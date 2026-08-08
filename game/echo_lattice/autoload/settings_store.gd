@@ -1,0 +1,140 @@
+extends Node
+## Persists Echo Lattice player settings (accessibility, audio, input).
+## Autoload name: SettingsStore
+
+signal settings_changed(section: String, key: String, value: Variant)
+signal settings_reloaded()
+
+const SETTINGS_PATH := "user://echo_lattice_settings.json"
+const DEFAULTS_RES := "res://echo_lattice/config/default_settings.json"
+
+var _data: Dictionary = {}
+var _defaults: Dictionary = {}
+
+
+func _ready() -> void:
+	_defaults = _load_json_file(DEFAULTS_RES)
+	if _defaults.is_empty():
+		_defaults = _builtin_defaults()
+	load_settings()
+
+
+func get_value(section: String, key: String, fallback: Variant = null) -> Variant:
+	if _data.has(section) and (_data[section] as Dictionary).has(key):
+		return (_data[section] as Dictionary)[key]
+	if _defaults.has(section) and (_defaults[section] as Dictionary).has(key):
+		return (_defaults[section] as Dictionary)[key]
+	return fallback
+
+
+func set_value(section: String, key: String, value: Variant, save_now: bool = true) -> void:
+	if not _data.has(section):
+		_data[section] = {}
+	(_data[section] as Dictionary)[key] = value
+	settings_changed.emit(section, key, value)
+	if save_now:
+		save_settings()
+
+
+func get_section(section: String) -> Dictionary:
+	var out: Dictionary = {}
+	if _defaults.has(section):
+		out = (_defaults[section] as Dictionary).duplicate(true)
+	if _data.has(section):
+		out.merge(_data[section] as Dictionary, true)
+	return out
+
+
+func reset_section(section: String) -> void:
+	if _defaults.has(section):
+		_data[section] = (_defaults[section] as Dictionary).duplicate(true)
+	elif _data.has(section):
+		_data.erase(section)
+	settings_reloaded.emit()
+	save_settings()
+
+
+func reset_all() -> void:
+	_data = _defaults.duplicate(true)
+	settings_reloaded.emit()
+	save_settings()
+
+
+func load_settings() -> void:
+	var loaded := _load_json_file(SETTINGS_PATH)
+	if loaded.is_empty():
+		_data = _defaults.duplicate(true)
+	else:
+		_data = _defaults.duplicate(true)
+		_deep_merge(_data, loaded)
+	settings_reloaded.emit()
+
+
+func save_settings() -> bool:
+	var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+	if file == null:
+		push_warning("SettingsStore: cannot write %s" % SETTINGS_PATH)
+		return false
+	file.store_string(JSON.stringify(_data, "\t"))
+	return true
+
+
+func export_dict() -> Dictionary:
+	return _data.duplicate(true)
+
+
+func _load_json_file(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+	return parsed
+
+
+func _deep_merge(dst: Dictionary, src: Dictionary) -> void:
+	for key in src.keys():
+		if src[key] is Dictionary and dst.has(key) and dst[key] is Dictionary:
+			_deep_merge(dst[key], src[key])
+		else:
+			dst[key] = src[key]
+
+
+func _builtin_defaults() -> Dictionary:
+	return {
+		"version": 1,
+		"accessibility": {
+			"fossil_palette": "default",
+			"fossil_use_patterns": true,
+			"reduce_flash": false,
+			"flash_max_intensity": 1.0,
+			"screen_shake_enabled": true,
+			"screen_shake_intensity": 1.0,
+			"subtitles_enabled": true,
+			"subtitle_size": "medium",
+			"subtitle_background": true,
+			"show_ghost_path_once": false,
+			"hold_to_walk": false,
+			"reduce_motion": false,
+		},
+		"audio": {
+			"master_volume": 1.0,
+			"sfx_volume": 1.0,
+			"music_volume": 0.8,
+		},
+		"input_bindings": {
+			"move_north": ["W", "Up"],
+			"move_east": ["D", "Right"],
+			"move_south": ["S", "Down"],
+			"move_west": ["A", "Left"],
+			"interact": ["E", "Enter"],
+			"undo": ["Z", "Backspace"],
+			"pause": ["Escape"],
+			"ghost_assist": ["G"],
+			"confirm": ["Enter", "Space"],
+			"cancel": ["Escape"],
+		},
+	}
