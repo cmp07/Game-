@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/NEXT_WAVE_PREDICTION.md`](research/NEXT_WAVE_PREDICTION.md) — 2026–2027 wave forecast (casino toys, micro-horror, soft-extraction, Deck toys, post-friendslop)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
