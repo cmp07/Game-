@@ -1,0 +1,9 @@
+# Godot 4 editor / import caches
+.godot/
+.import/
+
+# Export presets containing credentials
+export_presets.cfg
+
+# Debug / temporary
+*.tmp
