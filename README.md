@@ -12,11 +12,12 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- China Steam (2025–2026) inventive games, localization, tags, price: [`docs/research/CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md`](docs/research/CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md)
 
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
-- `docs/research/` — category ranking and competitive notes
+- `docs/research/` — category ranking, China market report, competitive notes
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
 

@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md`](research/CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md) — China Steam market deep dive (2025–2026): inventive hits, localization, tags, RMB pricing, generative/physics implications  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
