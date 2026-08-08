@@ -1,0 +1,20 @@
+// SteamPipe app build script for Echo Lattice (Windows-first).
+// Replace YOUR_APP_ID / YOUR_DEPOT_ID after Steamworks app creation.
+// Docs: docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md
+//
+// Example:
+//   steamcmd +login <user> +run_app_build <abs-path>/steam/echo_lattice/app_build.vdf +quit
+
+"AppBuild"
+{
+	"AppID" "YOUR_APP_ID"
+	"Desc" "Echo Lattice Windows build"
+	"BuildOutput" "..\\..\\..\\dist\\echo_lattice\\steam_build_output"
+	"ContentRoot" ""
+	"SetLive" "" // e.g. "beta" — leave empty to upload without setting live
+
+	"Depots"
+	{
+		"YOUR_DEPOT_ID" "depot_windows.vdf"
+	}
+}
