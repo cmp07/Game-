@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/OUTSIDE_THE_BOX_INDIES.md`](research/OUTSIDE_THE_BOX_INDIES.md) — 2022–2026 weird-mechanic case studies + inventiveness checklist (no mashups)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
