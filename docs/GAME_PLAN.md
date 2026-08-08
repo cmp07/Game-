@@ -29,6 +29,8 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 
 Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
 
+**Philosophy deep dive (idle spectacle vs generative inventiveness):** [`docs/research/PARTICUL_VS_GENERATIVE.md`](research/PARTICUL_VS_GENERATIVE.md) — treats Particul-like idle and true generative/adaptive as **separate product philosophies** (no mashup). If first-ship north star is generative reality + physics + inventiveness, prefer a systems-generative toy over Particul-like; keep Particul-like as a later catalog SKU.
+
 ---
 
 ## Ranking for FAST first ship (pure categories)
