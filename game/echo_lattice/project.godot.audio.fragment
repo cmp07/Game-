@@ -1,0 +1,12 @@
+; Merge into game/echo_lattice/project.godot (Godot 4).
+; Points the project at Master/SFX/Music/UI layout.
+;
+; [audio]
+; buses/default_bus_layout="res://default_bus_layout.tres"
+;
+; Suggested autoloads (paths relative to this Godot project root):
+; AudioManager="*res://scripts/audio/audio_manager.gd"
+; AdaptiveMusic="*res://scripts/audio/adaptive_music.gd"
+
+[audio]
+buses/default_bus_layout="res://default_bus_layout.tres"
