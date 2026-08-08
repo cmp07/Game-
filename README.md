@@ -12,7 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
-
+- Co-op / friendslop vs adaptive personalization: [`docs/research/COOP_GAME_SHAPING_FRIENDSLOP.md`](docs/research/COOP_GAME_SHAPING_FRIENDSLOP.md)
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
