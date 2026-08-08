@@ -296,7 +296,7 @@ Daily seed stairs are generated from a grammar of beams + joints; optional “ha
 ### Comps
 - Physics-consequence clarity of World of Goo / Besiege, but **vignette-sized** levels  
 - Clip culture of collapse / near-miss (People Playground energy without gore)  
-- Pricing/format lessons from short-session hits ([Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) ~$2.99 band; [Meccha Chameleon](https://store.steampowered.com/app/) style “simple rule, huge shareability” — see Polygon coverage of 2026 viral simple-mechanic sales)  
+- Pricing/format lessons from short-session hits ([Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) ~$2.99 band; Meccha Chameleon–style “simple rule, huge shareability” — see [Polygon coverage of 2026 viral simple-mechanic sales](https://www.polygon.com/meccha-chameleon-sales-15-million/))  
 
 ### Note
 **Best overall Game 1 inventive pick** for this repo: fast slice, obvious trailer, offline, pure category, room for $3.99–$7.99.
