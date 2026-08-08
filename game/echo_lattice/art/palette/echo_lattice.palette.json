@@ -1,0 +1,49 @@
+{
+  "name": "Echo Lattice — Field Ledger",
+  "version": "0.1.0",
+  "notes": "Single source of truth for Echo Lattice's palette. Human-referenced, deliberately anti-neon. If you feel the urge to add mystical purple, cyberpunk cyan, or a rainbow gradient, delete it and re-read 05_ART_BIBLE.md.",
+  "swatches": {
+    "paper_bone":        { "hex": "#EFE6D2", "role": "base surface — printer-warm cream, never pure white" },
+    "paper_deep":        { "hex": "#D9CDB0", "role": "walked-on floor, worn ledger page" },
+    "ink_black":         { "hex": "#141210", "role": "walls, glyphs, type — deep sepia black, never pure #000" },
+    "ink_soft":          { "hex": "#3A342C", "role": "secondary line weight, halftone" },
+    "chalk_white":       { "hex": "#F5EFDD", "role": "ghost trails, footprints, buffer stamps" },
+    "rust_fossil":       { "hex": "#8B3A1F", "role": "fossilized paths / hardened habit walls — iron oxide" },
+    "rust_deep":         { "hex": "#5E2412", "role": "old rust seams, joins between fossilized tiles" },
+    "slate_teal":        { "hex": "#2D4A55", "role": "cold accent for signage, keys, doors — NOT purple" },
+    "slate_teal_soft":   { "hex": "#4A6D77", "role": "ghost path dash, informational HUD" },
+    "cadmium_warn":      { "hex": "#D6432B", "role": "rewrite-imminent flash — used sparingly, one heartbeat" },
+    "copper_key":        { "hex": "#B8763A", "role": "keys, doors, tactile interactables — dry-plate etch" }
+  },
+  "banlist": {
+    "notes": "These are visually banned in-source unless the design lead approves an exception in writing.",
+    "colors": [
+      "#7F00FF", "#B026FF", "#8A2BE2", "any 'mystical' saturated purple",
+      "neon violet, neon cyan, cyberpunk pink",
+      "hot magenta, rainbow gradients",
+      "lava orange over pure black",
+      "TV-scanline green"
+    ],
+    "effects": [
+      "AI-illustration painterly blur",
+      "glass-morphism / blurred frosted panels",
+      "generic bloom halos",
+      "hexagonal HUD frames",
+      "particle sparkle 'juice' that isn't diegetic",
+      "fantasy runes, arcane sigils, glowing eldritch dust"
+    ]
+  },
+  "typography": {
+    "display": "Geometric grotesk, tightly tracked (e.g. Akkurat, Inter Tight, or IBM Plex Sans Condensed).",
+    "body":    "Newsprint serif for flavor text and printed-ledger UI (e.g. IBM Plex Serif or PT Serif).",
+    "mono":    "Monospaced grotesk for seed strings and the move buffer punch-card (e.g. IBM Plex Mono).",
+    "case":    "Small caps for headers. Sentence case in body. NEVER ALL CAPS SCREAMING except on the title lockup.",
+    "line_quality": "1px sepia ink at 32px reference tile. Never anti-alias to pure black."
+  },
+  "tile_grid": {
+    "reference_tile_px": 32,
+    "wall_thickness_px": 4,
+    "chamber_max_tiles": 32,
+    "diagonal_walls": "MVP: no diagonals. 1.0: unlockable via 'bevel' transform pack."
+  }
+}
