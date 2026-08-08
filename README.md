@@ -12,6 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Creation / tinkering genres (sandbox, factory, colony, god, crafting roguelite): [`docs/research/CREATION_GENRES_DEEP_DIVE.md`](docs/research/CREATION_GENRES_DEEP_DIVE.md)
 
 ## Layout
 

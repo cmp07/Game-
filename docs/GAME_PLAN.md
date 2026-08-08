@@ -29,6 +29,8 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 
 Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
 
+**If prioritizing “start from nothing → build / tinker” instead of the fast vignette path:** see the pure-genre deep dive [`docs/research/CREATION_GENRES_DEEP_DIVE.md`](research/CREATION_GENRES_DEEP_DIVE.md) (sandbox toys → minimal factory → crafting roguelite ranked for solo $3–$15). Still one pure category per product — do not mash that cluster into Game 1.
+
 ---
 
 ## Ranking for FAST first ship (pure categories)
@@ -125,4 +127,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/CREATION_GENRES_DEEP_DIVE.md`](research/CREATION_GENRES_DEEP_DIVE.md) — long report: pure creation/progression genres, Steam demand, scope traps, $3–$15 solo ranking + sources  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)

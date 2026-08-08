@@ -6,6 +6,9 @@
 
 Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 
+**Creation / progression / tinkering taste (separate lens):**  
+Long report + $3–$15 solo ranking for pure sandbox / factory / colony / god / crafting-roguelite genres → [`CREATION_GENRES_DEEP_DIVE.md`](CREATION_GENRES_DEEP_DIVE.md).
+
 ---
 
 ## Name resolutions
