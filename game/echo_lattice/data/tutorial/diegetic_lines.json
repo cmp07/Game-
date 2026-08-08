@@ -1,0 +1,233 @@
+{
+  "format": 1,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/12_TONE_AND_TUTORIAL.md",
+  "rules": {
+    "max_words": 14,
+    "target_words": 8,
+    "voice": "brutalist_transit_pa",
+    "no_vo": true,
+    "no_npc_dialogue": true
+  },
+  "lines": [
+    {
+      "id": "pa.boot.lattice_online",
+      "text": "LATTICE ONLINE",
+      "channel": "pa",
+      "when": "on_boot",
+      "once_flag": null,
+      "priority": 10
+    },
+    {
+      "id": "pa.boot.seed_visible",
+      "text": "SEED LOCKED TO RUN",
+      "channel": "toast",
+      "when": "on_run_start",
+      "once_flag": "flag.seen_seed_toast",
+      "priority": 5
+    },
+    {
+      "id": "plate.walk_span",
+      "text": "WALK THE SPAN",
+      "channel": "plate",
+      "when": "on_enter",
+      "chamber_ids": ["ch_w0_00_quiet_span"],
+      "once_flag": null,
+      "priority": 20
+    },
+    {
+      "id": "toast.span_clear",
+      "text": "SPAN CLEAR",
+      "channel": "toast",
+      "when": "on_clear",
+      "chamber_ids": ["ch_w0_00_quiet_span"],
+      "once_flag": null,
+      "priority": 5
+    },
+    {
+      "id": "pa.checkpoint.armed",
+      "text": "CHECKPOINT — BUFFER ARMED",
+      "channel": "pa",
+      "when": "on_checkpoint",
+      "once_flag": null,
+      "priority": 40
+    },
+    {
+      "id": "pa.rewrite.fired",
+      "text": "REWRITE FROM YOUR TRACE",
+      "channel": "pa",
+      "when": "on_rewrite",
+      "once_flag": null,
+      "priority": 50
+    },
+    {
+      "id": "pa.rewrite.matched",
+      "text": "IT MATCHES YOU",
+      "channel": "pa",
+      "when": "on_rewrite_settle",
+      "once_flag": "flag.seen_matches_you",
+      "priority": 55
+    },
+    {
+      "id": "pa.rewrite.matched.variant",
+      "text": "LOOP ARCHIVED AS WALL",
+      "channel": "pa",
+      "when": "on_rewrite_settle",
+      "once_flag": null,
+      "priority": 30,
+      "weight": 0.25,
+      "requires_flag": "flag.seen_matches_you"
+    },
+    {
+      "id": "pa.undo.hint",
+      "text": "UNDO CLEARS A STEP",
+      "channel": "toast",
+      "when": "on_first_blocked_after_rewrite",
+      "once_flag": "flag.undo_taught",
+      "priority": 60
+    },
+    {
+      "id": "pa.undo.confirm",
+      "text": "STEP ERASED",
+      "channel": "toast",
+      "when": "on_undo",
+      "once_flag": "flag.seen_undo_confirm",
+      "priority": 8
+    },
+    {
+      "id": "plate.take_exit",
+      "text": "TAKE · THEN EXIT",
+      "channel": "plate",
+      "when": "on_key_focus",
+      "chamber_ids": ["ch_w0_04_key_after"],
+      "once_flag": null,
+      "priority": 20
+    },
+    {
+      "id": "pa.ghost.floor",
+      "text": "ECHO ON THE FLOOR",
+      "channel": "pa",
+      "when": "on_checkpoint",
+      "chamber_ids": ["ch_w0_05_ghost_witness"],
+      "once_flag": "flag.ghost_literacy",
+      "priority": 45
+    },
+    {
+      "id": "pa.death.habit",
+      "text": "PATH CLOSED — REPLAY HABIT",
+      "channel": "pa",
+      "when": "on_fail",
+      "once_flag": null,
+      "priority": 70
+    },
+    {
+      "id": "pa.death.reset",
+      "text": "CHAMBER RESET",
+      "channel": "toast",
+      "when": "on_reset",
+      "once_flag": null,
+      "priority": 15
+    },
+    {
+      "id": "pa.wing.clear",
+      "text": "WING CLEAR — TRACE FILED",
+      "channel": "pa",
+      "when": "on_wing_clear",
+      "once_flag": null,
+      "priority": 80
+    },
+    {
+      "id": "toast.transform_deck_tease",
+      "text": "NEW TRANSFORMS WAIT IN META",
+      "channel": "toast",
+      "when": "on_meta_tease",
+      "once_flag": "meta.tease_transform_deck",
+      "priority": 25
+    },
+    {
+      "id": "pa.transform.mirror",
+      "text": "REWRITE · MIRROR",
+      "channel": "pa",
+      "when": "on_transform_first_use",
+      "transform_id": "mirror",
+      "once_flag": "flag.seen_transform_mirror",
+      "priority": 48
+    },
+    {
+      "id": "pa.transform.rotate",
+      "text": "REWRITE · ROTATE BUFFER",
+      "channel": "pa",
+      "when": "on_transform_first_use",
+      "transform_id": "rotate",
+      "once_flag": "flag.seen_transform_rotate",
+      "priority": 48
+    },
+    {
+      "id": "pa.transform.thicken",
+      "text": "REWRITE · THICKEN TRACE",
+      "channel": "pa",
+      "when": "on_transform_first_use",
+      "transform_id": "thicken",
+      "once_flag": "flag.seen_transform_thicken",
+      "priority": 48
+    },
+    {
+      "id": "pa.transform.invert",
+      "text": "REWRITE · INVERT TRACE",
+      "channel": "pa",
+      "when": "on_transform_first_use",
+      "transform_id": "invert",
+      "once_flag": "flag.seen_transform_invert",
+      "priority": 48
+    },
+    {
+      "id": "pa.habit.warn",
+      "text": "CORRIDOR IS LISTENING",
+      "channel": "toast",
+      "when": "on_habit_tension_high",
+      "once_flag": "flag.seen_listening",
+      "priority": 35
+    },
+    {
+      "id": "pa.door.open",
+      "text": "DOOR RELEASED",
+      "channel": "toast",
+      "when": "on_door_open",
+      "once_flag": null,
+      "priority": 12
+    },
+    {
+      "id": "pa.key.acquired",
+      "text": "KEY IN HAND",
+      "channel": "toast",
+      "when": "on_key_collect",
+      "once_flag": null,
+      "priority": 12
+    },
+    {
+      "id": "title_card.induction",
+      "text": "INDUCTION",
+      "channel": "title_card",
+      "when": "on_wing_enter",
+      "wing_ids": ["wing_00_induction"],
+      "once_flag": null,
+      "priority": 90
+    },
+    {
+      "id": "pa.daily.seed",
+      "text": "SHARED SEED — LOCAL JUDGE",
+      "channel": "toast",
+      "when": "on_daily_start",
+      "once_flag": null,
+      "priority": 20
+    },
+    {
+      "id": "pa.pause.ghost",
+      "text": "GHOST HOLDS YOUR LAST TRACE",
+      "channel": "toast",
+      "when": "on_pause_first",
+      "once_flag": "flag.seen_pause_ghost",
+      "priority": 5
+    }
+  ]
+}
