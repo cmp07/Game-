@@ -12,6 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Creator platforms → Steam sales (2025–2026): [`docs/research/CREATOR_TRENDS_STEAM_SALES_2025_2026.md`](docs/research/CREATOR_TRENDS_STEAM_SALES_2025_2026.md)
 
 ## Layout
 

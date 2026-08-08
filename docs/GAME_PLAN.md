@@ -27,7 +27,8 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 | Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | No Steam title “Rollerhalla”; platform-fighter taste, wrong first product |
 | Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | $1.99 particle mine → sell → automate idle |
 
-Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
+Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).  
+Creator platforms → Steam (TikTok/Twitch/YouTube, AI, physics fails, adaptation hooks): [`docs/research/CREATOR_TRENDS_STEAM_SALES_2025_2026.md`](research/CREATOR_TRENDS_STEAM_SALES_2025_2026.md).
 
 ---
 
