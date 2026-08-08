@@ -16,9 +16,17 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
+- `docs/ECHO_LATTICE/` — Echo Lattice production / Steam docs
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/` — Godot 4 project (after a lane is locked)
+- `game/` — Godot 4 projects (e.g. `game/echo_lattice/`)
+- `scripts/echo_lattice/` — Windows export scripts
+- `steam/echo_lattice/` — SteamPipe VDF templates (AppID placeholders)
+
+## Echo Lattice (Steam)
+
+- Checklist (AppID, tags, capsules, AI disclosure, achievements, Cloud, depots, GodotSteam): [`docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md`](docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md)
+- Windows `.exe` export: [`docs/ECHO_LATTICE/EXPORT_WINDOWS.md`](docs/ECHO_LATTICE/EXPORT_WINDOWS.md)
 
 ## Stack
 
