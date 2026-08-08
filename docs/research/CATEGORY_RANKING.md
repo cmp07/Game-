@@ -120,3 +120,9 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 - CloverPit: [Steam](https://store.steampowered.com/app/3314790/CloverPit/)
 - Particul: [Steam](https://store.steampowered.com/app/4273120/Particul/)
 - Windrose / Wildfrost / Brawlhalla / The Coin Game — store links in table above
+
+---
+
+## Creative parallel track
+
+For inventive seeds aligned with creation-from-nothing, physics play, unique simple mechanics, and generative-adaptive “shapes around you,” see [`INVENTIVE_GAME_SEEDS.md`](INVENTIVE_GAME_SEEDS.md) (20 pure-genre pitches + top-10 first-Steam ranking + comps).
