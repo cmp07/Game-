@@ -4,7 +4,8 @@
 **Constraint:** Pure categories only — no mashup pitches.  
 **Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).  
+Related deep dive: [`GENERATIVE_ADAPTIVE_GAMES_REPORT.md`](GENERATIVE_ADAPTIVE_GAMES_REPORT.md) — generative AI vs adaptive systems on Steam (2024–Aug 2026); verdict on “generative reality” as a first $3–$15 SKU.
 
 ---
 

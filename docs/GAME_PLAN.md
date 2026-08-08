@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/GENERATIVE_ADAPTIVE_GAMES_REPORT.md`](research/GENERATIVE_ADAPTIVE_GAMES_REPORT.md) — generative AI / adaptive systems deep dive (no mashup pitches); “generative reality” first-game verdict  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
