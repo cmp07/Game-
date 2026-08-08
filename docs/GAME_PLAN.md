@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/GENERATIVE_CONCEPT_SPACE.md`](research/GENERATIVE_CONCEPT_SPACE.md) — pure-direction map for creation / physics / generative-reality vision (**not** Games 1–3; do not mash)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
