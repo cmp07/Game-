@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/STEAM_INDIE_TREND_MAP_2025_MID2026.md`](research/STEAM_INDIE_TREND_MAP_2025_MID2026.md) — full Steam indie trend map (2025–mid-2026) + 8 opportunity lanes  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
