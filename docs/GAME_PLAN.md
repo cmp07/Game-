@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/INVENTIVE_GAME_SEEDS.md`](research/INVENTIVE_GAME_SEEDS.md) — 20 pure-genre inventive seeds (creation / physics / generative-adaptive); top-10 for first Steam ship  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
