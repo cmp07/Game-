@@ -4,7 +4,8 @@
 **Constraint:** Pure categories only — no mashup pitches.  
 **Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).  
+Deep dive — inventive simple games & $3–$10 market: [`SIMPLE_DEEP_INVENTIVE_GAMES.md`](SIMPLE_DEEP_INVENTIVE_GAMES.md).
 
 ---
 

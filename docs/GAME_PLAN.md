@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/SIMPLE_DEEP_INVENTIVE_GAMES.md`](research/SIMPLE_DEEP_INVENTIVE_GAMES.md) — Baba/Balatro/Parabox-class “simple but deep” research, $3–$10 market reality, ranked inventive templates  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
