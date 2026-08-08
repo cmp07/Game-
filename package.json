@@ -1,0 +1,17 @@
+{
+  "name": "game",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A small browser Snake game built with Vite + TypeScript and an HTML5 canvas.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}
