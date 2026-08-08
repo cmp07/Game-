@@ -5,7 +5,8 @@
 **Lens:** Inventive concepts mapped by **spatial dimension / presentation**, not by genre mash.  
 **Hard rule:** **One pure category per product** — no mashup pitches. Lessons are extracted per presentation family; they are not invitations to stack strip + diorama + desktop pet into one store page.
 
-Companions: [`CATEGORY_RANKING.md`](CATEGORY_RANKING.md) · [`../GAME_PLAN.md`](../GAME_PLAN.md) · [`PHYSICS_FORWARD_GAMES.md`](PHYSICS_FORWARD_GAMES.md) · [`OUTSIDE_THE_BOX_INDIES.md`](OUTSIDE_THE_BOX_INDIES.md) · [`STEAM_INDIE_TREND_MAP_2025_MID2026.md`](STEAM_INDIE_TREND_MAP_2025_MID2026.md)
+Companions: [`CATEGORY_RANKING.md`](CATEGORY_RANKING.md) · [`../GAME_PLAN.md`](../GAME_PLAN.md).  
+Related research tracks (sibling PRs / may land separately): physics-forward games, outside-the-box indies, simple-deep inventiveness, Steam indie trend map 2025–mid-2026.
 
 ---
 
@@ -237,7 +238,7 @@ Tiny Glade: two people, ~**2 years**, then massive wishlist — not a “fast fi
 | **Tension vignette (FP table / room)** | Sit, decide, survive | [Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) — **8M+ sales** reported; console ports into 2026 ([TechRaptor](https://techraptor.net/gaming/news/buckshot-roulette-sales-8m)) |
 | **Climbing / ascent physics** | Climb, fall, recover | [PEAK](https://store.steampowered.com/app/3527290/PEAK/) — jam → **2M+ sales**, &lt;$200k spend ([Game Developer](https://www.gamedeveloper.com/production/how-co-op-climbing-hit-peak-achieved-2-million-sales-for-less-than-200-000-)); [Getting Over It](https://store.steampowered.com/app/240720/Getting_Over_It_with_Bennett_Foddy/) long-tail millions |
 | **Physics toy / carry / ragdoll chaos** | Grab, throw, drop | R.E.P.O. / friendslop wave (see trend map & physics research) |
-| **Walking / exploration narrative** | Walk, look, listen | [Firewatch](https://store.steampowered.com/app/383870/Firewatch/) ~1.3M Steam units est.; **walking-sim tag now supply-heavy** ([trend map underserved/saturated notes](STEAM_INDIE_TREND_MAP_2025_MID2026.md)) |
+| **Walking / exploration narrative** | Walk, look, listen | [Firewatch](https://store.steampowered.com/app/383870/Firewatch/) ~1.3M Steam units est.; **walking-sim tag now supply-heavy** (2025–26 Steam tag weather) |
 | **Perspective puzzle FP** | Photograph / reshape space | [Viewfinder](https://store.steampowered.com/app/1382070/Viewfinder/) — inventive camera verb; ~200–370k unit est. band |
 
 ### 5.2 Hits
@@ -257,7 +258,7 @@ Tiny Glade: two people, ~**2 years**, then massive wishlist — not a “fast fi
 |---|---|---|
 | **Only Up!** | Twitch viral ascent; asset/NFT controversies; delisted by solo dev under stress ([Kotaku](https://kotaku.com/only-up-steam-twitch-removed-indiesolodev-platformer-1850817370)) | Virality without craft/IP hygiene burns the maker; clone flood followed |
 | **Only Up clones** | Mostly Negative / low trust pages | Namejacking ≠ product |
-| **Open physics sandbox day-1** | Trailer juice, Mixed reviews | See [`PHYSICS_FORWARD_GAMES.md`](PHYSICS_FORWARD_GAMES.md) gimmick table |
+| **Open physics sandbox day-1** | Trailer juice, Mixed reviews | Physics as trailer juice without authored goals (see physics-forward research track) |
 | **Aimless walking sim (2025–26 supply)** | Tag saturated vs attention | Need a job or mystery engine, not “vibes hike” |
 | **Teardown-scale voxels as first ship** | Content + tech mountain | Wrong for solo first product |
 
@@ -417,7 +418,7 @@ Not a backlog commitment; prompts for GDD only after lane lock.
 - Unpacking / Her Story / Firewatch / Viewfinder estimates: [Raijin Unpacking](https://raijin.gg/app/1135690/Unpacking), [SteamData Her Story](https://steamdata.ai/en-US/game/368370/her-story), [SteamData Firewatch](https://steamdata.ai/en-US/game/383870/firewatch), [SteamData Viewfinder](https://steamdata.ai/en-US/game/1382070/viewfinder)  
 - Only Up delist & clones: [Kotaku](https://kotaku.com/only-up-steam-twitch-removed-indiesolodev-platformer-1850817370), [Engadget](https://www.engadget.com/viral-indie-game-only-up-delisted-from-steam-171652546.html), [Automaton](https://automaton-media.com/en/news/20230927-21892/)  
 - 2D platformer / pixel saturation: [Game Oracle — platformers](https://www.game-oracle.com/blog/2d-platformers-on-steam), [Game Oracle — pixel art](https://www.game-oracle.com/blog/deep-dive-2D-pixel-art-part-1), [GMTK launch postmortem](https://gmtk.substack.com/p/what-its-like-to-launch-a-game-on), [tilt frog postmortem](https://www.gamesmarket.global/numbers-facts-truths-an-indies-analysis-of-tilt-frog/)  
-- Steam macro 2025–26: companion [`STEAM_INDIE_TREND_MAP_2025_MID2026.md`](STEAM_INDIE_TREND_MAP_2025_MID2026.md) (Alinea / Games-Stats citations therein)
+- Steam macro 2025–26: Alinea / Games-Stats tallies summarized in sibling Steam indie trend-map research (~20k releases / ~300 titles &gt;$1M in 2025; harsh medians)
 
 ### Design & presentation references
 
@@ -437,11 +438,8 @@ Not a backlog commitment; prompts for GDD only after lane lock.
 
 ### Internal companions
 
-- [`CATEGORY_RANKING.md`](CATEGORY_RANKING.md)  
-- [`PHYSICS_FORWARD_GAMES.md`](PHYSICS_FORWARD_GAMES.md)  
-- [`OUTSIDE_THE_BOX_INDIES.md`](OUTSIDE_THE_BOX_INDIES.md)  
-- [`SIMPLE_DEEP_INVENTIVE_GAMES.md`](SIMPLE_DEEP_INVENTIVE_GAMES.md)  
-- [`STEAM_INDIE_TREND_MAP_2025_MID2026.md`](STEAM_INDIE_TREND_MAP_2025_MID2026.md)
+- [`CATEGORY_RANKING.md`](CATEGORY_RANKING.md) · [`../GAME_PLAN.md`](../GAME_PLAN.md)  
+- Sibling research tracks (separate PRs): physics-forward games · outside-the-box indies · simple-deep inventiveness · Steam indie trend map 2025–mid-2026
 
 ---
 
