@@ -1,20 +1,37 @@
 # Steam Desktop Game Plan
 
-**Repo:** [cmp07/sandpile-tycoon](https://github.com/cmp07/sandpile-tycoon)  
-**Date:** August 2026  
+**Repo:** [cmp07/Game-](https://github.com/cmp07/Game-)  
+**Date:** August 2026 (revised — generative-vision synthesis)  
 **Goal:** Ship real desktop Steam games (Windows `.exe`, not browser) quickly at **$0.99–$10**.
+
+**Master research:** [`docs/research/GENERATIVE_REALITY_DEEP_DIVE.md`](research/GENERATIVE_REALITY_DEEP_DIVE.md)  
+**Inventive shortlist:** [`docs/research/INVENTIVE_DIRECTION_SHORTLIST.md`](research/INVENTIVE_DIRECTION_SHORTLIST.md)  
+**Prior catalog ranking (still valid as ladder):** [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md)
 
 ---
 
 ## Hard rule: do not mash genres
 
-Each Steam product is **one pure category**. No hybrid “first game” pitches (e.g. coin pusher + horror + idle + cards). Shared taste across games is fine; shared mechanics in one store page is not.
+Each Steam product is **one pure category**. No hybrid “first game” pitches (e.g. coin pusher + horror + idle + generative sandbox). Shared taste across games is fine; shared mechanics in one store page is not.
 
-| Coin-machine games sell | Idle / particle tycoons sell | Tension vignettes sell |
+| Adaptive physics puzzles sell | Coin-machine games sell | Idle / particle tycoons sell |
 |---|---|---|
-| Arcade physics + payout dopamine | Automation / number-go-up over time | Short, clip-friendly stakes + readable rules |
+| Authored laws + readable failure + clip replays | Arcade physics + payout dopamine | Automation / number-go-up over time |
 
 Same “simple systems” family — **different loops, art, pacing, and marketing**.
+
+---
+
+## North star (revised)
+
+**Generative reality / creation / physics inventiveness** is the reason to build — not “mash every Steam taste we liked.”
+
+Evidence (see deep dive) says:
+
+- **LLM / world-model runtime** as Game 1 = tech-demo trap at $3–$10 (cost, consistency, Steam live-gen stigma, poor conversion of AI-flagged floods).
+- **Particul-like idle** = solid **catalog** SKU; weak as the generative-vision flagship (physics is spectacle over a spreadsheet).
+- **Tension vignette** = still the fastest *catalog* format; keep its *shipping lessons*, replace its *content fantasy* if inventiveness is the goal.
+- **Shippable generative** = offline **adaptive / simulation systems** that reshape around authorship — not rented Genie/Marble/Inworld inference.
 
 ---
 
@@ -22,83 +39,88 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 
 | You said | Means | Notes |
 |---|---|---|
-| Raccoin / rack a coin | **[RACCOIN: Coin Pusher Roguelike](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/)** | Coin-pusher + run upgrades; breakout 2026 title |
-| Winrose | **[Windrose](https://store.steampowered.com/app/3041230/Windrose/)** *or* **[Wildfrost](https://store.steampowered.com/app/1811990/Wildfrost/)** | Windrose = pirate survival (scope signal, not a first game). Wildfrost = deckbuilder (phonetic fit among StS-likes) |
-| Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | No Steam title “Rollerhalla”; platform-fighter taste, wrong first product |
-| Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | $1.99 particle mine → sell → automate idle |
-
-Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
+| Raccoin / rack a coin | **[RACCOIN: Coin Pusher Roguelike](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/)** | Coin-pusher + run upgrades; breakout 2026 title — **Game 2 lane** |
+| Winrose | **[Windrose](https://store.steampowered.com/app/3041230/Windrose/)** *or* **[Wildfrost](https://store.steampowered.com/app/1811990/Wildfrost/)** | Scope / deckbuilder taste signals — not Game 1 |
+| Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | Platform-fighter taste — wrong first product |
+| Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | Idle particle tycoon — **Game 3 lane**, not generative flagship |
 
 ---
 
-## Ranking for FAST first ship (pure categories)
+## Ranking for FIRST ship (generative north star)
 
-Ranked for solo/small team + desktop Steam + $0.99–$10.
+Ranked for solo/small team + desktop Steam + $0.99–$10 + **inventive generative vision**.
 
 | Priority | Pure category | Verdict |
 |---|---|---|
-| **1** | Tension / horror vignette (Buckshot-like **format**) | **Build first** — fastest ship + proven ~$3 band |
-| **2** | Coin machine (RACCOIN / Coin Game lane) | **Game 2** — hot market; post-RACCOIN clones struggle |
-| **3** | Idle / particle tycoon (Particul-like) | **Game 3** — fastest to code; solid, smaller ceiling |
-| **4** | Classic tower defense | Strong later evergreen |
-| — | Offline geo / trivia | Maybe (not Street View) |
-| — | Full StS deckbuilder, RimWorld, Cities-depth, Palworld-scale, platform fighter | **Do not make first** |
+| **1** | Adaptive physics puzzle / generative-systems vignette (**Residue**) | **Build first** — generative vision + clip economics + offline |
+| **2** | Coin machine (RACCOIN / Coin Game lane) | **Game 2** — hot market; differentiate hard |
+| **3** | Idle / particle tycoon (Particul-like) | **Game 3** — fastest catalog filler; smaller inventiveness ceiling |
+| — | Classic tension / horror vignette | **Valid alternate Game 1** if Residue path declined |
+| — | Tower defense / geo trivia / StS / fighters / RimWorld-depth / Palworld-scale | Unchanged: later or avoid |
+
+Full inventive top-5: [`INVENTIVE_DIRECTION_SHORTLIST.md`](research/INVENTIVE_DIRECTION_SHORTLIST.md).
 
 ---
 
 ## Multi-game path (separate Steam products)
 
-### Game 1 — Tension / horror vignette (recommended first)
+### Game 1 — Residue (recommended first) · pure adaptive physics puzzle
 
-- **Format:** Short paid vignette — one space, escalating pressure, readable rules, replay via modifiers/challenges.
-- **Premise:** **Original** ritual / stakes / antagonist. Learn from Buckshot’s *structure* (clip length, tension, demoability) — do **not** clone shotgun roulette.
-- **Price band:** **$2.99–$7.99**
-- **Why first:** Smallest content mountain, strong short-form discovery, proven breakouts in-band ([Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) ~$2.99).
-- **Adjacent taste (separate category):** [CloverPit](https://store.steampowered.com/app/3314790/CloverPit/) is slot/debt tension — signal for *stakes*, not a mash into Game 1.
+- **Working title:** Residue  
+- **Format:** Short paid generative-systems vignette — sealed chambers, escalating authorship, readable laws, replay via residue ghost clips + challenge seeds.  
+- **Premise:** Your actions leave **residues** that rewrite local physics. Escape or stabilize under laws you authored. Habit-conditioned chamber grammars (deterministic — **no LLM**).  
+- **Price band:** **$4.99–$8.99**  
+- **Why first (revised):** Takes generative reality seriously *without* AI-slop store identity; keeps physics/particle DNA from this repo’s origin; inherits Buckshot-class session/demo lessons without cloning tension content; avoids Particul’s inventiveness ceiling as flagship.  
+- **Explicit non-goals:** idle prestige, coin payouts, horror shotgun rituals, Workshop platform, cloud world models.  
+- **Detail:** [`GENERATIVE_REALITY_DEEP_DIVE.md` §10–11](research/GENERATIVE_REALITY_DEEP_DIVE.md) · shortlist #1.
+
+**Shortlist alternates (still pure, still Game-1-shaped):** Axiom · Echo Lattice · Fulcrum Stairs · Void Plinth — see shortlist.
 
 ### Game 2 — Coin-machine game
 
-- Standalone arcade coin-pusher / coin-machine fantasy.
-- Comps: [RACCOIN](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [The Coin Game](https://store.steampowered.com/app/598980/The_Coin_Game/).
-- Differentiate with a sharp hook + demo; treat RACCOIN-scale returns as unlikely for a thin clone.
+- Standalone arcade coin-pusher / coin-machine fantasy.  
+- Comps: [RACCOIN](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [The Coin Game](https://store.steampowered.com/app/598980/The_Coin_Game/).  
+- Differentiate with a sharp hook + demo; treat RACCOIN-scale returns as unlikely for a thin clone.  
 - Target roughly **$5–$10** lean MVP after Game 1 lessons.
 
 ### Game 3 — Idle / particle tycoon (Particul-like)
 
-- Standalone particle/automation tycoon. This is where Particul-style screenshots belong — **not** Game 1.
-- Comp: [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99).
-- Target **$1.99–$4.99**; catalog filler and systems practice; distinct loop from Game 2.
+- Standalone particle/automation tycoon. Particul-style screenshots belong **here** — not Game 1.  
+- Comp: [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99).  
+- Target **$1.99–$4.99**; catalog filler and systems practice; distinct loop from Games 1–2.  
+- **Why demoted from flagship:** generative-vision taste test — physics as juice over incremental math is a different product contract ([philosophy note](research/GENERATIVE_REALITY_DEEP_DIVE.md#6-philosophy-split-particul-idle-vs-generative-inventiveness)).
 
 ### Later (not Games 1–3)
 
-Tower defense if you want a mid-scope evergreen. Base-building / colony / city only after several small paid ships.
+Tower defense if you want a mid-scope evergreen. Base-building / colony / city only after several small paid ships. Co-op / friendslop only after a solo SKU teaches shipping. World-model / LLM runtime experiments only as deliberate later R&D — not the first paid SKU.
 
 ---
 
-## Avoid first (scope / market traps)
+## Avoid first (scope / market / slop traps)
 
 | Avoid as first product | Why |
 |---|---|
-| **RimWorld-depth colony sim** | Multi-year AI, content, UI; usually $20–$40 ambition |
-| **Cities-depth city builder** | Content mountain; wrong price band for first ship |
-| **Palworld-scale creature survival** | Open world + collection + combat (+ MP expectations) |
-| **Platform fighter** (Brawlhalla / “Rollerhalla”) | Netcode, cast, live ops; F2P giants dominate |
-| **Full Slay the Spire deckbuilder** | Saturated; balance + card volume kills “fast”; often priced above band |
+| **LLM / Genie / Marble runtime “generative reality”** | Inference cost, consistency, live-gen compliance, demoware conversion |
+| **AI-art asset-flip store identity** | Gameslop stigma; Haro census conversion drag |
+| **Particul clone as flagship** | Catalog-fit, not inventiveness-fit |
+| **RACCOIN thin clone** | Crowded post-breakout lane |
+| **Buckshot shotgun clone** | Format lessons only — original premise required if tension alternate chosen |
+| **RimWorld / Cities / Palworld / platform fighter / full StS** | Scope / price / live-ops traps (unchanged) |
 | **Genre mashups** | Explicitly out of scope |
-
-Windrose-scale survival is a **taste signal**, not a schedule for product #1.
 
 ---
 
 ## Decision gate (user must confirm)
 
-**Recommended default:** Game 1 = tension/horror vignette with an original premise.
+**Recommended default (generative north star):** Game 1 = **Residue** (adaptive physics puzzle).
 
 Before production starts, confirm one of:
 
-1. **Game 1 — tension/horror vignette** (recommended), or  
-2. **Start with coin-machine** instead (Game 2 first), or  
-3. **Start with idle/particle** instead (Game 3 first — closest to current Particul interest / this repo’s original scaffold name).
+1. **Game 1 — Residue** (recommended), or  
+2. **Shortlist alternate** (Axiom / Echo Lattice / Fulcrum Stairs / Void Plinth), or  
+3. **Catalog alternate — tension/horror vignette** (prior fast-ship default), or  
+4. **Start with coin-machine** instead, or  
+5. **Start with idle/particle** instead (closest to Particul interest — accepted as *catalog* choice, not generative flagship).
 
 Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
@@ -106,23 +128,27 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 ## Tech stack (lean)
 
-- **Engine:** [Godot 4](https://godotengine.org/) — desktop export, Steam-friendly, free, fast iteration.
-- **Target:** Windows-first Steam build (real `.exe` + `.pck`); Mac/Linux optional later.
-- **Not for v1:** Web/HTML5 as the primary product, multiplayer netcode, live-service economies.
+- **Engine:** [Godot 4](https://godotengine.org/) — desktop export, Steam-friendly, free, fast iteration.  
+- **Target:** Windows-first Steam build (real `.exe` + `.pck`); Mac/Linux optional later.  
+- **Generative stack for Game 1:** simulation grammars + physics + habit buffers (**not** cloud LLMs).  
+- **AI tooling (optional):** coding/ideation assistants OK as *dev tools* (Steam Jan 2026 disclosure focus is player-facing content). Do **not** ship player-facing gen content in v1 without a deliberate disclosure strategy.  
+- **Not for v1:** Web/HTML5 as the primary product, multiplayer netcode, live-service economies, rented world-model APIs as gameplay.
 
 ---
 
 ## Next steps
 
-1. **User confirms** Game 1 lane (tension vs coin vs idle).
-2. Write a **one-page GDD** for that product only (loop, win/lose, session length, art direction, original hook).
-3. Godot 4 vertical slice (desktop) — one complete loop, no feature sprawl.
-4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push.
+1. **User confirms** Game 1 (Residue vs shortlist vs catalog alternate).  
+2. Write a **one-page GDD** for that product only (loop, win/lose, session length, art direction, residue/law rules, non-goals).  
+3. Godot 4 vertical slice (desktop) — one complete chamber loop + replay clip, no feature sprawl.  
+4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push — market the *verb*, not “AI.”  
 5. Price in-band; launch small; capture reviews → fund the next **separate** product.
 
 ---
 
 ## Related docs
 
-- [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/GENERATIVE_REALITY_DEEP_DIVE.md`](research/GENERATIVE_REALITY_DEEP_DIVE.md) — master synthesis  
+- [`docs/research/INVENTIVE_DIRECTION_SHORTLIST.md`](research/INVENTIVE_DIRECTION_SHORTLIST.md) — top 5 ranked  
+- [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — prior pure-category catalog scores  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)

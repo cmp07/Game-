@@ -7,16 +7,19 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Strategy (short)
 
 - **One pure category per product** — do not mash genres into a hybrid “first game.”
-- **Sequential small Steam releases**, not one mega-scope title:
-  1. Tension / horror vignette (recommended Game 1 — **confirm before production**)
+- **Generative north star:** adaptive / simulation systems that reshape around authorship — not LLM “AI game” store identity, not a Particul clone as flagship.
+- **Sequential small Steam releases:**
+  1. **Residue** — adaptive physics puzzle / generative-systems vignette (recommended Game 1 — **confirm before production**)
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
-- Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Master synthesis: [`docs/research/GENERATIVE_REALITY_DEEP_DIVE.md`](docs/research/GENERATIVE_REALITY_DEEP_DIVE.md)
+- Inventive shortlist: [`docs/research/INVENTIVE_DIRECTION_SHORTLIST.md`](docs/research/INVENTIVE_DIRECTION_SHORTLIST.md)
+- Prior catalog scores: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
 
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
-- `docs/research/` — category ranking and competitive notes
+- `docs/research/` — deep dives, shortlists, category ranking
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
 
