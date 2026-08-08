@@ -1,0 +1,28 @@
+; Echo Lattice — Godot 4 project (headless test bed).
+;
+; This project is intentionally minimal. It exists so that Godot 4 can
+; parse and run the GDScript modules under `src/` and the headless test
+; suite under `tests/`. Rendering, audio and input configuration will
+; land in later slices once QA is green.
+;
+; The full test matrix is documented in `docs/ECHO_LATTICE/09_QA.md`.
+
+config_version=5
+
+[application]
+
+config/name="Echo Lattice"
+config/description="A labyrinth that rebuilds from your last thirty moves — you escape by rewriting your own habits, not by beating RNG."
+run/main_scene=""
+config/features=PackedStringArray("4.3", "GL Compatibility")
+boot_splash/show_image=false
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/unused_parameter=0
