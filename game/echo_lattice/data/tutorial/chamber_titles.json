@@ -1,0 +1,117 @@
+{
+  "format": 1,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/12_TONE_AND_TUTORIAL.md",
+  "rules": {
+    "title_max_words": 4,
+    "subtitle_max_words": 6
+  },
+  "wings": [
+    {
+      "id": "wing_00_induction",
+      "title": "Induction",
+      "blurb": "Learn the rewrite without a lecture.",
+      "chambers": [
+        {
+          "id": "ch_w0_00_quiet_span",
+          "title": "Quiet Span",
+          "subtitle": "No rewrite yet",
+          "beat_id": "T00"
+        },
+        {
+          "id": "ch_w0_01_echo_plate",
+          "title": "Echo Plate",
+          "subtitle": "Buffer arms here",
+          "beat_id": "T01"
+        },
+        {
+          "id": "ch_w0_02_mirror_birth",
+          "title": "Mirror Birth",
+          "subtitle": "Your loop, made solid",
+          "beat_id": "T02"
+        },
+        {
+          "id": "ch_w0_03_break_the_loop",
+          "title": "Break the Loop",
+          "subtitle": "Habit is a wall",
+          "beat_id": "T03"
+        },
+        {
+          "id": "ch_w0_04_key_after",
+          "title": "Latch Remains",
+          "subtitle": "Order matters",
+          "beat_id": "T04"
+        },
+        {
+          "id": "ch_w0_05_ghost_witness",
+          "title": "Ghost Witness",
+          "subtitle": "Echo on the floor",
+          "beat_id": "T05"
+        },
+        {
+          "id": "ch_w0_06_wing_seal",
+          "title": "Wing Seal",
+          "subtitle": "Trace filed",
+          "beat_id": "T06"
+        }
+      ]
+    },
+    {
+      "id": "wing_01_service",
+      "title": "Service",
+      "blurb": "First paid wing — titles locked for content pipeline.",
+      "chambers": [
+        {
+          "id": "ch_w1_00_service_entrance",
+          "title": "Service Entrance",
+          "subtitle": "Same seed, new blame"
+        },
+        {
+          "id": "ch_w1_01_double_rail",
+          "title": "Double Rail",
+          "subtitle": "Two habits, one plate"
+        },
+        {
+          "id": "ch_w1_02_turnout",
+          "title": "Turnout",
+          "subtitle": "Leave a kinder corridor"
+        },
+        {
+          "id": "ch_w1_03_underpass",
+          "title": "Underpass",
+          "subtitle": "Low ceiling, long memory"
+        },
+        {
+          "id": "ch_w1_04_switchback",
+          "title": "Switchback",
+          "subtitle": "Hesitation thickens"
+        },
+        {
+          "id": "ch_w1_05_platform_edge",
+          "title": "Platform Edge",
+          "subtitle": "Do not loop the lip"
+        },
+        {
+          "id": "ch_w1_06_transfer_hall",
+          "title": "Transfer Hall",
+          "subtitle": "Ghost crosses first"
+        },
+        {
+          "id": "ch_w1_07_signal_bridge",
+          "title": "Signal Bridge",
+          "subtitle": "Cross only once"
+        },
+        {
+          "id": "ch_w1_08_yard_limit",
+          "title": "Yard Limit",
+          "subtitle": "Buffer ends at red"
+        },
+        {
+          "id": "ch_w1_09_terminus",
+          "title": "Terminus",
+          "subtitle": "Wing files you"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "format": 1,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/12_TONE_AND_TUTORIAL.md",
+  "rules": {
+    "max_words": 18,
+    "show_one_per_load": true,
+    "exclude_if_missing_unlock": true
+  },
+  "tips": [
+    {
+      "id": "tip.rebuild_moves",
+      "text": "The lattice rebuilds from your last moves — not from luck.",
+      "tags": ["systems", "trust"],
+      "weight": 1.0,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.same_seed",
+      "text": "Same seed. Different walker. Different building.",
+      "tags": ["tone", "fantasy"],
+      "weight": 1.0,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.ghost_personal",
+      "text": "If a wall feels personal, check your ghost.",
+      "tags": ["systems", "ghost"],
+      "weight": 1.0,
+      "min_unlock": "flag.seen_mirror_rewrite"
+    },
+    {
+      "id": "tip.undo_edit",
+      "text": "Undo is not shame. It is editing.",
+      "tags": ["ux", "undo"],
+      "weight": 0.9,
+      "min_unlock": "flag.undo_taught"
+    },
+    {
+      "id": "tip.seed_trust",
+      "text": "Seed stays on screen so trust stays intact.",
+      "tags": ["trust", "ux"],
+      "weight": 0.8,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.buffer_thirty",
+      "text": "Your recent steps are a buffer the checkpoint can read.",
+      "tags": ["systems"],
+      "weight": 0.9,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.mirror_first",
+      "text": "Mirror is the first rewrite: your path, flipped into structure.",
+      "tags": ["systems", "mirror"],
+      "weight": 0.85,
+      "min_unlock": "flag.seen_mirror_rewrite"
+    },
+    {
+      "id": "tip.kinder_corridors",
+      "text": "Mastery is leaving kinder corridors behind.",
+      "tags": ["tone", "fantasy"],
+      "weight": 0.7,
+      "min_unlock": "induction_complete"
+    },
+    {
+      "id": "tip.habit_listen",
+      "text": "When footsteps brighten, the corridor is listening.",
+      "tags": ["audio", "habit"],
+      "weight": 0.8,
+      "min_unlock": "flag.seen_listening"
+    },
+    {
+      "id": "tip.no_rng",
+      "text": "Replay your inputs. The lattice should match.",
+      "tags": ["trust", "determinism"],
+      "weight": 1.0,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.interact",
+      "text": "One interact. Keys, plates, doors — no inventory essay.",
+      "tags": ["ux"],
+      "weight": 0.7,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.hold_walk",
+      "text": "Hold-to-walk is in Accessibility if taps feel sharp.",
+      "tags": ["a11y", "ux"],
+      "weight": 0.5,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.colorblind",
+      "text": "Colorblind lattice modes keep accent infection readable.",
+      "tags": ["a11y"],
+      "weight": 0.5,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.rotate",
+      "text": "Rotate turns your buffer before it becomes architecture.",
+      "tags": ["systems", "rotate"],
+      "weight": 0.75,
+      "min_unlock": "flag.seen_transform_rotate"
+    },
+    {
+      "id": "tip.thicken",
+      "text": "Thicken punishes loops by widening what you overused.",
+      "tags": ["systems", "thicken"],
+      "weight": 0.75,
+      "min_unlock": "flag.seen_transform_thicken"
+    },
+    {
+      "id": "tip.invert",
+      "text": "Invert swaps figure and ground along your trace.",
+      "tags": ["systems", "invert"],
+      "weight": 0.75,
+      "min_unlock": "flag.seen_transform_invert"
+    },
+    {
+      "id": "tip.daily_friend",
+      "text": "Share a seed string. Judge runs locally — no cloud maze.",
+      "tags": ["meta", "daily"],
+      "weight": 0.6,
+      "min_unlock": "induction_complete"
+    },
+    {
+      "id": "tip.ghost_race",
+      "text": "Ghost races are you versus a prior self, not a stranger AI.",
+      "tags": ["meta", "ghost"],
+      "weight": 0.6,
+      "min_unlock": "flag.ghost_literacy"
+    },
+    {
+      "id": "tip.accent",
+      "text": "The accent color infects tiles you overuse. Read it.",
+      "tags": ["art", "habit"],
+      "weight": 0.7,
+      "min_unlock": "induction_complete"
+    },
+    {
+      "id": "tip.short_lines",
+      "text": "If the lattice speaks, it speaks in short board lines.",
+      "tags": ["tone"],
+      "weight": 0.4,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.reset_ok",
+      "text": "Reset files the attempt. The seed does not abandon you.",
+      "tags": ["ux", "trust"],
+      "weight": 0.7,
+      "min_unlock": null
+    },
+    {
+      "id": "tip.demo_wing",
+      "text": "The demo is the loop. If it clicks, the wing will too.",
+      "tags": ["meta"],
+      "weight": 0.5,
+      "min_unlock": null
+    }
+  ]
+}
