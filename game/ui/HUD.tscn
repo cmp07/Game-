@@ -1,0 +1,105 @@
+[gd_scene load_steps=5 format=3 uid="uid://hud_scene"]
+
+[ext_resource type="Script" path="res://ui/HUD.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/HabitMeter.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://ui/RewriteTelegraph.tscn" id="3"]
+[ext_resource type="Theme" path="res://resources/theme/echo_lattice_theme.tres" id="4"]
+
+[node name="HUD" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("4")
+mouse_filter = 1
+script = ExtResource("1")
+
+; ------- TOP BAR -------
+[node name="TopBar" type="MarginContainer" parent="."]
+anchor_right = 1.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 0
+
+[node name="H" type="HBoxContainer" parent="TopBar"]
+theme_override_constants/separation = 16
+
+[node name="AccentBar" type="Panel" parent="TopBar/H"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(4, 44)
+self_modulate = Color(0.486275, 0.976471, 1, 1)
+
+[node name="GoalCol" type="VBoxContainer" parent="TopBar/H"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="GoalKicker" type="Label" parent="TopBar/H/GoalCol"]
+unique_name_in_owner = true
+text = "CURRENT STANZA"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.545, 0.608, 0.702, 1)
+
+[node name="GoalText" type="Label" parent="TopBar/H/GoalCol"]
+unique_name_in_owner = true
+text = "Stabilize the first echo."
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.902, 0.925, 0.961, 1)
+
+[node name="TimerCol" type="VBoxContainer" parent="TopBar/H"]
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="TimerKicker" type="Label" parent="TopBar/H/TimerCol"]
+text = "LOOP TIME"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.545, 0.608, 0.702, 1)
+
+[node name="TimerText" type="Label" parent="TopBar/H/TimerCol"]
+unique_name_in_owner = true
+text = "00:00"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.663, 0.522, 1, 1)
+
+; ------- LEFT RAIL (Habit Meter) -------
+[node name="LeftRail" type="MarginContainer" parent="."]
+anchor_left = 0.0
+anchor_top = 0.3
+anchor_bottom = 0.85
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="HabitMeter" parent="LeftRail" instance=ExtResource("2")]
+
+; ------- RIGHT RAIL (Rewrite Telegraph) -------
+[node name="RightRail" type="MarginContainer" parent="."]
+anchor_left = 1.0
+anchor_top = 0.35
+anchor_right = 1.0
+anchor_bottom = 0.65
+offset_left = -390.0
+offset_right = -24.0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="RewriteTelegraph" parent="RightRail" instance=ExtResource("3")]
+
+; ------- BOTTOM CONTROLS ROW -------
+[node name="BottomBar" type="MarginContainer" parent="."]
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -50.0
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
+
+[node name="ControlsRow" type="Label" parent="BottomBar"]
+unique_name_in_owner = true
+text = "[E] rewrite   [Q] hold   [R] reset   [Esc] pause"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.545, 0.608, 0.702, 1)
