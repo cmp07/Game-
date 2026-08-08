@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cel00lattice001"]
+
+[ext_resource type="Script" path="res://scenes/lattice_world/lattice_world.gd" id="1_lattice"]
+
+[node name="LatticeWorld" type="Node3D"]
+script = ExtResource("1_lattice")
+starting_node = &"chamber_prime"
+resonance_threshold = 3
