@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/SIMPLE_LONGEVITY_PRINCIPLES.md`](research/SIMPLE_LONGEVITY_PRINCIPLES.md) — why simple games last years (atoms, toys, expansion vs week-death)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
