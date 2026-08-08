@@ -1,0 +1,18 @@
+# Project-local overrides for Echo Lattice.
+# See ../../.gitignore for the repo-wide rules; this file only adds things
+# specific to the Godot project directory.
+
+# Godot editor cache — regenerated on first open.
+.godot/
+.import/
+
+# Local export outputs.
+build/
+export_presets.cfg
+*.exe
+*.pck
+*.zip
+
+# Editor / IDE crumbs specific to this subproject.
+*.tmp
+*.log
