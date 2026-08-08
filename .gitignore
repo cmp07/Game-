@@ -6,6 +6,7 @@
 export_presets.cfg
 dist/
 steam/**/depot_build/**
+!steam/**/depot_build/**/
 !steam/**/depot_build/**/.gitkeep
 steam/**/steam_build_output/
 *.exe
