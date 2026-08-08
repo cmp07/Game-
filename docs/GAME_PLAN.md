@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/BREAKOUT_PREDICTION_SIGNALS.md`](research/BREAKOUT_PREDICTION_SIGNALS.md) — store-page / demo / Next Fest signals that predict breakouts  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
