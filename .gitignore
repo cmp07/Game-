@@ -1,0 +1,48 @@
+﻿# Godot 4
+.godot/
+*.translation
+
+# Exports / builds
+export_presets.cfg
+*.exe
+*.pck
+*.zip
+*.apk
+*.aab
+*.dmg
+*.app
+*.x86_64
+*.x86_32
+*.arm64
+*.wasm
+*.html
+
+# Import cache: keep committed .import sidecars for shared assets; ignore local import DB if any
+# *.import  # usually commit these so teammates get same import settings
+
+# Mono / C# (if used later)
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS junk
+Thumbs.db
+Desktop.ini
+.DS_Store
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Editors / IDE
+.vs/
+.vscode/
+*.suo
+*.user
+*.userprefs
+*.swp
+*~
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+.import/
