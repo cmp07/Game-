@@ -96,11 +96,14 @@ Windrose-scale survival is a **taste signal**, not a schedule for product #1.
 
 Before production starts, confirm one of:
 
-1. **Game 1 — tension/horror vignette** (recommended), or  
+1. **Game 1 — tension/horror vignette** (recommended for fastest non-physics ship), or  
 2. **Start with coin-machine** instead (Game 2 first), or  
-3. **Start with idle/particle** instead (Game 3 first — closest to current Particul interest / this repo’s original scaffold name).
+3. **Start with idle/particle** instead (Game 3 first — closest to current Particul interest / this repo’s original scaffold name), or  
+4. **Physics track Game 1 — solo tactile climber / rope campaign** (if prioritizing inventive physics feel; see research).
 
 Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
+
+**Physics research:** [`docs/research/PHYSICS_FORWARD_GAMES.md`](research/PHYSICS_FORWARD_GAMES.md) — Particul / Sandustry / Besiege / Teardown / PEAK / R.E.P.O. lessons, hits & flops 2023–2026, cool vs gimmick, Godot/Unity feasibility, ranked pure physics formats (**no mashups**).
 
 ---
 
@@ -125,4 +128,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/PHYSICS_FORWARD_GAMES.md`](research/PHYSICS_FORWARD_GAMES.md) — physics-forward deep research + ranked formats  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)

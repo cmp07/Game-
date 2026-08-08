@@ -113,6 +113,22 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 
 ---
 
+## Physics-forward track (optional)
+
+Deep dive (hits/flops 2023–2026, cool vs gimmick, Godot/Unity, named lessons, ranked pure physics formats):
+
+→ [`PHYSICS_FORWARD_GAMES.md`](PHYSICS_FORWARD_GAMES.md)
+
+| Physics rank | Pure format | First-ship verdict |
+|---|---|---|
+| 1 | Solo tactile climber | Best inventive physics first ship |
+| 2 | Rope / chain constraint campaign | Strong alternate |
+| 3–5 | Fragile-carry puzzle · 2D structural builder · Magnet chambers | Solid Game 2 options |
+| 6 | Idle / particle tycoon | Matches Game 3 here; modest ceiling |
+| 10–12 | Open sandbox · softbody/liquid-as-core · online physics co-op | Avoid as first ship |
+
+---
+
 ## Selected sources
 
 - RACCOIN: [Steam](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [Wikipedia](https://en.wikipedia.org/wiki/Raccoin:_Coin_Pusher_Roguelike)
@@ -120,3 +136,4 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 - CloverPit: [Steam](https://store.steampowered.com/app/3314790/CloverPit/)
 - Particul: [Steam](https://store.steampowered.com/app/4273120/Particul/)
 - Windrose / Wildfrost / Brawlhalla / The Coin Game — store links in table above
+- Physics comps & sources: [`PHYSICS_FORWARD_GAMES.md`](PHYSICS_FORWARD_GAMES.md)
