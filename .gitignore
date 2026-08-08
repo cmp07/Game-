@@ -46,3 +46,8 @@ $RECYCLE.BIN/
 *.tmp
 *.temp
 .import/
+
+# Python (validator scripts under game/echo_lattice/tests)
+__pycache__/
+*.pyc
+*.pyo
