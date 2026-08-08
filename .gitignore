@@ -2,8 +2,8 @@
 .godot/
 *.translation
 
-# Exports / builds
-export_presets.cfg
+# Local export overrides (git-ignore per-user)
+.export_config.cfg
 *.exe
 *.pck
 *.zip
@@ -50,6 +50,4 @@ $RECYCLE.BIN/
 # Godot 4 imports & editor artifacts
 game/**/.godot/
 game/**/.import/
-game/**/export.cfg
-game/**/export_presets.cfg
 game/**/builds/
