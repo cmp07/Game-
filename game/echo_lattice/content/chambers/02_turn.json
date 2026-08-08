@@ -1,0 +1,59 @@
+{
+  "id": "02_turn",
+  "title": "Turn",
+  "subtitle": "Corners route the echo ninety degrees.",
+  "teaches": "turn",
+  "difficulty": 1,
+  "tick_budget": 12,
+  "par_ticks": 8,
+  "par_tiles": 1,
+  "source_dir": "E",
+  "lattice": {
+    "rows": 6,
+    "cols": 7,
+    "cells": [
+      ".......",
+      "S.....#",
+      ".....#.",
+      ".......",
+      ".......",
+      ".....G."
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty",  "class": "empty" },
+    "#": { "name": "wall",   "class": "wall" },
+    "S": { "name": "source", "class": "source" },
+    "G": { "name": "goal",   "class": "goal" },
+    ">": { "name": "router_east",  "class": "router" },
+    "<": { "name": "router_west",  "class": "router" },
+    "^": { "name": "router_north", "class": "router" },
+    "v": { "name": "router_south", "class": "router" }
+  },
+  "goal": {
+    "predicate": "reach",
+    "cells": [[5, 5]]
+  },
+  "player_tools": {
+    "router":   { "count": 1, "note": "One router. Choose direction on place." },
+    "fork":     { "count": 0 },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 0 },
+    "delay":    { "count": 0 },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "A router's rewrite is: . -> ., <dir>",
+    "Walls absorb echoes. Route around them.",
+    "You have exactly one router. Place it where the corner belongs."
+  ],
+  "intro": "The path east is blocked. Place a router where the echo needs to turn.",
+  "tags": ["basics", "routing"],
+  "variations": {
+    "allow_rotate": true,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [-1, 0, 2]
+  }
+}

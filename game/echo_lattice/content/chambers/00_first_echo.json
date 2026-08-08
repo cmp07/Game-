@@ -1,0 +1,55 @@
+{
+  "id": "00_first_echo",
+  "title": "First Echo",
+  "subtitle": "Watch it travel.",
+  "teaches": "emit",
+  "difficulty": 0,
+  "tick_budget": 8,
+  "par_ticks": 4,
+  "par_tiles": 0,
+  "source_dir": "S",
+  "lattice": {
+    "rows": 5,
+    "cols": 5,
+    "cells": [
+      "..S..",
+      ".....",
+      ".....",
+      ".....",
+      "..G.."
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty", "class": "empty" },
+    "S": { "name": "source", "class": "source" },
+    "G": { "name": "goal",   "class": "goal" }
+  },
+  "goal": {
+    "predicate": "reach",
+    "cells": [[4, 2]]
+  },
+  "player_tools": {
+    "router":   { "count": 0 },
+    "fork":     { "count": 0 },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 0 },
+    "delay":    { "count": 0 },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "The source emits one echo when you press PLAY.",
+    "Every tick, the echo advances one cell.",
+    "Empty cells relay. Nothing to place, nothing to route."
+  ],
+  "intro": "This is your first lattice. One source, one goal, five empty cells between them. Press PLAY and count.",
+  "outro": "That is the whole engine. Everything after this is a rewrite on top of it.",
+  "music_cue": "calm_intro",
+  "tags": ["tutorial", "quiet", "symmetric"],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [0]
+  }
+}

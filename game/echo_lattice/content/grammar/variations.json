@@ -1,0 +1,40 @@
+{
+  "$schema_hint": "See docs/ECHO_LATTICE/04_CONTENT_BIBLE.md §5 for the authoritative grammar spec.",
+  "version": 1,
+  "grammar": {
+    "start_symbol": "variant",
+    "productions": {
+      "variant":      ["base", "base transforms"],
+      "transforms":   ["transform", "transform transforms"],
+      "transform":    ["rotate", "reflect", "palette", "budget_delta", "swap_glyph"],
+      "rotate":       [0, 90, 180, 270],
+      "reflect":      ["none", "horizontal", "vertical", "diagonal"],
+      "palette":      ["default", "cool", "warm", "mono"],
+      "budget_delta": [-2, -1, 0, 1, 2]
+    },
+    "notes": [
+      "Transforms compose left-to-right. Order matters.",
+      "swap_glyph is a first-class transform but its values are chamber-specific and live under `glyph_swap_pool` below.",
+      "A variant is legal iff each transform passes its chamber's `variations.allow_*` gate."
+    ]
+  },
+  "glyph_swap_pool": [
+    { "from": "o", "to": "◦", "class": "dark",  "safe": true,  "notes": "Purely cosmetic; both mean 'dark glyph'." },
+    { "from": "O", "to": "●", "class": "lit",   "safe": true,  "notes": "Purely cosmetic; both mean 'lit glyph'." },
+    { "from": ".", "to": "·", "class": "empty", "safe": true,  "notes": "Legibility swap for high-contrast palette." }
+  ],
+  "palettes": {
+    "default": { "background": "#0f1116", "grid": "#242a35", "dark": "#5a6272", "lit": "#f2c14e", "echo": "#8ecae6", "goal": "#95d5b2" },
+    "cool":    { "background": "#0d1420", "grid": "#1e2a3a", "dark": "#4c6272", "lit": "#a2d2ff", "echo": "#bde0fe", "goal": "#caffbf" },
+    "warm":    { "background": "#1a1010", "grid": "#2a1a1a", "dark": "#7a4e4e", "lit": "#ff9770", "echo": "#ffd670", "goal": "#ffef9f" },
+    "mono":    { "background": "#0a0a0a", "grid": "#1a1a1a", "dark": "#5a5a5a", "lit": "#e0e0e0", "echo": "#b0b0b0", "goal": "#ffffff" }
+  },
+  "example_variants": [
+    { "chamber": "01_plain_rewrite", "sequence": [] },
+    { "chamber": "01_plain_rewrite", "sequence": [{ "reflect": "vertical" }] },
+    { "chamber": "01_plain_rewrite", "sequence": [{ "palette": "cool" }] },
+    { "chamber": "01_plain_rewrite", "sequence": [{ "reflect": "vertical" }, { "palette": "cool" }, { "budget_delta": 2 }] },
+    { "chamber": "03_fork", "sequence": [{ "rotate": 90 }] },
+    { "chamber": "09_bloom", "sequence": [{ "rotate": 180 }, { "palette": "warm" }, { "budget_delta": -2 }] }
+  ]
+}

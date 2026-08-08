@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Chamber" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/echo_lattice/scripts/chamber.gd" id="1_chamber"]
+
+[resource]
+script = ExtResource("1_chamber")
+id = "04_merge"
+title = "Merge"
+subtitle = "Two arrivals unlock the gate."
+teaches = "merge"
+difficulty = 2
+tick_budget = 14
+par_ticks = 10
+par_tiles = 2
+source_dir = "E"
+rows = 7
+cols = 9
+cells = PackedStringArray("S........", ".........", ".........", "...+...G.", ".........", ".........", "S........")
+legend = {".": {"name": "empty", "class": "empty"}, "S": {"name": "source", "class": "source"}, "G": {"name": "goal", "class": "goal"}, "+": {"name": "merge", "class": "merge", "description": "Requires two echoes arriving on the same tick."}}
+goal = {"predicate": "reach", "cells": [[3, 7]]}
+player_tools = {"router": {"count": 2, "note": "Point the top and bottom echoes at the merge node."}, "fork": {"count": 0}, "merge": {"count": 0}, "filter": {"count": 0}, "delay": {"count": 0}, "cancel": {"count": 0}, "resonate": {"count": 0}}
+hints = PackedStringArray("The merge rewrite is: A + A -> B. Both echoes must land on the same tick.", "The distances are symmetric on purpose. Don't overthink it.", "One router redirects the top echo. One redirects the bottom.")
+intro = "Two sources, one merge, one goal. Route both echoes to arrive at the same tick."
+outro = "Merges are the first place timing starts to matter. Later chambers weaponize this."
+music_cue = null
+tags = PackedStringArray("merge", "timing", "symmetric")
+variations = {"allow_rotate": false, "allow_reflect": true, "allow_palette_swap": true, "budget_deltas": [0, 2]}

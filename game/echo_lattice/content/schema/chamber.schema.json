@@ -1,0 +1,197 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cmp07.github.io/game-/echo_lattice/chamber.schema.json",
+  "title": "Echo Lattice Chamber",
+  "description": "Schema for a single authored chamber in the Echo Lattice puzzle game. See docs/ECHO_LATTICE/04_CONTENT_BIBLE.md for the authoritative spec.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "teaches",
+    "difficulty",
+    "tick_budget",
+    "source_dir",
+    "lattice",
+    "legend",
+    "goal",
+    "player_tools",
+    "hints",
+    "variations"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9]{2}_[a-z][a-z0-9_]*$",
+      "description": "Zero-padded index + lowercase snake_case slug. Must match filename stem."
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "subtitle": { "type": "string", "maxLength": 120 },
+    "teaches": {
+      "type": "string",
+      "enum": [
+        "emit",
+        "rewrite",
+        "turn",
+        "fork",
+        "merge",
+        "filter",
+        "delay",
+        "silence",
+        "resonance",
+        "composition"
+      ]
+    },
+    "difficulty": { "type": "integer", "minimum": 0, "maximum": 5 },
+    "tick_budget": { "type": "integer", "minimum": 1, "maximum": 999 },
+    "par_ticks": { "type": ["integer", "null"], "minimum": 1 },
+    "par_tiles": { "type": ["integer", "null"], "minimum": 0 },
+    "source_dir": { "type": "string", "enum": ["N", "S", "E", "W"] },
+    "lattice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rows", "cols", "cells"],
+      "properties": {
+        "rows": { "type": "integer", "minimum": 3, "maximum": 12 },
+        "cols": { "type": "integer", "minimum": 3, "maximum": 12 },
+        "cells": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 12,
+          "items": { "type": "string", "minLength": 3, "maxLength": 12 }
+        }
+      }
+    },
+    "legend": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "class": {
+                "type": "string",
+                "enum": [
+                  "empty",
+                  "wall",
+                  "source",
+                  "goal",
+                  "dark",
+                  "lit",
+                  "router",
+                  "merge",
+                  "cancel",
+                  "delay",
+                  "filter",
+                  "resonate",
+                  "custom"
+                ]
+              },
+              "description": { "type": "string" }
+            }
+          }
+        ]
+      }
+    },
+    "goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predicate"],
+      "properties": {
+        "predicate": {
+          "type": "string",
+          "enum": ["reach", "light_all", "pattern", "count"]
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0 },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "pattern": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "player_tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "router":   { "$ref": "#/definitions/tool" },
+        "fork":     { "$ref": "#/definitions/tool" },
+        "merge":    { "$ref": "#/definitions/tool" },
+        "filter":   { "$ref": "#/definitions/tool" },
+        "delay":    { "$ref": "#/definitions/tool" },
+        "cancel":   { "$ref": "#/definitions/tool" },
+        "resonate": { "$ref": "#/definitions/tool" }
+      }
+    },
+    "hints": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 240 },
+      "maxItems": 6
+    },
+    "intro": { "type": "string", "maxLength": 800 },
+    "outro": { "type": "string", "maxLength": 800 },
+    "music_cue": { "type": ["string", "null"] },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_-]*$" },
+      "uniqueItems": true
+    },
+    "variations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allow_rotate",
+        "allow_reflect",
+        "allow_palette_swap",
+        "budget_deltas"
+      ],
+      "properties": {
+        "allow_rotate":       { "type": "boolean" },
+        "allow_reflect":      { "type": "boolean" },
+        "allow_palette_swap": { "type": "boolean" },
+        "budget_deltas": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": -5, "maximum": 5 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "glyph_swaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "to"],
+            "properties": {
+              "from": { "type": "string", "minLength": 1, "maxLength": 2 },
+              "to":   { "type": "string", "minLength": 1, "maxLength": 2 }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0, "maximum": 32 },
+        "note":  { "type": "string", "maxLength": 200 }
+      }
+    }
+  }
+}

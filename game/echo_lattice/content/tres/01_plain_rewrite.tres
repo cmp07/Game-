@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Chamber" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/echo_lattice/scripts/chamber.gd" id="1_chamber"]
+
+[resource]
+script = ExtResource("1_chamber")
+id = "01_plain_rewrite"
+title = "Plain Rewrite"
+subtitle = "Turn dark cells lit as the echo passes."
+teaches = "rewrite"
+difficulty = 1
+tick_budget = 10
+par_ticks = 6
+par_tiles = 0
+source_dir = "E"
+rows = 5
+cols = 7
+cells = PackedStringArray(".......", ".......", "Sooooo.", ".......", ".......")
+legend = {".": {"name": "empty", "class": "empty"}, "S": {"name": "source", "class": "source"}, "o": {"name": "dark", "class": "dark", "description": "Rewrites to 'O' when hit."}, "O": {"name": "lit", "class": "lit"}}
+goal = {"predicate": "pattern", "pattern": [".......", ".......", "SOOOOO.", ".......", "......."]}
+player_tools = {"router": {"count": 0}, "fork": {"count": 0}, "merge": {"count": 0}, "filter": {"count": 0}, "delay": {"count": 0}, "cancel": {"count": 0}, "resonate": {"count": 0}}
+hints = PackedStringArray("The rewrite here is: o -> O", "One echo, one line, five rewrites.", "The echo keeps going after each rewrite. That's the point.")
+intro = "Every dark cell is a rewrite target. The echo touches, the cell flips lit, the echo continues."
+outro = "You just watched five rewrites fire on one echo. Every future chamber is a wrinkle on this."
+music_cue = null
+tags = PackedStringArray("tutorial", "quiet", "linear")
+variations = {"allow_rotate": false, "allow_reflect": true, "allow_palette_swap": true, "budget_deltas": [0, 2]}
