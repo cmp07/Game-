@@ -113,6 +113,14 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 
 ---
 
+## China market note (2025–2026)
+
+China is a primary Steam language/audience cohort. Inventive small games that win there share: day-one Simplified Chinese, RMB indie pricing (often ¥20–¥80), and Bilibili/Heybox/RED discovery. **RACCOIN** (Chinese 3-person team, ¥45, 100K/24h) validates the coin-machine lane; **Escape from Duckov** (¥58, China-majority) validates inventive genre remixes; missing Chinese localization can leave global hits under ~5% China (R.E.P.O.).
+
+Full report + sources: [`CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md`](CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md).
+
+---
+
 ## Selected sources
 
 - RACCOIN: [Steam](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [Wikipedia](https://en.wikipedia.org/wiki/Raccoin:_Coin_Pusher_Roguelike)
@@ -120,3 +128,4 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 - CloverPit: [Steam](https://store.steampowered.com/app/3314790/CloverPit/)
 - Particul: [Steam](https://store.steampowered.com/app/4273120/Particul/)
 - Windrose / Wildfrost / Brawlhalla / The Coin Game — store links in table above
+- China deep dive: [`CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md`](CHINA_STEAM_INVENTIVE_GAMES_2025_2026.md)
