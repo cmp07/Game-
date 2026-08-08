@@ -108,7 +108,11 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 - **Engine:** [Godot 4](https://godotengine.org/) — desktop export, Steam-friendly, free, fast iteration.
 - **Target:** Windows-first Steam build (real `.exe` + `.pck`); Mac/Linux optional later.
+- **AI:** Editor-time assist for textures/code; **offline-first** player runtime (optional online AI later).
 - **Not for v1:** Web/HTML5 as the primary product, multiplayer netcode, live-service economies.
+
+Full pipeline, performance budgets, Steamworks gates, and **8-week milestone schedule:**  
+[`docs/research/GODOT_AI_STEAM_PIPELINE.md`](research/GODOT_AI_STEAM_PIPELINE.md).
 
 ---
 
@@ -116,8 +120,8 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 1. **User confirms** Game 1 lane (tension vs coin vs idle).
 2. Write a **one-page GDD** for that product only (loop, win/lose, session length, art direction, original hook).
-3. Godot 4 vertical slice (desktop) — one complete loop, no feature sprawl.
-4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push.
+3. Godot 4 vertical slice (desktop) — one complete loop, no feature sprawl; weekly clean `.exe` smoke test.
+4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push (start fee/clocks early — see pipeline doc).
 5. Price in-band; launch small; capture reviews → fund the next **separate** product.
 
 ---
@@ -125,4 +129,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/GODOT_AI_STEAM_PIPELINE.md`](research/GODOT_AI_STEAM_PIPELINE.md) — Godot 4 + AI + Steam technical plan (8 weeks)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
