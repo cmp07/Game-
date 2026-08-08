@@ -1,10 +1,11 @@
-# Category Ranking — Condensed
+# Category Ranking — Condensed (aligned to revised plan)
 
-**Research window:** 2024–2026 (compiled Aug 2026)  
+**Research window:** 2024–2026 (revised Aug 2026)  
 **Constraint:** Pure categories only — no mashup pitches.  
-**Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
+**Lens:** Solo/small team, fast desktop Steam ship, **$2.99–$9.99**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md)  
+Market deep dive: [`docs/research/MARKET_DEEP_DIVE.md`](MARKET_DEEP_DIVE.md)
 
 ---
 
@@ -16,88 +17,67 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 | Winrose | Windrose *(spelling)* or Wildfrost *(deckbuilder phonetic)* | https://store.steampowered.com/app/3041230/Windrose/ · https://store.steampowered.com/app/1811990/Wildfrost/ |
 | Rollerhalla | Brawlhalla (platform fighter) | https://store.steampowered.com/app/291550/Brawlhalla/ |
 | Particool | Particul | https://store.steampowered.com/app/4273120/Particul/ |
+| TFWR | The Farmer Was Replaced | https://store.steampowered.com/app/2060160/The_Farmer_Was_Replaced/ |
 
 ---
 
-## Scoreboard (relative 1–10)
+## Scoreboard (relative 1–10) — revised
 
-| Rank | Pure category | Ship speed | Sales @ $0.99–$10 | Taste fit | Score | Verdict |
+| Rank | Pure category | Ship speed | Sales @ $2.99–$9.99 | Taste fit | Score | Verdict |
 |---|---|---|---|---|---|---|
-| 1 | Tension / horror vignette | Very fast | Excellent | Strong | **9.2** | **Build first** |
-| 2 | Coin pusher / coin-machine | Fast–medium | Strong (crowded post-RACCOIN) | Very strong | **8.3** | **Game 2** |
-| 3 | Idle / particle tycoon | Fastest | Modest–good | Strong | **7.8** | **Game 3** |
-| 4 | Classic tower defense | Medium | Solid evergreen | Medium | **6.8** | Later |
-| 5 | Offline geo / trivia | Fast if original assets | Niche | Medium | **5.5** | Maybe |
-| 6 | Deckbuilder roguelike (StS) | Slow | High ceiling, brutal median | Strong taste | **4.8** | Not first |
-| 7 | Platform fighter | Very slow | Poor vs F2P | Fun taste | **3.0** | Avoid early |
-| 8 | Base-building | Very slow | Wrong band/scope | Aspiration | **2.5** | Career later |
-| 9 | Colony sim (RimWorld-depth) | Extremely slow | Usually $20–$40 | Aspiration | **2.0** | Not first |
-| 10 | City builder (Cities-depth) | Extremely slow | Wrong band | Aspiration | **1.8** | Not first |
-| 11 | Creature survival (Palworld-scale) | Studio-scale | Wrong entirely | Aspiration | **1.2** | Do not |
+| 1 | Idle / incremental | Fastest | Modest–good | Strong (Particul) | **9.0** | **Build first** |
+| 2 | Systems / automation (TFWR lane) | Medium | Strong ceiling | Strong | **8.6** | **Game 2** |
+| 3 | Non-poker synergy toy | Medium | High if hook lands | Strong | **8.0** | **Game 3 option** |
+| 4 | Coin pusher / coin-machine | Fast–medium | Strong (crowded post-RACCOIN) | Very strong | **7.8** | **Game 3 option** |
+| 5 | Short horror (original, non-Buckshot) | Fast | Spiky; clone fatigue | Strong | **7.2** | Later catalog |
+| 6 | Organization / tidy sim | Fast if assets | Modest; crowded 2026 | Medium | **6.0** | Optional filler |
+| 7 | Co-op friendslop | Slow (netcode) | Excellent upside | Medium | **5.5** | Not first |
+| 8 | Classic tower defense | Medium | Solid evergreen | Medium | **5.5** | Later |
+| 9 | Deckbuilder roguelike (StS) | Slow | High ceiling, brutal median | Strong taste | **4.0** | Avoid early |
+| 10 | Survivors-like (VS clones) | Medium | Crowded | Medium | **3.5** | Avoid early |
+| 11 | Platform fighter / open-world / colony-depth | Very slow | Wrong band/scope | Aspiration | **≤2.5** | Do not start here |
+
+**Delta vs prior scoreboard:** Idle promoted to #1; tension vignette demoted from #1 to “later catalog”; automation elevated to Game 2; friendslop listed with high upside but poor first-ship fit.
 
 ---
 
 ## Category briefs
 
-### 1) Tension / horror vignette — **pursue first**
+### 1) Idle / incremental — **pursue first**
 
-- **Fantasy:** Short session, escalating stakes, one readable system, clip-friendly outcomes.
-- **Key comps:**
-  - [Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) (~$2.99) — breakout proof for vignette tension in-band
-  - [CloverPit](https://store.steampowered.com/app/3314790/CloverPit/) (~$9.99–$10) — adjacent *stakes/debt* demand; **slot roguelite, not a vignette mash target**
-- **Solo ship:** Weeks–few months for a tight original premise (not a shotgun clone).
-- **Verdict:** Best FAST first Steam product at $2.99–$7.99.
+- **Fantasy:** Gather → convert → automate → prestige.
+- **Key comps:** [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99)
+- **Solo ship:** Often the fastest code path among top options.
+- **Verdict:** Best FAST first Steam product at **$2.99–$4.99** under current constraints.
 
-### 2) Coin pusher / coin-machine — **Game 2**
+### 2) Systems / automation — **Game 2**
+
+- **Fantasy:** Build/program a machine that does the work; optimize.
+- **Key comps:** [The Farmer Was Replaced](https://store.steampowered.com/app/2060160/The_Farmer_Was_Replaced/) (~$9.99)
+- **Solo ship:** Medium — DSL/UX depth is the risk; scope to one biome / one verb.
+- **Verdict:** Best offline ceiling after Game 1; target **$6.99–$9.99**.
+
+### 3) Non-poker synergy toy — **Game 3 option**
+
+- **Fantasy:** Run-based modifier stacking; absurd score engines.
+- **Key comps:** [Balatro](https://store.steampowered.com/app/2379780/Balatro/) (pattern, not poker clone); [CloverPit](https://store.steampowered.com/app/3314790/CloverPit/) (adjacent stakes/slots — separate product if pursued)
+- **Verdict:** Pursue with a **non-poker** base verb after economy skills from Games 1–2.
+
+### 4) Coin pusher / coin-machine — **Game 3 option**
 
 - **Fantasy:** Arcade physics + tickets/payouts + “one more drop.”
-- **Key comps:**
-  - [RACCOIN](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/) — category heat; list often above $10
-  - [The Coin Game](https://store.steampowered.com/app/598980/The_Coin_Game/) — solo-dev arcade physics sim
-  - [CloverPit](https://store.steampowered.com/app/3314790/CloverPit/) — gambling-*feel* adjacent, not a pusher
-- **Solo ship:** ~10–16 weeks for a lean $5–$10 physics MVP.
-- **Verdict:** Hot lane; differentiate hard — thin clones after RACCOIN struggle.
+- **Key comps:** [RACCOIN](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [The Coin Game](https://store.steampowered.com/app/598980/The_Coin_Game/)
+- **Verdict:** Hot lane; differentiate hard — thin clones struggle.
 
-### 3) Idle / particle tycoon — **Game 3**
+### 5) Short horror — later (not default Game 1)
 
-- **Fantasy:** Mine/drop particles → sell → automate → tech tree → prestige/ascend.
-- **Key comps:**
-  - [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99) — direct visual/loop reference
-- **Solo ship:** Often the fastest code path among the top three.
-- **Verdict:** Solid catalog product; smaller breakout ceiling than vignette/coin hits.
+- **Fantasy:** Short session, escalating stakes, clip-friendly.
+- **Key comps:** [Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) (format proof — **do not clone**)
+- **Verdict:** Original premise only; demoted from prior “build first” recommendation.
 
-### 4) Tower defense — later
+### 6–11) Crowded / wrong-scope
 
-- **Fantasy:** Place defenses, survive waves, upgrade paths.
-- **Key comps:** Bloons TD lineage (e.g. [Bloons TD Battles 2](https://store.steampowered.com/app/1276390/Bloons_TD_Battles_2/)); smaller Steam indie TDs as makeable comps.
-- **Verdict:** Strong evergreen **after** Games 1–3.
-
-### 5) Offline geo / trivia — maybe
-
-- **Fantasy:** Guess place/trivia from limited cues.
-- **Blocker:** Street View / map licensing; official [GeoGuessr Steam Edition](https://store.steampowered.com/app/3478870/GeoGuessr_Steam_Edition/) exists.
-- **Verdict:** Only with original assets / offline datasets — not as Game 1.
-
-### 6) Deckbuilder roguelike — not first
-
-- **Fantasy:** Build deck mid-run, climb acts, master synergies.
-- **Key comps:** [Slay the Spire](https://store.steampowered.com/app/646570/Slay_the_Spire/), [Wildfrost](https://store.steampowered.com/app/1811990/Wildfrost/), StS2 gravity.
-- **Verdict:** Avoid for a *fast* $0.99–$10 first ship (balance + content volume + saturation).
-
-### 7) Platform fighter — avoid early
-
-- **Fantasy:** Arena brawls, movement tech, cast of fighters.
-- **Key comps:** [Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/) (F2P).
-- **Verdict:** Netcode + cast + live ops; wrong for cheap paid first release.
-
-### 8–11) Sims / Palworld-scale — do not start here
-
-| Category | Key comps | Why not first |
-|---|---|---|
-| Base-building | [Planetbase](https://store.steampowered.com/app/403190/Planetbase/), Dawn of Man | Years of systems |
-| Colony sim | [RimWorld](https://store.steampowered.com/app/294100/RimWorld/) | Depth + AI + content mountain |
-| City builder | Cities: Skylines lineage | Content + tooling + price band |
-| Creature survival | [Palworld](https://store.steampowered.com/app/1623730/Palworld/), [Windrose](https://store.steampowered.com/app/3041230/Windrose/) as scope taste | Studio-scale expectations |
+Friendslop (netcode), tidy sims (asset flood), StS/VS clones, platform fighters, RimWorld/Cities/Palworld-scale — see deep dive. Not Games 1–3 defaults.
 
 ---
 
@@ -105,18 +85,17 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 
 | Slot | Pure category | Role |
 |---|---|---|
-| **Game 1** | Tension / horror vignette (original premise) | Fastest Steam page → demo → reviews |
-| **Game 2** | Coin-machine | Monetize arcade gambling-toy taste alone |
-| **Game 3** | Idle / particle tycoon | Particul-like catalog filler |
+| **Game 1** | Idle / incremental | Fastest Steam page → demo → reviews |
+| **Game 2** | Systems / automation | Monetize optimization taste offline |
+| **Game 3** | Synergy toy *or* coin-machine | One pure pick by taste |
 
-**User must confirm Game 1** (or explicitly choose coin / idle first) before production.
+**User must confirm Game 1** (or explicitly choose automation / original horror first) before production.
 
 ---
 
 ## Selected sources
 
-- RACCOIN: [Steam](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [Wikipedia](https://en.wikipedia.org/wiki/Raccoin:_Coin_Pusher_Roguelike)
-- Buckshot Roulette: [Steam](https://store.steampowered.com/app/2835570/Buckshot_Roulette/)
-- CloverPit: [Steam](https://store.steampowered.com/app/3314790/CloverPit/)
-- Particul: [Steam](https://store.steampowered.com/app/4273120/Particul/)
-- Windrose / Wildfrost / Brawlhalla / The Coin Game — store links in table above
+- Market deep dive links: [`MARKET_DEEP_DIVE.md`](MARKET_DEEP_DIVE.md)
+- Particul: https://store.steampowered.com/app/4273120/Particul/
+- The Farmer Was Replaced: https://store.steampowered.com/app/2060160/The_Farmer_Was_Replaced/
+- RACCOIN / Buckshot / CloverPit / Balatro — store links above
