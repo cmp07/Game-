@@ -1,0 +1,17 @@
+{
+  "name": "echo-lattice-juice",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Echo Lattice — juice showcase (screen feel, particles on rewrite, telegraph foreshadow, hitstop-light, camera ease, footstep-trail-becomes-walls).",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2"
+  }
+}

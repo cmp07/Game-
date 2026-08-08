@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Echo Lattice — JUICE</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #05070d;
+        --fg: #d9e0ff;
+        --dim: #6a739a;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
+      #stage {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      canvas#game {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background: #05070d;
+        max-width: 100vw;
+        max-height: 100vh;
+      }
+      #hud {
+        position: fixed;
+        top: 14px;
+        left: 16px;
+        pointer-events: none;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--dim);
+        line-height: 1.6;
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+      }
+      #hud b { color: var(--fg); }
+      #hud kbd {
+        display: inline-block;
+        padding: 1px 5px;
+        border: 1px solid #2a3358;
+        border-radius: 3px;
+        color: #cfd6ff;
+        background: rgba(20, 26, 52, 0.55);
+        margin-right: 2px;
+        font: inherit;
+      }
+      #banner {
+        position: fixed;
+        bottom: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--dim);
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        pointer-events: none;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="game" width="960" height="540"></canvas>
+    </div>
+    <div id="hud">
+      <div><b>ECHO LATTICE</b> — juice showcase</div>
+      <div><kbd>WASD</kbd>/<kbd>Arrows</kbd> move · <kbd>Space</kbd> REWRITE (echoes → walls)</div>
+      <div><kbd>Shift</kbd> dash · <kbd>R</kbd> reset arena · <kbd>P</kbd> toggle post-fx</div>
+    </div>
+    <div id="banner">the trail remembers</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
