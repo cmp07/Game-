@@ -1,8 +1,22 @@
 # Steam Desktop Game Plan
 
-**Repo:** [cmp07/sandpile-tycoon](https://github.com/cmp07/sandpile-tycoon)  
+**Repo:** [cmp07/Game-](https://github.com/cmp07/Game-)  
 **Date:** August 2026  
-**Goal:** Ship real desktop Steam games (Windows `.exe`, not browser) quickly at **$0.99–$10**.
+**Goal:** Ship real desktop Steam games (Windows `.exe`, not browser) quickly at roughly **$0.99–$12**.
+
+---
+
+## Decision document (start here)
+
+**Authoritative product decision doc:** [`docs/FIVE_GAMES_TO_BUILD.md`](FIVE_GAMES_TO_BUILD.md)
+
+That document contains:
+
+1. A sourced **2026–27 next-wave prediction** (reactive authorship toys — generative *feel* without LLM worldgen).  
+2. **Five fully written, pure-category game concepts** to build (4 forever systems/toys + 1 short vignette).  
+3. Per-game loops, MVP/later systems, Godot milestone plans, prices, tags, comps, risks.
+
+Do **not** treat older “tension → coin → idle” sequencing or Residue-only Game 1 recommendations as the decision authority anymore. Those remain useful *context* and *catalog alternatives*; the five concepts reconsider the full board.
 
 ---
 
@@ -10,9 +24,9 @@
 
 Each Steam product is **one pure category**. No hybrid “first game” pitches (e.g. coin pusher + horror + idle + cards). Shared taste across games is fine; shared mechanics in one store page is not.
 
-| Coin-machine games sell | Idle / particle tycoons sell | Tension vignettes sell |
-|---|---|---|
-| Arcade physics + payout dopamine | Automation / number-go-up over time | Short, clip-friendly stakes + readable rules |
+| Coin-machine games sell | Idle / particle tycoons sell | Tension vignettes sell | Reactive authorship toys sell |
+|---|---|---|---|
+| Arcade physics + payout dopamine | Automation / number-go-up over time | Short, clip-friendly stakes + readable rules | One verb → world visibly shaped by *you* (offline systems) |
 
 Same “simple systems” family — **different loops, art, pacing, and marketing**.
 
@@ -22,56 +36,39 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 
 | You said | Means | Notes |
 |---|---|---|
-| Raccoin / rack a coin | **[RACCOIN: Coin Pusher Roguelike](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/)** | Coin-pusher + run upgrades; breakout 2026 title |
-| Winrose | **[Windrose](https://store.steampowered.com/app/3041230/Windrose/)** *or* **[Wildfrost](https://store.steampowered.com/app/1811990/Wildfrost/)** | Windrose = pirate survival (scope signal, not a first game). Wildfrost = deckbuilder (phonetic fit among StS-likes) |
-| Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | No Steam title “Rollerhalla”; platform-fighter taste, wrong first product |
-| Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | $1.99 particle mine → sell → automate idle |
+| Raccoin / rack a coin | **[RACCOIN: Coin Pusher Roguelike](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/)** | Coin-pusher + run upgrades; breakout 2026 title — **taste signal, not a clone target for the five** |
+| Winrose | **[Windrose](https://store.steampowered.com/app/3041230/Windrose/)** *or* **[Wildfrost](https://store.steampowered.com/app/1811990/Wildfrost/)** | Scope / deckbuilder taste — not first products in the five |
+| Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | Platform-fighter taste; wrong first product |
+| Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | Particle idle — catalog filler later, **not** mashed into Games 1–5 |
 
-Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
-
----
-
-## Ranking for FAST first ship (pure categories)
-
-Ranked for solo/small team + desktop Steam + $0.99–$10.
-
-| Priority | Pure category | Verdict |
-|---|---|---|
-| **1** | Tension / horror vignette (Buckshot-like **format**) | **Build first** — fastest ship + proven ~$3 band |
-| **2** | Coin machine (RACCOIN / Coin Game lane) | **Game 2** — hot market; post-RACCOIN clones struggle |
-| **3** | Idle / particle tycoon (Particul-like) | **Game 3** — fastest to code; solid, smaller ceiling |
-| **4** | Classic tower defense | Strong later evergreen |
-| — | Offline geo / trivia | Maybe (not Street View) |
-| — | Full StS deckbuilder, RimWorld, Cities-depth, Palworld-scale, platform fighter | **Do not make first** |
+Condensed historical scores: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
 
 ---
 
-## Multi-game path (separate Steam products)
+## The five (summary)
 
-### Game 1 — Tension / horror vignette (recommended first)
+Full writeups: [`FIVE_GAMES_TO_BUILD.md`](FIVE_GAMES_TO_BUILD.md).
 
-- **Format:** Short paid vignette — one space, escalating pressure, readable rules, replay via modifiers/challenges.
-- **Premise:** **Original** ritual / stakes / antagonist. Learn from Buckshot’s *structure* (clip length, tension, demoability) — do **not** clone shotgun roulette.
-- **Price band:** **$2.99–$7.99**
-- **Why first:** Smallest content mountain, strong short-form discovery, proven breakouts in-band ([Buckshot Roulette](https://store.steampowered.com/app/2835570/Buckshot_Roulette/) ~$2.99).
-- **Adjacent taste (separate category):** [CloverPit](https://store.steampowered.com/app/3314790/CloverPit/) is slot/debt tension — signal for *stakes*, not a mash into Game 1.
+| # | Working title | Pure category | Longevity |
+|---|---|---|---|
+| 1 | **Echo Lattice** | Adaptive labyrinth puzzle | Forever systems / UGC |
+| 2 | **Edgewright** | Spatial edge-sculpting puzzle | Forever + editor |
+| 3 | **Quench** | Thermal material physics puzzle | Forever + material packs |
+| 4 | **Black Plinth** | Ex nihilo architecture toy | Forever toy / grammar packs |
+| 5 | **Stillroom** | Acoustic tension vignette | Sharp short hit |
 
-### Game 2 — Coin-machine game
+**Recommended first scaffold:** Echo Lattice or Edgewright (see decision gate in the five-games doc).
 
-- Standalone arcade coin-pusher / coin-machine fantasy.
-- Comps: [RACCOIN](https://store.steampowered.com/app/3784030/RACCOIN_Coin_Pusher_Roguelike/), [The Coin Game](https://store.steampowered.com/app/598980/The_Coin_Game/).
-- Differentiate with a sharp hook + demo; treat RACCOIN-scale returns as unlikely for a thin clone.
-- Target roughly **$5–$10** lean MVP after Game 1 lessons.
+---
 
-### Game 3 — Idle / particle tycoon (Particul-like)
+## Explicitly out of the five (still valid later catalog)
 
-- Standalone particle/automation tycoon. This is where Particul-style screenshots belong — **not** Game 1.
-- Comp: [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99).
-- Target **$1.99–$4.99**; catalog filler and systems practice; distinct loop from Game 2.
-
-### Later (not Games 1–3)
-
-Tower defense if you want a mid-scope evergreen. Base-building / colony / city only after several small paid ships.
+| Lane | Why deferred |
+|---|---|
+| Coin-machine (RACCOIN-adjacent) | Hot but clone-crowded; keep as separate later SKU if desired |
+| Idle / particle tycoon (Particul-like) | Fast to code, modest ceiling; separate catalog product |
+| Residue (habit-physics chambers) | Strong inventive alternate from generative synthesis — **not** merged into Echo Lattice |
+| Full StS deckbuilder, RimWorld, Cities-depth, Palworld-scale, platform fighter | Scope / band traps |
 
 ---
 
@@ -82,25 +79,11 @@ Tower defense if you want a mid-scope evergreen. Base-building / colony / city o
 | **RimWorld-depth colony sim** | Multi-year AI, content, UI; usually $20–$40 ambition |
 | **Cities-depth city builder** | Content mountain; wrong price band for first ship |
 | **Palworld-scale creature survival** | Open world + collection + combat (+ MP expectations) |
+| **Minecraft-like survival craft** | Simplicity *analogy* only — do not clone |
 | **Platform fighter** (Brawlhalla / “Rollerhalla”) | Netcode, cast, live ops; F2P giants dominate |
-| **Full Slay the Spire deckbuilder** | Saturated; balance + card volume kills “fast”; often priced above band |
+| **Full Slay the Spire deckbuilder** | Saturated; balance + card volume kills “fast” |
+| **LLM / world-model runtime as the game** | Cost, consistency, gameslop stigma ([Haro AI Steam census](https://fragwyz.substack.com/p/three-years-of-ai-on-steam)) |
 | **Genre mashups** | Explicitly out of scope |
-
-Windrose-scale survival is a **taste signal**, not a schedule for product #1.
-
----
-
-## Decision gate (user must confirm)
-
-**Recommended default:** Game 1 = tension/horror vignette with an original premise.
-
-Before production starts, confirm one of:
-
-1. **Game 1 — tension/horror vignette** (recommended), or  
-2. **Start with coin-machine** instead (Game 2 first), or  
-3. **Start with idle/particle** instead (Game 3 first — closest to current Particul interest / this repo’s original scaffold name).
-
-Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 ---
 
@@ -108,21 +91,23 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 - **Engine:** [Godot 4](https://godotengine.org/) — desktop export, Steam-friendly, free, fast iteration.
 - **Target:** Windows-first Steam build (real `.exe` + `.pck`); Mac/Linux optional later.
-- **Not for v1:** Web/HTML5 as the primary product, multiplayer netcode, live-service economies.
+- **Not for v1:** Web/HTML5 as the primary product, multiplayer netcode, live-service economies, runtime LLM worldgen.
 
 ---
 
 ## Next steps
 
-1. **User confirms** Game 1 lane (tension vs coin vs idle).
-2. Write a **one-page GDD** for that product only (loop, win/lose, session length, art direction, original hook).
-3. Godot 4 vertical slice (desktop) — one complete loop, no feature sprawl.
-4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push.
+1. **User confirms** one of the five (or a documented alternate) via the decision gate in [`FIVE_GAMES_TO_BUILD.md`](FIVE_GAMES_TO_BUILD.md).  
+2. Write a **one-page GDD** for that product only.  
+3. Godot 4 vertical slice (desktop) — one complete loop, no feature sprawl.  
+4. Steamworks setup: page, tags, capsule art, **demo**, wishlist push.  
 5. Price in-band; launch small; capture reviews → fund the next **separate** product.
 
 ---
 
 ## Related docs
 
-- [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/FIVE_GAMES_TO_BUILD.md`](FIVE_GAMES_TO_BUILD.md) — **decision document** (prediction + five full concepts)  
+- [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed historical scores / comps  
+- Sibling research PRs (trend map, inventiveness, generative reality, physics, seeds) — see open PRs on the repo  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
