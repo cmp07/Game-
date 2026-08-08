@@ -25,6 +25,10 @@ func _ready() -> void:
 	chamber_node.caption_changed.connect(_on_caption_changed)
 	_refresh_title()
 	_on_moves_changed(0)
+	# Chamber._ready fires before we wire up (children ready first), so pull the
+	# current caption once at scene start.
+	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
+	_on_caption_changed(str(data.get("caption", "")))
 
 
 func _refresh_title() -> void:

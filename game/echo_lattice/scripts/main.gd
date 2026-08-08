@@ -15,19 +15,89 @@ const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
 
 
 func _ready() -> void:
-	# Headless self-test — run when launched with `-- --selftest`.
-	# Exits with code 0 on pass, 1 on fail.
-	for a in OS.get_cmdline_user_args():
-		if a == "--selftest":
-			var ok: bool = await _run_self_test()
-			get_tree().quit(0 if ok else 1)
-			return
+	var all_args: PackedStringArray = OS.get_cmdline_user_args()
 	for a in OS.get_cmdline_args():
-		if a == "--selftest":
-			var ok2: bool = await _run_self_test()
-			get_tree().quit(0 if ok2 else 1)
-			return
+		all_args.append(a)
+	# Headless self-test — run when launched with `-- --selftest`.
+	if all_args.has("--selftest"):
+		var ok: bool = await _run_self_test()
+		get_tree().quit(0 if ok else 1)
+		return
+	# Screenshot capture — `-- --screenshot menu|chamber:N|won:N|end   out_dir`.
+	if all_args.has("--screenshot"):
+		var kind := ""
+		var out_dir := "user://shots"
+		var i2 := 0
+		while i2 < all_args.size():
+			if all_args[i2] == "--screenshot" and i2 + 1 < all_args.size():
+				kind = all_args[i2 + 1]
+			if all_args[i2] == "--out" and i2 + 1 < all_args.size():
+				out_dir = all_args[i2 + 1]
+			i2 += 1
+		await _capture_screenshot(kind, out_dir)
+		get_tree().quit(0)
+		return
 	show_menu()
+
+
+func _capture_screenshot(kind: String, out_dir: String) -> void:
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	if kind == "menu":
+		show_menu()
+	elif kind.begins_with("chamber:"):
+		GameState.current_chamber = int(kind.substr(8))
+		show_chamber()
+	elif kind.begins_with("won:"):
+		var idx: int = int(kind.substr(4))
+		GameState.current_chamber = idx
+		show_chamber_won(idx, 42)
+	elif kind.begins_with("rewrite:"):
+		# Show a chamber right after its rewrite fires — drives the player to the
+		# first checkpoint via BFS so the ghost trail + echo walls are visible.
+		var idx2: int = int(kind.substr(8))
+		GameState.current_chamber = idx2
+		show_chamber()
+		await get_tree().process_frame
+		var stage_kid: Node = stage.get_child(0)
+		var chamber: Node2D = stage_kid.get_node("Chamber")
+		# Find the closest checkpoint.
+		var target: Vector2i = chamber.goal_pos
+		for y in range(chamber.grid.size()):
+			for x in range(chamber.grid[y].size()):
+				if chamber.grid[y][x] == 2:
+					target = Vector2i(x, y)
+					break
+		# Step-by-step BFS toward the checkpoint.
+		var guard: int = 0
+		while chamber.player_pos != target and guard < 400:
+			var step: Vector2i = _bfs_next_step(chamber, target)
+			if step == Vector2i.ZERO:
+				break
+			chamber._try_move(step)
+			chamber._flush_pending_echoes()
+			guard += 1
+		# Small forward walk after the rewrite so the echo walls are on-screen.
+		for k in range(3):
+			var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
+			if next == Vector2i.ZERO:
+				break
+			chamber._try_move(next)
+			chamber._flush_pending_echoes()
+	elif kind == "end":
+		# Populate some fake best-moves so the end screen has data.
+		GameState.start_new_run()
+		for i in range(ChamberBook.chamber_count()):
+			GameState.record_chamber_win(i, 30 + i)
+		show_end_screen()
+	else:
+		show_menu()
+	# Let a few frames render, then grab.
+	for _f in range(6):
+		await get_tree().process_frame
+	var img: Image = get_viewport().get_texture().get_image()
+	var path: String = "%s/%s.png" % [out_dir, kind.replace(":", "_")]
+	img.save_png(path)
+	print("saved %s" % path)
 
 
 func _run_self_test() -> bool:
