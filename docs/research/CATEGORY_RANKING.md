@@ -4,7 +4,8 @@
 **Constraint:** Pure categories only — no mashup pitches.  
 **Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).  
+By presentation dimension (1D / 2D / 2.5D / 3D / desktop hybrid): [`DIMENSION_CONCEPT_MAP.md`](DIMENSION_CONCEPT_MAP.md).
 
 ---
 
