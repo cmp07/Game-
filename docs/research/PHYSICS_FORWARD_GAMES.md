@@ -158,9 +158,9 @@ Each product is **one pure category**. Lessons below are extracted per title; th
 | | |
 |---|---|
 | **Steam** | [PEAK](https://store.steampowered.com/app/3527290/PEAK/) (Landfall × Aggro Crab / “Landcrab”) |
-| **Released** | ~16–17 Jun 2025 · ~$7.99 |
-| **Reception** | Very / Overwhelmingly Positive (~93% in early windows) |
-| **Sales** | **1M+ copies in ~6 days**; ~100k peak concurrent ([IGN](https://www.ign.com/articles/co-op-climbing-game-peak-takes-steam-by-storm-reaches-summit-of-top-sellers-chart)) |
+| **Released** | 16 Jun 2025 · ~$7.99 |
+| **Reception** | Overwhelmingly Positive (English ~95%, 100k+ reviews; all-language hundreds of thousands by mid-2026); Steam Awards 2025 “Better With Friends” |
+| **Sales** | **1M+ copies in ~6 days**; ~100k peak concurrent at breakout ([IGN](https://www.ign.com/articles/co-op-climbing-game-peak-takes-steam-by-storm-reaches-summit-of-top-sellers-chart)) |
 
 **What it is:** Climb a daily/proc mountain through biomes; universal climb + **one stamina bar** (hunger, poison, injury carve it); rope/pitons as scarce tools; best as 1–4 co-op comedy.
 
