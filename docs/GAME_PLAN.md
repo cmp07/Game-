@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/ADAPTIVE_GENERATIVE_DESIGN.md`](research/ADAPTIVE_GENERATIVE_DESIGN.md) — AI Director / DDA / experience management survey + shippable patterns  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
