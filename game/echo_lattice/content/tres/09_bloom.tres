@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Chamber" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/echo_lattice/scripts/chamber.gd" id="1_chamber"]
+
+[resource]
+script = ExtResource("1_chamber")
+id = "09_bloom"
+title = "Bloom"
+subtitle = "Fork, filter, merge, light every goal."
+teaches = "composition"
+difficulty = 5
+tick_budget = 24
+par_ticks = 18
+par_tiles = 6
+source_dir = "E"
+rows = 9
+cols = 9
+cells = PackedStringArray("G.......G", ".........", "...o.o...", ".........", "S...+...G", ".........", "...o.o...", ".........", "G.......G")
+legend = {".": {"name": "empty", "class": "empty"}, "S": {"name": "source", "class": "source"}, "G": {"name": "goal", "class": "goal"}, "o": {"name": "dark", "class": "dark"}, "O": {"name": "lit", "class": "lit"}, "+": {"name": "merge", "class": "merge"}}
+goal = {"predicate": "light_all", "cells": [[0, 0], [0, 8], [4, 8], [8, 0], [8, 8]]}
+player_tools = {"router": {"count": 4, "note": "Four routers form the outer ring."}, "fork": {"count": 2, "note": "Two forks split the pulse to the corners."}, "merge": {"count": 0}, "filter": {"count": 1, "note": "One filter to gate the middle path."}, "delay": {"count": 1, "note": "One delay so the merge fires on time."}, "cancel": {"count": 0}, "resonate": {"count": 0}}
+hints = PackedStringArray("This is a capstone. Every primitive from earlier chambers plays a part.", "Only five goals need lighting, but four corners share symmetry with the center goal.", "Fork twice, delay once, filter once, merge once, done.")
+intro = "The lattice blooms outward from a single source. Fork the pulse to the corners, hold one path so the merge fires on time, and light the eastern goal on the way through."
+outro = "You now know every rewrite in the game. Everything after this is variations."
+music_cue = "bloom_finale"
+tags = PackedStringArray("capstone", "composition", "symmetric")
+variations = {"allow_rotate": true, "allow_reflect": true, "allow_palette_swap": true, "budget_deltas": [-2, 0, 2, 4]}

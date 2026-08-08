@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="Chamber" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/echo_lattice/scripts/chamber.gd" id="1_chamber"]
+
+[resource]
+script = ExtResource("1_chamber")
+id = "05_filter"
+title = "Filter"
+subtitle = "Phase-locked doors: only matching echoes pass."
+teaches = "filter"
+difficulty = 3
+tick_budget = 14
+par_ticks = 10
+par_tiles = 1
+source_dir = "E"
+rows = 5
+cols = 9
+cells = PackedStringArray("S........", "....?....", ".........", "....?....", "S.......G")
+legend = {".": {"name": "empty", "class": "empty"}, "S": {"name": "source", "class": "source"}, "G": {"name": "goal", "class": "goal"}, "?": {"name": "filter", "class": "filter", "description": "Passes echoes whose arrival direction matches the filter's phase; consumes the rest."}}
+goal = {"predicate": "reach", "cells": [[4, 8]]}
+player_tools = {"router": {"count": 3, "note": "Route the two echoes; one is a decoy for the filter."}, "fork": {"count": 0}, "merge": {"count": 0}, "filter": {"count": 0}, "delay": {"count": 0}, "cancel": {"count": 0}, "resonate": {"count": 0}}
+hints = PackedStringArray("A filter's rewrite is: A@dir -> A, dir  |  A@!dir -> ∅", "Phase equals arrival direction. N and S are opposites; E and W are opposites.", "Only one of the two echoes needs to reach the goal. The other is your key.")
+intro = "Both filters here pass north-bound echoes and consume east-bound ones. Only one of your two sources should reach the goal."
+outro = ""
+music_cue = null
+tags = PackedStringArray("filter", "phase")
+variations = {"allow_rotate": false, "allow_reflect": true, "allow_palette_swap": true, "budget_deltas": [0, 2]}
