@@ -12,11 +12,12 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Physics / creation / systems white space: [`docs/research/PHYSICS_CREATION_WHITE_SPACE.md`](docs/research/PHYSICS_CREATION_WHITE_SPACE.md)
 
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
-- `docs/research/` — category ranking and competitive notes
+- `docs/research/` — category ranking, physics/creation white space, competitive notes
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
 
