@@ -12,6 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Particul-like idle vs generative/adaptive (separate philosophies): [`docs/research/PARTICUL_VS_GENERATIVE.md`](docs/research/PARTICUL_VS_GENERATIVE.md)
 
 ## Layout
 

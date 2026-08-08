@@ -63,8 +63,10 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 - **Fantasy:** Mine/drop particles → sell → automate → tech tree → prestige/ascend.
 - **Key comps:**
   - [Particul](https://store.steampowered.com/app/4273120/Particul/) (~$1.99) — direct visual/loop reference
+- **Adjacent (not the same philosophy):** [Falling Sand Idle](https://store.steampowered.com/app/3714750/Falling_Sand_Idle/) — art-project idle; shows mash temptation and thin-execution risk
 - **Solo ship:** Often the fastest code path among the top three.
 - **Verdict:** Solid catalog product; smaller breakout ceiling than vignette/coin hits.
+- **Taste note:** Particle *spectacle* overlaps generative sand toys, but idle’s contract is number-go-up — see [`PARTICUL_VS_GENERATIVE.md`](PARTICUL_VS_GENERATIVE.md). Do not use Particul-like as the vehicle for generative reality + inventiveness.
 
 ### 4) Tower defense — later
 
@@ -120,3 +122,4 @@ Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
 - CloverPit: [Steam](https://store.steampowered.com/app/3314790/CloverPit/)
 - Particul: [Steam](https://store.steampowered.com/app/4273120/Particul/)
 - Windrose / Wildfrost / Brawlhalla / The Coin Game — store links in table above
+- Philosophy compare (idle vs generative/adaptive): [`PARTICUL_VS_GENERATIVE.md`](PARTICUL_VS_GENERATIVE.md)
