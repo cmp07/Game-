@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/DO_NOT_BUILD_2026.md`](research/DO_NOT_BUILD_2026.md) — adversarial late-2026 kill list (clone graveyards, AI slop, overscoped sims, saturated tags)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
