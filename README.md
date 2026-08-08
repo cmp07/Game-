@@ -4,6 +4,8 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 
 **Start here:** [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md)
 
+**Working prototype:** [`game/`](game/) contains the Godot 4 scaffold for **Echo Lattice** (codename, Game 1). Meta shell spec: [`docs/ECHO_LATTICE_META.md`](docs/ECHO_LATTICE_META.md).
+
 ## Strategy (short)
 
 - **One pure category per product** — do not mash genres into a hybrid “first game.”
