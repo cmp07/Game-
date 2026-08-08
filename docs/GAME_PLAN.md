@@ -27,7 +27,8 @@ Same “simple systems” family — **different loops, art, pacing, and marketi
 | Rollerhalla | **[Brawlhalla](https://store.steampowered.com/app/291550/Brawlhalla/)** | No Steam title “Rollerhalla”; platform-fighter taste, wrong first product |
 | Particool screenshots | **[Particul](https://store.steampowered.com/app/4273120/Particul/)** | $1.99 particle mine → sell → automate idle |
 
-Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).
+Full scores and comps: [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md).  
+Inventiveness by dimension/presentation: [`docs/research/DIMENSION_CONCEPT_MAP.md`](research/DIMENSION_CONCEPT_MAP.md).
 
 ---
 
@@ -125,4 +126,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/DIMENSION_CONCEPT_MAP.md`](research/DIMENSION_CONCEPT_MAP.md) — 1D→3D / UI / diorama / desktop-hybrid concept map  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
