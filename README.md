@@ -12,15 +12,18 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- **Godot 4 + AI + Steam desktop pipeline (8-week plan):** [`docs/research/GODOT_AI_STEAM_PIPELINE.md`](docs/research/GODOT_AI_STEAM_PIPELINE.md)
 
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
-- `docs/research/` — category ranking and competitive notes
+- `docs/research/` — category ranking, competitive notes, technical pipeline
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
 
 ## Stack
 
-- Godot 4 (desktop / Steam)
+- Godot 4 (desktop / Steam Windows `.exe`, not browser)
+- GodotSteam GDExtension + SteamPipe
+- AI-assisted **production** (textures/code); offline-first **runtime**
 - Windows-first development
