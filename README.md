@@ -1,24 +1,27 @@
-﻿# sandpile-tycoon
+# Game- (Echo Lattice production workspace)
 
-Planning and production workspace for a sequence of **small, separate Steam desktop games** (real Windows `.exe`, not browser) priced roughly **$0.99–$10**.
+Planning and production workspace for a sequence of **small, separate Steam desktop games** (real Windows `.exe`, not browser) priced roughly **$0.99–$12**.
 
-**Start here:** [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md)
+## Start here
+
+1. **Game 1 LOCKED — Echo Lattice:** [`docs/ECHO_LATTICE/00_PRODUCTION_BIBLE.md`](docs/ECHO_LATTICE/00_PRODUCTION_BIBLE.md)
+2. Index / catalog: [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md)
+3. Five-product concepts: [`docs/FIVE_GAMES_TO_BUILD.md`](docs/FIVE_GAMES_TO_BUILD.md)
 
 ## Strategy (short)
 
 - **One pure category per product** — do not mash genres into a hybrid “first game.”
-- **Sequential small Steam releases**, not one mega-scope title:
-  1. Tension / horror vignette (recommended Game 1 — **confirm before production**)
-  2. Coin-machine game
-  3. Idle / particle tycoon (Particul-like)
-- Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- **Game 1 = Echo Lattice** (adaptive labyrinth puzzle) — production standards and ownership are locked; gameplay lands in follow-on lanes.
+- Games 2–5 (Edgewright, Quench, Black Plinth, Stillroom) stay separate later SKUs.
+- Historical category scores: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
 
 ## Layout
 
-- `docs/` — game plan, design notes, Steam checklist
+- `docs/ECHO_LATTICE/` — production bible + parallel-agent specs
+- `docs/` — game plan, five-games archive, Steam checklist
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/` — Godot 4 project (after a lane is locked)
+- `game/` — Godot 4 project (scaffold after specs)
 
 ## Stack
 
