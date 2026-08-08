@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/PHYSICS_CREATION_WHITE_SPACE.md`](research/PHYSICS_CREATION_WHITE_SPACE.md) — physics / creation-from-nothing / systems-toy commercial white space (2024–2026)  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
