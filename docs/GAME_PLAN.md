@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/AI_STEAM_GAMESLOP_REPORT.md`](research/AI_STEAM_GAMESLOP_REPORT.md) — why AI Steam games fail, Next Fest/disclosure, do/don’t for inventive AI use  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
