@@ -1,0 +1,55 @@
+{
+  "id": "03_fork",
+  "title": "Fork",
+  "subtitle": "One echo becomes two.",
+  "teaches": "fork",
+  "difficulty": 2,
+  "tick_budget": 12,
+  "par_ticks": 8,
+  "par_tiles": 1,
+  "source_dir": "E",
+  "lattice": {
+    "rows": 5,
+    "cols": 9,
+    "cells": [
+      ".......G.",
+      ".........",
+      "S........",
+      ".........",
+      ".......G."
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty",  "class": "empty" },
+    "S": { "name": "source", "class": "source" },
+    "G": { "name": "goal",   "class": "goal" },
+    "Y": { "name": "fork",   "class": "router", "description": "Splits eastbound echo into N and S." }
+  },
+  "goal": {
+    "predicate": "light_all",
+    "cells": [[0, 7], [4, 7]]
+  },
+  "player_tools": {
+    "router":   { "count": 0 },
+    "fork":     { "count": 1, "note": "Splits into N and S when traveling E." },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 0 },
+    "delay":    { "count": 0 },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "A fork's rewrite is: . -> ., N, S when hit from W.",
+    "One echo in, two echoes out. Both must reach a goal within budget.",
+    "The fork's column matters. Count.",
+    "You do not need any other tiles for this."
+  ],
+  "intro": "Both goals must light. You have one fork and one echo.",
+  "tags": ["fork", "symmetric"],
+  "variations": {
+    "allow_rotate": true,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [0, 2]
+  }
+}

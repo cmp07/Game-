@@ -1,0 +1,55 @@
+{
+  "id": "07_silence",
+  "title": "Silence",
+  "subtitle": "Opposite echoes cancel. Send them at each other.",
+  "teaches": "silence",
+  "difficulty": 3,
+  "tick_budget": 16,
+  "par_ticks": 12,
+  "par_tiles": 3,
+  "source_dir": "E",
+  "lattice": {
+    "rows": 5,
+    "cols": 11,
+    "cells": [
+      "S..........",
+      "...........",
+      "....x....G.",
+      "...........",
+      "S.........."
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty",  "class": "empty" },
+    "S": { "name": "source", "class": "source" },
+    "G": { "name": "goal",   "class": "goal" },
+    "x": { "name": "cancel", "class": "cancel", "description": "Two opposite-direction arrivals on the same tick annihilate. Same-direction arrivals pass through." },
+    "?": { "name": "filter", "class": "filter" }
+  },
+  "goal": {
+    "predicate": "reach",
+    "cells": [[2, 9]]
+  },
+  "player_tools": {
+    "router":   { "count": 3, "note": "Two to aim the decoy echoes at the cancel node; one to route the real echo." },
+    "fork":     { "count": 0 },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 1, "note": "A single filter to seal the decoy path off." },
+    "delay":    { "count": 0 },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "A cancel node fires A@+ + A@- -> ∅ when opposite-direction echoes arrive together.",
+    "Both sources fire east. Route one south-then-east, the other north-then-east so they meet head-on at x.",
+    "Silencing the decoys is what lets your third echo cross the middle line."
+  ],
+  "intro": "The middle row is a corridor of ghosts. Cancel them, then walk the goal.",
+  "tags": ["cancel", "phase"],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [0, 2]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "id": "08_resonance",
+  "title": "Resonance",
+  "subtitle": "Two hits inside a window light the target.",
+  "teaches": "resonance",
+  "difficulty": 4,
+  "tick_budget": 18,
+  "par_ticks": 14,
+  "par_tiles": 3,
+  "source_dir": "E",
+  "lattice": {
+    "rows": 7,
+    "cols": 9,
+    "cells": [
+      "S........",
+      ".........",
+      ".........",
+      "...*....G",
+      ".........",
+      ".........",
+      "........."
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty",    "class": "empty" },
+    "S": { "name": "source",   "class": "source" },
+    "G": { "name": "goal",     "class": "goal" },
+    "*": { "name": "resonate", "class": "resonate", "description": "Lights only after 2 hits within a 3-tick window; then emits east." },
+    "Y": { "name": "fork",     "class": "router" }
+  },
+  "goal": {
+    "predicate": "reach",
+    "cells": [[3, 8]]
+  },
+  "player_tools": {
+    "router":   { "count": 3, "note": "Bounce the fork's second echo back into the resonance cell." },
+    "fork":     { "count": 1 },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 0 },
+    "delay":    { "count": 0 },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "Resonance rewrite: A -> B if hits >= 2 within window; window is 3 ticks here.",
+    "One echo isn't enough. Fork, loop the second echo, come back.",
+    "The resonance cell only emits east after it wakes."
+  ],
+  "intro": "Some cells refuse to light on a single touch. Learn to hit twice.",
+  "tags": ["resonance", "loop"],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [0, 2, 4]
+  }
+}

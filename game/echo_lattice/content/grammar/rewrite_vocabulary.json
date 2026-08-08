@@ -1,0 +1,59 @@
+{
+  "$schema_hint": "Rewrite tile vocabulary. See docs/ECHO_LATTICE/04_CONTENT_BIBLE.md §6.",
+  "version": 1,
+  "tiles": {
+    "router": {
+      "display_name": "Router",
+      "glyphs": [">", "<", "^", "v"],
+      "rewrite_form": ". -> ., <dir>",
+      "description": "Redirects an incoming echo to the router's arrow direction. The cell itself remains empty; only the outgoing echo changes direction.",
+      "notes": "The four glyph variants encode the four cardinal directions. The runtime picks the glyph based on placement UI, but the rewrite is the same shape."
+    },
+    "fork": {
+      "display_name": "Fork",
+      "glyphs": ["Y"],
+      "rewrite_form": ". -> ., <dir1>, <dir2>",
+      "description": "Splits one incoming echo into two outgoing echoes in fixed directions relative to arrival.",
+      "notes": "The default fork on an eastbound echo emits N and S. Rotated variants adjust accordingly."
+    },
+    "merge": {
+      "display_name": "Merge",
+      "glyphs": ["+"],
+      "rewrite_form": "A + A -> B",
+      "description": "Two echoes arriving on the same tick coalesce into one outgoing echo. A single echo arriving alone is consumed silently.",
+      "notes": "This is the timing gate of the game. Every non-trivial chamber uses it."
+    },
+    "filter": {
+      "display_name": "Filter",
+      "glyphs": ["?"],
+      "rewrite_form": "A@<phase> -> A, forward   |   A@!<phase> -> ∅",
+      "description": "Only echoes whose arrival direction matches the filter's phase pass through; the rest are consumed.",
+      "notes": "Phase is derived from arrival direction. N↔S and E↔W are opposite phases."
+    },
+    "delay": {
+      "display_name": "Delay",
+      "glyphs": ["~"],
+      "rewrite_form": "A -> A after N",
+      "description": "Holds an incoming echo for N ticks (default 1), then re-emits it in the same direction.",
+      "notes": "The N in `after N` is the tile's configured delay; default configuration is 1."
+    },
+    "cancel": {
+      "display_name": "Cancel",
+      "glyphs": ["x"],
+      "rewrite_form": "A@+ + A@- -> ∅",
+      "description": "Opposite-direction arrivals on the same tick annihilate. Same-direction arrivals pass through unchanged.",
+      "notes": "This is how the game teaches parity."
+    },
+    "resonate": {
+      "display_name": "Resonate",
+      "glyphs": ["*"],
+      "rewrite_form": "A -> B if hits >= 2 within window",
+      "description": "Only lights after receiving at least two echoes within a sliding window (default 3 ticks). Then emits east.",
+      "notes": "The window and threshold are configurable in the tile parameters; the shipped default is 2 hits within 3 ticks."
+    }
+  },
+  "phase_semantics": {
+    "definition": "Phase of an arriving echo equals its arrival direction. Two arrivals are 'opposite phase' iff their directions are (N,S) or (E,W).",
+    "why": "Deriving phase from direction removes the need for authored phase per-source. Every rewrite involving phase (filter, cancel) reads from the direction the echo already carries."
+  }
+}

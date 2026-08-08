@@ -1,0 +1,58 @@
+{
+  "id": "06_delay",
+  "title": "Delay",
+  "subtitle": "Hold and release. Rendezvous the pulses.",
+  "teaches": "delay",
+  "difficulty": 3,
+  "tick_budget": 16,
+  "par_ticks": 12,
+  "par_tiles": 3,
+  "source_dir": "E",
+  "lattice": {
+    "rows": 7,
+    "cols": 9,
+    "cells": [
+      "S........",
+      ".........",
+      ".........",
+      "....+...G",
+      ".........",
+      ".........",
+      "S........"
+    ]
+  },
+  "legend": {
+    ".": { "name": "empty",  "class": "empty" },
+    "S": { "name": "source", "class": "source" },
+    "G": { "name": "goal",   "class": "goal" },
+    "+": { "name": "merge",  "class": "merge" },
+    "~": { "name": "delay",  "class": "delay", "description": "Holds an incoming echo for one tick, then re-emits it in the same direction." }
+  },
+  "goal": {
+    "predicate": "reach",
+    "cells": [[3, 8]]
+  },
+  "player_tools": {
+    "router":   { "count": 2, "note": "Point top and bottom echoes at the merge." },
+    "fork":     { "count": 0 },
+    "merge":    { "count": 0 },
+    "filter":   { "count": 0 },
+    "delay":    { "count": 1, "note": "Adds one tick of hold." },
+    "cancel":   { "count": 0 },
+    "resonate": { "count": 0 }
+  },
+  "hints": [
+    "The merge is one row nearer to the top source than the bottom source.",
+    "A delay tile holds for exactly one tick.",
+    "Only the earlier echo needs delaying."
+  ],
+  "intro": "Merge chambers punish arrival mismatch. Delay tiles let you fix it.",
+  "outro": "Delay is a puzzle-scale time knob. You'll see it again in the capstone.",
+  "tags": ["delay", "merge", "timing"],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [-1, 0, 2]
+  }
+}
