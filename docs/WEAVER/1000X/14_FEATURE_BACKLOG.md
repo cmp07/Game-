@@ -41,8 +41,7 @@ Survey → Recover → Bind → Tension → Inhabit → Residue
 
 **Ordering inside a priority:** Core loop & fair toy → discovery/anti-wiki → identity (art/audio/juice) → content caps → store surfaces → fences.
 
-**Counts in this doc:** 
-**P0** 30 · **P1** 50 · **P2** 32 · **P3** 20 · **Total 132**.
+**Counts in this doc:** **P0** 30 · **P1** 50 · **P2** 32 · **P3** 20 · **Total 132**.
 
 ---
 
