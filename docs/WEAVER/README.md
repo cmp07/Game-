@@ -54,6 +54,12 @@
 | [`10_AUDIO.md`](10_AUDIO.md) | Tension earprint |
 | [`11_PROGRESSION.md`](11_PROGRESSION.md) | Literacy unlocks, not XP theater |
 
+### 20 — Feel / juice
+
+| Doc | Topic |
+|---|---|
+| [`20_JUICE.md`](20_JUICE.md) | Fragment suck · combine flash · weave pulse (diegetic) |
+
 ### 12–15 — Biz / tech
 
 | Doc | Topic |
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-juice` | W1 feel spike — `game/weaver/` juice verbs |
 
 ---
 
@@ -96,3 +103,4 @@
 | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Echo Lattice Steam freeze |
 | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL vision (not live north star) |
 | `game/echo_lattice/` | Frozen playable — **keep** |
+| `game/weaver/` | W1 juice spike (separate SKU path) |

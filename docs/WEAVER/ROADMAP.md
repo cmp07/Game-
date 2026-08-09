@@ -51,12 +51,14 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 | Task | Notes |
 |---|---|
 | Create `game/weaver/` Godot 4 project | Empty EL tree alone; copy **patterns**, not scenes |
+| **Juice triad** ([`20_JUICE.md`](20_JUICE.md)) | Fragment suck · combine flash · weave pulse — diegetic, no purple glow |
 | Pick sim fence (G1) | Verlet/beam budget sheet day one |
 | Implement six-beat loop on **one** field | No hub meta, no gallery yet |
 | Fragment ×4 + Thread ×2 + Structure ×1 | Prefer Span/Anchor + Brace/Feed |
 | Collapse readability | Culprit highlight + undo tension |
 | Python/GDScript contracts | Determinism + softlock smoke |
 
+**Juice spike (landed on `cursor/weaver-juice`):** `game/weaver/` demo field exercises Recover/Bind/Tension feel.  
 **Exit:** Internal clip of Tension seat that passes still test.
 
 ### W2 — Vertical slice (first thirty)
