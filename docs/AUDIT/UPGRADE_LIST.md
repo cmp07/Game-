@@ -44,10 +44,10 @@ Must clear before marketing “final mix,” Partner Coming Soon with non-temp a
 | ID | Upgrade | Owner lane | Acceptance |
 |---|---|---|---|
 | P2-01 | **Vendor Latin stack** (IBM Plex Sans Condensed + Serif + Mono or Inter Tight + OFL) under `fonts/latin/`; wire Theme + `draw_string` | Art/Code | Menu brand lockup uses display face; seed uses mono |
-| P2-02 | **Settings as index-card** (paper plate, underline controls, paper-turn open) — retire dim glass panel look | UX | Matches title-card materials |
+| P2-02 | **Settings as index-card** (paper plate, underline controls, paper-turn open) — retire dim glass panel look | UX | `[~]` Instrument Folio plate + ink sliders/options; full Folio* skins / PaperTurn still open |
 | P2-03 | **Won / end / daily meta screens** restyled to loose ledger pages + stamp numerals | UX | Same underline button language as menu |
-| P2-04 | **Credits scene** (menu entry) with engine/font/audio credits; temporary placeholder audio line until P0 mix | UX/Compliance | Compliance §4 checklist |
-| P2-05 | **Stop `ui.click` on menu `_ready`**; play only on navigation/confirm | Audio/UX | Cold boot silent except intentional title bed policy |
+| P2-04 | **Credits scene** (menu entry) with engine/font/audio credits; temporary placeholder audio line until P0 mix | UX/Compliance | `[x]` Colophon stub on Field Index (`credits_colophon`) |
+| P2-05 | **Stop `ui.click` on menu `_ready`**; play only on navigation/confirm | Audio/UX | `[x]` Cold boot silent except intentional title bed policy |
 | P2-06 | **Align capsules README hex** + regenerate marketing placeholders from palette JSON | Art | Single palette table across game + store |
 | P2-07 | **Demo wishlist + Settings** both present in screenshot tour captions when demo feature on | Docs/UX | Tour matches chrome |
 

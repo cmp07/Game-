@@ -15,6 +15,7 @@ signal quit_pressed()
 signal wishlist_pressed()
 
 const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
+const COLOPHON_SCENE: PackedScene = preload("res://scenes/ui/credits_colophon.tscn")
 
 @onready var continue_button: Button = %ContinueButton
 @onready var start_button: Button = %StartButton
@@ -23,6 +24,7 @@ const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn"
 @onready var hard_button: Button = %HardButton
 @onready var museum_button: Button = %MuseumButton
 @onready var settings_button: Button = %SettingsButton
+@onready var colophon_button: Button = get_node_or_null("%ColophonButton")
 @onready var quit_button: Button = %QuitButton
 @onready var subtitle: Label = %Subtitle
 @onready var meta_label: Label = %MetaLabel
@@ -31,7 +33,9 @@ var _t: float = 0.0
 var _demo_path: Array = []  ## Vector2i points for ambient ghost walk
 var _demo_progress: float = 0.0
 var _settings_overlay: Control = null
+var _colophon_overlay: Control = null
 var _wishlist_button: Button = null
+var _card_slot_t: float = 0.0
 
 ## Ambient chalk path does not need a full 60 Hz canvas rebuild.
 const AMBIENT_REDRAW_HZ: float = 15.0
@@ -64,6 +68,8 @@ func _ready() -> void:
 	if museum_button:
 		museum_button.pressed.connect(func(): emit_signal("museum_pressed"))
 	settings_button.pressed.connect(_open_settings)
+	if colophon_button:
+		colophon_button.pressed.connect(_open_colophon)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
 	# Wishlist CTA only when DemoBuild gates allow (demo + Steam + real store URL).
 	if DemoBuild.wishlist_cta_enabled():
@@ -74,6 +80,7 @@ func _ready() -> void:
 		_wishlist_button = null
 
 	_build_demo_path()
+	_card_slot_t = 0.0
 	set_process(true)
 	_sync_tech_art_grain()
 	var store := get_node_or_null("/root/SettingsStore")
@@ -85,19 +92,21 @@ func _ready() -> void:
 		if not remap.bindings_changed.is_connected(queue_redraw):
 			remap.bindings_changed.connect(queue_redraw)
 	# Restyle buttons as underlined type (art bible §6).
-	_style_as_index_button(start_button, true)
-	_style_as_index_button(continue_button, false)
-	_style_as_index_button(daily_button, false)
+	LedgerChrome.style_index_button(start_button, true)
+	LedgerChrome.style_index_button(continue_button, false)
+	LedgerChrome.style_index_button(daily_button, false)
 	if endless_button:
-		_style_as_index_button(endless_button, false)
+		LedgerChrome.style_index_button(endless_button, false)
 	if hard_button:
-		_style_as_index_button(hard_button, false)
+		LedgerChrome.style_index_button(hard_button, false)
 	if museum_button:
-		_style_as_index_button(museum_button, false)
-	_style_as_index_button(settings_button, false)
-	_style_as_index_button(quit_button, false)
+		LedgerChrome.style_index_button(museum_button, false)
+	LedgerChrome.style_index_button(settings_button, false)
+	if colophon_button:
+		LedgerChrome.style_index_button(colophon_button, false)
+	LedgerChrome.style_index_button(quit_button, false)
 	if _wishlist_button != null:
-		_style_as_index_button(_wishlist_button, false)
+		LedgerChrome.style_index_button(_wishlist_button, false)
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
 	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
@@ -135,6 +144,8 @@ func _localize_chrome() -> void:
 		museum_button.text = tr("menu.museum")
 	if settings_button:
 		settings_button.text = tr("menu.settings")
+	if colophon_button:
+		colophon_button.text = tr("menu.colophon")
 	quit_button.text = tr("menu.quit")
 	if _wishlist_button != null:
 		_wishlist_button.text = tr("menu.wishlist")
@@ -206,6 +217,19 @@ func _open_settings() -> void:
 		AudioDirector.fire("ui.click")
 
 
+func _open_colophon() -> void:
+	if _colophon_overlay == null:
+		_colophon_overlay = COLOPHON_SCENE.instantiate()
+		add_child(_colophon_overlay)
+		_colophon_overlay.closed.connect(func():
+			if start_button:
+				start_button.grab_focus()
+			queue_redraw()
+		)
+	if _colophon_overlay.has_method("open_colophon"):
+		_colophon_overlay.open_colophon()
+
+
 func _ensure_wishlist_button() -> void:
 	if _wishlist_button != null:
 		return
@@ -224,22 +248,7 @@ func _ensure_wishlist_button() -> void:
 		emit_signal("wishlist_pressed")
 		DemoBuild.open_wishlist()
 	)
-
-
-func _style_as_index_button(btn: Button, primary: bool) -> void:
-	var empty := StyleBoxEmpty.new()
-	btn.add_theme_stylebox_override("normal", empty)
-	btn.add_theme_stylebox_override("pressed", empty)
-	btn.add_theme_stylebox_override("hover", empty)
-	btn.add_theme_stylebox_override("focus", empty)
-	btn.add_theme_stylebox_override("disabled", empty)
-	btn.add_theme_color_override("font_color", Palette.INK_BLACK if primary else Palette.INK_SOFT)
-	btn.add_theme_color_override("font_hover_color", Palette.SLATE_TEAL)
-	btn.add_theme_color_override("font_pressed_color", Palette.RUST_FOSSIL)
-	btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
-	btn.add_theme_color_override("font_disabled_color", Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35))
-	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.focus_mode = Control.FOCUS_ALL
+	LedgerChrome.style_index_button(_wishlist_button, false)
 
 
 func _ensure_gamepad_focus_chain() -> void:
@@ -251,24 +260,12 @@ func _ensure_gamepad_focus_chain() -> void:
 	if museum_button:
 		order.append(museum_button)
 	order.append(settings_button)
+	if colophon_button:
+		order.append(colophon_button)
 	order.append(quit_button)
 	if _wishlist_button != null:
 		order.insert(order.size() - 1, _wishlist_button)
-
-	var live: Array = []
-	for btn in order:
-		if btn != null and not btn.disabled and btn.visible:
-			live.append(btn)
-	for i in range(live.size()):
-		var cur: Control = live[i]
-		var prev: Control = live[(i - 1 + live.size()) % live.size()]
-		var next: Control = live[(i + 1) % live.size()]
-		cur.focus_neighbor_top = cur.get_path_to(prev)
-		cur.focus_neighbor_bottom = cur.get_path_to(next)
-		cur.focus_neighbor_left = cur.get_path_to(cur)
-		cur.focus_neighbor_right = cur.get_path_to(cur)
-		cur.focus_previous = cur.get_path_to(prev)
-		cur.focus_next = cur.get_path_to(next)
+	LedgerChrome.wire_vertical_focus(order)
 
 
 func _build_demo_path() -> void:
@@ -287,11 +284,13 @@ func _build_demo_path() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _card_slot_t < 0.18:
+		_card_slot_t = minf(_card_slot_t + delta, 0.18)
 	_demo_progress = fmod(_demo_progress + delta * 3.2, float(_demo_path.size()) + 8.0)
 	var step: int = int(_demo_progress)
 	_redraw_accum += delta
 	# Redraw when the chalk path advances a cell, or at a capped ambient rate for pulse.
-	if step != _last_demo_step or _redraw_accum >= 1.0 / AMBIENT_REDRAW_HZ:
+	if step != _last_demo_step or _redraw_accum >= 1.0 / AMBIENT_REDRAW_HZ or _card_slot_t < 0.18:
 		_last_demo_step = step
 		_redraw_accum = 0.0
 		queue_redraw()
@@ -316,13 +315,27 @@ func _draw() -> void:
 		ArtKit.draw_paper_grain(self, page, 19, 0.07)
 	draw_rect(page, Palette.INK_SOFT, false, 2.0)
 
+	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
+	draw_string(
+		ThemeDB.fallback_font,
+		page.position + Vector2(16, 22),
+		tr("menu.folio_mark"),
+		HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Palette.SLATE_TEAL
+	)
+	draw_line(
+		page.position + Vector2(16, 28),
+		page.position + Vector2(page.size.x - 16, 28),
+		Palette.INK_SOFT,
+		1.0
+	)
+
 	# Seed header strip along top margin.
 	var seed_tex: Texture2D = ArtKit.tex("res://art/ui/seed_header_256x24.png")
 	if seed_tex != null:
-		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(16, 10), Vector2(256, 24)), false)
+		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(16, 36), Vector2(256, 24)), false)
 	draw_string(
 		_type("mono"),
-		page.position + Vector2(280, 28),
+		page.position + Vector2(280, 54),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
 	)
@@ -355,19 +368,29 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Palette.INK_SOFT
 	)
 
-	# Index-card plate behind the button column (right side).
-	var card := Rect2(page.end.x - 340, page.position.y + 80, 280, 360)
-	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
-	draw_rect(card, Palette.PAPER_BONE, true)
-	draw_rect(card, Palette.INK_SOFT, false, 1.5)
-	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45), false, 1.0)
+	# Index-card plate behind the button column (right side) — paper-slot settle.
+	var slot: float = clampf(_card_slot_t / 0.16, 0.0, 1.0)
+	var y_off: float = (1.0 - slot) * 6.0
+	var card := Rect2(page.end.x - 340, page.position.y + 80 + y_off, 280, 400)
+	var shadow := Palette.PAPER_SHADOW
+	shadow.a *= slot
+	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), shadow, true)
+	# paper_deep backer lift, then bone face.
+	var deep := Palette.PAPER_DEEP
+	deep.a = slot
+	draw_rect(Rect2(card.position + Vector2(2, 2), card.size), deep, true)
+	var bone := Palette.PAPER_BONE
+	bone.a = slot
+	draw_rect(card, bone, true)
+	draw_rect(card, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot), false, 1.5)
+	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * slot), false, 1.0)
 	# Binder holes — diegetic Field Index chrome (QW-2).
 	for i in range(5):
 		var hy: float = card.position.y + 28.0 + float(i) * 70.0
 		if hy > card.end.y - 24.0:
 			break
-		draw_circle(Vector2(card.position.x + 12.0, hy), 3.5, Palette.INK_SOFT)
-		draw_circle(Vector2(card.position.x + 12.0, hy), 1.8, Palette.PAPER_BONE)
+		draw_circle(Vector2(card.position.x + 12.0, hy), 3.5, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot))
+		draw_circle(Vector2(card.position.x + 12.0, hy), 1.8, bone)
 	# Card header double rule.
 	draw_line(card.position + Vector2(22, 34), card.position + Vector2(card.size.x - 16, 34), Palette.INK_SOFT, 1.0)
 	draw_line(card.position + Vector2(22, 38), card.position + Vector2(card.size.x - 16, 38), Palette.INK_SOFT, 1.0)
@@ -375,7 +398,8 @@ func _draw() -> void:
 		_type("mono"),
 		card.position + Vector2(26, 26),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
+		HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
+		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot)
 	)
 
 	# Focus underlines drawn under whichever button has focus.
@@ -457,26 +481,17 @@ func _draw_button_underlines(_card: Rect2) -> void:
 	var buttons: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		buttons.append(endless_button)
+	if hard_button and hard_button.visible:
+		buttons.append(hard_button)
 	if museum_button:
 		buttons.append(museum_button)
 	buttons.append(settings_button)
+	if colophon_button:
+		buttons.append(colophon_button)
 	buttons.append(quit_button)
 	if _wishlist_button != null:
 		buttons.insert(buttons.size() - 1, _wishlist_button)
-	for btn in buttons:
-		if btn == null:
-			continue
-		var r: Rect2 = btn.get_global_rect()
-		# Convert to local.
-		var local_pos: Vector2 = r.position - global_position
-		var focused: bool = btn.has_focus()
-		var hovered: bool = btn.is_hovered()
-		if focused:
-			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, min(r.size.x, 200), 2), Palette.RUST_FOSSIL, true)
-		elif hovered and not btn.disabled:
-			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, min(r.size.x, 200), 2), Palette.SLATE_TEAL, true)
-		elif not btn.disabled:
-			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, min(r.size.x, 160), 1), Palette.INK_SOFT, true)
+	LedgerChrome.draw_index_underlines(self, buttons, global_position)
 
 
 func _draw_punchcard_ribbon(page: Rect2) -> void:

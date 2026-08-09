@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bq8ledgerbootsplash01"
-path="res://.godot/imported/boot_splash.png-g1feel000000000000000000000001.ctex"
+uid="uid://bq8splashledger01"
+path="res://.godot/imported/boot_splash.png-a1b2c3d4e5f6789012345678abcdef01.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://art/ui/boot_splash.png"
-dest_files=["res://.godot/imported/boot_splash.png-g1feel000000000000000000000001.ctex"]
+dest_files=["res://.godot/imported/boot_splash.png-a1b2c3d4e5f6789012345678abcdef01.ctex"]
 
 [params]
 

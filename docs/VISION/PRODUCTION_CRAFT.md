@@ -56,11 +56,11 @@ Status keys against `cursor/echo-lattice-rc1` playable root `game/echo_lattice/`
 
 | # | Check | RC1 | Acceptance |
 |---|---|---|---|
-| B1 | Custom boot image (not Godot default robot) | `[ ]` `boot_splash/show_image=false` | Paper-bone field with ink mark or miniature punch-card; no logo soup |
-| B2 | Boot bg color matches `paper_bone` / `ink_black` | `[ ]` | No bright grey flash before first frame |
-| B3 | Splash duration short (≤ ~1.2 s perceived) or skippable | `[ ]` | Cold start never feels like a tech demo bumper |
+| B1 | Custom boot image (not Godot default robot) | `[x]` `art/ui/boot_splash.png` | Paper-bone field with ink mark or miniature punch-card; no logo soup |
+| B2 | Boot bg color matches `paper_bone` / `ink_black` | `[x]` `paper_bone` splash bg | No bright grey flash before first frame |
+| B3 | Splash duration short (≤ ~1.2 s perceived) or skippable | `[~]` engine splash + `boot_title` hold | Cold start never feels like a tech demo bumper |
 | B4 | Optional PA / silence policy on first enter | `[~]` `pa.boot.lattice_online` cataloged | Induction stays silence-capable; boot chime is institutional, not cute |
-| B5 | No `ui.click` / menu SFX before first intentional input | `[ ]` menu fires `ui.click` on `_ready` | Cold boot quiet except intentional title bed / PA policy |
+| B5 | No `ui.click` / menu SFX before first intentional input | `[x]` silent menu `_ready` | Cold boot quiet except intentional title bed / PA policy |
 
 **Field Ledger note:** splash is a **rubber stamp on blank stock**, not a cinematic logo animation.
 
@@ -95,9 +95,9 @@ Status keys against `cursor/echo-lattice-rc1` playable root `game/echo_lattice/`
 
 | # | Check | RC1 | Acceptance |
 |---|---|---|---|
-| P1 | Esc / Start / B opens a **pause card**, not an instant dump to main menu | `[ ]` `pause_menu` → `menu_requested` | Player can resume without losing chamber context |
-| P2 | Tree paused (or sim gated) while card up; audio ducks per bible | `[~]` overlay pause only via Steam | Gameplay clock stops; Music/UI policy explicit |
-| P3 | Pause card is index-card material (Resume / Restart / Settings / Menu) | `[ ]` | No glass `PanelContainer` look |
+| P1 | Esc / Start / B opens a **pause card**, not an instant dump to main menu | `[x]` `ui/pause_index.tscn` | Player can resume without losing chamber context |
+| P2 | Tree paused (or sim gated) while card up; audio ducks per bible | `[~]` tree pause on Pause Index; audio duck open | Gameplay clock stops; Music/UI policy explicit |
+| P3 | Pause card is index-card material (Resume / Restart / Settings / Menu) | `[x]` Resume / Restart / Instruments / Abandon | No glass `PanelContainer` look |
 | P4 | Mid-rewrite slam: flush or block pause so Continue cannot softlock | `[~]` flush-on-leave exists | Documented; pause during lock is safe |
 | P5 | Steam overlay open also pauses tree when feature flagged | `[x]` `SteamService` | Shift+Tab does not desync hitstop permanently |
 | P6 | Focus loss policy chosen (pause vs keep running) and documented | `[ ]` | Adversarial QA notes `pause_on_focus_loss` unset |
@@ -125,13 +125,13 @@ Echo Lattice is not a combat-death game. “Fail” means **softlock, habit trap
 
 | # | Check | RC1 | Acceptance |
 |---|---|---|---|
-| S1 | Settings is a **paper plate / index card**, not dim glass overlay | `[ ]` `settings_menu.tscn` PanelContainer | UPGRADE P2-02 |
-| S2 | Open/close = paper turn (same language as title) | `[ ]` | Shared transition helper |
+| S1 | Settings is a **paper plate / index card**, not dim glass overlay | `[~]` Instrument Folio paper plate + ink controls | UPGRADE P2-02 |
+| S2 | Open/close = paper turn (same language as title) | `[~]` paper wash open; full PaperTurn helper still open | Shared transition helper |
 | S3 | Groups readable as ledger sections (Audio, Display, Accessibility, Controls, Language) | `[~]` | One job per section; no OS-settings dump |
 | S4 | Remap + glyphs live on the same card | `[x]` / `[~]` | Full keyboard remap; Deck defaults preserved |
 | S5 | A11y: colorblind, flash, motion, UI scale, bus mutes | `[~]` | Documented in [`ACCESSIBILITY.md`](../RELEASE/ACCESSIBILITY.md) |
 | S6 | Telemetry opt-out present if retail default-on | `[ ]` compliance C7 | Local-only today; keep honest |
-| S7 | Settings reachable from title **and** pause without losing place | `[~]` title only today | Pause → Settings → back to pause |
+| S7 | Settings reachable from title **and** pause without losing place | `[x]` title + Pause Index → Instruments | Pause → Settings → back to pause |
 | S8 | Persist via `SettingsStore`; sane defaults on first boot | `[x]` | Corrupt/missing file recovers |
 
 **Craft bar:** Outer Wilds ship computer / Papers Please desk — options are **in-fiction equipment**, not a borrowed ImGui theme.
@@ -140,12 +140,12 @@ Echo Lattice is not a combat-death game. “Fail” means **softlock, habit trap
 
 | # | Check | RC1 | Acceptance |
 |---|---|---|---|
-| C1 | Menu → Credits first-class entry | `[ ]` | Compliance C11 |
-| C2 | In-game copy matches [`COMPLIANCE_FINAL.md`](../RELEASE/COMPLIANCE_FINAL.md) §4.5 draft | `[ ]` | Studio, Godot MIT, fonts OFL, audio honesty |
-| C3 | Placeholder audio labeled as procedural until final mix | `[ ]` | Never marketed as licensed library music (C9) |
-| C4 | Scroll/page turn works with gamepad; B/Start exits | `[ ]` | Same input grammar as pause |
+| C1 | Menu → Credits first-class entry | `[x]` Colophon on Field Index | Compliance C11 |
+| C2 | In-game copy matches [`COMPLIANCE_FINAL.md`](../RELEASE/COMPLIANCE_FINAL.md) §4.5 draft | `[~]` stub matches §4.5 draft placeholders | Studio, Godot MIT, fonts OFL, audio honesty |
+| C3 | Placeholder audio labeled as procedural until final mix | `[x]` colophon.audio_body | Never marketed as licensed library music (C9) |
+| C4 | Scroll/page turn works with gamepad; B/Start exits | `[~]` B/Esc File away; scrollable body | Same input grammar as pause |
 | C5 | Depot `THIRD_PARTY_NOTICES.txt` + Godot COPYRIGHT beside Windows build | `[ ]` C10 | Credits screen ≠ license depot (ship both) |
-| C6 | Credits visual = closing the ledger (quiet, paper, no parade) | `[ ]` | Brand mark once; no emoji; no purple |
+| C6 | Credits visual = closing the ledger (quiet, paper, no parade) | `[x]` Colophon leaf | Brand mark once; no emoji; no purple |
 
 ### 2.8 Adjacent “real game” signals (same craft budget)
 
@@ -243,15 +243,15 @@ If step 4 or 5 fails, the build still feels like a vertical slice no matter how 
 
 | Beat | Verdict |
 |---|---|
-| Title card | **Strong scaffold** — fonts + motion still open |
+| Title card | **Strong** — folio mark + paper-slot; vendor fonts still open |
 | Transitions | **Off-vision** — functional scene swaps; paper-turn language not shell-wide |
-| Pause | **Missing as craft** — input exists; behavior is leave-to-menu |
+| Pause | **MVP shipped** — Pause Index card over chamber; abandon is explicit |
 | Death / fail | **Partial** — undo/restart/end exist; not authored as a fail suite |
-| Settings as object | **Wrong material** — feature-complete a11y under glass chrome |
-| Credits | **Missing** — copy drafted in compliance only |
-| Boot splash | **Missing** — splash disabled |
+| Settings as object | **Partial** — Instrument Folio paper plate; native Option/Check hosts remain |
+| Credits | **Stub shipped** — Colophon leaf from Field Index |
+| Boot splash | **On** — custom paper stamp + `paper_bone` bg |
 
-**Bottom line:** the playable loop already argues for a real game. The shell still argues for a build. Close the seven beats above before calling the slice “reviewer-ready.”
+**Bottom line:** Pause, Colophon, boot splash, and title/settings paper polish land the shell MVP. Paper-turn transitions + full Folio* control skins remain before reviewer-ready.
 
 ---
 

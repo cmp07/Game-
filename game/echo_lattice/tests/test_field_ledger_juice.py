@@ -169,9 +169,11 @@ class TestFeelQuickWins(unittest.TestCase):
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
         self.assertIn("_style_as_index_card", settings)
-        self.assertIn("PAPER_BONE", settings)
-        self.assertIn("PAPER_MARGIN", settings)
-        self.assertIn("shadow_size = 0", settings)
+        self.assertIn("LedgerChrome.paper_plate_style", settings)
+        self.assertIn("paper_wash_color", settings)
+        chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
+        self.assertIn("PAPER_BONE", chrome)
+        self.assertIn("shadow_size = 0", chrome)
 
     def test_chamber_page_framing(self) -> None:
         chamber = (ROOT / "scripts" / "chamber.gd").read_text()
@@ -196,6 +198,71 @@ class TestFeelQuickWins(unittest.TestCase):
         vision = REPO / "docs" / "VISION" / "QUICK_WINS_SPEC.md"
         self.assertTrue(vision.is_file())
         self.assertIn("QW-1", vision.read_text())
+
+
+class TestDiegeticShellMvp(unittest.TestCase):
+    """MVP shell: Pause Index, Colophon, boot splash, paper polish."""
+
+    def test_pause_index_scene_and_chamber_wiring(self) -> None:
+        self.assertTrue((ROOT / "scenes" / "ui" / "pause_index.tscn").is_file())
+        pause = (ROOT / "scripts" / "ui" / "pause_index.gd").read_text()
+        self.assertIn("signal resume_pressed", pause)
+        self.assertIn("signal abandon_pressed", pause)
+        self.assertIn("open_pause", pause)
+        self.assertIn("PROCESS_MODE_WHEN_PAUSED", pause)
+        scene = (ROOT / "scripts" / "chamber_scene.gd").read_text()
+        self.assertIn("pause_index.tscn", scene)
+        self.assertIn("_open_pause_index", scene)
+        # Esc must not dump straight to title.
+        unhandled = scene.split("func _unhandled_input")[1].split("\nfunc ")[0]
+        self.assertIn("_open_pause_index", unhandled)
+        self.assertNotIn('emit_signal("menu_requested")', unhandled)
+
+    def test_credits_colophon_and_menu_entry(self) -> None:
+        self.assertTrue((ROOT / "scenes" / "ui" / "credits_colophon.tscn").is_file())
+        colo = (ROOT / "scripts" / "ui" / "credits_colophon.gd").read_text()
+        self.assertIn("open_colophon", colo)
+        self.assertIn("colophon.file_away", colo)
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        self.assertIn("credits_colophon.tscn", menu)
+        self.assertIn("_open_colophon", menu)
+        tscn = (ROOT / "scenes" / "menu.tscn").read_text()
+        self.assertIn("ColophonButton", tscn)
+
+    def test_boot_splash_enabled(self) -> None:
+        proj = (ROOT / "project.godot").read_text()
+        self.assertIn("boot_splash/show_image=true", proj)
+        self.assertIn('boot_splash/image="res://art/ui/boot_splash.png"', proj)
+        self.assertIn("boot_splash/bg_color=Color(0.937255, 0.901961, 0.823529, 1)", proj)
+        self.assertTrue((ROOT / "art" / "ui" / "boot_splash.png").is_file())
+        gen = (ROOT / "art" / "generate_placeholders.py").read_text()
+        self.assertIn("ui_boot_splash", gen)
+
+    def test_title_settings_paper_polish(self) -> None:
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        self.assertIn("menu.folio_mark", menu)
+        self.assertIn("_card_slot_t", menu)
+        self.assertIn("PAPER_DEEP", menu)
+        self.assertIn("LedgerChrome", menu)
+        settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
+        self.assertIn("settings.folio_mark", settings)
+        self.assertIn("_style_folio_controls", settings)
+        self.assertIn("LedgerChrome.paper_plate_style", settings)
+        chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
+        self.assertIn("class_name LedgerChrome", chrome)
+
+    def test_locale_shell_keys(self) -> None:
+        csv = (ROOT / "locale" / "echo_lattice.csv").read_text()
+        for key in (
+            "menu.colophon,",
+            "menu.folio_mark,",
+            "pause.resume,",
+            "pause.abandon,",
+            "colophon.heading,",
+            "colophon.file_away,",
+            "settings.folio_mark,",
+        ):
+            self.assertIn(key, csv)
 
 
 def main() -> int:

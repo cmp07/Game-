@@ -6,16 +6,18 @@ boot.wing_line,FIELD LEDGER · WING I,现场账本 · 第一翼
 menu.field_index,FIELD INDEX,现场索引
 menu.buffer,BUFFER,缓冲
 menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
-menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc,移动  WASD / 方向键     重开  R     撤销  Z     菜单  Esc
+menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Pause  Esc,移动  WASD / 方向键     重开  R     撤销  Z     暂停  Esc
 menu.continue,Continue,继续
-menu.start_new,Start New Run,开始新周目
-menu.daily,Daily Challenge,每日挑战
-menu.endless,Endless,无尽
-menu.hard,Hard Variants,高难变体
-menu.hard_count,Hard Variants (%s),高难变体（%s）
-menu.settings,Settings,设置
+menu.start_new,Open new survey,开启新勘测
+menu.daily,Daily sheet,每日页
+menu.endless,Endless corridor,无尽廊道
+menu.hard,Hard binding,高难装订
+menu.hard_count,Hard binding (%s),高难装订（%s）
+menu.settings,Instruments,仪器
 menu.wishlist,Wishlist on Steam,Steam 愿望单
-menu.quit,Quit,退出
+menu.quit,Close ledger,合上账本
+menu.colophon,Colophon,版权页
+menu.folio_mark,FIELD LEDGER · WING I,现场账本 · 第一翼
 menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间室。纸上墨迹。
 menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
@@ -33,7 +35,7 @@ hud.habit_leaning,%s-leaning,%s倾向
 hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
 hud.seed,SEED  %s,种子  %s
 hud.restart,Restart (R),重开 (R)
-hud.menu,Menu (Esc),菜单 (Esc)
+hud.menu,Pause (Esc),暂停 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
 hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
 hud.endless_depth,Depth %s,深度 %s
@@ -87,7 +89,8 @@ locale.language,Language,语言
 locale.en,English,English
 locale.zh_Hans,简体中文,简体中文
 locale.system,System,跟随系统
-settings.title,Settings — Accessibility,设置 — 无障碍
+settings.title,Instruments,仪器
+settings.folio_mark,FIELD LEDGER · INSTRUMENTS,现场账本 · 仪器
 settings.a11y_header,Accessibility,无障碍
 settings.colorblind,Colorblind mode,色盲模式
 settings.patterns,Pattern cues (not color-only),图案提示（非仅靠颜色）
@@ -104,7 +107,7 @@ settings.hold_to_walk,Hold to walk,按住行走
 settings.input_header,Input (click to rebind keyboard; gamepad preserved),输入（点击重绑键盘；手柄保留）
 settings.reset_a11y,Reset accessibility,重置无障碍
 settings.reset_input,Reset input,重置输入
-settings.close,Close,关闭
+settings.close,File away,归档
 settings.size_small,Small,小
 settings.size_medium,Medium,中
 settings.size_large,Large,大
@@ -161,9 +164,9 @@ subtitle.pa.wing.clear,Wing clear.,本翼清除。
 subtitle.tutorial_buffer,Your last moves leave fossils behind you.,你最近的步伐会留下化石。
 hud.undo_hint,%s · UNDO,%s · 撤销
 menu.subtitle_demo,Demo — Act I · Mirror Birth. Ink on paper.,试玩 — 第一幕 · 镜生。纸上墨迹。
-menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Menu  %s,移动  %s…     重开  %s     撤销  %s     菜单  %s
+menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Pause  %s,移动  %s…     重开  %s     撤销  %s     暂停  %s
 hud.restart_fmt,Restart (%s),重开 (%s)
-hud.menu_fmt,Menu (%s),菜单 (%s)
+hud.menu_fmt,Pause (%s),暂停 (%s)
 glyphs.move_pad,D-Pad / Stick,方向键 / 摇杆
 glyphs.move_wasd,WASD / Arrows,WASD / 方向键
 glyphs.controls_gamepad,Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start / B     Confirm  A     Assist  B,移动  方向键/摇杆     撤销  X     重开  Y     菜单  Start / B     确认  A     辅助  B
@@ -315,3 +318,24 @@ habit.op.mirror_walked_h,a horizontal habit mirror,一枚水平习惯镜
 habit.op.widen_hot_corridor,a widened corridor,拓宽走廊
 habit.op.carve_shortcut,a carved shortcut,凿出的捷径
 end.museum,Museum of Selves,自我博物馆
+pause.title,PAUSE · FIELD INDEX,暂停 · 现场索引
+pause.meta,%s  ·  seed  %s,%s  ·  种子  %s
+pause.resume,Resume survey,继续勘测
+pause.restart,Restart chamber,重开间室
+pause.instruments,Instruments,仪器
+pause.abandon,Abandon to Field Index,返回现场索引
+colophon.folio,FIELD LEDGER · COLOPHON,现场账本 · 版权页
+colophon.heading,COLOPHON,版权页
+colophon.blurb,Echo Lattice — a Field Ledger survey,回声晶格 — 一份现场账本勘测
+colophon.design,Design / code / content,设计 / 代码 / 内容
+colophon.design_body,Echo Lattice,回声晶格
+colophon.engine,Engine,引擎
+colophon.engine_body,"Godot Engine — © Juan Linietsky, Ariel Manzur, and contributors (MIT)","Godot 引擎 — © Juan Linietsky、Ariel Manzur 与贡献者（MIT）"
+colophon.fonts,Fonts,字体
+colophon.fonts_body,Vendor display / body / mono slots pending — SIL OFL when embedded,显示 / 正文 / 等宽字库待嵌入 — 嵌入后为 SIL OFL
+colophon.audio,Audio,音频
+colophon.audio_body,Procedural placeholders — Echo Lattice,程序化占位音效 — 回声晶格
+colophon.legal,Legal,法律
+colophon.legal_body,See depot THIRD_PARTY_NOTICES.txt beside the Windows build,见 Windows 构建旁的 THIRD_PARTY_NOTICES.txt
+colophon.build,Build %s,构建 %s
+colophon.file_away,File away,归档
