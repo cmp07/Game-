@@ -24,15 +24,15 @@ Playable product root: `game/echo_lattice/` (Godot 4.3, GDScript).
 | Compliance | `cursor/release-compliance` | #64 | Merged into RC1 |
 | Live ops | `cursor/release-liveops-2a83` | #65 | Merged into RC1 |
 | Marketing | `cursor/release-marketing` | #66 | Merged into RC1 |
-| Steam store | `cursor/release-steam-store*` | — | Pending (merge when present) |
-| Steamworks | `cursor/release-steamworks*` | — | Pending |
-| Demo | `cursor/release-demo*` | — | Pending |
-| Localization | `cursor/release-l10n*` | — | Pending |
-| Polish | `cursor/release-polish*` | — | Pending |
-| Steam Deck | `cursor/release-deck*` | — | Pending |
-| Accessibility (release) | `cursor/release-a11y*` | — | Pending |
+| Steam Deck | `cursor/release-deck` | #67 | Merged into RC1 |
+| Steam store | `cursor/release-steam-store` | #69 | Merged into RC1 |
+| Accessibility | `cursor/release-a11y` | #70 | Merged into RC1 |
+| Localization | `cursor/release-l10n` | #71 | Merged into RC1 |
+| Demo | `cursor/release-demo` | #72 | Merged into RC1 |
+| Steamworks | `cursor/release-steamworks` | #73 | Merged into RC1 |
+| Polish | `cursor/release-polish-rc` | #74 | Merged into RC1 |
 
-Update this table as additional `cursor/release-*` branches land.
+All requested `cursor/release-*` packs present at integration time are merged above.
 
 ---
 

@@ -15,6 +15,21 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 |---|---|
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Final Steam compliance pack |
 
+
+## Steam store / Steamworks / Deck / Demo
+
+| Doc | Purpose |
+|---|---|
+| [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) | Coming Soon / Next Fest store package |
+| [`capsules/`](capsules/) | Capsule art placeholders |
+| [`STEAMWORKS.md`](STEAMWORKS.md) | Offline stub + achievements + depot notes |
+| [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Achievement catalog |
+| [`STEAM_DECK.md`](STEAM_DECK.md) | Deck Verified prep |
+| [`DEMO_SPEC.md`](DEMO_SPEC.md) | Next Fest demo scope |
+| [`LOCALIZATION.md`](LOCALIZATION.md) | EN + zh-Hans |
+| [`ACCESSIBILITY.md`](ACCESSIBILITY.md) | Colorblind, flash, remap, subtitles, UI scale |
+| [`BUGBASH.md`](BUGBASH.md) | RC polish bugbash checklist |
+
 ## Marketing
 
 | Doc | Purpose |
