@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/CATEGORY_UNIVERSE_SCAN.md`](research/CATEGORY_UNIVERSE_SCAN.md) — full Steam tag/category universe scan + 2027 under-hyped calls  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
