@@ -20,9 +20,13 @@ var run_started: bool = false
 var run_mode: String = "standard"
 var daily_seed: int = 0
 var daily_label: String = ""
+var daily_friend_code: String = ""
+var daily_chamber_id: String = ""
+var daily_source: String = ""
+var daily_variation: Dictionary = {}
 var run_queue: Array = []          # chamber indices for this run
 var queue_pos: int = 0
-var daily_best_stars: Dictionary = {}  # seed_str -> total stars
+var daily_best_stars: Dictionary = {}  # date_str (or legacy seed_str) -> total stars
 var last_clear_stars: int = 0
 var last_clear_bfs_par: int = 0
 
@@ -48,8 +52,7 @@ func _ready() -> void:
 
 func start_new_run() -> void:
 	run_mode = "standard"
-	daily_seed = 0
-	daily_label = ""
+	_clear_daily_meta()
 	endless_seed = 0
 	endless_depth = 0
 	endless_label = ""
@@ -67,12 +70,12 @@ func start_new_run() -> void:
 
 func start_daily_run() -> void:
 	run_mode = "daily"
-	daily_seed = _today_seed()
-	daily_label = _today_label()
+	var entry: Dictionary = DailyCalendar.today_utc()
+	_apply_daily_entry(entry)
 	endless_seed = 0
 	endless_depth = 0
 	endless_label = ""
-	run_queue = ChamberBook.daily_chamber_indices(daily_seed, 5)
+	run_queue = ChamberBook.daily_wing_for_entry(entry, 5)
 	queue_pos = 0
 	current_chamber = int(run_queue[0]) if run_queue.size() > 0 else 0
 	run_cleared.clear()
@@ -84,8 +87,7 @@ func start_daily_run() -> void:
 
 func start_endless_run() -> void:
 	run_mode = "endless"
-	daily_seed = 0
-	daily_label = ""
+	_clear_daily_meta()
 	endless_seed = _new_endless_seed()
 	endless_label = "E-%s" % _endless_seed_label(endless_seed)
 	endless_depth = 0
@@ -102,8 +104,8 @@ func start_endless_run() -> void:
 func continue_run() -> void:
 	run_started = true
 	if run_queue.is_empty():
-		if run_mode == "daily" and daily_seed != 0:
-			run_queue = ChamberBook.daily_chamber_indices(daily_seed, 5)
+		if run_mode == "daily" and (daily_seed != 0 or daily_label != ""):
+			run_queue = ChamberBook.daily_wing_for_entry(_daily_entry_from_state(), 5)
 		elif run_mode == "endless" and endless_seed != 0:
 			run_queue = ChamberBook.endless_chamber_batch(endless_seed, endless_depth, ENDLESS_BATCH, {})
 			queue_pos = 0
@@ -289,17 +291,17 @@ func active_seed_int() -> int:
 	## Live ledger seed for the diegetic HUD header.
 	if run_mode == "daily" and daily_seed != 0:
 		return daily_seed
+	if run_mode == "endless" and endless_seed != 0:
+		return endless_seed
 	var data: Dictionary = ChamberBook.get_chamber(current_chamber)
 	var chamber_seed: int = int(data.get("seed", 0))
 	if chamber_seed != 0:
 		return chamber_seed
 	return current_chamber + 1
 
-
 func seed_display_string() -> String:
 	## Art bible: seed string in mono, four groups of four.
 	return format_seed_groups(active_seed_int())
-
 
 static func format_seed_groups(seed_int: int) -> String:
 	var n: int = abs(seed_int) & 0xFFFFFFFF
@@ -313,9 +315,58 @@ static func format_seed_groups(seed_int: int) -> String:
 		return "%04X · %04X · %04X · %04X" % [g2, g3, g1 ^ g2, g1]
 	return "%04X · %04X · %04X · %04X" % [g0, g1, g2, g3]
 
+func today_daily_entry() -> Dictionary:
+	return DailyCalendar.today_utc()
+
+func daily_best_for_today() -> int:
+	var entry: Dictionary = today_daily_entry()
+	var date_key: String = str(entry.get("date", _today_label()))
+	if daily_best_stars.has(date_key):
+		return int(daily_best_stars[date_key])
+	# Legacy saves keyed daily_best_stars by YYYYMMDD int string.
+	var legacy: String = str(_today_seed())
+	return int(daily_best_stars.get(legacy, 0))
+
+func _apply_daily_entry(entry: Dictionary) -> void:
+	if entry.is_empty():
+		daily_label = _today_label()
+		daily_seed = _today_seed()
+		daily_friend_code = ""
+		daily_chamber_id = ""
+		daily_source = "legacy_yyyymmdd"
+		daily_variation = {}
+		return
+	daily_label = str(entry.get("date", _today_label()))
+	daily_seed = int(entry.get("seed", 0))
+	daily_friend_code = str(entry.get("friend_code", ""))
+	daily_chamber_id = str(entry.get("chamber_id", ""))
+	daily_source = str(entry.get("source", ""))
+	var variation: Variant = entry.get("variation", {})
+	if typeof(variation) == TYPE_DICTIONARY:
+		daily_variation = (variation as Dictionary).duplicate(true)
+	else:
+		daily_variation = {}
+
+func _daily_entry_from_state() -> Dictionary:
+	return {
+		"date": daily_label,
+		"seed": daily_seed,
+		"chamber_id": daily_chamber_id,
+		"friend_code": daily_friend_code,
+		"source": daily_source,
+		"variation": daily_variation,
+	}
+
+func _clear_daily_meta() -> void:
+	daily_seed = 0
+	daily_label = ""
+	daily_friend_code = ""
+	daily_chamber_id = ""
+	daily_source = ""
+	daily_variation = {}
 
 func _update_daily_stars() -> void:
-	var key: String = str(daily_seed)
+	var key: String = daily_label if daily_label != "" else str(daily_seed)
 	var total: int = 0
 	for idx in run_queue:
 		total += int(best_stars.get(int(idx), 0))
@@ -359,6 +410,7 @@ func _endless_seed_label(seed_int: int) -> String:
 
 
 func _today_seed() -> int:
+	## UTC YYYYMMDD — legacy key / screenshot helper only. Live Daily uses catalog seed.
 	var dt := Time.get_datetime_dict_from_system(true)
 	return int(dt.year) * 10000 + int(dt.month) * 100 + int(dt.day)
 

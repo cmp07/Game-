@@ -109,13 +109,19 @@ func _refresh_progress_copy() -> void:
 		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
 		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
-	var today: String = GameState._today_label()
-	var dseed: int = GameState._today_seed()
-	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
+	var entry: Dictionary = GameState.today_daily_entry()
+	var today: String = str(entry.get("date", GameState._today_label()))
+	var friend_code: String = str(entry.get("friend_code", ""))
+	var dbest: int = GameState.daily_best_for_today()
 	var ebest: int = int(GameState.endless_best_depth)
 	if DemoBuild.is_demo():
 		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
-		meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
+		if friend_code != "":
+			meta_label.text = tr("menu.demo_daily_meta_code") % [today, friend_code, dbest]
+		else:
+			meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
+	elif friend_code != "":
+		meta_label.text = tr("menu.daily_endless_meta_code") % [today, friend_code, dbest, ebest]
 	else:
 		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
 

@@ -60,7 +60,10 @@ func configure(chamber_id: int, moves: int) -> void:
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
-		mode_line = tr("won.daily_line") % GameState.daily_label
+		if GameState.daily_friend_code != "":
+			mode_line = tr("won.daily_line_code") % [GameState.daily_label, GameState.daily_friend_code]
+		else:
+			mode_line = tr("won.daily_line") % GameState.daily_label
 	elif GameState.run_mode == "endless":
 		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
 		mode_line = tr("won.endless_line") % [GameState.endless_label, GameState.endless_depth, pct]

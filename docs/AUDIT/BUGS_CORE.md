@@ -15,7 +15,7 @@ Severity: **P0** ship-blocker / broken progression · **P1** major mode or fairn
 |---|---|---|---|
 | CORE-01 | P0 | Campaign / Daily Continue vs lifetime `completed` | **Fixed** on this branch |
 | CORE-02 | P0 | Wing-complete Continue parks on last chamber (SL-6 regress) | **Fixed** on this branch |
-| CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | Open |
+| CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | **Mitigated** on `cursor/fix-daily-calendar` |
 | CORE-04 | P1 | Endless mode advertised, not implemented | **Fixed** on `cursor/fix-endless` (thin vertical) |
 | CORE-05 | P1 | Soft/hard adaptation + RewriteEngine unwired from playable loop | Open |
 | CORE-06 | P1 | Habit archetypes / score bias never affect rewrites | Open |
@@ -80,21 +80,11 @@ When the skip loop exhausted the queue, `continue_run()` **parked** `queue_pos` 
 
 ## P1 — Open (document only)
 
-### CORE-03 — Daily mode does not use authored daily pipeline
+### CORE-03 — Daily mode does not use authored daily pipeline (mitigated)
 
-**Repro**
+**Mitigation**
 
-1. Inspect `GameState.start_daily_run()` → `ChamberBook.daily_chamber_indices(seed, 5)`.
-2. Compare with `DailyCalendar.today_utc()` / `DailySeeds.pick_for_date()` and chamber `daily_eligible` flags.
-3. Ship bar in `docs/RELEASE/RC1_README.md` requires UTC calendar / catalog hash; runtime never calls those classes.
-
-**Root cause**
-
-Daily wing is a Fisher–Yates shuffle of **all** campaign indices from `YYYYMMDD`, then sorted. `content/daily/calendar_90.json`, `seeds.json`, and `daily_eligible` are unused by the playable path (only by release/liveops tests).
-
-**Recommended fix**
-
-Wire `start_daily_run` through `DailyCalendar.pick_for_date` (fallback `DailySeeds`), resolve `chamber_id` / slug via `ChamberBook.get_chamber_by_content_id`, build a 5-chamber wing from eligible content, keep UTC date label/seed for meta + Steam presence.
+`GameState.start_daily_run()` → `DailyCalendar.today_utc()` → `ChamberBook.daily_wing_for_entry` (featured `chamber_id` + `daily_eligible` fillers). Friend code / variation persist via SaveManager; menu Daily card shows `EL-#####`. Catalog hash covers dates outside `calendar_90.json`. Contract: `tests/test_daily_calendar_wire.py`.
 
 ---
 
@@ -220,8 +210,8 @@ Keep recovery; add CI assert that auto-solver playthroughs never emit recovery; 
 | Softlocks | Movement/undo locked while `pending_echoes`; flush skips player/goal; Esc flushes | Matches BUGBASH SL-1..4 |
 | Goal/player corruption | Flush never fossils `player_pos` / `goal_pos`; win path separate | OK at P0 |
 | Campaign | `acts.json` order via `ChamberBook` | OK |
-| Daily | Shuffle of campaign indices | Calendar/seeds unused (CORE-03) |
-| Endless | Seeded catalog climb + rewrite pressure | Thin vertical on `cursor/fix-endless` |
+| CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | **Mitigated** on `cursor/fix-daily-calendar` |
+| CORE-04 | P1 | Endless mode advertised, not implemented | **Fixed** on `cursor/fix-endless` (thin vertical) |
 
 ---
 

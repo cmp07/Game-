@@ -268,8 +268,9 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 		GameState.move_ring.clear()
 		GameState.run_started = false
-		var dseed: int = GameState._today_seed()
-		GameState.daily_best_stars[str(dseed)] = 9
+		var entry: Dictionary = GameState.today_daily_entry()
+		var dkey: String = str(entry.get("date", GameState._today_label()))
+		GameState.daily_best_stars[dkey] = 9
 		show_menu()
 		await get_tree().process_frame
 		var menu_n: Node = stage.get_child(0)
@@ -486,8 +487,31 @@ func _run_self_test() -> bool:
 	if GameState.last_clear_stars < 1:
 		printerr("stars not awarded"); ok = false
 
-	# Daily wing shape (demo pools from Act I only — still five when possible).
+	# Daily wing: calendar / catalog authority (not YYYYMMDD-only shuffle).
 	GameState.start_daily_run()
+	var daily_entry: Dictionary = DailyCalendar.today_utc()
+	var daily_n: int = mini(5, maxi(1, ChamberBook.daily_eligible_indices().size()))
+	if GameState.run_queue.size() != daily_n and GameState.run_queue.size() != mini(5, ChamberBook.chamber_count()):
+		# Wing is capped by eligible pool (or campaign fallback); accept either bound.
+		if GameState.run_queue.is_empty() or GameState.run_queue.size() > 5:
+			printerr("daily wing size unexpected: %d" % GameState.run_queue.size()); ok = false
+	if str(daily_entry.get("source", "")) == "calendar_90" or str(daily_entry.get("source", "")) == "catalog_hash":
+		if GameState.daily_source != str(daily_entry.get("source", "")):
+			printerr("daily_source mismatch"); ok = false
+		if GameState.daily_friend_code != str(daily_entry.get("friend_code", "")):
+			printerr("daily_friend_code not wired from calendar"); ok = false
+		var featured: int = ChamberBook.index_for_content_id(str(daily_entry.get("chamber_id", "")))
+		if featured >= 0 and GameState.run_queue.size() > 0 and int(GameState.run_queue[0]) != featured:
+			printerr("daily wing must lead with calendar chamber"); ok = false
+	for idx in GameState.run_queue:
+		var ch: Dictionary = ChamberBook.get_chamber(int(idx))
+		if ch.is_empty():
+			printerr("daily wing has unresolvable chamber %s" % str(idx)); ok = false
+			continue
+		var cid: String = str(ch.get("content_id", ""))
+		# Featured may be force-included; fillers must be daily_eligible.
+		if cid != GameState.daily_chamber_id and not bool(ch.get("daily_eligible", false)):
+			printerr("daily wing filler not daily_eligible: %s" % cid); ok = false
 	var daily_n: int = mini(5, ChamberBook.chamber_count())
 	if GameState.run_queue.size() != daily_n:
 		printerr("daily wing expected %d chambers got %d" % [daily_n, GameState.run_queue.size()]); ok = false

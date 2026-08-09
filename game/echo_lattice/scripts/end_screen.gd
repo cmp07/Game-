@@ -116,7 +116,10 @@ func _summary() -> String:
 	if DemoBuild.is_demo():
 		header = tr("end.header_demo")
 	elif GameState.run_mode == "daily":
-		header = tr("end.header_daily") % GameState.daily_label
+		if GameState.daily_friend_code != "":
+			header = tr("end.header_daily_code") % [GameState.daily_label, GameState.daily_friend_code]
+		else:
+			header = tr("end.header_daily") % GameState.daily_label
 	elif GameState.run_mode == "endless":
 		header = tr("end.header_endless") % [GameState.endless_label, GameState.endless_depth]
 	return tr("end.summary") % [

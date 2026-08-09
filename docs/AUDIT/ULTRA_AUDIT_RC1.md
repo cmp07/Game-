@@ -83,7 +83,7 @@ Ranked by ship damage × likelihood for Coming Soon → Next Fest → 1.0.
 |---:|---|---|---|
 | 1 | **Partner identity still placeholders** (`YOUR_APP_ID`, studio/legal, demo wishlist URL) — public CTA / depots cannot go live | P0 | Steam #80, Meta #82, Product #79 |
 | 2 | **No export CI / Godot workflows** — every build is manual; checksum/pinning guidance missing | P0 | Architecture #86, Steam #80, Security #76 |
-| 3 | **Daily Challenge authority orphaned** — FAQ/calendar claim UTC friend-code ritual; runtime Fisher–Yates ignores `DailyCalendar` / `DailySeeds` | P0 | Bugs-core #87, Adversarial #88, Design #83 |
+| 3 | **Daily Challenge authority orphaned** — FAQ/calendar claim UTC friend-code ritual; runtime Fisher–Yates ignores `DailyCalendar` / `DailySeeds` | P0 · mitigated on `cursor/fix-daily-calendar` | Bugs-core #87, Adversarial #88, Design #83 |
 | 4 | ~~**Continue / save P0s on RC1**~~ — **LANDING NOTE:** lifetime `completed` skip, bak destruction, cloud-before-commit, demo↔full queue bleed **mitigated on RC1** via #82/#87/#88 merge | ~~P0~~ → closed | #87, #82, #88 |
 | 5 | **Spacewar `480` fallback** if Steam enabled without real AppID | High | Security SEC-01 |
 | 6 | **Steam Cloud pull writes unvalidated remote bytes** once flag flips | High | Security SEC-02, Meta P1-06 |

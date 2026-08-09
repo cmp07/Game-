@@ -18,7 +18,8 @@ menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
 menu.daily_endless_meta,Daily %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
-menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+menu.demo_daily_meta_code,Next Fest demo  ·  Daily %s  ·  %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引
 menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
 menu.daily_placeholder,Daily,每日
@@ -34,7 +35,7 @@ hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
 hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
 hud.endless_depth,Depth %s,深度 %s
-hud.chamber_fallback,Chamber,间室
+hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %shud.chamber_fallback,Chamber,间室
 habit.up,up,上
 habit.down,down,下
 habit.left,left,左
@@ -66,7 +67,9 @@ Daily %s","
 won.endless_line,"
 Endless %s  ·  depth %s  ·  rewrite pressure %s%%","
 无尽 %s  ·  深度 %s  ·  改写压 %s%%"
-won.stars_glyph,%s (%s/3),%s (%s/3)
+won.daily_line_code,"
+Daily %s · %s","
+每日 %s · %swon.stars_glyph",%s (%s/3),%s (%s/3)
 end.title,END OF SLICE,切片终章
 end.tagline,The lattice remembers you.,晶格记得你。
 end.new_run,New Run,新周目
@@ -76,7 +79,7 @@ end.header_wing,Wing complete.,本翼完成。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
 end.header_endless,Endless %s — depth %s.,无尽 %s — 深度 %s。
-end.summary,"%s
+end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。end.summary,"%s
 Escaped %s / %s chambers.
 Stars this wing: %s★
 Total best moves: %s
@@ -245,3 +248,15 @@ chamber.37_cement_trail_hard.title,Cement Trail+,水泥足迹+
 chamber.37_cement_trail_hard.caption,Hard. Thicken with fewer detours.,困难。更少绕路的增厚。
 chamber.38_nameplate_hard.title,Nameplate+,铭牌+
 chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
+menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
+end.summary,"%s
+Escaped %s / %s chambers.
+Stars this wing: %s★
+Total best moves: %s
+Habit signature: %s
+(u:%s  d:%s  l:%s  r:%s)","%s
+逃脱 %s / %s 间室。
+本翼星级：%s★
+最佳步数合计：%s
+习惯签名：%s
+(上:%s  下:%s  左:%s  右:%s)"

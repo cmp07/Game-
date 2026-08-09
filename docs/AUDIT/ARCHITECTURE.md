@@ -192,7 +192,7 @@ All of the above were executed green in this audit environment.
 |---|---|---|
 | No `.github/workflows` | CI_BUILDS.md is a sketch only | Add validate job: chamber validate + locale + polish + `godot --selftest` |
 | No GDScript unit tests in tree | PR #49 promised `tests/*.gd`; RC1 has Python only | Port critical selftest slices to `-s` scripts **or** drop the claim |
-| `DailyCalendar` / `DailySeeds` untested & unused | Docs/live-ops assume calendar path | Wire into `GameState.start_daily_run` **or** delete + rewrite POSTLAUNCH |
+| `DailyCalendar` / `DailySeeds` untested & unused | Docs/live-ops assume calendar path | **Mitigated** — wired in `start_daily_run` + `test_daily_calendar_wire.py` |
 | `reader` / `cold` / Endless untested in runtime | Balance JSON implies modes | Menu + `GameState.run_mode` contract tests |
 | Steam cloud merge / conflict | Cloud pull can race local save | Headless stub test for pull-if-newer |
 | Crash log hook | Documented for post-launch | Autoload + selftest write path |
@@ -228,7 +228,7 @@ These target older bases or features that diverge from RC1 reality:
 | Residue | Evidence |
 |---|---|
 | Obsolete M0 meta contract | `docs/ECHO_LATTICE_META.md` describes `SaveService` / `GameSession` / `game/tests` / `scenes/meta` — **none exist** |
-| Dead daily catalog path | `DailyCalendar` + `DailySeeds` + `content/daily/*` unused by `GameState._today_seed()` (YYYYMMDD int) |
+| Dead daily catalog path | Was YYYYMMDD-only; now `DailyCalendar.today_utc()` → wing builder |
 | Juice bible → TS prototype | `docs/ECHO_LATTICE/07_JUICE.md` links `game/echo_lattice/src/**/*.ts` (missing) |
 | Dual achievement catalogs | `docs/RELEASE/ACHIEVEMENTS.json` ≡ `config/achievements_steam.json` (identical today — drift bomb) |
 | Merged autoload fragments kept | Audio/Steam fragments duplicate live config |
@@ -251,7 +251,7 @@ These target older bases or features that diverge from RC1 reality:
 | `ECHO_LATTICE_META.md`: M0 meta shell, `SaveService`, `GameSession`, `ec_01_boot` roster | Playable v2 book, `SaveManager` + `GameState`, chamber slugs `00_quiet_span`… | **Critical** |
 | `RC1_README.md`: “Campaign / Daily / **Endless**” | `run_mode` ∈ {`standard`,`daily`} only | **High** |
 | `RC1_README` / `CRASH_LOG_HOOK.md`: crash logs local via hook | Script exists; **not autoloaded**; no boot wiring | **High** |
-| `POSTLAUNCH.md`: `DailyCalendar.pick_for_date` runtime | Not called from gameplay | **High** |
+| `POSTLAUNCH.md`: `DailyCalendar.pick_for_date` runtime | Called via `today_utc()` from `start_daily_run` | Mitigated |
 | `07_JUICE.md`: TypeScript engine paths | Godot `Juice` autoload only | **High** |
 | `13_VERTICAL_SLICE_README.md`: Forward+ automatic / GLES3 tree comment vs Compatibility | `gl_compatibility` actually set; features still say Forward Plus | **Medium** |
 | `06_AUDIO_BIBLE.md` checklist “wire autoloads” | Already wired on RC1 | **Low** (stale checklist) |

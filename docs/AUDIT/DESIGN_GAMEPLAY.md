@@ -84,8 +84,8 @@ North-star pitch (content bible / slice): *escape by rewriting your own habits, 
 
 | Spec | Runtime |
 |---|---|
-| `DailySeeds` + `DailyCalendar` + `daily_eligible` + variations | **Unused** by `GameState.start_daily_run()` |
-| Content bible: one seeded chamber (+ variation) / day | Daily = **Fisher–Yates shuffle of 5 campaign indices** from `YYYYMMDD` int seed |
+| `DailySeeds` + `DailyCalendar` + `daily_eligible` + variations | **Wired** — calendar/catalog featured chamber + eligible fillers; geometry variation on featured |
+| Content bible: one seeded chamber (+ variation) / day | Daily = featured calendar/catalog chamber leading a 5-chamber `daily_eligible` wing |
 | Open Lattice as `daily_showcase` / friend-code poster | Not special-cased in daily route |
 | Endless / infinite wing | **Does not exist** |
 | Hard variants in `hard_order` | Loaded into `_playable` but **never offered** in campaign or daily UI |
@@ -273,7 +273,7 @@ Sorted by **impact first**, then lower effort.
 
 | ID | Proposal | Impact | Effort | Notes |
 |---|---|---|---|---|
-| **U1** | **Wire daily to `DailyCalendar` → `DailySeeds`, honor `daily_eligible`, apply variations** | H | S–M | Delete or demote Fisher–Yates wing; friend codes become true |
+| **U1** | **Wire daily to `DailyCalendar` → `DailySeeds`, honor `daily_eligible`, apply variations** | H | S–M | **Done** on fix-daily-calendar — palette axis still cosmetic-only |
 | **U2** | **Make habit reactivity visible once per chamber** — e.g. overuse rust raises thicken bias *or* archetype picks among legal soft ops when `forced_op` allows soft choice | H | M | Smallest honest “it answered you”; keep determinism via seed |
 | **U3** | **Identity boss stamp** — on clear, render echo silhouette to a ledger card; optional 2★/3★ from signature metrics (symmetry, negative-space face, non-thrash) | H | M | Turns Who Walked / Nameplate into real Mirror Birth kin |
 | **U4** | **Reconcile acts: either 4 balance acts or map Mastery uniquely; stop clamping 4→3** | H | S | Unblocks star/window truthfulness |
