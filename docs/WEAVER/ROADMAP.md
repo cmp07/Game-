@@ -71,7 +71,7 @@ Follow [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) spine:
 6. Single next-session CTA  
 
 Content caps: [`17_MVP.md`](17_MVP.md) vertical-slice row.  
-Craft: [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md).
+Craft: [`09_VISUAL.md`](09_VISUAL.md) · [`25_VOID_ART_V2.md`](25_VOID_ART_V2.md) · [`10_AUDIO.md`](10_AUDIO.md).
 
 ### W3 — Demo
 

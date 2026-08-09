@@ -5,7 +5,8 @@
 **Product:** **The Weaver** (north star) — separate from frozen Echo Lattice  
 **Job:** Lock how Fragments, Threads, Structures, and frayed-field gaps read on screen — fiber craft, not purple-void AI key art.  
 **Peers:** [`01_CONCEPT.md`](01_CONCEPT.md) · [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`17_MVP.md`](17_MVP.md) · [`18_RISKS.md`](18_RISKS.md) · [`PIVOT.md`](PIVOT.md)  
-**Audio / progression weavers:** [`10_AUDIO.md`](10_AUDIO.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md)
+**Audio / progression weavers:** [`10_AUDIO.md`](10_AUDIO.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md)  
+**Elevation:** [`25_VOID_ART_V2.md`](25_VOID_ART_V2.md) — depth / materials; kill circles-on-black
 
 ---
 
@@ -156,6 +157,6 @@ Ship **2–3 intentional motions** on shell + Tension. Physics readability > par
 
 ## 9. Non-goals
 
-- Full material bible atlas (follow-on art bible OK).  
+- Full material bible atlas (follow-on art bible OK — see [`25_VOID_ART_V2.md`](25_VOID_ART_V2.md)).  
 - Dual 2D+3D art tracks.  
 - Code or assets in this PR — **CLOUD ONLY**.

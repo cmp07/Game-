@@ -54,6 +54,12 @@
 | [`10_AUDIO.md`](10_AUDIO.md) | Tension earprint |
 | [`11_PROGRESSION.md`](11_PROGRESSION.md) | Literacy unlocks, not XP theater |
 
+### 20+ — Elevations
+
+| Doc | Topic |
+|---|---|
+| [`25_VOID_ART_V2.md`](25_VOID_ART_V2.md) | Void art V2 — depth/materials; kill circles-on-black |
+
 ### 12–15 — Biz / tech
 
 | Doc | Topic |
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-void-art` | Void art V2 elevation ([`25_VOID_ART_V2.md`](25_VOID_ART_V2.md)) |
 
 ---
 
