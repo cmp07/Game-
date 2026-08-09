@@ -67,6 +67,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.current_chamber = 0
 		GameState.best_moves.clear()
 		GameState.completed.clear()
+		GameState.run_cleared.clear()
 		GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 		GameState.move_ring.clear()
 		GameState.run_started = false
@@ -202,6 +203,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.best_moves.clear()
 		GameState.best_stars.clear()
 		GameState.completed.clear()
+		GameState.run_cleared.clear()
 		GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 		GameState.move_ring.clear()
 		GameState.run_started = false
@@ -453,21 +455,43 @@ func _run_self_test() -> bool:
 	# Continue UX — finished wing disables Continue; mid-run skips cleared rooms.
 	GameState.start_new_run()
 	GameState.completed.clear()
+	GameState.run_cleared.clear()
 	GameState.best_moves.clear()
 	GameState.best_stars.clear()
 	for i in range(GameState.run_queue.size()):
 		GameState.completed[int(GameState.run_queue[i])] = true
+		GameState.run_cleared[int(GameState.run_queue[i])] = true
 	GameState.queue_pos = GameState.run_queue.size()
 	if GameState.can_continue():
 		printerr("can_continue should be false after wing complete"); ok = false
+	# Lifetime completed must not poison a fresh run / Daily Continue skip.
+	GameState.start_new_run()
+	if not GameState.run_cleared.is_empty():
+		printerr("start_new_run should clear run_cleared"); ok = false
+	if GameState.queue_pos != 0 or GameState.current_chamber != int(GameState.run_queue[0]):
+		printerr("start_new_run should resume at queue head despite lifetime completed")
+		ok = false
+	GameState.continue_run()
+	if GameState.queue_pos != 0:
+		printerr("Continue after Start New must not skip via lifetime completed, queue_pos=%d" % GameState.queue_pos)
+		ok = false
 	GameState.completed.clear()
+	GameState.run_cleared.clear()
 	GameState.best_moves.clear()
 	GameState.best_stars.clear()
 	GameState.start_new_run()
 	GameState.record_chamber_win(int(GameState.run_queue[0]), 10, 8)
 	GameState.continue_run()
 	if GameState.queue_pos != 1:
-		printerr("continue_run should skip cleared chamber 0, queue_pos=%d" % GameState.queue_pos)
+		printerr("continue_run should skip run_cleared chamber 0, queue_pos=%d" % GameState.queue_pos)
+		ok = false
+	# Parked-on-last after clearing every room without advancing queue_pos.
+	GameState.start_new_run()
+	for i in range(GameState.run_queue.size()):
+		GameState.run_cleared[int(GameState.run_queue[i])] = true
+	GameState.queue_pos = maxi(0, GameState.run_queue.size() - 1)
+	if GameState.can_continue():
+		printerr("can_continue should be false when all remaining rooms are run_cleared")
 		ok = false
 
 	# Accessibility end-to-end (colorblind / flash / remap / subtitles / UI scale).
@@ -812,7 +836,10 @@ func _on_menu_start_new() -> void:
 
 func _on_menu_continue() -> void:
 	GameState.continue_run()
-	show_chamber()
+	if GameState.is_run_complete():
+		show_end_screen()
+	else:
+		show_chamber()
 
 
 func _on_menu_daily() -> void:

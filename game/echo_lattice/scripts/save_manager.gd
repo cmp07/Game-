@@ -31,6 +31,7 @@ func save_to_disk() -> bool:
 		"best_moves": GameState.best_moves,
 		"best_stars": GameState.best_stars,
 		"completed": GameState.completed,
+		"run_cleared": GameState.run_cleared,
 		"habit_profile": GameState.habit_profile,
 		"run_mode": GameState.run_mode,
 		"run_queue": GameState.run_queue,
@@ -140,6 +141,16 @@ func _apply_save(parsed: Dictionary) -> void:
 	var done = parsed.get("completed", {})
 	if typeof(done) == TYPE_DICTIONARY:
 		GameState.completed = _stringify_int_keys(done)
+	var cleared = parsed.get("run_cleared", null)
+	if typeof(cleared) == TYPE_DICTIONARY:
+		GameState.run_cleared = _stringify_int_keys(cleared)
+	else:
+		# Legacy saves used lifetime `completed` for Continue skips. Seed the
+		# per-run set from those clears so win→menu→Continue cannot soft-loop,
+		# then Start New / Daily still wipe run_cleared independently.
+		GameState.run_cleared.clear()
+		for k in GameState.completed.keys():
+			GameState.run_cleared[int(k)] = true
 	var habit = parsed.get("habit_profile", null)
 	if typeof(habit) == TYPE_DICTIONARY:
 		for k in ["up", "down", "left", "right"]:
@@ -168,7 +179,7 @@ func _apply_save(parsed: Dictionary) -> void:
 		GameState.queue_pos = mini(GameState.queue_pos, GameState.run_queue.size())
 		if GameState.queue_pos < GameState.run_queue.size():
 			GameState.current_chamber = int(GameState.run_queue[GameState.queue_pos])
-		elif GameState.run_queue.size() > 0:
+		else:
 			GameState.current_chamber = int(GameState.run_queue[GameState.run_queue.size() - 1])
 
 
