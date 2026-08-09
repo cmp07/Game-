@@ -1,7 +1,7 @@
 # Menu 10/10 — Title Shell Acceptance (HARD RESET)
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
-**Branch:** `cursor/menu-hard-reset` → merge to `cursor/echo-lattice-rc1` (not `main`)  
+**Branch:** `cursor/menu-hard-reset` ([#160](https://github.com/cmp07/Game-/pull/160)) merged into `cursor/echo-lattice-rc1` tip `e853ecc` (not `main`)  
 **Supersedes soft passes after #158** — USER rated prior tip **4/10**; this doc is the fail-CI bar.
 
 ---
@@ -70,4 +70,4 @@ Rejected forever: dashed circle seal · FIELD watermark · ~90% cream void · br
 | [`../RELEASE/screenshots/02_brand_main_menu.png`](../RELEASE/screenshots/02_brand_main_menu.png) | Partner brand slate |
 
 Raw (after branch push):  
-`https://github.com/cmp07/Game-/raw/cursor/menu-hard-reset/docs/RELEASE/screenshots/02_brand_main_menu.png`
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu.png`
