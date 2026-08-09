@@ -9,6 +9,7 @@
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |
 | [`13_VERTICAL_SLICE_README.md`](13_VERTICAL_SLICE_README.md) | How to run the playable Godot project |
+| [`../VISION/META_LOOPS_V3.md`](../VISION/META_LOOPS_V3.md) | **Retention loop vision** — Campaign / Daily / Endless / Museum / Hard+ as one Habit Ledger |
 | [`../RELEASE/`](../RELEASE/) | Post-launch ops — hotfix runbook, crash logs, 90-day daily calendar, DLC fence, FAQ |
 | [`../RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | Next Fest demo — Act I + Mirror Birth + wishlist CTA |
 
