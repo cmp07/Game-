@@ -26,17 +26,17 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 56,
-			"tagline": 18,
-			"blurb": 14,
-			"index_primary": 17,
-			"index": 15,
-			"meta": 11,
+			"brand": 48,
+			"tagline": 16,
+			"blurb": 13,
+			"index_primary": 15,
+			"index": 14,
+			"meta": 10,
 			"folio": 10,
-			"seed": 11,
-			"card_header": 11,
+			"seed": 10,
+			"card_header": 10,
 			"rule_w": 2.0,
-			"rule_len": 340.0,
+			"rule_len": 300.0,
 		}
 	return {
 		"brand": TYPE_BRAND,

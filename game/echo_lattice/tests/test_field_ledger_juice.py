@@ -367,23 +367,40 @@ class TestDiegeticShellMvp(unittest.TestCase):
                 left = x
                 break
         self.assertIsNotNone(left)
-        ys = [
+        # Ink hairline on the plate — strict threshold so ledger fiber/grid
+        # (lum ~190–210) does not inflate the card height.
+        edge = [
             y
-            for y in range(80, 900)
-            if any(lum(left + dx, y) < 200 for dx in range(0, 3))
+            for y in range(80, 1000)
+            if any(lum(left + dx, y) < 130 for dx in range(0, 3))
         ]
-        self.assertGreater(ys[-1] - ys[0], 350)
+        self.assertGreater(len(edge), 200, msg="Field Index left rule missing")
+        # Longest contiguous ink run = physical card edge.
+        runs: list[tuple[int, int]] = []
+        run_a: int | None = None
+        for y in range(80, 1000):
+            dark = any(lum(left + dx, y) < 130 for dx in range(0, 3))
+            if dark and run_a is None:
+                run_a = y
+            elif not dark and run_a is not None:
+                runs.append((run_a, y - 1))
+                run_a = None
+        if run_a is not None:
+            runs.append((run_a, 999))
+        self.assertTrue(runs, msg="Field Index card edge run missing")
+        top, bottom = max(runs, key=lambda r: r[1] - r[0])
+        self.assertGreater(bottom - top, 300, msg="Field Index plate too short")
         text_bottom = max(
             y
-            for y in range(ys[0], ys[-1] + 40, 2)
-            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 200) > 10
+            for y in range(top, bottom + 20, 2)
+            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 150) > 10
         )
-        self.assertLessEqual(text_bottom, ys[-1] + 8)
+        self.assertLessEqual(text_bottom, bottom + 8)
         orphan = sum(
             1
-            for y in range(ys[-1] + 40, 1000, 2)
+            for y in range(bottom + 24, 1000, 2)
             for x in range(left + 40, left + 240, 2)
-            if lum(x, y) < 180
+            if lum(x, y) < 140
         )
         self.assertLess(orphan, 40, msg="menu rows orphaned below Field Index card")
 

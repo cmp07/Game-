@@ -137,8 +137,8 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 ## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
 const _INDEX_PAD_L: float = 36.0
 const _INDEX_PAD_R: float = 20.0
-const _INDEX_PAD_T: float = 52.0
-const _INDEX_PAD_B: float = 24.0
+const _INDEX_PAD_T: float = 48.0
+const _INDEX_PAD_B: float = 20.0
 
 
 ## Right-side Field Index plate — sized to the action column when available.
@@ -150,27 +150,28 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	var page: Rect2 = _ledger_page_rect(vp)
 	# Brand lockup + seal sit on the left — keep clearance for hero type + glyph.
 	var brand_clear: float = page.position.x + minf(540.0, page.size.x * 0.50)
-	var right_pad: float = 28.0 if page.size.x < 1100.0 else 40.0
-	var card_w: float = 312.0 if page.size.x >= 1100.0 else 286.0
+	var right_pad: float = 28.0 if page.size.x < 1100.0 else 36.0
+	var card_w: float = 320.0 if page.size.x >= 1100.0 else 290.0
 	var card_x: float = page.end.x - right_pad - card_w
 	if card_x < brand_clear:
 		card_x = brand_clear
 		card_w = maxf(220.0, page.end.x - right_pad - card_x)
-	var top_pad: float = 52.0 if page.size.y < 700.0 else 74.0
-	var bottom_pad: float = 52.0 if page.size.y < 700.0 else 72.0
+	# Generous vertical budget so Deck/1080p never orphan index rows under the plate.
+	var top_pad: float = 44.0 if page.size.y < 700.0 else 64.0
+	var bottom_pad: float = 44.0 if page.size.y < 700.0 else 56.0
 	var top: float = page.position.y + top_pad + y_off
 	var bottom_limit: float = page.end.y - bottom_pad
 	# Prefer a physical index-card height; grow only when rows need it.
-	var card_h: float = clampf(page.size.y * 0.55, 360.0, 540.0)
+	var card_h: float = clampf(page.size.y * 0.58, 360.0, 560.0)
 	var col: Control = get_node_or_null("CardColumn") as Control
 	if col != null and col.get_child_count() > 0:
 		var content_h: float = col.size.y
 		if content_h < 8.0:
 			content_h = col.get_combined_minimum_size().y
-		card_h = clampf(content_h + _INDEX_PAD_T + _INDEX_PAD_B, 320.0, bottom_limit - top)
+		card_h = clampf(content_h + _INDEX_PAD_T + _INDEX_PAD_B, 300.0, bottom_limit - top)
 	else:
 		card_h = minf(card_h, bottom_limit - top)
-	return Rect2(card_x, top, card_w, maxf(280.0, card_h))
+	return Rect2(card_x, top, card_w, maxf(260.0, card_h))
 
 
 ## Inner content inset: binder holes left, FIELD INDEX header top.
@@ -195,7 +196,8 @@ func _slot_alpha() -> float:
 
 
 func _style_index_actions(compact: bool = false) -> void:
-	var scale: Dictionary = LedgerChrome.title_type_scale(720.0 if compact else 1080.0)
+	# title_type_scale treats page_h < 700 as compact — do not pass 720 here.
+	var scale: Dictionary = LedgerChrome.title_type_scale(560.0 if compact else 1080.0)
 	var idx_px: int = int(scale.get("index", LedgerChrome.TYPE_INDEX))
 	var primary_px: int = int(scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
 	LedgerChrome.style_index_button(start_button, true, primary_px)
@@ -213,13 +215,41 @@ func _style_index_actions(compact: bool = false) -> void:
 	LedgerChrome.style_index_button(quit_button, false, idx_px)
 	if _wishlist_button != null:
 		LedgerChrome.style_index_button(_wishlist_button, false, idx_px)
+	# Deck / editor short pages: keep row advance tight so the plate can hug actions.
+	if compact:
+		_clamp_index_button_fonts(idx_px, primary_px)
+
+
+func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
+	## Short pages: Regular face + zeroed StyleBox margins so rows stay Deck-safe.
+	var face: Font = null
+	if has_node("/root/LedgerType"):
+		face = LedgerType.font_or_fallback("display")
+	var buttons: Array = _index_action_buttons()
+	for b in buttons:
+		if b == null:
+			continue
+		var btn: Button = b as Button
+		var px: int = primary_px if btn == start_button else idx_px
+		if face != null:
+			btn.add_theme_font_override("font", face)
+		btn.add_theme_font_size_override("font_size", px)
+		for state in ["normal", "pressed", "hover", "focus", "disabled"]:
+			var sb := StyleBoxEmpty.new()
+			sb.content_margin_left = 0
+			sb.content_margin_right = 0
+			sb.content_margin_top = 0
+			sb.content_margin_bottom = 0
+			btn.add_theme_stylebox_override(state, sb)
 
 
 func _apply_index_row_metrics(compact: bool) -> void:
-	var row_h: float = 28.0 if compact else 34.0
-	var primary_h: float = 32.0 if compact else 38.0
+	var row_h: float = 22.0 if compact else 30.0
+	var primary_h: float = 24.0 if compact else 34.0
 	# Pack rows to the top of the Field Index plate — never vertically expand.
 	var shrink_top: int = Control.SIZE_SHRINK_BEGIN
+	_style_index_actions(compact)
+	_style_meta_as_ledger_lines(compact)
 	var buttons: Array = [
 		continue_button, daily_button, endless_button, hard_button,
 		museum_button, settings_button, colophon_button, quit_button, _wishlist_button,
@@ -228,15 +258,15 @@ func _apply_index_row_metrics(compact: bool) -> void:
 		if b == null:
 			continue
 		var btn: Button = b as Button
+		# Clamp after font style — content min-size can otherwise balloon past Deck budget.
 		btn.custom_minimum_size = Vector2(200.0, row_h)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.size_flags_vertical = shrink_top
+		btn.add_theme_constant_override("h_separation", 0)
 	if start_button:
 		start_button.custom_minimum_size = Vector2(200.0, primary_h)
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		start_button.size_flags_vertical = shrink_top
-	_style_index_actions(compact)
-	_style_meta_as_ledger_lines(compact)
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
@@ -245,20 +275,25 @@ func _style_meta_as_ledger_lines(compact: bool = false) -> void:
 		LedgerChrome.style_ink_label(
 			subtitle,
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.78),
-			11 if compact else 12
+			10 if compact else 11
 		)
-		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		# Prefer single quiet lines — wrapping balloons the plate past Deck budget.
+		subtitle.autowrap_mode = TextServer.AUTOWRAP_OFF
+		subtitle.clip_text = true
 		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		subtitle.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		subtitle.custom_minimum_size = Vector2(0, 16 if compact else 18)
 	if meta_label:
 		LedgerChrome.style_ink_label(
 			meta_label,
 			Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.85),
 			10 if compact else 11
 		)
-		meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		meta_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+		meta_label.clip_text = true
 		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		meta_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		meta_label.custom_minimum_size = Vector2(0, 16 if compact else 18)
 
 
 func _sync_field_index_layout() -> void:
@@ -271,7 +306,7 @@ func _sync_field_index_layout() -> void:
 	var page: Rect2 = _ledger_page_rect(vp)
 	var compact: bool = page.size.y < 700.0
 	_apply_index_row_metrics(compact)
-	col.add_theme_constant_override("separation", 4 if compact else 6)
+	col.add_theme_constant_override("separation", 2 if compact else 4)
 	# Place column using the shared card geometry (content-driven height + slot settle).
 	var y_off: float = _slot_y_off()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
@@ -323,8 +358,12 @@ func verify_field_index_layout() -> bool:
 		var host: Vector2 = global_position
 		var local := Rect2(r.position - host, r.size)
 		if not pad.encloses(local):
+			var mins: Vector2 = c.get_combined_minimum_size()
 			printerr(
-				"Field Index layout: %s at %s outside card %s" % [c.name, str(local), str(card)]
+				"Field Index layout: %s at %s outside card %s (min=%s font=%s)" % [
+					c.name, str(local), str(card), str(mins),
+					str(c.get_theme_font_size("font_size"))
+				]
 			)
 			ok = false
 	# Brand lockup must stay clear of the plate (no left-side clip).
