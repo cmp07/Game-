@@ -19,7 +19,7 @@
 | **Echo Lattice** | **Frozen** product line; keep today at `game/echo_lattice/`; later may archive to `game/_archive/echo_lattice/`; Steam pack freeze stands |
 | **Core verb** | Recover **Fragments** → draw **Threads** → tension **Structures** → inhabit what you wove |
 | **Hub** | One **Shed Yard** + authored fields/jobs (not open-world, not MMO) |
-| **Economy** | Craft scarcity only — **no player trade** at MVP or 1.0 |
+| **Economy** | Solo-satisfying craft scarcity — **no player trade** at MVP or 1.0 ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)) |
 | **Multiplayer** | **None** at MVP; social residue (seeds/ghosts) only as post fence |
 | **Monetization** | Paid premium **$4.99–$8.99** (plan **$6.99**); no F2P / battle pass / gacha |
 | **Tech** | Godot 4 · offline-first · playable root `game/weaver/` · do not overwrite EL |
@@ -131,7 +131,7 @@ Brace · Feed · Oppose · Echo
 | System | MVP lock | Authority |
 |---|---|---|
 | **World** | One Shed Yard hub; authored fields; 12–20 slice jobs → 40–60 at 1.0 | [`06_WORLD.md`](06_WORLD.md) |
-| **Economy** | Ports, thread budget, tension commits, residue — **no human trade** | [`07_ECONOMY.md`](07_ECONOMY.md) |
+| **Economy** | Ports, thread budget, tension commits, residue — **solo-satisfying scarcity; no human trade** | [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) (live) · [`07_ECONOMY.md`](07_ECONOMY.md) (trade critique archive) |
 | **Legacy** | Local gallery + ghost replay + next-field bias | [`08_LEGACY.md`](08_LEGACY.md) |
 | **Progression** | Literacy → catalog → authorship → memory (job stamps, not XP theater) | [`11_PROGRESSION.md`](11_PROGRESSION.md) |
 
@@ -225,6 +225,7 @@ Merged into `cursor/weaver-master` from remotes (2026-08-09 wave):
 | No playable `game/weaver/` yet | **H** | Docs-only wave — schedule throwaway prototype before art ramp ([`18_RISKS.md`](18_RISKS.md) P2) |
 | Fragment hand-feel (recover / silhouette / Pulse color) | **M** | Deepened in [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) — brass beat, not purple time |
 | Sim fence unset (2D vs constrained 3D) | **H** | Pick in week-1 of prototype ([`17_MVP.md`](17_MVP.md) §5) |
+| Economy feel authority split across 07 vs V2 | **L** | Resolved — live feel in [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md); 07 keeps trade pre-mortem |
 | Legal name check | **M** | Human before Partner ([`19_NAMES.md`](19_NAMES.md)) |
 | Combination / hint pedagogy beyond first-thirty | **M** | Mitigated by [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) — teach combos without spoiler wiki |
 | GAME_PLAN.md still lists older Game-1 research lanes | **L** | Update separately if Weaver becomes catalog Game 1 |
@@ -237,7 +238,7 @@ From [`18_RISKS.md`](18_RISKS.md):
 
 1. **Verb mud** — poetic nouns, unclear buttons  
 2. **Besiege gravity** — catalog before jobs  
-3. **Economy creep** — player trade as “legacy”  
+3. **Economy creep** — player trade as “legacy” (cite [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md))  
 4. **Docs without playable** — no feel proof  
 5. **Early Coming Soon** / **delete Echo Lattice** temptation  
 

@@ -1,9 +1,10 @@
 # Weaver — Economy
 
 **Doc:** `docs/WEAVER/07_ECONOMY.md`  
-**Status:** Systems lock — scarcity, sinks, and **player-trade critique** (CLOUD ONLY)  
+**Status:** Archive systems lock — scarcity spine + **player-trade critique** (CLOUD ONLY)  
+**Live authority (feel / solo satisfaction):** [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)  
 **Product line:** Weaver  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`06_WORLD.md`](06_WORLD.md) · [`08_LEGACY.md`](08_LEGACY.md) · [`13_MONETIZATION.md`](13_MONETIZATION.md) · [`17_MVP.md`](17_MVP.md)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`06_WORLD.md`](06_WORLD.md) · [`08_LEGACY.md`](08_LEGACY.md) · [`13_MONETIZATION.md`](13_MONETIZATION.md) · [`17_MVP.md`](17_MVP.md) · [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)
 
 ---
 
@@ -14,6 +15,8 @@ Weaver’s economy is **craft scarcity** — Fragment slots, Thread budget, Tens
 ```
 Scarcity = ports + spans + collapse risk  (not gold + stalls + fees)
 ```
+
+**V2 note:** For solo-satisfying scarcity design (feel, sinks, tuning rubric), prefer [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md). This file remains the trade pre-mortem and original loop table.
 
 ---
 
@@ -157,3 +160,5 @@ Before adding any “economy” feature, answer:
 ## 7. Lock line
 
 Weaver is rich when **stitches are scarce** and poor when **markets are busy**. Player trade is declined — not deferred as inevitable — because authorship is the product.
+
+**Superseding feel doc:** [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) — solo-satisfying scarcity replaces trade fantasy as the economy center of gravity.

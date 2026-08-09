@@ -32,7 +32,7 @@ Survey → Recover → Bind → Tension → Inhabit → Residue → next job
 | XP bar, level-up fireworks, purple ascension VFX | Gameslop; fights material identity |
 | Rarity rainbow Fragment ladder (grey→purple) | Slot dopamine ([`03_FRAGMENTS.md`](03_FRAGMENTS.md)) |
 | Gacha / chronoshard collection | Banned cliché |
-| Player trade / auction as spine | Different game (economy critique) |
+| Player trade / auction as spine | Different game ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)) |
 | Always-online gates | Offline-first |
 | Combat / stealth / dialogue RPG trees | Genre mash |
 | Echo Lattice act map / habit archetypes as Weaver meta | Separate SKU ([`PIVOT.md`](PIVOT.md)) |

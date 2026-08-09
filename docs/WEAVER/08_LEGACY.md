@@ -93,7 +93,7 @@ Gallery dopamine must survive with the network cable pulled.
 
 | Drift | Why it fails |
 |---|---|
-| **Tradable Legacy items** | Converts authorship into AH inventory — banned in [`07_ECONOMY.md`](07_ECONOMY.md) §3 |
+| **Tradable Legacy items** | Converts authorship into AH inventory — banned in [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) · [`07_ECONOMY.md`](07_ECONOMY.md) §3 |
 | **Housing districts** | Base-building meta island; wrong session shape |
 | **Seasonal wipe FOMO** | Live-service spine; offline-first breach |
 | **Power Legacy** | Permanent damage/HP buffs from old Structures | Wrong fantasy; gates fairness |

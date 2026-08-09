@@ -47,7 +47,7 @@ Ship **four** types. Resist a toolbox of twelve.
 | Out | Why |
 |---|---|
 | Damage / aggro Threads | Combat mash |
-| Trade / market Threads | Economy doc may cover exchange — not a bind verb |
+| Trade / market Threads | Not a bind verb — trade fantasy out ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)) |
 | Chrono / rewind Threads | Banned with Time Fragments |
 | Friendship / faction Threads | Social sim mash |
 | Freeform “any to any” | Deletes skill |
