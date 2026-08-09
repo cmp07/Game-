@@ -11,7 +11,8 @@ const MOVE_BUFFER_MAX: int = 30
 var current_chamber: int = 0
 var best_moves: Dictionary = {}    # chamber_id -> int
 var best_stars: Dictionary = {}    # chamber_id -> int (1..3)
-var completed: Dictionary = {}     # chamber_id -> true
+var completed: Dictionary = {}     # chamber_id -> true (lifetime clears)
+var run_cleared: Dictionary = {}   # chamber_id -> true (clears in the active wing only)
 var run_started: bool = false
 
 # "standard" full book, or "daily" five-chamber wing
@@ -46,7 +47,8 @@ func start_new_run() -> void:
 	for i in range(ChamberBook.chamber_count()):
 		run_queue.append(i)
 	queue_pos = 0
-	current_chamber = int(run_queue[0])
+	current_chamber = int(run_queue[0]) if run_queue.size() > 0 else 0
+	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
 	run_started = true
@@ -60,6 +62,7 @@ func start_daily_run() -> void:
 	run_queue = ChamberBook.daily_chamber_indices(daily_seed, 5)
 	queue_pos = 0
 	current_chamber = int(run_queue[0]) if run_queue.size() > 0 else 0
+	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
 	run_started = true
@@ -75,13 +78,16 @@ func continue_run() -> void:
 			run_mode = "standard"
 			for i in range(ChamberBook.chamber_count()):
 				run_queue.append(i)
-	# Skip chambers already cleared so Continue never soft-loops a finished room.
-	while queue_pos < run_queue.size() and completed.has(int(run_queue[queue_pos])):
+	# Skip chambers cleared in *this* wing so Continue never soft-loops a
+	# finished room — but never consult lifetime `completed`, or New Game /
+	# Daily would jump over still-unplayed queue entries.
+	while queue_pos < run_queue.size() and run_cleared.has(int(run_queue[queue_pos])):
 		queue_pos += 1
 	if queue_pos >= run_queue.size():
-		# Wing already finished — park on last chamber; UI should disable Continue.
-		queue_pos = maxi(0, run_queue.size() - 1)
-		current_chamber = int(run_queue[queue_pos]) if run_queue.size() > 0 else current_chamber
+		# Wing already finished — keep queue_pos past the end so can_continue()
+		# stays false (do not park on the last chamber).
+		if run_queue.size() > 0:
+			current_chamber = int(run_queue[run_queue.size() - 1])
 	else:
 		current_chamber = int(run_queue[queue_pos])
 	SaveManager.save_to_disk()
@@ -95,6 +101,14 @@ func is_run_complete() -> bool:
 func can_continue() -> bool:
 	if is_run_complete():
 		return false
+	if run_queue.size() > 0:
+		# Treat "every remaining queue entry is cleared this wing" as finished so
+		# a parked legacy save (queue_pos on last cleared room) cannot Continue.
+		var i: int = queue_pos
+		while i < run_queue.size() and run_cleared.has(int(run_queue[i])):
+			i += 1
+		if i >= run_queue.size():
+			return false
 	return run_started or completed.size() > 0 or queue_pos > 0 or current_chamber > 0
 
 
@@ -114,6 +128,7 @@ func record_direction(dir: Vector2i) -> void:
 
 func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1) -> void:
 	completed[chamber_id] = true
+	run_cleared[chamber_id] = true
 	var prev: int = int(best_moves.get(chamber_id, 999999))
 	if moves < prev:
 		best_moves[chamber_id] = moves

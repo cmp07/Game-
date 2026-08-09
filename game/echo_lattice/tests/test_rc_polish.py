@@ -155,17 +155,45 @@ class TestRcPolish(unittest.TestCase):
 
     def test_continue_skips_cleared_queue(self):
         queue = [0, 1, 2, 3, 4]
-        completed = {0: True, 1: True}
+        run_cleared = {0: True, 1: True}
         queue_pos = 0
-        while queue_pos < len(queue) and queue[queue_pos] in completed:
+        while queue_pos < len(queue) and queue[queue_pos] in run_cleared:
             queue_pos += 1
         self.assertEqual(queue_pos, 2)
         self.assertFalse(queue_pos >= len(queue))
+
+    def test_continue_ignores_lifetime_completed(self):
+        """Start New / Daily must not skip via lifetime completed dict."""
+        queue = [0, 1, 2, 3, 4]
+        completed = {0: True, 1: True, 2: True, 3: True, 4: True}
+        run_cleared = {}
+        queue_pos = 0
+        while queue_pos < len(queue) and queue[queue_pos] in run_cleared:
+            queue_pos += 1
+        self.assertEqual(queue_pos, 0)
+        self.assertNotEqual(queue_pos, len(queue))
+        # Lifetime completed alone must not mark the wing finished.
+        i = queue_pos
+        while i < len(queue) and queue[i] in run_cleared:
+            i += 1
+        can_continue = i < len(queue)
+        self.assertTrue(can_continue)
+        self.assertTrue(all(c in completed for c in queue))
 
     def test_wing_complete_disables_continue(self):
         queue = [0, 1, 2]
         queue_pos = len(queue)
         can_continue = not (len(queue) > 0 and queue_pos >= len(queue))
+        self.assertFalse(can_continue)
+
+    def test_parked_last_cleared_disables_continue(self):
+        queue = [0, 1, 2]
+        run_cleared = {0: True, 1: True, 2: True}
+        queue_pos = len(queue) - 1  # legacy park-on-last
+        i = queue_pos
+        while i < len(queue) and queue[i] in run_cleared:
+            i += 1
+        can_continue = not (i >= len(queue))
         self.assertFalse(can_continue)
 
     def test_atomic_save_roundtrip_shape(self):
@@ -176,6 +204,7 @@ class TestRcPolish(unittest.TestCase):
             "best_moves": {"0": 12},
             "best_stars": {"0": 2},
             "completed": {"0": True},
+            "run_cleared": {"0": True},
             "habit_profile": {"up": 0, "down": 1, "left": 0, "right": 2},
             "run_mode": "standard",
             "run_queue": [0, 1, 2],
