@@ -160,12 +160,12 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	if card_x < brand_clear:
 		card_x = brand_clear
 		card_w = maxf(260.0, page.end.x - right_pad - card_x)
-	# Tall index-card object — fills the right column with presence, not void.
-	var top_pad: float = 36.0 if page.size.y < 700.0 else 56.0
-	var bottom_pad: float = 36.0 if page.size.y < 700.0 else 48.0
+	# Tall index-card object — fills the right column nearly to the page foot.
+	var top_pad: float = 32.0 if page.size.y < 700.0 else 48.0
+	var bottom_pad: float = 28.0 if page.size.y < 700.0 else 32.0
 	var top: float = page.position.y + top_pad + y_off
 	var bottom_limit: float = page.end.y - bottom_pad
-	var card_h: float = clampf(page.size.y * 0.78, 420.0, 820.0)
+	var card_h: float = clampf(page.size.y * 0.86, 420.0, 900.0)
 	var col: Control = get_node_or_null("CardColumn") as Control
 	if col != null and col.get_child_count() > 0:
 		var content_h: float = col.size.y
@@ -173,11 +173,11 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 			content_h = col.get_combined_minimum_size().y
 		# Hug content from below, but never shrink under a substantial plate height.
 		var needed: float = content_h + _INDEX_PAD_T + _INDEX_PAD_B
-		var presence: float = clampf(page.size.y * 0.72, 400.0, bottom_limit - top)
-		card_h = clampf(maxf(needed, presence), 340.0, bottom_limit - top)
+		var presence: float = clampf(page.size.y * 0.84, 420.0, bottom_limit - top)
+		card_h = clampf(maxf(needed, presence), 360.0, bottom_limit - top)
 	else:
 		card_h = minf(card_h, bottom_limit - top)
-	return Rect2(card_x, top, card_w, maxf(320.0, card_h))
+	return Rect2(card_x, top, card_w, maxf(340.0, card_h))
 
 
 ## Inner content inset: binder holes left, FIELD INDEX header top.
@@ -463,7 +463,13 @@ func _refresh_progress_copy() -> void:
 	var friend_code: String = str(entry.get("friend_code", ""))
 	var dbest: int = GameState.daily_best_for_today()
 	var ebest: int = int(GameState.endless_best_depth)
-	if DemoBuild.is_demo():
+	# Quiet header: omit zero bests so a fresh ledger does not read as clinical stats.
+	if dbest <= 0 and ebest <= 0 and not DemoBuild.is_demo():
+		if friend_code != "":
+			meta_label.text = tr("menu.daily_meta_quiet_code") % [today, friend_code]
+		else:
+			meta_label.text = tr("menu.daily_meta_quiet") % today
+	elif DemoBuild.is_demo():
 		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
 		if friend_code != "":
 			meta_label.text = tr("menu.demo_daily_meta_code") % [today, friend_code, dbest]
@@ -586,6 +592,8 @@ func _build_demo_path() -> void:
 		Vector2i(20, 8), Vector2i(21, 8), Vector2i(22, 8), Vector2i(22, 9),
 		Vector2i(22, 10), Vector2i(23, 10), Vector2i(24, 10), Vector2i(25, 10),
 	]
+	# Seed a late-path so chalk + fossil stamps fill the brand blotter on open.
+	_demo_progress = 24.0
 
 
 func _process(delta: float) -> void:
@@ -710,35 +718,56 @@ func _draw() -> void:
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
 	# Surveyor seal + lattice glyph — substantial ink character under the brand.
-	var seal_r: float = 72.0 if page.size.y >= 700.0 else 42.0
-	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 168.0)
+	var seal_r: float = 78.0 if page.size.y >= 700.0 else 44.0
+	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 178.0)
 	if seal_c.x + seal_r + 20.0 > card.position.x:
 		seal_c.x = brand_x + seal_r + 8.0
+	# Soft blotter plate under the seal — fills the left plane with stock, not void.
+	var blot_w: float = minf(card.position.x - brand_x - 28.0, page.size.x * 0.40)
+	var blot_h: float = minf(page.end.y - (seal_c.y - seal_r) - 48.0, page.size.y * 0.42)
+	var blot := Rect2(brand_x - 4.0, seal_c.y - seal_r - 12.0, maxf(220.0, blot_w), maxf(180.0, blot_h))
+	if blot.size.y > 8.0 and blot.size.x > 8.0:
+		var blot_deep := Palette.PAPER_DEEP
+		blot_deep.a = 0.55
+		draw_rect(Rect2(blot.position + Vector2(4, 5), blot.size), blot_deep, true)
+		var blot_face := Palette.PAPER_BONE
+		blot_face.a = 0.92
+		draw_rect(blot, blot_face, true)
+		ArtKit.draw_paper_grain(self, blot, 27, 0.05)
+		draw_rect(
+			blot,
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+			false,
+			1.5
+		)
 	# Soft ink blot under the stamp so it reads as pressed into stock.
 	draw_circle(
 		seal_c + Vector2(3, 4),
-		seal_r + 6.0,
-		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.18)
+		seal_r + 8.0,
+		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.22)
 	)
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
 		"rot_deg": -5.0,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.88,
+		"alpha": 0.90,
 		"seed": 42,
-		"ring_w": 3.2,
+		"ring_w": 3.4,
 		"caption": "FIELD",
 		"font": _type("display"),
-		"font_size": maxi(14, folio_px + 4),
+		"font_size": maxi(15, folio_px + 5),
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.48)
+	_draw_seal_lattice(seal_c, seal_r * 0.50)
 	draw_string(
 		_type("mono"),
-		Vector2(brand_x, seal_c.y + seal_r + 28.0),
+		Vector2(brand_x, seal_c.y + seal_r + 30.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
 	)
-	# Ambient chalk path fills the brand plane — discrete stamps, no breathe.
-	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 28.0, seal_c.y - seal_r * 0.35))
+	# Letterpress specimen + chalk path fill the blotter — authored ink, not void.
+	var specimen_origin := Vector2(brand_x + 18.0, seal_c.y + seal_r + 52.0)
+	if specimen_origin.y + 140.0 < page.end.y - 24.0:
+		_draw_specimen_lattice(specimen_origin, 15.0 if page.size.y >= 700.0 else 11.0)
+	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 16.0, seal_c.y - seal_r * 0.15))
 
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
@@ -758,6 +787,14 @@ func _draw() -> void:
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
 		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot_a)
+	)
+	# Quiet foot line inside the plate — fills the card object without chamber HUD.
+	draw_string(
+		_type("mono"),
+		Vector2(card.position.x + 32.0, card.end.y - 18.0),
+		tr("menu.card_foot"),
+		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)
 	)
 
 	# Focus underlines — rust ink draw-in + selection tick (cadmium reserved).
@@ -784,33 +821,52 @@ func _draw_seal_lattice(center: Vector2, half: float) -> void:
 		ArtKit.draw_letterpress_wall(self, r2, true, 15)
 
 
+func _draw_specimen_lattice(origin: Vector2, cell: float = 16.0) -> void:
+	## Larger letterpress specimen on the brand blotter — authored ink, not empty stock.
+	var walls: Array = [
+		Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0), Vector2i(6, 0), Vector2i(7, 0),
+		Vector2i(0, 1), Vector2i(7, 1), Vector2i(0, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(4, 2), Vector2i(7, 2),
+		Vector2i(0, 3), Vector2i(7, 3), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(5, 4), Vector2i(6, 4), Vector2i(7, 4),
+		Vector2i(0, 5), Vector2i(7, 5), Vector2i(0, 6), Vector2i(3, 6), Vector2i(4, 6), Vector2i(7, 6),
+		Vector2i(0, 7), Vector2i(1, 7), Vector2i(2, 7), Vector2i(3, 7), Vector2i(7, 7),
+	]
+	var fossil: Array = [
+		Vector2i(4, 0), Vector2i(5, 0), Vector2i(5, 1), Vector2i(5, 2), Vector2i(6, 2),
+	]
+	for w in walls:
+		var r := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.5, cell - 1.5))
+		ArtKit.draw_letterpress_wall(self, r, false, 15)
+	for w in fossil:
+		var r2 := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.5, cell - 1.5))
+		ArtKit.draw_letterpress_wall(self, r2, true, 15)
+
+
 func _draw_ambient_chalk(seal_origin: Vector2) -> void:
 	## Writing chalk path beside the seal — fills brand plane; discrete stamps, no breathe.
-	var cell: float = 14.0
-	var origin: Vector2 = seal_origin + Vector2(36.0, 28.0)
-	var visible: int = mini(_demo_path.size(), int(_demo_progress))
+	var cell: float = 16.0
+	var origin: Vector2 = seal_origin + Vector2(24.0, 36.0)
+	var visible: int = mini(_demo_path.size(), maxi(2, int(_demo_progress)))
 	if visible < 2:
 		return
-	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.82)
-	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.28)
+	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.88)
+	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.42)
 	for i in range(visible - 1):
 		var a: Vector2i = _demo_path[i]
 		var b: Vector2i = _demo_path[i + 1]
-		var pa: Vector2 = origin + Vector2(a.x * 0.55 * cell, (a.y - 6) * 0.55 * cell)
-		var pb: Vector2 = origin + Vector2(b.x * 0.55 * cell, (b.y - 6) * 0.55 * cell)
-		ArtKit.draw_dashed_line(self, pa, pb, chalk, 2.0, 4.0, 2.5)
-		# Soft ink underprint so the path reads on bone paper.
-		draw_line(pa, pb, ink_trail, 1.0, true)
+		var pa: Vector2 = origin + Vector2(a.x * 0.62 * cell, (a.y - 6) * 0.62 * cell)
+		var pb: Vector2 = origin + Vector2(b.x * 0.62 * cell, (b.y - 6) * 0.62 * cell)
+		draw_line(pa, pb, ink_trail, 2.0, true)
+		ArtKit.draw_dashed_line(self, pa, pb, chalk, 2.4, 4.0, 2.2)
 	# Discrete fossil stamp when the demo buffer fills — no sin breathe.
 	var fill: int = int(_demo_progress) % 31
-	var fold_on: bool = fill > 22
+	var fold_on: bool = fill > 16
 	if fold_on:
-		for j in range(3):
+		for j in range(4):
 			var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
-			var mx: float = origin.x + (22.0 - fp.x * 0.55) * cell
-			var my: float = origin.y + (fp.y - 6) * 0.55 * cell + j * cell * 0.55
+			var mx: float = origin.x + (22.0 - fp.x * 0.62) * cell
+			var my: float = origin.y + (fp.y - 6) * 0.62 * cell + j * cell * 0.55
 			var fr := Rect2(mx, my, cell - 1.0, cell - 1.0)
-			draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.82), true)
+			draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.86), true)
 
 
 func _draw_button_underlines(_card: Rect2) -> void:
