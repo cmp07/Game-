@@ -24,6 +24,8 @@ buses/default_bus_layout="res://default_bus_layout.tres"
 
 [autoload]
 
+Palette="*res://scripts/palette.gd"
+ArtKit="*res://scripts/art_kit.gd"
 GameState="*res://scripts/game_state.gd"
 ChamberBook="*res://scripts/chamber_book.gd"
 SaveManager="*res://scripts/save_manager.gd"
@@ -96,4 +98,4 @@ confirm={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/canvas_textures/default_texture_filter=0
-environment/defaults/default_clear_color=Color(0.0784314, 0.0705882, 0.0627451, 1)
+environment/defaults/default_clear_color=Color(0.894118, 0.847059, 0.737255, 1)

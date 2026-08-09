@@ -11,106 +11,60 @@ grow_vertical = 2
 mouse_filter = 0
 script = ExtResource("1_menu")
 
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.078, 0.071, 0.063, 1)
-
-[node name="Wash" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.937, 0.902, 0.824, 0.06)
-
-[node name="AccentBar" type="ColorRect" parent="."]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 8.0
-anchor_bottom = 1.0
-color = Color(0.545, 0.227, 0.122, 1)
-
-[node name="VBox" type="VBoxContainer" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
+[node name="CardColumn" type="VBoxContainer" parent="."]
+anchors_preset = 0
+anchor_left = 1.0
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -220.0
-offset_right = 240.0
-offset_bottom = 220.0
-grow_horizontal = 2
+offset_left = -340.0
+offset_top = -120.0
+offset_right = -80.0
+offset_bottom = 200.0
+grow_horizontal = 0
 grow_vertical = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="VBox"]
-text = "ECHO LATTICE"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 64
-theme_override_colors/font_color = Color(0.961, 0.937, 0.867, 1)
-
-[node name="Tagline" type="Label" parent="VBox"]
-text = "A labyrinth that rebuilds from your last thirty moves."
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
-
-[node name="Subtitle" type="Label" parent="VBox"]
+[node name="Subtitle" type="Label" parent="CardColumn"]
 unique_name_in_owner = true
-text = "Four Acts. It learns you."
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.29, 0.267, 0.235, 1)
+text = "Four Acts. Ink on paper."
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
 
-[node name="MetaLabel" type="Label" parent="VBox"]
+[node name="MetaLabel" type="Label" parent="CardColumn"]
 unique_name_in_owner = true
 text = "Daily"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.29, 0.42, 0.467, 1)
 
-[node name="Spacer" type="Control" parent="VBox"]
-custom_minimum_size = Vector2(0, 16)
-
-[node name="ContinueButton" type="Button" parent="VBox"]
+[node name="ContinueButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 44)
+custom_minimum_size = Vector2(240, 34)
 text = "Continue"
+flat = true
 theme_override_font_sizes/font_size = 20
+alignment = 0
 
-[node name="StartButton" type="Button" parent="VBox"]
+[node name="StartButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 44)
+custom_minimum_size = Vector2(240, 38)
 text = "Start New Run"
-theme_override_font_sizes/font_size = 20
+flat = true
+theme_override_font_sizes/font_size = 22
+alignment = 0
 
-[node name="DailyButton" type="Button" parent="VBox"]
+[node name="DailyButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 44)
+custom_minimum_size = Vector2(240, 34)
 text = "Daily Challenge"
+flat = true
 theme_override_font_sizes/font_size = 20
+alignment = 0
 
-[node name="QuitButton" type="Button" parent="VBox"]
+[node name="QuitButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 44)
+custom_minimum_size = Vector2(240, 34)
 text = "Quit"
-theme_override_font_sizes/font_size = 20
-
-[node name="Footer" type="Label" parent="."]
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -32.0
-grow_horizontal = 2
-grow_vertical = 0
-horizontal_alignment = 1
-vertical_alignment = 1
-text = "Move: WASD / Arrows      Restart: R      Undo: Z      Menu: Esc"
-theme_override_colors/font_color = Color(0.29, 0.267, 0.235, 1)
-theme_override_font_sizes/font_size = 13
+flat = true
+theme_override_font_sizes/font_size = 18
+alignment = 0

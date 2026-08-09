@@ -119,58 +119,72 @@ def tile_floor_walked() -> Image.Image:
 
 
 def tile_wall_fresh() -> Image.Image:
-    img = paper_noise(TILE, SW["paper_bone"], jitter=6)
+    # Solid ink block — maze walls must read as architecture, not hollow frames.
+    # Paper peeks only as a 1px edge tremor (art bible: bordered onto paper).
+    img = paper_noise(TILE, SW["ink_black"], jitter=7)
     d = ImageDraw.Draw(img)
-    ink = hx(SW["ink_black"])
-    d.rectangle([0, 0, TILE - 1, WALL_PX - 1], fill=ink)
-    d.rectangle([0, TILE - WALL_PX, TILE - 1, TILE - 1], fill=ink)
-    d.rectangle([0, 0, WALL_PX - 1, TILE - 1], fill=ink)
-    d.rectangle([TILE - WALL_PX, 0, TILE - 1, TILE - 1], fill=ink)
+    soft = hx(SW["ink_soft"])
+    paper = hx(SW["paper_bone"])
+    # Soft edge highlight so adjacent wall cells don't melt into a blob.
+    d.rectangle([1, 1, TILE - 2, TILE - 2], outline=soft)
+    # 1px paper micro-tremor on two corners (hand-drawn ink, not laser).
+    d.point((0, 0), fill=paper)
+    d.point((TILE - 1, TILE - 1), fill=paper)
     rng = random.Random(0xBEE)
-    for _ in range(TILE * 2):
-        x = rng.randint(0, TILE - 1)
-        y = rng.randint(0, TILE - 1)
-        if (x < WALL_PX or x >= TILE - WALL_PX or y < WALL_PX or y >= TILE - WALL_PX):
-            if rng.random() < 0.15:
-                d.point((x, y), fill=hx(SW["ink_soft"]))
+    for _ in range(TILE * 3):
+        x = rng.randint(2, TILE - 3)
+        y = rng.randint(2, TILE - 3)
+        if rng.random() < 0.35:
+            d.point((x, y), fill=soft)
     return img
 
 
 def tile_wall_fossilized() -> Image.Image:
-    img = paper_noise(TILE, SW["paper_deep"], jitter=8)
+    # Solid rust fossil — habit calcified into stone.
+    img = paper_noise(TILE, SW["rust_fossil"], jitter=9)
     d = ImageDraw.Draw(img)
-    rust = hx(SW["rust_fossil"])
     rust_deep = hx(SW["rust_deep"])
-    d.rectangle([0, 0, TILE - 1, WALL_PX - 1], fill=rust_deep)
-    d.rectangle([0, TILE - WALL_PX, TILE - 1, TILE - 1], fill=rust_deep)
-    d.rectangle([0, 0, WALL_PX - 1, TILE - 1], fill=rust_deep)
-    d.rectangle([TILE - WALL_PX, 0, TILE - 1, TILE - 1], fill=rust_deep)
+    rust = hx(SW["rust_fossil"])
+    paper = hx(SW["paper_deep"])
+    d.rectangle([0, 0, TILE - 1, TILE - 1], outline=rust_deep)
+    d.rectangle([2, 2, TILE - 3, TILE - 3], outline=rust_deep)
     rng = random.Random(0xF05517)
-    for _ in range(24):
-        x = rng.randint(WALL_PX, TILE - WALL_PX - 1)
-        y = rng.randint(WALL_PX, TILE - WALL_PX - 1)
-        d.point((x, y), fill=rust)
-    for _ in range(6):
-        x1 = rng.randint(WALL_PX, TILE - WALL_PX - 1)
-        y1 = rng.randint(WALL_PX, TILE - WALL_PX - 1)
-        x2 = x1 + rng.choice([-3, -2, 2, 3])
-        y2 = y1 + rng.choice([-3, -2, 2, 3])
+    for _ in range(40):
+        x = rng.randint(1, TILE - 2)
+        y = rng.randint(1, TILE - 2)
+        d.point((x, y), fill=rust_deep if rng.random() < 0.55 else rust)
+    for _ in range(8):
+        x1 = rng.randint(2, TILE - 3)
+        y1 = rng.randint(2, TILE - 3)
+        x2 = x1 + rng.choice([-5, -3, 3, 5])
+        y2 = y1 + rng.choice([-4, -2, 2, 4])
         d.line([(x1, y1), (x2, y2)], fill=rust_deep)
+    # Tiny paper flecks at joins — calcification growing out of the ledger.
+    for _ in range(5):
+        d.point((rng.randint(0, TILE - 1), rng.randint(0, TILE - 1)), fill=paper)
     return img
 
 
 def tile_wall_folding() -> Image.Image:
-    img = paper_noise(TILE, SW["paper_bone"], jitter=6)
+    # Origami crease mid-fold — paper lifting, not a hollow box.
+    img = paper_noise(TILE, SW["paper_deep"], jitter=6)
     d = ImageDraw.Draw(img)
     ink = hx(SW["ink_black"])
     ink_s = hx(SW["ink_soft"])
+    rust = hx(SW["rust_fossil"])
+    # Diagonal fold planes.
     for i in range(TILE):
-        t = i / (TILE - 1)
-        crease_y = int(TILE / 2 + math.sin(t * math.pi) * 3)
+        t = i / max(1, TILE - 1)
+        crease_y = int(TILE / 2 + math.sin(t * math.pi) * 4)
         d.point((i, crease_y), fill=ink)
         d.point((i, crease_y - 1), fill=ink_s)
-    d.rectangle([0, 0, TILE - 1, WALL_PX - 1], fill=ink)
-    d.rectangle([0, TILE - WALL_PX, TILE - 1, TILE - 1], fill=ink)
+        d.point((i, max(0, crease_y - 2)), fill=rust if i % 3 == 0 else ink_s)
+    # Rising corner shadow wedge.
+    for y in range(TILE // 2, TILE):
+        for x in range(y - TILE // 2):
+            if 0 <= x < TILE:
+                d.point((x, y), fill=ink_s)
+    d.rectangle([0, 0, TILE - 1, TILE - 1], outline=ink)
     return img
 
 
@@ -231,16 +245,27 @@ def decal_chalk_footprint() -> Image.Image:
 
 
 def sprite_player_stamp() -> Image.Image:
+    # Surveyor silhouette: hooded torso + chest lantern (art bible §3).
+    # Must read at 24×24 without looking like a letterform.
     size = 24
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     ink = hxa(SW["ink_black"], 255)
+    soft = hxa(SW["ink_soft"], 255)
     lantern = hxa(SW["copper_key"], 255)
-    d.ellipse([9, 3, 15, 9], fill=ink)
-    d.polygon([(7, 9), (17, 9), (18, 20), (6, 20)], fill=ink)
-    d.rectangle([11, 12, 13, 15], fill=lantern)
-    d.rectangle([5, 20, 10, 22], fill=ink)
-    d.rectangle([14, 20, 19, 22], fill=ink)
+    # Hood / head
+    d.ellipse([8, 2, 16, 10], fill=ink)
+    # Cloaked triangular torso
+    d.polygon([(5, 9), (19, 9), (21, 20), (3, 20)], fill=ink)
+    # Soft shoulder notch so it doesn't read as "A"
+    d.point((5, 10), fill=soft)
+    d.point((19, 10), fill=soft)
+    # Chest lantern — the only warm spot
+    d.ellipse([10, 12, 14, 16], fill=lantern)
+    d.point((12, 14), fill=hxa(SW["chalk_white"], 220))
+    # Feet as two short stamps
+    d.rectangle([6, 20, 10, 23], fill=ink)
+    d.rectangle([14, 20, 18, 23], fill=ink)
     return img
 
 

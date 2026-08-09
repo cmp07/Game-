@@ -21,10 +21,30 @@ func _ready() -> void:
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
+	_style_ledger_chrome()
 	_refresh_title()
 	_on_moves_changed(0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(str(data.get("caption", "")))
+
+
+func _style_ledger_chrome() -> void:
+	## Top/bottom bars read as printed page margins, not glass HUD.
+	var paper := StyleBoxFlat.new()
+	paper.bg_color = Palette.PAPER_BONE
+	paper.border_color = Palette.INK_SOFT
+	paper.set_border_width_all(0)
+	paper.border_width_bottom = 1
+	var top: PanelContainer = get_node_or_null("TopBar")
+	if top:
+		top.add_theme_stylebox_override("panel", paper)
+	var paper2 := StyleBoxFlat.new()
+	paper2.bg_color = Palette.PAPER_BONE
+	paper2.border_color = Palette.INK_SOFT
+	paper2.border_width_top = 1
+	var bottom: PanelContainer = get_node_or_null("BottomBar")
+	if bottom:
+		bottom.add_theme_stylebox_override("panel", paper2)
 
 
 func _refresh_title() -> void:

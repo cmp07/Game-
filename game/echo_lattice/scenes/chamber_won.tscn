@@ -16,7 +16,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.078, 0.071, 0.063, 1)
+color = Color(0.894, 0.847, 0.737, 1)
 
 [node name="AccentBar" type="ColorRect" parent="."]
 anchors_preset = 12
@@ -24,7 +24,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -6.0
-color = Color(0.29, 0.42, 0.467, 1)
+color = Color(0.545, 0.227, 0.122, 1)
 
 [node name="VBox" type="VBoxContainer" parent="."]
 anchors_preset = 8
@@ -43,21 +43,21 @@ unique_name_in_owner = true
 text = "Chamber Cleared"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 48
-theme_override_colors/font_color = Color(0.961, 0.937, 0.867, 1)
+theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 
 [node name="Subtitle" type="Label" parent="VBox"]
 unique_name_in_owner = true
 text = ""
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 20
-theme_override_colors/font_color = Color(0.72, 0.46, 0.23, 1)
+theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 1)
 
 [node name="Stats" type="Label" parent="VBox"]
 unique_name_in_owner = true
 text = ""
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 15
-theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
 
 [node name="Spacer" type="Control" parent="VBox"]
 custom_minimum_size = Vector2(0, 12)
@@ -66,16 +66,22 @@ custom_minimum_size = Vector2(0, 12)
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 44)
 text = "→ Next Chamber"
+flat = true
 theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 
 [node name="ReplayButton" type="Button" parent="VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 44)
 text = "Replay this chamber"
+flat = true
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
 
 [node name="MenuButton" type="Button" parent="VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 44)
 text = "Menu"
+flat = true
 theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)

@@ -42,17 +42,62 @@ func _ready() -> void:
 
 func _capture_screenshot(kind: String, out_dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
-	# Ensure run queue / progress labels match a real standard run.
-	GameState.start_new_run()
 	if kind == "menu":
+		# Fresh-boot menu: no prior save, so Continue is disabled and the
+		# subtitle reads "A vertical slice — N chambers."
+		SaveManager.wipe()
+		GameState.current_chamber = 0
+		GameState.best_moves.clear()
+		GameState.completed.clear()
+		GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
+		GameState.move_ring.clear()
+		GameState.run_started = false
 		show_menu()
 	elif kind.begins_with("chamber:"):
+		# Enter a chamber with a fresh run so the habit reads "unwritten" and
+		# the maze is untouched.
 		var cidx: int = int(kind.substr(8))
+		GameState.start_new_run()
 		GameState.current_chamber = cidx
-		GameState.queue_pos = cidx
 		show_chamber()
+	elif kind.begins_with("walk_only:"):
+		# `walk_only:CHAMBER:STOP_BEFORE` — enter chamber, BFS-step toward the
+		# closest checkpoint, and stop STOP_BEFORE tiles short so the ghost
+		# trail is visible with no rewrite fired yet.
+		var rest: String = kind.substr("walk_only:".length())
+		var parts: PackedStringArray = rest.split(":")
+		var cidx2: int = int(parts[0]) if parts.size() > 0 else 2
+		var stop_before: int = 4
+		if parts.size() > 1:
+			stop_before = int(parts[1])
+		GameState.start_new_run()
+		GameState.current_chamber = cidx2
+		show_chamber()
+		await get_tree().process_frame
+		var stage_kid_w: Node = stage.get_child(0)
+		var chamber_w: Node2D = stage_kid_w.get_node("Chamber")
+		var target_w: Vector2i = chamber_w.goal_pos
+		for y in range(chamber_w.grid.size()):
+			for x in range(chamber_w.grid[y].size()):
+				if chamber_w.grid[y][x] == 2:
+					target_w = Vector2i(x, y)
+					break
+		# Manhattan distance to the target — used to stop early without ever
+		# stepping onto the checkpoint tile.
+		var guard_w: int = 0
+		while guard_w < 400:
+			var dist: int = abs(chamber_w.player_pos.x - target_w.x) + abs(chamber_w.player_pos.y - target_w.y)
+			if dist <= stop_before:
+				break
+			var step_w: Vector2i = _bfs_next_step(chamber_w, target_w)
+			if step_w == Vector2i.ZERO:
+				break
+			chamber_w._try_move(step_w)
+			chamber_w._flush_pending_echoes()
+			guard_w += 1
 	elif kind.begins_with("won:"):
 		var idx: int = int(kind.substr(4))
+		GameState.start_new_run()
 		GameState.current_chamber = idx
 		GameState.queue_pos = idx
 		GameState.last_clear_stars = 3
@@ -61,47 +106,76 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.best_stars[idx] = 3
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
-		# Show a chamber right after its rewrite fires — drives the player to the
-		# first checkpoint via BFS so the ghost trail + echo walls are visible.
+		# Drive to the first checkpoint, then freeze the origami slam mid-fold
+		# so the VISUAL v2 rewrite beat is visible (creases + cast shadow + rust).
 		var idx2: int = int(kind.substr(8))
+		GameState.start_new_run()
 		GameState.current_chamber = idx2
-		GameState.queue_pos = idx2
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid: Node = stage.get_child(0)
 		var chamber: Node2D = stage_kid.get_node("Chamber")
-		# Find the closest checkpoint.
 		var target: Vector2i = chamber.goal_pos
 		for y in range(chamber.grid.size()):
 			for x in range(chamber.grid[y].size()):
 				if chamber.grid[y][x] == 2:
 					target = Vector2i(x, y)
 					break
-		# Step-by-step BFS toward the checkpoint.
 		var guard: int = 0
 		while chamber.player_pos != target and guard < 400:
 			var step: Vector2i = _bfs_next_step(chamber, target)
 			if step == Vector2i.ZERO:
 				break
 			chamber._try_move(step)
-			chamber._flush_pending_echoes()
+			# Do NOT flush — leave the slam running so we can freeze mid-fold.
 			guard += 1
-		# Small forward walk after the rewrite so the echo walls are on-screen.
-		for k in range(3):
-			var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
-			if next == Vector2i.ZERO:
+		if chamber.pending_echoes.size() > 0:
+			# Mid-slam: lift + slot phase (~0.55) — the trailer still.
+			chamber.freeze_rewrite_at(0.55)
+		else:
+			# Fallback: if no echoes placed, step a few more and show settled walls.
+			for k in range(3):
+				var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
+				if next == Vector2i.ZERO:
+					break
+				chamber._try_move(next)
+				chamber._flush_pending_echoes()
+	elif kind.begins_with("rewrite_done:"):
+		# Settled fossil walls after the slam completes (for before/after comps).
+		var idx3: int = int(kind.substr("rewrite_done:".length()))
+		GameState.start_new_run()
+		GameState.current_chamber = idx3
+		show_chamber()
+		await get_tree().process_frame
+		var stage_kid3: Node = stage.get_child(0)
+		var chamber3: Node2D = stage_kid3.get_node("Chamber")
+		var target3: Vector2i = chamber3.goal_pos
+		for y in range(chamber3.grid.size()):
+			for x in range(chamber3.grid[y].size()):
+				if chamber3.grid[y][x] == 2:
+					target3 = Vector2i(x, y)
+					break
+		var guard3: int = 0
+		while chamber3.player_pos != target3 and guard3 < 400:
+			var step3: Vector2i = _bfs_next_step(chamber3, target3)
+			if step3 == Vector2i.ZERO:
 				break
-			chamber._try_move(next)
-			chamber._flush_pending_echoes()
+			chamber3._try_move(step3)
+			chamber3._flush_pending_echoes()
+			guard3 += 1
+		for k3 in range(3):
+			var next3: Vector2i = _bfs_next_step(chamber3, chamber3.goal_pos)
+			if next3 == Vector2i.ZERO:
+				break
+			chamber3._try_move(next3)
+			chamber3._flush_pending_echoes()
 	elif kind == "end":
-		# Populate some fake best-moves so the end screen has data.
 		GameState.start_new_run()
 		for i in range(ChamberBook.chamber_count()):
 			GameState.record_chamber_win(i, 30 + i)
 		show_end_screen()
 	else:
 		show_menu()
-	# Let a few frames render, then grab.
 	for _f in range(6):
 		await get_tree().process_frame
 	var img: Image = get_viewport().get_texture().get_image()
