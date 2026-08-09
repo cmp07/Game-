@@ -55,6 +55,9 @@
 | **W1A.3** | `cursor/execute-g1` (was `cursor/v3-type-latin-*`) | Vendor latin display + mono per art bible; stop ThemeDB-only brand | Brand lockup uses ledger type | [x] landed (IBM Plex OFL) |
 | **W1A.4** | `cursor/execute-g1` (was `cursor/v3-shell-boot-*`) | Custom boot splash (`paper_bone` / ink stamp); quiet cold boot | No Godot robot / grey flash | [x] landed |
 
+
+**Sibling merges into `cursor/execute-g1`:** `g1-habit-feel` · `g1-prototype-tells` · `g1-audio-lift` · `g1-tech-art` · `media-g1-capsules`.
+
 **Also on `cursor/execute-g1` (G1 MVP):** diegetic Clear Stamp / Wing Colophon plates ([`UI_DIEGETIC_V3`](UI_DIEGETIC_V3.md) §4.5–4.6); remix/Daily/Endless habit-answer plain speech ([`HABIT_SYSTEMS_V3`](HABIT_SYSTEMS_V3.md) READ aloud); screenshot path seeds habit answer for media agents.
 
 **Docs:** [`FEELS_PROTOTYPE.md`](FEELS_PROTOTYPE.md) · [`PRODUCTION_CRAFT.md`](PRODUCTION_CRAFT.md)
