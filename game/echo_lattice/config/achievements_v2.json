@@ -1,0 +1,303 @@
+{
+  "schema_version": 2,
+  "achievements": [
+    {
+      "id": "first_steps",
+      "title": "First Steps",
+      "desc": "Complete your first chamber clear.",
+      "icon": "boot",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "runs_completed", "value": 1 }
+    },
+    {
+      "id": "boot_cleared",
+      "title": "Lattice Online",
+      "desc": "Clear Booting the Lattice.",
+      "icon": "boot",
+      "secret": false,
+      "rule": { "kind": "stars_chamber_at_least", "chamber_id": "ec_01_boot", "value": 1 }
+    },
+    {
+      "id": "wing_seed",
+      "title": "Wing Seed",
+      "desc": "Clear 3 distinct chambers.",
+      "icon": "wing",
+      "secret": false,
+      "rule": { "kind": "chambers_cleared_at_least", "value": 3 }
+    },
+    {
+      "id": "wing_full",
+      "title": "Act I Closed",
+      "desc": "Clear all 7 Act I chambers.",
+      "icon": "wing",
+      "secret": false,
+      "rule": { "kind": "chambers_cleared_at_least", "value": 7 }
+    },
+    {
+      "id": "habit_aware",
+      "title": "Habit Aware",
+      "desc": "Commit your first lattice rewrite.",
+      "icon": "rewrite",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "rewrites_committed", "value": 1 }
+    },
+    {
+      "id": "fossil_witness",
+      "title": "Fossil Witness",
+      "desc": "Trigger a fossilize rewrite at least once.",
+      "icon": "fossil",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "fossils_seen", "value": 1 }
+    },
+    {
+      "id": "three_star_debut",
+      "title": "Clean Signal",
+      "desc": "Earn a 3-star clear.",
+      "icon": "star",
+      "secret": false,
+      "rule": { "kind": "any_of", "rules": [
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_01_boot", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_02_hum", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_03_signal", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_04_silence", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_05_choir", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_06_mirror", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_07_thicken", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_08_invert", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_09_prism", "value": 3 }
+      ]}
+    },
+    {
+      "id": "star_collector_9",
+      "title": "Nine Points of Light",
+      "desc": "Hold 9 total best stars.",
+      "icon": "star",
+      "secret": false,
+      "rule": { "kind": "stars_total_at_least", "value": 9 }
+    },
+    {
+      "id": "star_collector_21",
+      "title": "Constellation",
+      "desc": "Hold 21 total best stars.",
+      "icon": "star",
+      "secret": false,
+      "rule": { "kind": "stars_total_at_least", "value": 21 }
+    },
+    {
+      "id": "perfect_wing",
+      "title": "Perfect Wing",
+      "desc": "3-star every Act I chamber.",
+      "icon": "star",
+      "secret": false,
+      "rule": { "kind": "all_of", "rules": [
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_01_boot", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_02_hum", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_03_signal", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_04_silence", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_05_choir", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_06_mirror", "value": 3 },
+        { "kind": "stars_chamber_at_least", "chamber_id": "ec_07_thicken", "value": 3 }
+      ]}
+    },
+    {
+      "id": "daily_initiate",
+      "title": "Same Seed",
+      "desc": "Play a daily challenge.",
+      "icon": "daily",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "daily_runs", "value": 1 }
+    },
+    {
+      "id": "daily_clear",
+      "title": "Day Resolved",
+      "desc": "Clear a daily challenge.",
+      "icon": "daily",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "daily_clears", "value": 1 }
+    },
+    {
+      "id": "daily_week",
+      "title": "Seven Echoes",
+      "desc": "Hold a 7-day daily clear streak (best).",
+      "icon": "streak",
+      "secret": false,
+      "rule": { "kind": "streak_at_least", "streak": "daily_clear_best", "value": 7 }
+    },
+    {
+      "id": "weekly_initiate",
+      "title": "Weekmark",
+      "desc": "Play a weekly challenge.",
+      "icon": "weekly",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "weekly_runs", "value": 1 }
+    },
+    {
+      "id": "weekly_clear",
+      "title": "Week Resolved",
+      "desc": "Clear a weekly challenge.",
+      "icon": "weekly",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "weekly_clears", "value": 1 }
+    },
+    {
+      "id": "museum_first",
+      "title": "First Exhibit",
+      "desc": "Archive your first Self in the Museum.",
+      "icon": "museum",
+      "secret": false,
+      "rule": { "kind": "museum_count_at_least", "value": 1 }
+    },
+    {
+      "id": "museum_gallery",
+      "title": "Gallery Opening",
+      "desc": "Archive 10 Selves.",
+      "icon": "museum",
+      "secret": false,
+      "rule": { "kind": "museum_count_at_least", "value": 10 }
+    },
+    {
+      "id": "museum_chorus",
+      "title": "Chorus of Selves",
+      "desc": "Archive 25 Selves.",
+      "icon": "museum",
+      "secret": false,
+      "rule": { "kind": "museum_count_at_least", "value": 25 }
+    },
+    {
+      "id": "ghost_race",
+      "title": "Race Your Echo",
+      "desc": "Finish a ghost race against a Museum Self.",
+      "icon": "ghost",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "ghost_races", "value": 1 }
+    },
+    {
+      "id": "streak_3",
+      "title": "Three-Day Hum",
+      "desc": "Maintain a 3-day play streak (best).",
+      "icon": "streak",
+      "secret": false,
+      "rule": { "kind": "streak_at_least", "streak": "play_best", "value": 3 }
+    },
+    {
+      "id": "streak_7",
+      "title": "Week of Footsteps",
+      "desc": "Maintain a 7-day play streak (best).",
+      "icon": "streak",
+      "secret": false,
+      "rule": { "kind": "streak_at_least", "streak": "play_best", "value": 7 }
+    },
+    {
+      "id": "streak_14",
+      "title": "Fortnight Lattice",
+      "desc": "Maintain a 14-day play streak (best).",
+      "icon": "streak",
+      "secret": false,
+      "rule": { "kind": "streak_at_least", "streak": "play_best", "value": 14 }
+    },
+    {
+      "id": "ng_plus_unlock",
+      "title": "Again, Differently",
+      "desc": "Unlock New Game Plus.",
+      "icon": "ng",
+      "secret": false,
+      "rule": { "kind": "flag_true", "path": "profile.ng_plus_unlocked" }
+    },
+    {
+      "id": "ng_plus_clear",
+      "title": "Plus One",
+      "desc": "Clear a chamber while NG+ is active.",
+      "icon": "ng",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "ng_plus_clears", "value": 1 }
+    },
+    {
+      "id": "ng_plus_wing",
+      "title": "Cycle Complete",
+      "desc": "Complete an NG+ cycle.",
+      "icon": "ng",
+      "secret": false,
+      "rule": { "kind": "ng_plus_cycle_at_least", "value": 1 }
+    },
+    {
+      "id": "short_run_habit",
+      "title": "One Sitting",
+      "desc": "Complete a short-run session inside its budget.",
+      "icon": "pacing",
+      "secret": false,
+      "rule": { "kind": "short_runs_at_least", "value": 1 }
+    },
+    {
+      "id": "one_more",
+      "title": "One More Run",
+      "desc": "Start another run within 5 minutes of ending one.",
+      "icon": "pacing",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "one_more_runs", "value": 1 }
+    },
+    {
+      "id": "no_undo_clear",
+      "title": "No Take-Backs",
+      "desc": "Clear a chamber with zero undos.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "no_undo_clears", "value": 1 }
+    },
+    {
+      "id": "cold_clear",
+      "title": "Cold Operator",
+      "desc": "Clear a chamber on Cold mode.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "cold_clears", "value": 1 }
+    },
+    {
+      "id": "reader_finish",
+      "title": "Reader Graduate",
+      "desc": "Clear three chambers on Reader mode.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "reader_clears", "value": 3 }
+    },
+    {
+      "id": "all_modes",
+      "title": "Three Readings",
+      "desc": "Clear the same chamber on Reader, Standard, and Cold.",
+      "icon": "mastery",
+      "secret": true,
+      "rule": { "kind": "stat_at_least", "stat": "triple_mode_chambers", "value": 1 }
+    },
+    {
+      "id": "lattice_cartographer",
+      "title": "Cartographer",
+      "desc": "Visit every catalogued chamber at least once.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "chambers_cleared_at_least", "value": 9 }
+    },
+    {
+      "id": "silence_keeper",
+      "title": "Silence Keeper",
+      "desc": "Clear with zero hard rewrites.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "stat_at_least", "stat": "soft_only_clears", "value": 1 }
+    },
+    {
+      "id": "echo_complete",
+      "title": "Echo Complete",
+      "desc": "Clear every standard chamber once.",
+      "icon": "mastery",
+      "secret": false,
+      "rule": { "kind": "chambers_cleared_at_least", "value": 9 }
+    },
+    {
+      "id": "weekly_month",
+      "title": "Monthly Resonance",
+      "desc": "Hold a 4-week weekly clear streak (best).",
+      "icon": "weekly",
+      "secret": false,
+      "rule": { "kind": "streak_at_least", "streak": "weekly_clear_best", "value": 4 }
+    }
+  ]
+}

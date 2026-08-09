@@ -1,0 +1,11 @@
+; Merge into game/echo_lattice/project.godot
+;
+; [autoload]
+; MetaV2="*res://scripts/meta/meta_v2.gd"
+;
+; Optional boot for retention UI slice:
+; run/main_scene="res://scenes/meta/meta_hub.tscn"
+
+[autoload]
+
+MetaV2="*res://scripts/meta/meta_v2.gd"

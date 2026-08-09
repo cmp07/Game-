@@ -1,0 +1,117 @@
+{
+  "schema_version": 2,
+  "save_version": 2,
+  "daily": {
+    "namespace": "echo-lattice/daily/v2",
+    "pool": [
+      "ec_02_hum",
+      "ec_03_signal",
+      "ec_04_silence",
+      "ec_05_choir",
+      "ec_06_mirror",
+      "ec_07_thicken"
+    ]
+  },
+  "weekly": {
+    "namespace": "echo-lattice/weekly/v2",
+    "pool": [
+      "ec_05_choir",
+      "ec_06_mirror",
+      "ec_07_thicken",
+      "ec_08_invert",
+      "ec_09_prism"
+    ]
+  },
+  "stars": {
+    "min": 1,
+    "max": 3,
+    "track_mode_stars": false
+  },
+  "museum": {
+    "cap": 48,
+    "archive_on_clear": true,
+    "ghost_stride": 2,
+    "title_templates": {
+      "right_leaner": "The Right-Leaner of {chamber}",
+      "looper": "The Looper of {chamber}",
+      "zigzagger": "The Zigzag of {chamber}",
+      "balanced": "The Balanced Echo of {chamber}",
+      "default": "A Self from {chamber}"
+    }
+  },
+  "streaks": {
+    "timezone": "utc",
+    "play_counts_abandon": true,
+    "daily_requires_clear": true,
+    "weekly_requires_clear": true
+  },
+  "ng_plus": {
+    "unlock_chambers": [
+      "ec_01_boot",
+      "ec_02_hum",
+      "ec_03_signal",
+      "ec_04_silence",
+      "ec_05_choir",
+      "ec_06_mirror",
+      "ec_07_thicken"
+    ],
+    "max_cycle_scale": 5,
+    "modifiers": [
+      {
+        "id": "tighter_window",
+        "habit_window_delta": -8,
+        "habit_window_floor": 24
+      },
+      {
+        "id": "harder_bias",
+        "soft_hard_bias_delta": 0.08
+      },
+      {
+        "id": "strict_stars",
+        "star_slack_mult": 0.9
+      },
+      {
+        "id": "ghost_pressure",
+        "overlay_random_self": true
+      }
+    ]
+  },
+  "short_run": {
+    "kinds": {
+      "standard": {
+        "chamber_count": 3,
+        "budget_sec": 720,
+        "min_budget_sec": 480,
+        "max_budget_sec": 900
+      },
+      "daily": {
+        "chamber_count": 1,
+        "budget_sec": 600,
+        "min_budget_sec": 480,
+        "max_budget_sec": 900,
+        "seed_mode": "daily"
+      },
+      "weekly": {
+        "chamber_count": 1,
+        "budget_sec": 780,
+        "min_budget_sec": 480,
+        "max_budget_sec": 900,
+        "seed_mode": "weekly"
+      }
+    },
+    "interstitial_sec": 15,
+    "overage_warn_sec": 1080,
+    "one_more_window_sec": 300
+  },
+  "chambers": {
+    "ec_01_boot": { "name": "Booting the Lattice", "act": 1 },
+    "ec_02_hum": { "name": "The Hum", "act": 1 },
+    "ec_03_signal": { "name": "Signal Bleed", "act": 1 },
+    "ec_04_silence": { "name": "Room 4 Is Silent", "act": 1 },
+    "ec_05_choir": { "name": "The Choir", "act": 1 },
+    "ec_06_mirror": { "name": "Mirror Wing", "act": 1 },
+    "ec_07_thicken": { "name": "Thicken", "act": 1 },
+    "ec_08_invert": { "name": "Invert", "act": 2 },
+    "ec_09_prism": { "name": "Prism", "act": 2 }
+  }
+}

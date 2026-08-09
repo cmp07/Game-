@@ -4,6 +4,8 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 
 **Start here:** [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md)
 
+**Echo Lattice META v2** (stars, daily/weekly seeds, Museum of Selves, streaks, achievements, NG+, short-run pacing): [`docs/ECHO_LATTICE/15_META_V2.md`](docs/ECHO_LATTICE/15_META_V2.md) · [`game/echo_lattice/meta/README.md`](game/echo_lattice/meta/README.md)
+
 ## Strategy (short)
 
 - **One pure category per product** — do not mash genres into a hybrid “first game.”
