@@ -261,12 +261,12 @@ Steam wants ≥5; we ship **eight** native **1920×1080** (16:9) candidates in P
 | # | Store job | File | Silent-legible claim |
 |---|---|---|---|
 | 1 | Hook / header still | [`01_hook_rewrite_slam.png`](screenshots/01_hook_rewrite_slam.png) | Looking Glass slam — trail folds into walls; habit sealed |
-| 2 | Brand / tone | [`02_brand_main_menu.png`](screenshots/02_brand_main_menu.png) | Field Ledger / Field Index — paper, ink, rust |
+| 2 | Brand / tone | [`02_brand_main_menu.png`](screenshots/02_brand_main_menu.png) | Menu 1000× Field Ledger shell — hero lockup + Field Index (survey focused) |
 | 3 | Clean chamber read | [`03_chamber_start.png`](screenshots/03_chamber_start.png) | Quiet Span — ink walls, copper goal, empty BUFFER |
 | 4 | Habit forming | [`04_walking_trail.png`](screenshots/04_walking_trail.png) | Mirror Birth chalk trail — “Floor chalk noted.” |
 | 5 | Depth / pressure | [`05_mid_act_chamber.png`](screenshots/05_mid_act_chamber.png) | Cement Trail under the same ledger framing |
 | 6 | Meta / stars | [`06_win_stars.png`](screenshots/06_win_stars.png) | Clear stamp — 1–3★, moves vs par, Hand line |
-| 7 | Modes | [`07_daily_select.png`](screenshots/07_daily_select.png) | Daily sheet focused on the Field Index |
+| 7 | Modes | [`07_daily_select.png`](screenshots/07_daily_select.png) | Daily sheet focused (rust underline); see also [`menu_1000x/`](screenshots/menu_1000x/) |
 | 8 | Run close | [`08_wing_clear.png`](screenshots/08_wing_clear.png) | Ledger closed — habit handwriting / Museum next |
 
 **Rules:** no debug overlays, no Discord watermarks, no fake combat key art. Regenerate with `./game/echo_lattice/tools/capture_steam_store.sh` (writes a temporary 1920×1080 `override.cfg`, then removes it). Prefer a G1 tip so stills match the diegetic shell.

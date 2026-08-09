@@ -5,7 +5,8 @@
 **Tool:** [`../../../game/echo_lattice/tools/capture_steam_store.sh`](../../../game/echo_lattice/tools/capture_steam_store.sh)  
 **Store order / captions:** [`../STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md) §8 · [`TOUR.md`](TOUR.md)
 
-**G1 slate (2026-08-09):** regenerated from `cursor/execute-g1` @ `26ae974` so Partner stills show diegetic UI, paper framing, and habit beats. See [`TOUR.md`](TOUR.md) provenance note.
+**G1 slate (2026-08-09):** regenerated from `cursor/execute-g1` @ `26ae974` so Partner stills show diegetic UI, paper framing, and habit beats.  
+**Menu 1000× (2026-08-09):** slots `02_brand_main_menu` / `07_daily_select` + [`menu_1000x/`](menu_1000x/) focus-row variants after `cursor/menu-1000x` landed on RC1. See [`TOUR.md`](TOUR.md).
 
 Lower-res loop-proof tour (1152×672) remains at [`../../ECHO_LATTICE/screenshots/v2_complete/`](../../ECHO_LATTICE/screenshots/v2_complete/). **Upload this folder to Steam Partner**, not the tour folder.
 
