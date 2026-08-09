@@ -173,7 +173,7 @@ Priority: **P0** ship-blocking / trust · **P1** campaign quality · **P2** demo
 | 3 | **P0** | **Reconcile Balance v2 ↔ four-act roster** — retarget act tables, escalation curve, clear-rate ideals | Telemetry/tuning aimed at wrong skeleton | `balance_v2.json`, `14_BALANCE_V2.md` |
 | 4 | **P1** | **Diverge near-clones** — `13`≠`25`, `08`≠`33`, rail-stack family (`06`/`18`/`22`) | Restores act identity | maps |
 | 5 | **P1** | **Fix teach/test roles** — mark first-in-act transforms as `lesson`; keep remixes honest | Bible compliance; UI/filters | JSON tags |
-| 6 | **P1** | **Hard-variant pass** — each hard = tighter parent (floor/checkpoints/par), honest captions; add `mirror_h` + `rotate_180` hards | Daily + mastery track | 4–6 JSON |
+| 6 | **P1** | **Hard-variant pass** — each hard = tighter parent (floor/checkpoints/par), honest captions; add `mirror_h` + `rotate_180` hards | Daily + mastery track | 4–6 JSON · **UI entry done** (`cursor/fix-remaining-p1` Hard+ menu); map/caption honesty still open |
 | 7 | **P1** | **Hint pack** for Pressure/Mastery remixes + hards (1 line each) | Anti-frustration without spoiling | JSON + locale |
 | 8 | **P1** | **Caption rewrite** — drop mechanical Boss./Hard. mold; remove act-name leaks; align `05`/`35`/`38` with truth | Voice + trust | JSON + `echo_lattice.csv` |
 | 9 | **P1** | **Rename `invert_ballet`** → rotation-true title (e.g. Far Mark / Counterspin) until `invert` ships | Glossary hygiene | id/slug migration carefully |

@@ -69,6 +69,14 @@ flat = true
 theme_override_font_sizes/font_size = 20
 alignment = 0
 
+[node name="HardButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 34)
+text = "Hard Variants"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
 [node name="MuseumButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 34)

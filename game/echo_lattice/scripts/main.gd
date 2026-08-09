@@ -1133,6 +1133,8 @@ func show_menu() -> void:
 		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
 	if m.has_signal("endless_pressed"):
 		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
+	if m.has_signal("hard_pressed"):
+		m.connect("hard_pressed", Callable(self, "_on_menu_hard"))
 	if m.has_signal("museum_pressed"):
 		m.connect("museum_pressed", Callable(self, "_on_menu_museum"))
 	if has_node("/root/SteamService"):
@@ -1145,8 +1147,6 @@ func show_museum() -> void:
 	stage.add_child(m)
 	if m.has_signal("back_pressed"):
 		m.connect("back_pressed", Callable(self, "show_menu"))
-	if has_node("/root/SteamService"):
-		SteamService.set_menu_presence()
 
 
 func show_chamber() -> void:
@@ -1212,6 +1212,13 @@ func _on_menu_daily() -> void:
 
 func _on_menu_endless() -> void:
 	GameState.start_endless_run()
+	show_chamber()
+
+
+func _on_menu_hard() -> void:
+	if not GameState.can_start_hard_run():
+		return
+	GameState.start_hard_run()
 	show_chamber()
 
 

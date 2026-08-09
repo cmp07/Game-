@@ -18,3 +18,15 @@ Closes the three **High** findings before Steam init / Cloud enablement.
 **Tests:** `python3 game/echo_lattice/tests/test_security_high.py`
 
 **Release note:** see also [`../RELEASE/STEAMWORKS.md`](../RELEASE/STEAMWORKS.md) (AppID / Cloud sections).
+
+---
+
+## Follow-up (Medium) on `cursor/fix-remaining-p1`
+
+| ID | Fix |
+|---|---|
+| **SEC-02 drift** | `SAVE_ALLOWED_KEYS` / `SAVE_RUN_MODES` now match `save_to_disk` (endless + hard + daily meta + stamps + `updated_at`) so Cloud push/pull accepts real RC1 saves. |
+| **SEC-04** | Telemetry path allowlisted to `user://telemetry/**`. |
+| **SEC-08** | Known PII keys scrubbed when `include_pii` is false. |
+
+**Tests:** `python3 game/echo_lattice/tests/test_remaining_p1.py` + `test_security_high.py`.

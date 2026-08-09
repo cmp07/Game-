@@ -87,10 +87,10 @@ North-star pitch (content bible / slice): *escape by rewriting your own habits, 
 | `DailySeeds` + `DailyCalendar` + `daily_eligible` + variations | **Wired** — calendar/catalog featured chamber + eligible fillers; geometry variation on featured |
 | Content bible: one seeded chamber (+ variation) / day | Daily = featured calendar/catalog chamber leading a 5-chamber `daily_eligible` wing |
 | Open Lattice as `daily_showcase` / friend-code poster | Not special-cased in daily route |
-| Endless / infinite wing | **Does not exist** |
-| Hard variants in `hard_order` | Loaded into `_playable` but **never offered** in campaign or daily UI |
+| Endless / infinite wing | **Thin vertical landed** — menu Endless + rewrite pressure (`cursor/fix-endless`) |
+| Hard variants in `hard_order` | **Menu Hard+ wing** after parent clear (`cursor/fix-remaining-p1`); still optional vs campaign |
 
-**Effect:** Daily is “short campaign randomizer,” not the comparable friend-code ritual the content bible describes. Replay longevity leans on stars + full campaign only.
+**Effect:** Daily is calendar/catalog featured + eligible fillers with friend codes. Replay longevity = stars + campaign + Endless + Hard+.
 
 ### I4 — Mirror Birth / identity bosses under-deliver on “portrait”
 
@@ -284,7 +284,7 @@ Sorted by **impact first**, then lower effort.
 | ID | Proposal | Impact | Effort | Notes |
 |---|---|---|---|---|
 | **U6** | Surface first hint after first failed-looking rewrite or on pause; Echo Plate ghost-preview | M–H | S | Cheap tutorial lift |
-| **U7** | **Hard variants menu row** after parent clear (“Mirror Birth+”) | M | S | Uses existing JSON; daily spice |
+| **U7** | **Hard variants menu row** after parent clear (“Mirror Birth+”) | M | S | **Done** on `cursor/fix-remaining-p1` |
 | **U8** | **Open Lattice / sandbox from menu** as endless-lite (reroll seed, same transform grammar) | M–H | M | Supplies missing endless without a new genre |
 | **U9** | Looking Glass second-ceremony (unique PA + slam chroma within ledger) | M | S | Marks dual-axis birth |
 | **U10** | Trim or gate Act II–III remix count behind stars / optional wing (keep lessons+boss mandatory) | M | M | Fights fatigue; keeps pure fantasy |

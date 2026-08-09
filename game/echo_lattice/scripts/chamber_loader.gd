@@ -190,4 +190,5 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"hints": hints,
 		"onboarding": bool(rec.get("onboarding", raw.get("onboarding", false))),
 		"spectacle": bool(rec.get("spectacle", raw.get("spectacle", false))),
+		"hard_variant_of": str(rec.get("hard_variant_of", "")) if rec.get("hard_variant_of", null) != null else "",
 	}

@@ -7,9 +7,10 @@
 | **Synthesis branch** | `cursor/audit-ultra-synthesis` |
 | **Date** | 2026-08-09 |
 | **Mode** | Cloud-only merge of sibling `cursor/audit-*` findings + RC1 tree spot-checks |
-| **Ship-readiness score** | **68 / 100** (post–fix-* integration wave; Partner/assets still dominate Gate A) |
+| **Ship-readiness score** | **70 / 100** (post–fix-remaining-p1; Partner/assets still dominate Gate A) |
 | **P0 code landed** | **Yes — 2026-08-09** on `cursor/echo-lattice-rc1` (#82 / #87 / #88 + full `docs/AUDIT/`) |
 | **Fix wave landed** | **Yes — 2026-08-09** `cursor/fix-*` + meta/identity/ci category lanes on RC1 tip `c5cb181` |
+| **Remaining-P1 wave** | **Yes — 2026-08-09** `cursor/fix-remaining-p1` — Cloud save schema, hard-variant menu, telemetry path, rewrite wall-clock |
 
 ---
 
@@ -19,7 +20,7 @@ RC1 is a **real offline playable Steam candidate**, not a paper prototype. The h
 
 **P0 code landed (2026-08-09):** SaveManager bak recovery / post-commit cloud push (#82), Continue/`run_cleared` lifetime-skip fix (#87), and adversarial session integrity (build_flavor + book sanitize, focus/pad hold clear, locale HUD refresh + tests) (#88) are merged into this RC1 tip. Full audit set `#75–#89` docs live under [`docs/AUDIT/`](.).
 
-It is **not** Partner-ready. Steam Partner readiness remains **~45%** (real AppID/capsules/trailer still missing; CI + Linux/demo depots now scaffolded). **Landed on RC1 this wave:** SEC-01/02/03 High fixes; DailyCalendar friend-code wire; HabitRewriteLever + RewriteScoreBias; content clone rebuild + rewrite.cap; Endless thin vertical; Field Ledger juice; a11y/l10n tr()+CJK fetch; wishlist CTA gates; Deck GL Compatibility/7W; identity stamps + sealed habit HUD; CrashLogHook autoload; Steam CI workflow. Hard-variant UI and production audio/art remain open. RELEASE overclaims are reduced but not gone.
+It is **not** Partner-ready. Steam Partner readiness remains **~45%** (real AppID/capsules/trailer still missing; CI + Linux/demo depots now scaffolded). **Landed on RC1 this wave:** SEC-01/02/03 High fixes; DailyCalendar friend-code wire; HabitRewriteLever + RewriteScoreBias; content clone rebuild + rewrite.cap; Endless thin vertical; Field Ledger juice; a11y/l10n tr()+CJK fetch; wishlist CTA gates; Deck GL Compatibility/7W; identity stamps + sealed habit HUD; CrashLogHook autoload; Steam CI workflow. **`cursor/fix-remaining-p1`:** Cloud save schema sync (endless/hard), hard-variant menu after parent clear, SEC-04 telemetry path + SEC-08 PII scrub, CORE-08 wall-clock rewrite settle, habit mode_id for Endless. Production audio/art + real AppID remain open.
 
 **Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**, provided Partner identity + final store assets land first. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. Audit P0s + the fix-integration wave are on RC1; Gate A is still blocked on AppID / capsules / trailer / Partner paste.
 
@@ -60,20 +61,20 @@ It is **not** Partner-ready. Steam Partner readiness remains **~45%** (real AppI
 
 ---
 
-## 2. Scorecard (weighted → 68/100)
+## 2. Scorecard (weighted → 70/100)
 
 | Pillar | Weight | Score | Evidence |
 |---|---:|---:|---|
-| Offline playable loop & softlock bar | 20 | **17** | Continue/save P0s + Daily calendar wire + Endless climb; validators green |
+| Offline playable loop & softlock bar | 20 | **18** | Continue/save P0s + Daily + Endless + Hard+ wing; rewrite settle wall-clock |
 | Demo / content spine (Act I → Mirror Birth) | 15 | **13** | Clone maps rebuilt; rewrite.cap; identity stamps after Mirror Birth |
-| Thesis reactivity (habit → authorship) | 10 | **7** | HabitRewriteLever + RewriteScoreBias wired; sealed habit HUD until birth |
+| Thesis reactivity (habit → authorship) | 10 | **8** | HabitRewriteLever + score bias + Endless mode floor; sealed habit HUD until birth |
 | Store & Steam Partner | 20 | **10** | Wishlist CTA gates + CI/depot scaffolds; AppID/capsules/trailer still open (~45%) |
 | Compat (Win / Linux / Deck / mac) | 10 | **7** | GL Compatibility tag; Deck 7W defaults; Linux/demo depot VDFs added |
-| Security & privacy | 10 | **9** | SEC-01/02/03 High closed on RC1; Cloud validate + updated_at policy |
+| Security & privacy | 10 | **9** | SEC High closed; Cloud schema matches save_to_disk; telemetry path + PII scrub |
 | A11y / l10n | 8 | **6** | Settings/demo/glyphs keyed; CJK fetch/OFL; subtitle background |
 | Perf / juice / production audio-art | 7 | **5** | Baked grain + dirty redraw + particle pool; Field Ledger juice; stems still placeholder |
 
-**Interpretation:** High-60s = “integration line is playable + thesis-reactive,” still **not** Partner upload-ready until Gate A assets land.
+**Interpretation:** Low-70s = “integration line is playable + thesis-reactive,” still **not** Partner upload-ready until Gate A assets land.
 
 ---
 
@@ -92,17 +93,18 @@ Ranked by ship damage × likelihood for Coming Soon → Next Fest → 1.0.
 | 7 | ~~**Linux depot + demo depot missing**~~ — **mitigated** (VDF + CI scaffold on RC1); real AppIDs + upload still open | High → P1 | `cursor/steam-ci-depots` |
 | 8 | **Production audio/art placeholders** — beeps + PLACEHOLDER capsules kill conversion | High | Audio/art #84, Product U01/U07 |
 | 9 | **Trailer / final capsules absent** — Coming Soon page cannot convert | High | Product #79, Steam #80 |
-| 10 | ~~**Habit systems unwired**~~ — **mitigated** (HabitRewriteLever + score bias on RC1); hard-variant UI still thin | High → P1 | Design #83 / `cursor/fix-habit-wire` |
+| 10 | ~~**Habit systems unwired**~~ — **mitigated** (HabitRewriteLever + score bias + Endless mode floor); Hard+ menu landed | ~~High~~ → closed | Design #83 / `cursor/fix-habit-wire` + `fix-remaining-p1` |
 | 11 | ~~**Chamber map clones**~~ — **mitigated** (Twin Rail / Conductor / Mirror Birth+ rebuilt) | ~~High~~ → closed | Content #85 / `cursor/fix-content-clones` |
 | 12 | ~~**Perf: full redraw + grain spam**~~ — **mitigated** (bake + dirty redraw + particle pool); device Deck QA still open | High → P1 | Perf #81 / `cursor/fix-perf-grain` |
 | 13 | ~~**CJK font not vendored**~~ — **mitigated** (fetch script + OFL + locale keys; binary via LFS) | High → P1 | `cursor/fix-a11y-l10n` |
 | 14 | ~~**CrashLogHook not autoloaded**~~ — **mitigated** on RC1 via `cursor/bugs-meta-p1` | ~~P1~~ → closed | Meta #82 |
-| 15 | **Docs / code drift** (Endless, Forward+, META APIs, store “keyboard required”) — trust & support landmines | P1 | Architecture #86, Compat #75 |
+| 15 | ~~**Docs / code drift** (Endless, Forward+, store “keyboard required”)~~ — **partially mitigated** (store controller copy + audit stamps); META Museum still absent | P1 → P2 | Architecture #86 / `cursor/fix-remaining-p1` |
 | 16 | ~~**A11y RELEASE overclaims**~~ — **partially mitigated** (tr()+glyphs+subtitle bg); flash/remap honesty still needs RELEASE sync | P1 | `cursor/fix-a11y-l10n` |
 | 17 | **macOS unsigned stub** — do not list as public SKU | P1 | Desktop compat #78 |
 | 18 | ~~**CLI `--screenshot --out` unconstrained**~~ — **mitigated** (SEC-03 path allowlist) | ~~High~~ → closed | `cursor/fix-sec-high` |
 | 19 | **Parallel-PR residue into `main`** — stale echo-lattice-* PRs risk reintroducing deleted paths | P1 | Architecture #86 |
-| 20 | **Hard variants** still thin; Endless **offered** (thin vertical on RC1) — store copy must match | P1 | Design #83 / `cursor/fix-endless` |
+| 20 | ~~**Hard variants** unplayable from menu~~ — **mitigated** (Hard+ wing after parent clear); caption/map honesty polish remains | P1 → closed UI | Design #83 / `cursor/fix-remaining-p1` |
+| 21 | ~~**Cloud save schema rejected real RC1 saves**~~ — **mitigated** (`SAVE_ALLOWED_KEYS` / `SAVE_RUN_MODES` sync) | ~~P1~~ → closed | SEC-02 drift / `cursor/fix-remaining-p1` |
 
 ---
 
@@ -158,7 +160,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 |---|---:|---|
 | Critical | **0** | No secrets, no dynamic `Expression`/eval, no always-on network upload client |
 | High | **0** (was 3) | SEC-01/02/03 mitigated on RC1 (`allow_spacewar_dev`, cloud validate+atomic+newer-wins, screenshot `--out` allowlist) |
-| Medium | **7** | Telemetry path allowlist, save schema weakness, PII flag not enforced, CI supply chain, PCK encryption posture, stub cloud flags, loader path trust |
+| Medium | **5** open (+2 partial) | Telemetry path + PII scrub landed; residual: full event allowlist, CI pin, PCK encryption, stub cloud flags, loader path trust |
 | Low | **6** | Export console wrapper, wishlist `shell_open`, crash-pack dest, etc. |
 
 **Security verdict:** **Acceptable for offline stub / Coming Soon** with SEC High closed on RC1. Steam init / Cloud still require real AppID + Partner config before enabling in retail. Privacy story (local JSONL, opt-in upload no-op) is directionally right but needs in-game opt-out + enforced `include_pii: false`.
@@ -167,7 +169,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 
 ## 7. Ship-readiness score & milestone gates
 
-### Score: **68 / 100**
+### Score: **70 / 100**
 
 | Band | Meaning |
 |---|---|
@@ -238,10 +240,11 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ```text
 1. ✅ Merge #87 + #82 + #88 into RC1
 2. ✅ Land fix-* / category wave (sec/daily/habit/content/meta/perf/a11y/endless/juice/identity/ci/wishlist/compat)
-3. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A — blocks public)
-4. Confirm CI green; bake real AppIDs into VDFs; device BUGBASH Win+Deck
-5. Audio identity + demo cold-path polish (Gate B remainder)
-6. META Museum retention polish (Gate C remainder) → Deck Verified
+3. ✅ Remaining code P1s (cloud save schema, Hard+ menu, telemetry path, rewrite wall-clock) — cursor/fix-remaining-p1
+4. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A — blocks public)
+5. Confirm CI green; bake real AppIDs into VDFs; device BUGBASH Win+Deck
+6. Audio identity + demo cold-path polish (Gate B remainder)
+7. META Museum retention polish (Gate C remainder) → Deck Verified
 ```
 
 ---
@@ -253,3 +256,4 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - **P0 landing note (2026-08-09):** #82 / #87 / #88 code + #75–#81 / #83–#86 / #89 audit docs merged into `cursor/echo-lattice-rc1`; SaveManager conflicts resolved to keep bak recovery + `run_cleared` + book sanitize. Re-run full `game/echo_lattice/tests/` on the landed tip.
 - This document is executive-only; detail, repros, and file citations live in the linked sibling audit markdown files on their PRs.
 - **Fix-wave note (2026-08-09):** Integrated `cursor/fix-*` plus category lanes `bugs-meta-p1` / `form-identity-ledger` / `steam-ci-depots` into `cursor/echo-lattice-rc1` @ `c5cb181`. Python suite green (17/17). Score **54 → 68**. Re-synthesize when Partner AppID / capsules land.
+- **Remaining-P1 note (2026-08-09):** `cursor/fix-remaining-p1` closes Cloud save-schema drift, Hard+ menu (U7), SEC-04/08 telemetry hardening, CORE-08 wall-clock settle, habit Endless mode floor. Score **68 → 70**. Real AppID / capsules / trailer still Gate A.
