@@ -95,7 +95,7 @@
 
 **Phase 1 exit gate (G1):** Game-feel score **≥ 55 / 100** on re-score rubric in [`MASTER_1000X.md`](MASTER_1000X.md) §3 (same axes). Prototype P0 tells 1–5 closed. Habit answer legible on at least one remix clear.
 
-**G1 progress (2026-08-09, `cursor/execute-g1`):** P0 tells **3–5 closed in code** (type · END OF SLICE · ASCII stars) + boot splash (shell). Habit answer legible on remix/Daily/Endless clear stamps. P0 tells **1–2** (authored audio / tiles) remain Phase 3. Waves **1B–1D** still open for full ≥55 re-score.
+**G1 progress (2026-08-09, `cursor/execute-g1`):** P0 tells **3–5 closed in code** (type · END OF SLICE · ASCII stars) + boot splash (shell). Habit answer legible on remix/Daily/Endless clear stamps + Birth ceremony / split telegraph (`g1-habit-feel`). W1D.1 Pause Index + Colophon landed. Audio lift + TECH ART grain merge soften P0 audio/art debt (not authored earprint/tiles yet). Waves **1B** + W1C.1–2 / W1D.2 still open for full ≥55 re-score.
 
 ---
 
