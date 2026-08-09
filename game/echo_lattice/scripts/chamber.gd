@@ -1,13 +1,9 @@
 extends Node2D
 ##
-## Chamber — one playable room of Echo Lattice.
+## Chamber — one playable room of Echo Lattice (VISUAL v2).
 ##
-## Owns the tile grid, the player position, the local move buffer since the
-## last checkpoint, and applies rewrites when a checkpoint is entered.
-##
-## The scene has a self-drawn look: no external tile textures. Everything is
-## drawn in _draw() using solid rects, so the whole vertical slice runs
-## with only project.godot + icon.svg + scripts + scenes on disk.
+## Materials follow the art bible: ink on paper, fossilization not radiance.
+## The rewrite is a 12-beat origami slam with a single cadmium_warn heartbeat.
 ##
 
 signal chamber_won(chamber_id: int, moves: int)
@@ -27,62 +23,78 @@ const CELL_SIZE: int = 32
 const GRID_W: int = ChamberBook.GRID_W
 const GRID_H: int = ChamberBook.GRID_H
 
-# Palette — brutalist subway map: monochrome lattice + one accent.
-const COLOR_BG: Color              = Color("#0c0c11")
-const COLOR_FLOOR: Color           = Color("#181822")
-const COLOR_FLOOR_ALT: Color       = Color("#1c1c27")
-const COLOR_GRID: Color            = Color("#22222f")
-const COLOR_WALL: Color            = Color("#3b3b52")
-const COLOR_WALL_HI: Color         = Color("#4a4a67")
-const COLOR_CHECKPOINT: Color      = Color("#ffd166")
-const COLOR_CHECKPOINT_USED: Color = Color("#5a4a20")
-const COLOR_GOAL: Color            = Color("#57f2b0")
-const COLOR_GOAL_PULSE: Color      = Color("#a9ffdb")
-const COLOR_ECHO: Color            = Color("#ff5c3d")
-const COLOR_ECHO_SOFT: Color       = Color("#a53a26")
-const COLOR_PLAYER: Color          = Color("#e8e8f1")
-const COLOR_GHOST: Color           = Color(1.0, 0.36, 0.24, 0.35)
-const COLOR_GHOST_LINE: Color      = Color(1.0, 0.36, 0.24, 0.55)
+## Rewrite slam total duration (~12 beats × 75 ms).
+const REWRITE_DURATION: float = 0.90
+const REWRITE_HEARTBEAT: float = 0.07
 
-var grid: Array = []                 # 2D: grid[y][x] -> Tile
+var grid: Array = []
 var player_pos: Vector2i = Vector2i.ZERO
 var start_pos: Vector2i = Vector2i.ZERO
 var goal_pos: Vector2i = Vector2i.ZERO
 
 var move_count: int = 0
-var moves_since_checkpoint: Array = []   # Array[Vector2i]  positions walked since last rewrite
-var undo_stack: Array = []               # Array of dicts {pos, tile_at_prev, moves_pop}
-var checkpoints_triggered: Dictionary = {}   # Vector2i -> true
-var pending_echoes: Array = []           # Array[Vector2i] echoes still animating in
+var moves_since_checkpoint: Array = []
+var undo_stack: Array = []
+var checkpoints_triggered: Dictionary = {}
+var pending_echoes: Array = []
 var pending_echo_timer: float = 0.0
-var pending_echo_settle_time: float = 0.35
+var pending_echo_settle_time: float = REWRITE_DURATION
+var rewrite_freeze: bool = false  ## hold mid-slam for screenshot capture
+
+var walked: Dictionary = {}  ## Vector2i -> true — paper darkens under footprints
+var traverse_count: Dictionary = {}  ## Vector2i -> int — rust colonization intensity
 
 var chamber: Dictionary = {}
 var transform_name: String = "none"
 
 var goal_pulse_t: float = 0.0
-var move_accum: float = 0.0
 var has_won: bool = false
+var lantern_t: float = 0.0
+
+var tex_floor_fresh: Texture2D
+var tex_floor_walked: Texture2D
+var tex_wall_fresh: Texture2D
+var tex_wall_fossil: Texture2D
+var tex_wall_folding: Texture2D
+var tex_player: Texture2D
+var tex_chalk: Texture2D
+var tex_rust: Array = []
 
 
 func _ready() -> void:
+	_load_art()
 	set_process(true)
 	set_process_input(true)
 	load_chamber(GameState.current_chamber)
 
 
+func _load_art() -> void:
+	tex_floor_fresh = ArtKit.tex("res://art/tiles/floor_fresh_32.png")
+	tex_floor_walked = ArtKit.tex("res://art/tiles/floor_walked_32.png")
+	tex_wall_fresh = ArtKit.tex("res://art/tiles/wall_fresh_32.png")
+	tex_wall_fossil = ArtKit.tex("res://art/tiles/wall_fossilized_32.png")
+	tex_wall_folding = ArtKit.tex("res://art/tiles/wall_folding_32.png")
+	tex_player = ArtKit.tex("res://art/tiles/player_stamp_24.png")
+	tex_chalk = ArtKit.tex("res://art/decals/chalk_footprint.png")
+	tex_rust = [
+		ArtKit.tex("res://art/decals/rust_01.png"),
+		ArtKit.tex("res://art/decals/rust_02.png"),
+		ArtKit.tex("res://art/decals/rust_03.png"),
+		ArtKit.tex("res://art/decals/rust_04.png"),
+	]
+
+
 func _process(delta: float) -> void:
 	goal_pulse_t = fmod(goal_pulse_t + delta, TAU)
-	if pending_echoes.size() > 0:
+	lantern_t = fmod(lantern_t + delta * 1.7, TAU)
+	if pending_echoes.size() > 0 and not rewrite_freeze:
 		pending_echo_timer += delta
 		if pending_echo_timer >= pending_echo_settle_time:
-			# Commit all pending echoes to real ECHO_WALL cells.
 			for p in pending_echoes:
 				if _in_bounds(p) and grid[p.y][p.x] == Tile.FLOOR:
 					grid[p.y][p.x] = Tile.ECHO_WALL
 			pending_echoes.clear()
 			pending_echo_timer = 0.0
-			queue_redraw()
 	queue_redraw()
 
 
@@ -93,6 +105,8 @@ func load_chamber(id: int) -> void:
 	transform_name = str(chamber.get("transform", "none"))
 	var rows: Array = chamber.get("map", [])
 	grid.clear()
+	walked.clear()
+	traverse_count.clear()
 	for y in range(GRID_H):
 		var row: Array = []
 		var src: String = rows[y] if y < rows.size() else ""
@@ -115,12 +129,14 @@ func load_chamber(id: int) -> void:
 				_:
 					row.append(Tile.FLOOR)
 		grid.append(row)
+	walked[player_pos] = true
 	move_count = 0
 	moves_since_checkpoint.clear()
 	undo_stack.clear()
 	checkpoints_triggered.clear()
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	rewrite_freeze = false
 	has_won = false
 	emit_signal("moves_changed", move_count)
 	emit_signal("caption_changed", str(chamber.get("caption", "")))
@@ -131,6 +147,15 @@ func reset_chamber() -> void:
 	if chamber.is_empty():
 		return
 	load_chamber(int(chamber.get("id", 0)))
+
+
+func freeze_rewrite_at(t_norm: float) -> void:
+	## Hold the origami slam at a normalized progress for screenshot capture.
+	if pending_echoes.is_empty():
+		return
+	rewrite_freeze = true
+	pending_echo_timer = clampf(t_norm, 0.0, 1.0) * pending_echo_settle_time
+	queue_redraw()
 
 
 func _input(event: InputEvent) -> void:
@@ -157,7 +182,6 @@ func _try_move(dir: Vector2i) -> void:
 	var t: int = grid[target.y][target.x]
 	if t == Tile.WALL or t == Tile.ECHO_WALL:
 		return
-	# Persist an undo frame BEFORE any state change.
 	undo_stack.push_back({
 		"prev_pos": player_pos,
 		"prev_tile_at_target": t,
@@ -168,6 +192,8 @@ func _try_move(dir: Vector2i) -> void:
 	player_pos = target
 	move_count += 1
 	moves_since_checkpoint.append(target)
+	walked[target] = true
+	traverse_count[target] = int(traverse_count.get(target, 0)) + 1
 	GameState.record_direction(dir)
 	emit_signal("moves_changed", move_count)
 
@@ -183,24 +209,17 @@ func _try_move(dir: Vector2i) -> void:
 func _undo() -> void:
 	if undo_stack.is_empty():
 		return
-	# Commit any pending echoes first so undo state is deterministic.
 	_flush_pending_echoes()
 	var frame: Dictionary = undo_stack.pop_back()
-	# Revert player.
 	player_pos = frame["prev_pos"]
 	move_count = max(0, move_count - 1)
-	# Trim moves since checkpoint back to previous size.
 	while moves_since_checkpoint.size() > int(frame["moves_since_cp_len"]):
 		moves_since_checkpoint.pop_back()
-	# Restore triggered map — if a checkpoint just got used, un-use it and revert echoes.
 	var new_triggered: Dictionary = frame["triggered_snapshot"]
-	# Any checkpoint that IS triggered now but wasn't before: revert its cell and its echoes.
 	for pos in checkpoints_triggered.keys():
 		if not new_triggered.has(pos):
-			# Un-trigger — put the CHECKPOINT tile back.
 			if _in_bounds(pos):
 				grid[pos.y][pos.x] = Tile.CHECKPOINT
-			# Clear ECHO_WALL tiles back to FLOOR (best-effort revert).
 			_clear_all_echoes()
 	checkpoints_triggered = new_triggered
 	emit_signal("moves_changed", move_count)
@@ -213,6 +232,7 @@ func _flush_pending_echoes() -> void:
 			grid[p.y][p.x] = Tile.ECHO_WALL
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	rewrite_freeze = false
 
 
 func _clear_all_echoes() -> void:
@@ -223,14 +243,10 @@ func _clear_all_echoes() -> void:
 
 
 func _trigger_rewrite() -> void:
-	# The rewrite is a deterministic transform of the path walked since last checkpoint.
-	# We compute the transformed cells and mark them as pending echoes so the visual
-	# has a moment to communicate causation.
 	var path: Array = moves_since_checkpoint.duplicate()
 	if path.is_empty():
 		path.append(player_pos)
 	var transformed: Array = _apply_transform(transform_name, path)
-	# Deduplicate + filter to placeable candidates.
 	var seen := {}
 	var candidates: Array = []
 	for p in transformed:
@@ -245,19 +261,17 @@ func _trigger_rewrite() -> void:
 			continue
 		seen[p] = true
 		candidates.append(p)
-	# Solvability safety net — never seal the goal off from the player.
-	# Add candidates one by one; skip any that would break player→goal connectivity.
 	pending_echoes.clear()
 	for p in candidates:
 		if _would_still_be_reachable(p):
 			pending_echoes.append(p)
 	pending_echo_timer = 0.0
+	pending_echo_settle_time = REWRITE_DURATION
+	rewrite_freeze = false
 	moves_since_checkpoint.clear()
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
-	# Treat WALL / ECHO_WALL / the proposed new_wall / any already-pending echo as blocked.
-	# Player must remain able to reach the goal.
 	var w: int = GRID_W
 	var h: int = GRID_H
 	var blocked := {}
@@ -302,7 +316,6 @@ func _apply_transform(name: String, path: Array) -> Array:
 			for p in path:
 				out.append(Vector2i(GRID_W - 1 - int(p.x), GRID_H - 1 - int(p.y)))
 		"thicken":
-			# Habit solidifies on the same cells you just walked, minus the player's current tile.
 			for p in path:
 				out.append(Vector2i(int(p.x), int(p.y)))
 		"mirror_v_then_h":
@@ -319,7 +332,6 @@ func _on_win() -> void:
 		return
 	has_won = true
 	GameState.record_chamber_win(int(chamber.get("id", 0)), move_count)
-	# Small delay so the goal tile animation reads before the transition.
 	var t := get_tree().create_timer(0.35)
 	t.timeout.connect(func():
 		emit_signal("chamber_won", int(chamber.get("id", 0)), move_count)
@@ -330,87 +342,231 @@ func _in_bounds(p: Vector2i) -> bool:
 	return p.x >= 0 and p.x < GRID_W and p.y >= 0 and p.y < GRID_H
 
 
+func _grid_offset() -> Vector2:
+	var vp_size: Vector2 = get_viewport_rect().size
+	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
+	return ((vp_size - grid_px) * 0.5).floor()
+
+
 # ---------------- rendering ----------------
 
 func _draw() -> void:
 	var vp_size: Vector2 = get_viewport_rect().size
+	var offset: Vector2 = _grid_offset()
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
-	var offset: Vector2 = ((vp_size - grid_px) * 0.5).floor()
+	var page := Rect2(offset - Vector2(24, 24), grid_px + Vector2(48, 48))
 
-	# Background wash
-	draw_rect(Rect2(Vector2.ZERO, vp_size), COLOR_BG, true)
+	# Full viewport paper wash + margin.
+	draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
+	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
+
+	# Cast shadow under the ledger page.
+	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
+	draw_rect(page, Palette.PAPER_BONE, true)
+	ArtKit.draw_ledger_grid(self, page, 16)
+	ArtKit.draw_paper_grain(self, page, 42, 0.08)
+
+	# Page border — ink rule.
+	draw_rect(page, Palette.INK_SOFT, false, 2.0)
 
 	# Tiles
 	for y in range(GRID_H):
 		for x in range(GRID_W):
-			var t: int = grid[y][x]
-			var rect := Rect2(offset + Vector2(x * CELL_SIZE, y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
-			var col: Color
-			match t:
-				Tile.FLOOR:
-					col = COLOR_FLOOR if (x + y) % 2 == 0 else COLOR_FLOOR_ALT
-				Tile.WALL:
-					col = COLOR_WALL
-				Tile.CHECKPOINT:
-					col = COLOR_FLOOR
-				Tile.CHECKPOINT_USED:
-					col = COLOR_FLOOR
-				Tile.GOAL:
-					col = COLOR_FLOOR
-				Tile.ECHO_WALL:
-					col = COLOR_ECHO
-				_:
-					col = COLOR_FLOOR
-			draw_rect(rect, col, true)
-			# Fine grid line
-			draw_rect(rect, COLOR_GRID, false, 1.0)
+			_draw_tile(Vector2i(x, y), offset)
 
-			# Decorations over floor.
-			match t:
-				Tile.WALL:
-					var inner := rect.grow(-2.0)
-					draw_rect(inner, COLOR_WALL_HI, false, 1.0)
-				Tile.CHECKPOINT:
-					var r := 6.0 + sin(goal_pulse_t * 3.0) * 1.5
-					draw_circle(rect.get_center(), r, COLOR_CHECKPOINT)
-					draw_arc(rect.get_center(), r + 3.0, 0.0, TAU, 24, COLOR_CHECKPOINT, 1.0, true)
-				Tile.CHECKPOINT_USED:
-					draw_circle(rect.get_center(), 3.0, COLOR_CHECKPOINT_USED)
-				Tile.GOAL:
-					var pulse: float = 0.5 + 0.5 * sin(goal_pulse_t * 2.5)
-					var gcol: Color = COLOR_GOAL.lerp(COLOR_GOAL_PULSE, pulse)
-					draw_rect(rect.grow(-4.0), gcol, true)
-					draw_rect(rect.grow(-8.0), COLOR_FLOOR, true)
-					draw_rect(rect.grow(-11.0), gcol, true)
-				Tile.ECHO_WALL:
-					var inner2 := rect.grow(-3.0)
-					draw_rect(inner2, COLOR_ECHO_SOFT, true)
+	# Ghost trail — dashed chalk diagram line (art bible §5).
+	_draw_ghost_trail(offset)
 
-	# Ghost trail — the path walked since last checkpoint.
+	# Pending rewrite origami slam.
+	if pending_echoes.size() > 0:
+		_draw_rewrite_slam(offset, vp_size, page)
+
+	# Player — surveyor stamp + chest-lantern warm spot.
+	_draw_player(offset)
+
+
+func _draw_tile(p: Vector2i, offset: Vector2) -> void:
+	var t: int = grid[p.y][p.x]
+	var rect := Rect2(offset + Vector2(p.x * CELL_SIZE, p.y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
+	var is_walked: bool = walked.has(p)
+
+	match t:
+		Tile.WALL:
+			_blit(tex_wall_fresh, rect, Palette.INK_BLACK)
+			# Soft edge tremor — 1px ink rule.
+			draw_rect(rect, Palette.INK_SOFT, false, 1.0)
+		Tile.ECHO_WALL:
+			_blit(tex_wall_fossil, rect, Palette.RUST_FOSSIL)
+			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
+			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
+				draw_texture_rect(tex_rust[rust_i], rect.grow(-2.0), false)
+			draw_rect(rect.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+		Tile.FLOOR, Tile.CHECKPOINT, Tile.CHECKPOINT_USED, Tile.GOAL:
+			if is_walked and tex_floor_walked != null:
+				_blit(tex_floor_walked, rect, Palette.PAPER_DEEP)
+			else:
+				_blit(tex_floor_fresh, rect, Palette.PAPER_BONE if (p.x + p.y) % 2 == 0 else Palette.PAPER_DEEP.lerp(Palette.PAPER_BONE, 0.55))
+			# Habit colonization — rust flecks on over-walked floors (never on unwalked).
+			var tc: int = int(traverse_count.get(p, 0))
+			if tc >= 3 and tex_rust.size() > 0:
+				var ri: int = (p.x + p.y) % tex_rust.size()
+				if tex_rust[ri] != null:
+					var rc: Color = Color(1, 1, 1, clampf(0.25 + 0.12 * float(tc - 2), 0.25, 0.7))
+					draw_texture_rect(tex_rust[ri], rect.grow(-6.0), false, rc)
+		_:
+			draw_rect(rect, Palette.PAPER_BONE, true)
+
+	# Fine ledger sub-grid on floors.
+	if t != Tile.WALL and t != Tile.ECHO_WALL:
+		var gcol: Color = Palette.INK_SOFT
+		gcol.a = 0.12
+		draw_rect(rect, gcol, false, 1.0)
+
+	match t:
+		Tile.CHECKPOINT:
+			# Printed stamp — slate teal, no aura.
+			var stamp := rect.grow(-7.0)
+			draw_rect(stamp, Palette.SLATE_TEAL, false, 2.0)
+			draw_rect(stamp.grow(-3.0), Palette.SLATE_TEAL, false, 1.0)
+			# Tiny § mark via crossed bars.
+			var c: Vector2 = rect.get_center()
+			draw_line(c + Vector2(-4, 0), c + Vector2(4, 0), Palette.SLATE_TEAL, 1.5, true)
+			draw_line(c + Vector2(0, -4), c + Vector2(0, 4), Palette.SLATE_TEAL, 1.5, true)
+		Tile.CHECKPOINT_USED:
+			var c2: Vector2 = rect.get_center()
+			draw_circle(c2, 3.0, Palette.INK_SOFT)
+		Tile.GOAL:
+			# Copper keyhole plate — dry-plate etch, not neon.
+			var pulse: float = 0.5 + 0.5 * sin(goal_pulse_t * 2.0)
+			var gcol: Color = Palette.COPPER_KEY.lerp(Palette.SLATE_TEAL, 0.15 * pulse)
+			draw_rect(rect.grow(-5.0), gcol, false, 2.0)
+			draw_rect(rect.grow(-10.0), gcol, true)
+			draw_rect(rect.grow(-13.0), Palette.PAPER_BONE, true)
+
+
+func _blit(tex: Texture2D, rect: Rect2, fallback: Color) -> void:
+	if tex != null:
+		draw_texture_rect(tex, rect, false)
+	else:
+		draw_rect(rect, fallback, true)
+
+
+func _draw_ghost_trail(offset: Vector2) -> void:
+	if moves_since_checkpoint.is_empty():
+		return
+	# Chalk footprints on each buffer tile.
 	for i in range(moves_since_checkpoint.size()):
 		var p: Vector2i = moves_since_checkpoint[i]
-		var r := Rect2(offset + Vector2(p.x * CELL_SIZE + 12, p.y * CELL_SIZE + 12), Vector2(CELL_SIZE - 24, CELL_SIZE - 24))
-		draw_rect(r, COLOR_GHOST, true)
-	# Ghost trail lines (connecting)
+		var rect := Rect2(offset + Vector2(p.x * CELL_SIZE + 6, p.y * CELL_SIZE + 6), Vector2(CELL_SIZE - 12, CELL_SIZE - 12))
+		if tex_chalk != null:
+			var a: float = 0.35 + 0.45 * (float(i + 1) / float(moves_since_checkpoint.size()))
+			draw_texture_rect(tex_chalk, rect, false, Color(1, 1, 1, a))
+		else:
+			draw_rect(rect.grow(-4.0), Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.55), true)
+	# Dashed chalk connector.
 	if moves_since_checkpoint.size() >= 2:
-		var pts: PackedVector2Array = PackedVector2Array()
-		for p in moves_since_checkpoint:
-			pts.append(offset + Vector2(p.x * CELL_SIZE + CELL_SIZE * 0.5, p.y * CELL_SIZE + CELL_SIZE * 0.5))
-		for i in range(pts.size() - 1):
-			draw_line(pts[i], pts[i + 1], COLOR_GHOST_LINE, 2.0, true)
+		var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.65)
+		for i in range(moves_since_checkpoint.size() - 1):
+			var a: Vector2i = moves_since_checkpoint[i]
+			var b: Vector2i = moves_since_checkpoint[i + 1]
+			var pa: Vector2 = offset + Vector2(a.x * CELL_SIZE + CELL_SIZE * 0.5, a.y * CELL_SIZE + CELL_SIZE * 0.5)
+			var pb: Vector2 = offset + Vector2(b.x * CELL_SIZE + CELL_SIZE * 0.5, b.y * CELL_SIZE + CELL_SIZE * 0.5)
+			ArtKit.draw_dashed_line(self, pa, pb, chalk, 1.5, 4.0, 3.0)
 
-	# Pending echoes (animate in).
-	if pending_echoes.size() > 0:
-		var t_norm: float = clamp(pending_echo_timer / pending_echo_settle_time, 0.0, 1.0)
-		var pulse: float = 0.35 + 0.65 * (1.0 - abs(sin(t_norm * PI * 2.0)))
-		for p in pending_echoes:
-			var r := Rect2(offset + Vector2(p.x * CELL_SIZE, p.y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
-			var c: Color = COLOR_ECHO
-			c.a = pulse
-			draw_rect(r.grow(-2.0), c, true)
 
-	# Player
-	var pr := Rect2(offset + Vector2(player_pos.x * CELL_SIZE + 6, player_pos.y * CELL_SIZE + 6), Vector2(CELL_SIZE - 12, CELL_SIZE - 12))
-	draw_rect(pr, COLOR_PLAYER, true)
-	# Player outline for punch
-	draw_rect(pr.grow(1.0), Color(0, 0, 0, 0.5), false, 1.0)
+func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
+	var t_norm: float = clampf(pending_echo_timer / pending_echo_settle_time, 0.0, 1.0)
+	# 12-beat origami slam (art bible §5).
+	# 0.00–0.08: cadmium_warn margin heartbeat
+	# 0.08–0.28: creases (S2)
+	# 0.28–0.50: lift + cast shadow
+	# 0.50–0.78: slot into place with overshoot
+	# 0.78–1.00: rust bleed
+
+	if t_norm < REWRITE_HEARTBEAT / REWRITE_DURATION:
+		# Single heartbeat — paper margin flash only.
+		var flash_a: float = 1.0 - (t_norm / (REWRITE_HEARTBEAT / REWRITE_DURATION))
+		var warn := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.55 * flash_a)
+		draw_rect(Rect2(0, 0, vp_size.x, 10), warn, true)
+		draw_rect(Rect2(0, vp_size.y - 10, vp_size.x, 10), warn, true)
+		draw_rect(Rect2(0, 0, 10, vp_size.y), warn, true)
+		draw_rect(Rect2(vp_size.x - 10, 0, 10, vp_size.y), warn, true)
+		# Thin rule around the page.
+		var page_warn := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.85 * flash_a)
+		draw_rect(page.grow(2.0), page_warn, false, 3.0)
+
+	var n: int = pending_echoes.size()
+	for i in range(n):
+		var p: Vector2i = pending_echoes[i]
+		# Stagger each wall slightly so the cascade reads as paper folding, not a flash.
+		var stagger: float = float(i) / float(maxi(n, 1)) * 0.18
+		var local_t: float = clampf((t_norm - stagger) / max(0.001, 1.0 - stagger), 0.0, 1.0)
+		var base := Rect2(offset + Vector2(p.x * CELL_SIZE, p.y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
+
+		if local_t < 0.25:
+			# Creases appear.
+			var crease_a: float = local_t / 0.25
+			_blit(tex_wall_folding, base, Palette.PAPER_DEEP)
+			var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.7 * crease_a)
+			draw_line(base.position + Vector2(2, 2), base.end - Vector2(2, 2), ink, 1.0, true)
+			draw_line(base.position + Vector2(CELL_SIZE - 2, 2), base.position + Vector2(2, CELL_SIZE - 2), ink, 1.0, true)
+		elif local_t < 0.50:
+			# Lift — cast shadow, no rim light.
+			var lift: float = (local_t - 0.25) / 0.25
+			var shadow_off: Vector2 = Vector2(3.0 + 4.0 * lift, 4.0 + 5.0 * lift)
+			var sh := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.22 + 0.18 * lift)
+			draw_rect(Rect2(base.position + shadow_off, base.size), sh, true)
+			var raised := Rect2(base.position - Vector2(0, 3.0 * lift), base.size)
+			_blit(tex_wall_folding, raised, Palette.PAPER_DEEP)
+			draw_rect(raised, Palette.INK_SOFT, false, 1.0)
+		elif local_t < 0.78:
+			# Slot with 1px overshoot bounce.
+			var slot: float = (local_t - 0.50) / 0.28
+			var bounce: float = sin(slot * PI) * (1.0 - slot) * 2.0
+			var slotted := Rect2(base.position - Vector2(0, bounce), base.size)
+			_blit(tex_wall_fossil, slotted, Palette.RUST_FOSSIL)
+			draw_rect(slotted.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+		else:
+			# Rust bleed from the joins.
+			var bleed: float = (local_t - 0.78) / 0.22
+			_blit(tex_wall_fossil, base, Palette.RUST_FOSSIL)
+			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
+			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
+				draw_texture_rect(tex_rust[rust_i], base.grow(-2.0 + 2.0 * (1.0 - bleed)), false, Color(1, 1, 1, 0.4 + 0.6 * bleed))
+			draw_rect(base.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+
+	# Quiet title plate during slam — "IT LEARNED YOU"
+	if t_norm > 0.12 and t_norm < 0.85:
+		var a: float = 1.0
+		if t_norm < 0.25:
+			a = (t_norm - 0.12) / 0.13
+		elif t_norm > 0.70:
+			a = 1.0 - (t_norm - 0.70) / 0.15
+		var label_pos := Vector2(vp_size.x * 0.5 - 90, offset.y - 18)
+		var plate := Rect2(label_pos - Vector2(8, 2), Vector2(188, 16))
+		var plate_c := Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.92 * a)
+		draw_rect(plate, plate_c, true)
+		draw_rect(plate, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.9 * a), false, 1.0)
+
+
+func _draw_player(offset: Vector2) -> void:
+	var center: Vector2 = offset + Vector2(player_pos.x * CELL_SIZE + CELL_SIZE * 0.5, player_pos.y * CELL_SIZE + CELL_SIZE * 0.5)
+	# Soft copper lantern disc — hard 1-tile falloff, diegetic only.
+	var flicker: float = 0.85 + 0.15 * sin(lantern_t)
+	var lantern := Color(Palette.COPPER_KEY.r, Palette.COPPER_KEY.g, Palette.COPPER_KEY.b, 0.18 * flicker)
+	draw_circle(center, CELL_SIZE * 0.95, lantern)
+	var lantern_core := Color(Palette.COPPER_KEY.r, Palette.COPPER_KEY.g, Palette.COPPER_KEY.b, 0.35 * flicker)
+	draw_circle(center, CELL_SIZE * 0.35, lantern_core)
+
+	var pr := Rect2(center - Vector2(12, 12), Vector2(24, 24))
+	if tex_player != null:
+		draw_texture_rect(tex_player, pr, false)
+	else:
+		# Fallback surveyor stamp — triangular torso + lantern spot.
+		var pts := PackedVector2Array([
+			center + Vector2(0, -10),
+			center + Vector2(9, 10),
+			center + Vector2(-9, 10),
+		])
+		draw_colored_polygon(pts, Palette.INK_BLACK)
+		draw_circle(center + Vector2(0, 2), 2.5, Palette.COPPER_KEY)

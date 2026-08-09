@@ -101,8 +101,8 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.current_chamber = idx
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
-		# Show a chamber right after its rewrite fires — drives the player to the
-		# first checkpoint via BFS so the ghost trail + echo walls are visible.
+		# Drive to the first checkpoint, then freeze the origami slam mid-fold
+		# so the VISUAL v2 rewrite beat is visible (creases + cast shadow + rust).
 		var idx2: int = int(kind.substr(8))
 		GameState.start_new_run()
 		GameState.current_chamber = idx2
@@ -122,14 +122,48 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 			if step == Vector2i.ZERO:
 				break
 			chamber._try_move(step)
-			chamber._flush_pending_echoes()
+			# Do NOT flush — leave the slam running so we can freeze mid-fold.
 			guard += 1
-		for k in range(3):
-			var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
-			if next == Vector2i.ZERO:
+		if chamber.pending_echoes.size() > 0:
+			# Mid-slam: lift + slot phase (~0.55) — the trailer still.
+			chamber.freeze_rewrite_at(0.55)
+		else:
+			# Fallback: if no echoes placed, step a few more and show settled walls.
+			for k in range(3):
+				var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
+				if next == Vector2i.ZERO:
+					break
+				chamber._try_move(next)
+				chamber._flush_pending_echoes()
+	elif kind.begins_with("rewrite_done:"):
+		# Settled fossil walls after the slam completes (for before/after comps).
+		var idx3: int = int(kind.substr("rewrite_done:".length()))
+		GameState.start_new_run()
+		GameState.current_chamber = idx3
+		show_chamber()
+		await get_tree().process_frame
+		var stage_kid3: Node = stage.get_child(0)
+		var chamber3: Node2D = stage_kid3.get_node("Chamber")
+		var target3: Vector2i = chamber3.goal_pos
+		for y in range(chamber3.grid.size()):
+			for x in range(chamber3.grid[y].size()):
+				if chamber3.grid[y][x] == 2:
+					target3 = Vector2i(x, y)
+					break
+		var guard3: int = 0
+		while chamber3.player_pos != target3 and guard3 < 400:
+			var step3: Vector2i = _bfs_next_step(chamber3, target3)
+			if step3 == Vector2i.ZERO:
 				break
-			chamber._try_move(next)
-			chamber._flush_pending_echoes()
+			chamber3._try_move(step3)
+			chamber3._flush_pending_echoes()
+			guard3 += 1
+		for k3 in range(3):
+			var next3: Vector2i = _bfs_next_step(chamber3, chamber3.goal_pos)
+			if next3 == Vector2i.ZERO:
+				break
+			chamber3._try_move(next3)
+			chamber3._flush_pending_echoes()
 	elif kind == "end":
 		GameState.start_new_run()
 		for i in range(ChamberBook.chamber_count()):
