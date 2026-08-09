@@ -1,21 +1,12 @@
 extends Node
 ##
-## Chamber book — authored chamber layouts for the Echo Lattice vertical slice.
+## Chamber book — authored chamber layouts for Echo Lattice.
 ##
-## Each chamber is a fixed-size ASCII grid (GRID_W x GRID_H).
-##   '#' wall (immovable)
-##   '.' floor
-##   'P' player start (counts as floor)
-##   'G' goal tile (counts as floor while stepping onto it)
-##   'C' checkpoint (walkable; triggers a lattice rewrite the first time entered)
-##   'K' key gate — becomes passable after the last checkpoint fires (unused in this slice, reserved)
+## Induction (chambers 0–2) is tuned so a new player hits the
+## "it learned me" rewrite spectacle by chamber 2 inside ~90 seconds.
+## Captions stay ≤ ~8 words; diegetic PA carries teach lines.
 ##
-## Transform names line up with the design bible:
-##   "none"      — no rewrite (tutorial chambers)
-##   "mirror_v"  — mirror walked path across the vertical axis
-##   "mirror_h"  — mirror walked path across the horizontal axis
-##   "rotate_180"— rotate walked path 180° around chamber centre
-##   "thicken"   — walked-path cells convert to walls in place (habits solidify)
+##   '#' wall   '.' floor   'P' start   'G' goal   'C' checkpoint
 ##
 
 const GRID_W: int = 24
@@ -24,60 +15,63 @@ const GRID_H: int = 14
 const CHAMBERS: Array = [
 	{
 		"id": 0,
-		"title": "I. First Step",
-		"caption": "Walk. Nothing here learns you yet.",
+		"title": "I. Quiet Span",
+		"caption": "Walk the span.",
 		"transform": "none",
+		"onboarding": true,
 		"map": [
 			"########################",
-			"#......................#",
-			"#..P................G..#",
-			"#......................#",
 			"########################",
-			"#......................#",
-			"#......................#",
-			"#......................#",
-			"#......................#",
-			"#......................#",
 			"########################",
-			"#......................#",
-			"#......................#",
+			"########################",
+			"########################",
+			"#P....................G#",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
 			"########################",
 		],
 	},
 	{
 		"id": 1,
-		"title": "II. A Corner",
-		"caption": "Turn once. The lattice is still asleep.",
+		"title": "II. Echo Plate",
+		"caption": "Step the plate.",
 		"transform": "none",
+		"onboarding": true,
 		"map": [
 			"########################",
 			"#P.....................#",
 			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
-			"#.####################.#",
+			"#..........C...........#",
 			"#.####################.#",
 			"#.....................G#",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
+			"########################",
 			"########################",
 		],
 	},
 	{
 		"id": 2,
-		"title": "III. It Learned You",
-		"caption": "Cross the checkpoint. The mirror of your path becomes wall.",
+		"title": "III. Mirror Birth",
+		"caption": "Your loop, made solid.",
 		"transform": "mirror_v",
+		"onboarding": true,
+		"spectacle": true,
 		"map": [
 			"########################",
 			"#P.....................#",
 			"#.####################.#",
 			"#......................#",
 			"#.####################.#",
-			"#......................#",
 			"#..........C...........#",
 			"#......................#",
 			"#.####################.#",
@@ -85,13 +79,14 @@ const CHAMBERS: Array = [
 			"#.####################.#",
 			"#......................#",
 			"#.####################G#",
+			"#......................#",
 			"########################",
 		],
 	},
 	{
 		"id": 3,
 		"title": "IV. Mirrors",
-		"caption": "Two checkpoints, two rewrites. Vary your route or wall yourself in.",
+		"caption": "Two plates. Vary the route.",
 		"transform": "mirror_v",
 		"map": [
 			"########################",
@@ -113,7 +108,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 4,
 		"title": "V. Ceiling",
-		"caption": "The mirror is horizontal now — every dash imprints the roof.",
+		"caption": "Horizontal mirror now.",
 		"transform": "mirror_h",
 		"map": [
 			"########################",
@@ -135,7 +130,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 5,
 		"title": "VI. Loop",
-		"caption": "Loops leave dense mirrors. Straight lines leave clean ones.",
+		"caption": "Dense loops, dense walls.",
 		"transform": "mirror_v",
 		"map": [
 			"########################",
@@ -157,7 +152,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 6,
 		"title": "VII. Turn",
-		"caption": "Rotation. Your path prints on the far side of the chamber.",
+		"caption": "Path prints opposite.",
 		"transform": "rotate_180",
 		"map": [
 			"########################",
@@ -179,7 +174,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 7,
 		"title": "VIII. Thicken",
-		"caption": "The habit solidifies where you stepped. You cannot re-tread.",
+		"caption": "Steps solidify. No re-tread.",
 		"transform": "thicken",
 		"map": [
 			"########################",
@@ -201,7 +196,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 8,
 		"title": "IX. Two Selves",
-		"caption": "A vertical mirror and a horizontal mirror in one chamber.",
+		"caption": "Vertical and horizontal.",
 		"transform": "mirror_v_then_h",
 		"map": [
 			"########################",
@@ -223,7 +218,7 @@ const CHAMBERS: Array = [
 	{
 		"id": 9,
 		"title": "X. Signature",
-		"caption": "The last room. It rewrites twice. Sign it carefully.",
+		"caption": "Two rewrites. Sign carefully.",
 		"transform": "mirror_v",
 		"map": [
 			"########################",

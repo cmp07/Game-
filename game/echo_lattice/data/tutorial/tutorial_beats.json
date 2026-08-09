@@ -1,0 +1,153 @@
+{
+  "format": 1,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/12_TONE_AND_TUTORIAL.md",
+  "wing_id": "wing_00_induction",
+  "wing_title": "Induction",
+  "goal": "Teach rewrite authorship without a text wall; spectacle at T02.",
+  "completion_flag": "induction_complete",
+  "beats": [
+    {
+      "id": "T00",
+      "chamber_id": "ch_w0_00_quiet_span",
+      "order": 0,
+      "teach": "move",
+      "rewrite": false,
+      "transforms_allowed": [],
+      "objectives": ["reach_door"],
+      "unlock_on_clear": [],
+      "lines": {
+        "on_enter_plate": "plate.walk_span",
+        "on_checkpoint": null,
+        "on_rewrite": null,
+        "on_clear": "toast.span_clear"
+      },
+      "notes": "Clean hall. Buffer glyphs visible. No checkpoint rewrite."
+    },
+    {
+      "id": "T01",
+      "chamber_id": "ch_w0_01_echo_plate",
+      "order": 1,
+      "teach": "checkpoint_arms_buffer",
+      "rewrite": false,
+      "transforms_allowed": [],
+      "objectives": ["step_checkpoint", "reach_door"],
+      "unlock_on_clear": [],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": "pa.checkpoint.armed",
+        "on_rewrite": null,
+        "on_clear": null
+      },
+      "notes": "Plate arms buffer; geometry still honest."
+    },
+    {
+      "id": "T02",
+      "chamber_id": "ch_w0_02_mirror_birth",
+      "order": 2,
+      "teach": "rewrite_is_your_path",
+      "rewrite": true,
+      "transforms_allowed": ["mirror"],
+      "spectacle": true,
+      "objectives": ["step_checkpoint", "survive_rewrite", "reach_door"],
+      "unlock_on_clear": ["flag.seen_mirror_rewrite"],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": "pa.checkpoint.armed",
+        "on_rewrite": "pa.rewrite.fired",
+        "on_rewrite_settle": "pa.rewrite.matched",
+        "on_clear": null
+      },
+      "staging": {
+        "ghost_pre_opacity": 0.4,
+        "rewrite_hold_s": 0.55,
+        "require_legible_loop": true,
+        "show_seed": true
+      },
+      "notes": "Core fantasy beat. Walls must read as the player's route."
+    },
+    {
+      "id": "T03",
+      "chamber_id": "ch_w0_03_break_the_loop",
+      "order": 3,
+      "teach": "change_habit",
+      "rewrite": true,
+      "transforms_allowed": ["mirror"],
+      "objectives": ["step_checkpoint", "reach_door_via_new_path"],
+      "unlock_on_clear": ["flag.undo_taught"],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": null,
+        "on_rewrite": "pa.rewrite.fired",
+        "on_first_blocked_after_rewrite": "pa.undo.hint",
+        "on_clear": null
+      },
+      "systems": {
+        "undo_enabled": true,
+        "undo_hint_once_flag": "flag.undo_taught"
+      },
+      "notes": "Old loop becomes wall. Undo hint only on first blocked sequence."
+    },
+    {
+      "id": "T04",
+      "chamber_id": "ch_w0_04_key_after",
+      "order": 4,
+      "teach": "interact_and_order",
+      "rewrite": true,
+      "transforms_allowed": ["mirror"],
+      "objectives": ["step_checkpoint", "collect_key", "open_door"],
+      "unlock_on_clear": [],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": null,
+        "on_rewrite": null,
+        "on_key_plate": "plate.take_exit",
+        "on_clear": null
+      },
+      "systems": {
+        "undo_enabled": true,
+        "solvability_guard": true
+      },
+      "notes": "Rewrite may seal first key route; force re-path."
+    },
+    {
+      "id": "T05",
+      "chamber_id": "ch_w0_05_ghost_witness",
+      "order": 5,
+      "teach": "ghost_literacy",
+      "rewrite": true,
+      "transforms_allowed": ["mirror"],
+      "objectives": ["step_checkpoint", "reach_door"],
+      "unlock_on_clear": ["flag.ghost_literacy"],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": "pa.ghost.floor",
+        "on_rewrite": null,
+        "on_clear": null
+      },
+      "systems": {
+        "ghost_auto_echo": true,
+        "ghost_replay_toggle": true
+      },
+      "notes": "Echo on floor before/with rewrite; optional replay toggle."
+    },
+    {
+      "id": "T06",
+      "chamber_id": "ch_w0_06_wing_seal",
+      "order": 6,
+      "teach": "wing_clear_meta_tease",
+      "rewrite": true,
+      "transforms_allowed": ["mirror"],
+      "objectives": ["step_checkpoint", "reach_door"],
+      "unlock_on_clear": ["induction_complete", "meta.tease_transform_deck"],
+      "lines": {
+        "on_enter_plate": null,
+        "on_checkpoint": null,
+        "on_rewrite": null,
+        "on_clear": "pa.wing.clear",
+        "on_meta_tease": "toast.transform_deck_tease"
+      },
+      "notes": "Name-only tease for later transforms; no binder UI."
+    }
+  ]
+}

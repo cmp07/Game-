@@ -20,9 +20,11 @@ boot_splash/show_image=false
 
 [autoload]
 
-GameState="*res://scripts/game_state.gd"
 ChamberBook="*res://scripts/chamber_book.gd"
+ModeService="*res://scripts/mode_service.gd"
+DiegeticPA="*res://scripts/diegetic_pa.gd"
 SaveManager="*res://scripts/save_manager.gd"
+GameState="*res://scripts/game_state.gd"
 
 [display]
 

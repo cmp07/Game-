@@ -3,7 +3,8 @@ extends Node
 ## GameState — global run state.
 ##
 ## Tracks which chamber the player is in, per-chamber best move counts,
-## the aggregate habit profile, and a global move buffer (last 30 moves).
+## the aggregate habit profile, a global move buffer (last 30 moves),
+## and induction / tutorial flags for the first-90s onboarding.
 ##
 
 signal chamber_changed(new_index: int)
@@ -16,7 +17,6 @@ var completed: Dictionary = {}     # chamber_id (int) -> true
 var run_started: bool = false
 
 # Habit profile — counts of each direction played across the whole run.
-# "up", "down", "left", "right"
 var habit_profile: Dictionary = {
 	"up": 0,
 	"down": 0,
@@ -27,6 +27,10 @@ var habit_profile: Dictionary = {
 # Cross-chamber ring buffer of the last MOVE_BUFFER_MAX directions
 # stored as short strings ("u"/"d"/"l"/"r").
 var move_ring: Array = []
+
+# Tutorial / induction flags (persisted). Keys are strings from diegetic_lines.
+var tutorial_flags: Dictionary = {}
+var induction_complete: bool = false
 
 
 func _ready() -> void:
@@ -45,7 +49,6 @@ func start_new_run() -> void:
 
 func continue_run() -> void:
 	run_started = true
-	# current_chamber already loaded by SaveManager
 
 
 func record_direction(dir: Vector2i) -> void:
@@ -63,11 +66,14 @@ func record_chamber_win(chamber_id: int, moves: int) -> void:
 	var prev: int = int(best_moves.get(chamber_id, 999999))
 	if moves < prev:
 		best_moves[chamber_id] = moves
+	# Induction graduation: clearing chamber 2 ("It Learned You") seals the teach.
+	if chamber_id >= 2 and not induction_complete:
+		induction_complete = true
+		set_tutorial_flag("induction_complete")
 	SaveManager.save_to_disk()
 
 
 func advance_chamber() -> bool:
-	# Returns true if there is a next chamber; false if the vertical slice is over.
 	current_chamber += 1
 	if current_chamber >= ChamberBook.chamber_count():
 		current_chamber = ChamberBook.chamber_count() - 1
@@ -90,6 +96,21 @@ func dominant_habit() -> String:
 			best_val = v
 			best_key = k
 	return best_key
+
+
+func has_tutorial_flag(flag: String) -> bool:
+	if flag == "":
+		return false
+	return bool(tutorial_flags.get(flag, false))
+
+
+func set_tutorial_flag(flag: String) -> void:
+	if flag == "":
+		return
+	tutorial_flags[flag] = true
+	if flag == "induction_complete":
+		induction_complete = true
+	SaveManager.save_to_disk()
 
 
 static func _dir_key(dir: Vector2i) -> String:

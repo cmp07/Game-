@@ -47,14 +47,14 @@ theme_override_font_sizes/font_size = 64
 theme_override_colors/font_color = Color(0.91, 0.91, 0.94, 1)
 
 [node name="Tagline" type="Label" parent="VBox"]
-text = "A labyrinth that rebuilds from your last thirty moves."
+text = "It learned you."
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1, 0.36, 0.24, 1)
 
 [node name="Subtitle" type="Label" parent="VBox"]
 unique_name_in_owner = true
-text = "A vertical slice."
+text = "Pick a mode."
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
@@ -62,16 +62,16 @@ theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
 [node name="Spacer" type="Control" parent="VBox"]
 custom_minimum_size = Vector2(0, 20)
 
+[node name="PlayButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 44)
+text = "Play"
+theme_override_font_sizes/font_size = 20
+
 [node name="ContinueButton" type="Button" parent="VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 44)
-text = "Continue"
-theme_override_font_sizes/font_size = 20
-
-[node name="StartButton" type="Button" parent="VBox"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 44)
-text = "Start New Run"
+text = "Continue Campaign"
 theme_override_font_sizes/font_size = 20
 
 [node name="QuitButton" type="Button" parent="VBox"]

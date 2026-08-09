@@ -24,16 +24,36 @@ func _ready() -> void:
 
 func configure(chamber_id: int, moves: int) -> void:
 	var data: Dictionary = ChamberBook.get_chamber(chamber_id)
-	title_label.text = "Chamber Cleared"
 	subtitle_label.text = str(data.get("title", ""))
 	var best: int = int(GameState.best_moves.get(chamber_id, moves))
-	var next_idx: int = chamber_id + 1
-	var is_last: bool = next_idx >= ChamberBook.chamber_count()
-	var next_text: String = "→ Next Chamber" if not is_last else "→ Finish Slice"
-	next_button.text = next_text
-	stats_label.text = "Moves this run: %d\nBest ever: %d\n\nHabit so far: %s" % [
-		moves, best, _habit_summary()
-	]
+	match ModeService.active_mode:
+		ModeService.Mode.ENDLESS:
+			title_label.text = "Shift Cleared"
+			next_button.text = "→ Next Shift"
+			var next_streak: int = ModeService.endless_clears + 1
+			var best_preview: int = max(ModeService.endless_best, next_streak)
+			stats_label.text = "Moves: %d\nStreak: %d\nBest streak: %d\nHabit: %s" % [
+				moves,
+				next_streak,
+				best_preview,
+				_habit_summary(),
+			]
+		ModeService.Mode.DAILY:
+			title_label.text = "Daily Cleared"
+			next_button.text = "→ File Result"
+			stats_label.text = "Moves: %d\nBest ever here: %d\nHabit: %s" % [
+				moves, best, _habit_summary()
+			]
+		_:
+			title_label.text = "Chamber Cleared"
+			var next_idx: int = chamber_id + 1
+			var is_last: bool = next_idx >= ChamberBook.chamber_count()
+			next_button.text = "→ Next Chamber" if not is_last else "→ Finish Slice"
+			if chamber_id == 2 and not GameState.has_tutorial_flag("flag.seen_matches_you"):
+				# Fallback if PA was skipped — still no wall of text.
+				stats_label.text = "Moves: %d\nBest: %d\nHabit: %s" % [moves, best, _habit_summary()]
+			else:
+				stats_label.text = "Moves: %d\nBest: %d\nHabit: %s" % [moves, best, _habit_summary()]
 
 
 func _habit_summary() -> String:

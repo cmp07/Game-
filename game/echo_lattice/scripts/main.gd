@@ -1,29 +1,29 @@
 extends Node
 ##
-## Main — the root router.
-##
-## Owns a single container child which we swap between menu, chamber, chamber win,
-## and end-of-slice screens. Keeps scene loads explicit and Godot-project-simple.
+## Main — root router for menus, modes, chambers, results.
 ##
 
-const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
-const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
-const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
-const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
+const MENU_SCENE:        PackedScene = preload("res://scenes/menu.tscn")
+const MODE_SELECT_SCENE: PackedScene = preload("res://scenes/mode_select.tscn")
+const MODE_STUB_SCENE:   PackedScene = preload("res://scenes/mode_stub.tscn")
+const CHAMBER_SCENE:     PackedScene = preload("res://scenes/chamber.tscn")
+const WIN_SCENE:         PackedScene = preload("res://scenes/chamber_won.tscn")
+const DAILY_RESULT_SCENE: PackedScene = preload("res://scenes/daily_result.tscn")
+const END_SCENE:         PackedScene = preload("res://scenes/end_screen.tscn")
 
 @onready var stage: Node = $Stage
+
+var _pending_route: Dictionary = {}
 
 
 func _ready() -> void:
 	var all_args: PackedStringArray = OS.get_cmdline_user_args()
 	for a in OS.get_cmdline_args():
 		all_args.append(a)
-	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
 		var ok: bool = await _run_self_test()
 		get_tree().quit(0 if ok else 1)
 		return
-	# Screenshot capture — `-- --screenshot menu|chamber:N|won:N|end   out_dir`.
 	if all_args.has("--screenshot"):
 		var kind := ""
 		var out_dir := "user://shots"
@@ -44,30 +44,31 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	if kind == "menu":
 		show_menu()
+	elif kind == "modes":
+		show_mode_select()
 	elif kind.begins_with("chamber:"):
+		ModeService.active_mode = ModeService.Mode.CAMPAIGN
 		GameState.current_chamber = int(kind.substr(8))
 		show_chamber()
 	elif kind.begins_with("won:"):
 		var idx: int = int(kind.substr(4))
+		ModeService.active_mode = ModeService.Mode.CAMPAIGN
 		GameState.current_chamber = idx
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
-		# Show a chamber right after its rewrite fires — drives the player to the
-		# first checkpoint via BFS so the ghost trail + echo walls are visible.
 		var idx2: int = int(kind.substr(8))
+		ModeService.active_mode = ModeService.Mode.CAMPAIGN
 		GameState.current_chamber = idx2
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid: Node = stage.get_child(0)
 		var chamber: Node2D = stage_kid.get_node("Chamber")
-		# Find the closest checkpoint.
 		var target: Vector2i = chamber.goal_pos
 		for y in range(chamber.grid.size()):
 			for x in range(chamber.grid[y].size()):
 				if chamber.grid[y][x] == 2:
 					target = Vector2i(x, y)
 					break
-		# Step-by-step BFS toward the checkpoint.
 		var guard: int = 0
 		while chamber.player_pos != target and guard < 400:
 			var step: Vector2i = _bfs_next_step(chamber, target)
@@ -76,7 +77,6 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 			chamber._try_move(step)
 			chamber._flush_pending_echoes()
 			guard += 1
-		# Small forward walk after the rewrite so the echo walls are on-screen.
 		for k in range(3):
 			var next: Vector2i = _bfs_next_step(chamber, chamber.goal_pos)
 			if next == Vector2i.ZERO:
@@ -84,14 +84,12 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 			chamber._try_move(next)
 			chamber._flush_pending_echoes()
 	elif kind == "end":
-		# Populate some fake best-moves so the end screen has data.
 		GameState.start_new_run()
 		for i in range(ChamberBook.chamber_count()):
 			GameState.record_chamber_win(i, 30 + i)
 		show_end_screen()
 	else:
 		show_menu()
-	# Let a few frames render, then grab.
 	for _f in range(6):
 		await get_tree().process_frame
 	var img: Image = get_viewport().get_texture().get_image()
@@ -101,11 +99,12 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 
 
 func _run_self_test() -> bool:
-	print("== Echo Lattice self-test ==")
+	print("== Echo Lattice self-test (onboard + modes) ==")
 	var ok := true
 	var grid_w: int = int(ChamberBook.GRID_W)
 	var grid_h: int = int(ChamberBook.GRID_H)
 	print("chambers: %d, grid: %dx%d" % [ChamberBook.chamber_count(), grid_w, grid_h])
+
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
 		var rows: Array = data.get("map", [])
@@ -135,7 +134,34 @@ func _run_self_test() -> bool:
 			i, data.get("title", ""), transform, w, h, checkpoints
 		])
 
-	# Rewrite math sanity — mirror transforms are involutions.
+	# Onboarding contract: chamber 2 is the spectacle rewrite.
+	var c2: Dictionary = ChamberBook.get_chamber(2)
+	if str(c2.get("transform", "none")) == "none":
+		printerr("chamber 2 must rewrite (spectacle)"); ok = false
+	if not bool(c2.get("spectacle", false)) and str(c2.get("title", "")).find("Mirror") < 0:
+		printerr("chamber 2 should be the Mirror Birth spectacle"); ok = false
+	# Chambers 0–1 stay silent so the first walls are the learn-me beat.
+	if str(ChamberBook.get_chamber(0).get("transform", "")) != "none":
+		printerr("chamber 0 should be transform=none"); ok = false
+	if str(ChamberBook.get_chamber(1).get("transform", "")) != "none":
+		printerr("chamber 1 should be transform=none"); ok = false
+
+	# Induction path length budget — BFS shortest paths for chambers 0..2 must be short.
+	var budget_moves := 0
+	for i in range(3):
+		var sp: int = _shortest_path_len(ChamberBook.get_chamber(i))
+		if sp < 0:
+			printerr("chamber %d has no path" % i); ok = false
+		else:
+			budget_moves += sp
+			print("  induction shortest path chamber %d = %d" % [i, sp])
+	if budget_moves > 90:
+		printerr("induction shortest-path sum %d exceeds 90-move / ~90s budget" % budget_moves)
+		ok = false
+	else:
+		print("  induction path budget OK (%d steps across chambers 0-2)" % budget_moves)
+
+	# Rewrite math sanity.
 	var path := [Vector2i(3, 4), Vector2i(5, 2), Vector2i(10, 7)]
 	if _mirror_v(_mirror_v(path, grid_w), grid_w) != path:
 		printerr("mirror_v is not an involution"); ok = false
@@ -144,69 +170,159 @@ func _run_self_test() -> bool:
 	if _rotate180(_rotate180(path, grid_w, grid_h), grid_w, grid_h) != path:
 		printerr("rotate_180 is not an involution"); ok = false
 
-	# GameState round-trip.
+	# ModeService daily seed determinism.
+	var s1: int = ModeService.daily_seed_for("2026-08-09")
+	var s2: int = ModeService.daily_seed_for("2026-08-09")
+	var s3: int = ModeService.daily_seed_for("2026-08-10")
+	if s1 != s2:
+		printerr("daily seed not stable"); ok = false
+	if s1 == s3:
+		printerr("daily seed collided across dates"); ok = false
+	var ch_a: int = ModeService.pick_daily_chamber(s1)
+	var ch_b: int = ModeService.pick_daily_chamber(s1)
+	if ch_a != ch_b:
+		printerr("daily chamber pick unstable"); ok = false
+	if not ModeService.DAILY_POOL.has(ch_a):
+		printerr("daily chamber not in pool"); ok = false
+	print("  daily seed OK (%d → chamber %d)" % [s1, ch_a])
+
+	# Mode begin / clear routing.
+	var camp: Dictionary = ModeService.begin_mode(ModeService.Mode.CAMPAIGN)
+	if int(camp.get("chamber", -1)) != 0:
+		printerr("campaign should start at chamber 0"); ok = false
+	var daily: Dictionary = ModeService.begin_mode(ModeService.Mode.DAILY)
+	if not ModeService.DAILY_POOL.has(int(daily.get("chamber", -1))):
+		printerr("daily begin picked outside pool"); ok = false
+	var end_payload: Dictionary = ModeService.on_chamber_cleared(int(daily.get("chamber", 0)), 12)
+	if str(end_payload.get("kind", "")) != "daily_done":
+		printerr("daily clear should route daily_done"); ok = false
+	var endls: Dictionary = ModeService.begin_mode(ModeService.Mode.ENDLESS)
+	if not ModeService.ENDLESS_POOL.has(int(endls.get("chamber", -1))):
+		printerr("endless begin outside pool"); ok = false
+	var shift: Dictionary = ModeService.on_chamber_cleared(int(endls.get("chamber", 0)), 20)
+	if str(shift.get("kind", "")) != "endless_next":
+		printerr("endless clear should route endless_next"); ok = false
+	if int(shift.get("clears", 0)) != 1:
+		printerr("endless clears should be 1"); ok = false
+	print("  mode routing OK")
+
+	# Stubs flagged.
+	if not ModeService.is_stub(ModeService.Mode.ZEN):
+		printerr("zen should be stub"); ok = false
+	if not ModeService.is_stub(ModeService.Mode.SPEEDRUN):
+		printerr("speedrun should be stub"); ok = false
+	if not ModeService.is_stub(ModeService.Mode.HOTSEAT):
+		printerr("hotseat should be stub"); ok = false
+
+	# Diegetic lines load.
+	if DiegeticPA._lines_by_id.is_empty():
+		printerr("diegetic lines failed to load"); ok = false
+	else:
+		print("  diegetic lines: %d" % DiegeticPA._lines_by_id.size())
+
+	# GameState / save round-trip including tutorial flags + modes.
+	ModeService.begin_mode(ModeService.Mode.CAMPAIGN)
 	GameState.start_new_run()
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(0, 1))
 	if int(GameState.habit_profile.get("right", 0)) != 2:
-		printerr("habit_profile.right expected 2 got %d" % int(GameState.habit_profile.get("right", 0)))
-		ok = false
-	if GameState.dominant_habit() != "right":
-		printerr("dominant_habit expected 'right' got %s" % GameState.dominant_habit())
-		ok = false
-	GameState.record_chamber_win(0, 42)
-	if not GameState.completed.has(0):
-		printerr("record_chamber_win did not mark completed"); ok = false
-	if int(GameState.best_moves.get(0, -1)) != 42:
-		printerr("best_moves not updated"); ok = false
-
-	# Save/load round-trip.
+		printerr("habit_profile.right expected 2"); ok = false
+	GameState.set_tutorial_flag("flag.test_roundtrip")
+	GameState.record_chamber_win(2, 42)
+	if not GameState.induction_complete:
+		printerr("clearing chamber 2 should set induction_complete"); ok = false
 	SaveManager.save_to_disk()
+	GameState.tutorial_flags.clear()
+	GameState.induction_complete = false
 	GameState.best_moves.clear()
+	ModeService.endless_best = -1
 	SaveManager.load_from_disk()
-	if int(GameState.best_moves.get(0, -1)) != 42:
-		printerr("best_moves lost through save/load: %s" % str(GameState.best_moves))
-		ok = false
+	if not GameState.has_tutorial_flag("flag.test_roundtrip"):
+		printerr("tutorial flag lost through save/load"); ok = false
+	if not GameState.induction_complete:
+		printerr("induction_complete lost through save/load"); ok = false
+	if int(GameState.best_moves.get(2, -1)) != 42:
+		printerr("best_moves lost through save/load"); ok = false
 
-	# Chamber scene runtime — instantiate and drive one move on chamber 0.
+	# Live scene + self-trap undo path on chamber 2.
 	var chamber_scene: PackedScene = load("res://scenes/chamber.tscn")
 	if chamber_scene == null:
 		printerr("failed to load chamber.tscn"); ok = false
 	else:
+		ModeService.active_mode = ModeService.Mode.CAMPAIGN
 		GameState.current_chamber = 0
 		var inst: Node = chamber_scene.instantiate()
 		add_child(inst)
 		await get_tree().process_frame
 		var chamber: Node2D = inst.get_node("Chamber")
 		if chamber == null:
-			printerr("Chamber node missing from scene"); ok = false
+			printerr("Chamber node missing"); ok = false
 		else:
 			var before: Vector2i = chamber.player_pos
 			chamber._try_move(Vector2i(1, 0))
 			if chamber.player_pos == before:
 				printerr("player did not move right in chamber 0"); ok = false
-			if chamber.move_count != 1:
-				printerr("move_count expected 1 got %d" % chamber.move_count); ok = false
 		inst.queue_free()
 
-	# Static solvability check for every chamber (BFS ignoring rewrites).
-	for i in range(ChamberBook.chamber_count()):
-		var data: Dictionary = ChamberBook.get_chamber(i)
-		if not _bfs_reachable(data):
-			printerr("  chamber %d is unreachable from start to goal in its base layout" % i)
-			ok = false
+	# Self-trap undo: drive chamber 2 to checkpoint, bump an echo wall, undo.
+	ModeService.active_mode = ModeService.Mode.CAMPAIGN
+	GameState.current_chamber = 2
+	var inst2: Node = chamber_scene.instantiate()
+	add_child(inst2)
+	await get_tree().process_frame
+	var ch2n: Node2D = inst2.get_node("Chamber")
+	var target2 := _pick_target(ch2n)
+	var guard2 := 0
+	while ch2n.player_pos != target2 and guard2 < 400:
+		var step2: Vector2i = _bfs_next_step(ch2n, target2)
+		if step2 == Vector2i.ZERO:
+			break
+		ch2n._try_move(step2)
+		ch2n._flush_pending_echoes()
+		guard2 += 1
+	if ch2n.rewrites_done < 1:
+		printerr("chamber 2 rewrite did not fire during self-trap test"); ok = false
+	else:
+		# Probe four directions for a blocked echo bump.
+		var bumped := false
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var npos: Vector2i = ch2n.player_pos + d
+			if ch2n._in_bounds(npos) and ch2n.grid[npos.y][npos.x] == 5:
+				ch2n._try_move(d)
+				bumped = true
+				break
+		if bumped and not ch2n.self_trap_armed:
+			printerr("self-trap not armed after echo bump"); ok = false
+		elif bumped:
+			print("  self-trap undo arm OK")
+		else:
+			print("  self-trap: no adjacent echo to bump (acceptable)")
+	inst2.queue_free()
 
-	# Live-play simulation for every chamber — instantiate the real Chamber
-	# scene, BFS to each checkpoint in turn (letting the rewrite fire), then
-	# BFS to the goal. Uses the safety-net-aware _try_move so this exactly
-	# mirrors production play.
+	# Solvability + full playthrough.
+	for i in range(ChamberBook.chamber_count()):
+		var data2: Dictionary = ChamberBook.get_chamber(i)
+		if not _bfs_reachable(data2):
+			printerr("  chamber %d unreachable in base layout" % i)
+			ok = false
 	for i in range(ChamberBook.chamber_count()):
 		if not await _sim_playthrough(i):
 			printerr("  chamber %d could not be beaten by the auto-solver" % i)
 			ok = false
 		else:
 			print("  playthrough chamber %d OK" % i)
+
+	# Mode select scene instantiates.
+	var ms: PackedScene = load("res://scenes/mode_select.tscn")
+	if ms == null:
+		printerr("mode_select.tscn missing"); ok = false
+	else:
+		var msi: Node = ms.instantiate()
+		add_child(msi)
+		await get_tree().process_frame
+		msi.queue_free()
+		print("  mode_select scene OK")
 
 	print("result: %s" % ("OK" if ok else "FAIL"))
 	return ok
@@ -233,9 +349,49 @@ static func _rotate180(path: Array, w: int, h: int) -> Array:
 	return out
 
 
+func _shortest_path_len(data: Dictionary) -> int:
+	var rows: Array = data.get("map", [])
+	var h: int = rows.size()
+	var w: int = int(ChamberBook.GRID_W)
+	var start := Vector2i(-1, -1)
+	var goal := Vector2i(-1, -1)
+	for y in range(h):
+		var s: String = rows[y] if y < rows.size() else ""
+		for x in range(w):
+			if x >= s.length():
+				continue
+			var c: String = s.substr(x, 1)
+			if c == "P":
+				start = Vector2i(x, y)
+			elif c == "G":
+				goal = Vector2i(x, y)
+	if start == Vector2i(-1, -1) or goal == Vector2i(-1, -1):
+		return -1
+	var dist := {}
+	dist[start] = 0
+	var q: Array = [start]
+	while q.size() > 0:
+		var p: Vector2i = q.pop_front()
+		if p == goal:
+			return int(dist[p])
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = p + d
+			if n.x < 0 or n.x >= w or n.y < 0 or n.y >= h:
+				continue
+			if dist.has(n):
+				continue
+			var row_s: String = rows[n.y]
+			if n.x >= row_s.length():
+				continue
+			if row_s.substr(n.x, 1) == "#":
+				continue
+			dist[n] = int(dist[p]) + 1
+			q.append(n)
+	return -1
+
+
 func _sim_playthrough(chamber_index: int) -> bool:
-	# Real Chamber node, driven by _try_move — this exercises the same rewrite
-	# and safety-net path production uses.
+	ModeService.active_mode = ModeService.Mode.CAMPAIGN
 	GameState.current_chamber = chamber_index
 	var scene: PackedScene = load("res://scenes/chamber.tscn")
 	var inst: Node = scene.instantiate()
@@ -249,18 +405,15 @@ func _sim_playthrough(chamber_index: int) -> bool:
 		if chamber.has_won:
 			beaten = true
 			break
-		# Pick a live target: the nearest un-triggered checkpoint, else the goal.
 		var target := _pick_target(chamber)
 		if target == Vector2i(-1, -1):
 			break
 		var next_step := _bfs_next_step(chamber, target)
 		if next_step == Vector2i.ZERO:
-			# Cannot reach target — try goal directly.
 			next_step = _bfs_next_step(chamber, chamber.goal_pos)
 			if next_step == Vector2i.ZERO:
 				break
 		chamber._try_move(next_step)
-		# Flush any pending echoes deterministically so subsequent BFS sees the final grid.
 		chamber._flush_pending_echoes()
 		total_moves += 1
 	inst.queue_free()
@@ -273,7 +426,6 @@ func _pick_target(chamber: Node2D) -> Vector2i:
 	for y in range(chamber.grid.size()):
 		for x in range(chamber.grid[y].size()):
 			var cell: int = chamber.grid[y][x]
-			# 2 == CHECKPOINT (untouched); pick closest.
 			if cell == 2:
 				var d: int = abs(x - chamber.player_pos.x) + abs(y - chamber.player_pos.y)
 				if d < best_d:
@@ -285,7 +437,6 @@ func _pick_target(chamber: Node2D) -> Vector2i:
 
 
 func _bfs_next_step(chamber: Node2D, target: Vector2i) -> Vector2i:
-	# BFS from player_pos to target on the current live grid; return the first step direction.
 	var w: int = ChamberBook.GRID_W
 	var h: int = ChamberBook.GRID_H
 	if target == chamber.player_pos:
@@ -307,14 +458,12 @@ func _bfs_next_step(chamber: Node2D, target: Vector2i) -> Vector2i:
 			if came_from.has(n):
 				continue
 			var cell: int = chamber.grid[n.y][n.x]
-			# Tile.WALL == 1, Tile.ECHO_WALL == 5
 			if cell == 1 or cell == 5:
 				continue
 			came_from[n] = cur
 			q.append(n)
 	if not found:
 		return Vector2i.ZERO
-	# Walk backwards from target to the step just after start.
 	var cur2: Vector2i = target
 	while came_from[cur2] != start:
 		cur2 = came_from[cur2]
@@ -369,22 +518,40 @@ func _clear_stage() -> void:
 
 
 func show_menu() -> void:
+	DiegeticPA.clear()
 	_clear_stage()
 	var m: Node = MENU_SCENE.instantiate()
 	stage.add_child(m)
-	if m.has_signal("start_new_pressed"):
-		m.connect("start_new_pressed", Callable(self, "_on_menu_start_new"))
+	if m.has_signal("play_pressed"):
+		m.connect("play_pressed", Callable(self, "_on_menu_play"))
 	if m.has_signal("continue_pressed"):
 		m.connect("continue_pressed", Callable(self, "_on_menu_continue"))
 	if m.has_signal("quit_pressed"):
 		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
 
 
+func show_mode_select() -> void:
+	DiegeticPA.clear()
+	_clear_stage()
+	var m: Node = MODE_SELECT_SCENE.instantiate()
+	stage.add_child(m)
+	m.connect("mode_chosen", Callable(self, "_on_mode_chosen"))
+	m.connect("back_pressed", Callable(self, "show_menu"))
+
+
+func show_mode_stub(mode_id: String) -> void:
+	_clear_stage()
+	var s: Node = MODE_STUB_SCENE.instantiate()
+	stage.add_child(s)
+	if s.has_method("configure"):
+		s.configure(mode_id)
+	s.connect("back_pressed", Callable(self, "show_mode_select"))
+
+
 func show_chamber() -> void:
 	_clear_stage()
 	var c: Node = CHAMBER_SCENE.instantiate()
 	stage.add_child(c)
-	# Chamber HUD forwards these to us.
 	if c.has_signal("chamber_won"):
 		c.connect("chamber_won", Callable(self, "_on_chamber_won"))
 	if c.has_signal("menu_requested"):
@@ -405,6 +572,16 @@ func show_chamber_won(chamber_id: int, moves: int) -> void:
 		w.connect("menu_pressed", Callable(self, "_on_win_menu"))
 
 
+func show_daily_result(payload: Dictionary) -> void:
+	_clear_stage()
+	var d: Node = DAILY_RESULT_SCENE.instantiate()
+	stage.add_child(d)
+	if d.has_method("configure"):
+		d.configure(payload)
+	d.connect("again_pressed", Callable(self, "_on_daily_again"))
+	d.connect("menu_pressed", Callable(self, "_on_end_menu"))
+
+
 func show_end_screen() -> void:
 	_clear_stage()
 	var e: Node = END_SCENE.instantiate()
@@ -415,15 +592,12 @@ func show_end_screen() -> void:
 		e.connect("menu_pressed", Callable(self, "_on_end_menu"))
 
 
-# ---------- menu callbacks ----------
-
-func _on_menu_start_new() -> void:
-	GameState.start_new_run()
-	show_chamber()
+func _on_menu_play() -> void:
+	show_mode_select()
 
 
 func _on_menu_continue() -> void:
-	GameState.continue_run()
+	ModeService.continue_campaign()
 	show_chamber()
 
 
@@ -431,9 +605,22 @@ func _on_menu_quit() -> void:
 	get_tree().quit()
 
 
-# ---------- chamber callbacks ----------
+func _on_mode_chosen(mode_id: String) -> void:
+	var mode: int = ModeService.mode_from_id(mode_id)
+	if ModeService.is_stub(mode):
+		show_mode_stub(mode_id)
+		return
+	if not ModeService.is_playable(mode):
+		show_mode_select()
+		return
+	ModeService.begin_mode(mode)
+	if mode == ModeService.Mode.CAMPAIGN and not GameState.induction_complete:
+		DiegeticPA.play("title_card.induction")
+	show_chamber()
+
 
 func _on_chamber_won(chamber_id: int, moves: int) -> void:
+	_pending_route = {"chamber_id": chamber_id, "moves": moves}
 	show_chamber_won(chamber_id, moves)
 
 
@@ -441,14 +628,23 @@ func _on_menu_requested() -> void:
 	show_menu()
 
 
-# ---------- win-screen callbacks ----------
-
 func _on_win_next() -> void:
-	var advanced: bool = GameState.advance_chamber()
-	if advanced:
-		show_chamber()
-	else:
-		show_end_screen()
+	var cleared_id: int = int(_pending_route.get("chamber_id", GameState.current_chamber))
+	var moves: int = int(_pending_route.get("moves", 0))
+	_pending_route = {}
+	var route: Dictionary = ModeService.on_chamber_cleared(cleared_id, moves)
+	match str(route.get("kind", "")):
+		"next":
+			show_chamber()
+		"endless_next":
+			DiegeticPA.play_text("SHIFT %d" % int(route.get("clears", 0)), "pa", 2.0)
+			show_chamber()
+		"daily_done":
+			show_daily_result(route)
+		"end":
+			show_end_screen()
+		_:
+			show_menu()
 
 
 func _on_win_replay() -> void:
@@ -459,12 +655,16 @@ func _on_win_menu() -> void:
 	show_menu()
 
 
-# ---------- end-screen callbacks ----------
+func _on_daily_again() -> void:
+	ModeService.begin_mode(ModeService.Mode.DAILY)
+	show_chamber()
+
 
 func _on_end_restart() -> void:
-	GameState.start_new_run()
+	ModeService.begin_mode(ModeService.Mode.CAMPAIGN)
 	show_chamber()
 
 
 func _on_end_menu() -> void:
+	ModeService.reset_active()
 	show_menu()

@@ -1,8 +1,6 @@
 extends Node
 ##
 ## SaveManager — flat JSON persistence in user://save.json.
-## Kept small on purpose: current chamber, per-chamber best move counts,
-## completed set, and habit profile.
 ##
 
 const SAVE_PATH: String = "user://save.json"
@@ -10,11 +8,14 @@ const SAVE_PATH: String = "user://save.json"
 
 func save_to_disk() -> void:
 	var data := {
-		"version": 1,
+		"version": 2,
 		"current_chamber": GameState.current_chamber,
 		"best_moves": GameState.best_moves,
 		"completed": GameState.completed,
 		"habit_profile": GameState.habit_profile,
+		"tutorial_flags": GameState.tutorial_flags,
+		"induction_complete": GameState.induction_complete,
+		"modes": ModeService.to_save_dict(),
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -46,6 +47,14 @@ func load_from_disk() -> void:
 	if typeof(habit) == TYPE_DICTIONARY:
 		for k in ["up", "down", "left", "right"]:
 			GameState.habit_profile[k] = int(habit.get(k, 0))
+	var flags = parsed.get("tutorial_flags", {})
+	if typeof(flags) == TYPE_DICTIONARY:
+		GameState.tutorial_flags = flags.duplicate(true)
+	GameState.induction_complete = bool(parsed.get("induction_complete", false)) \
+		or GameState.has_tutorial_flag("induction_complete")
+	var modes = parsed.get("modes", {})
+	if typeof(modes) == TYPE_DICTIONARY:
+		ModeService.from_save_dict(modes)
 
 
 func wipe() -> void:
@@ -54,7 +63,6 @@ func wipe() -> void:
 
 
 static func _stringify_int_keys(d: Dictionary) -> Dictionary:
-	# JSON round-trip converts int keys to strings; normalise back to int.
 	var out := {}
 	for k in d.keys():
 		var ik: int

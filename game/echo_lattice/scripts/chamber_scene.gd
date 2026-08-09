@@ -1,8 +1,6 @@
 extends Control
 ##
-## Chamber scene root — hosts the Chamber (Node2D) plus the HUD/legend on top.
-## The scene forwards chamber_won upward, offers restart & menu buttons, and
-## captures the pause_menu action.
+## Chamber scene root — hosts Chamber + HUD + diegetic PA strip.
 ##
 
 signal chamber_won(chamber_id: int, moves: int)
@@ -15,6 +13,9 @@ signal menu_requested()
 @onready var habit_label: Label = %HabitLabel
 @onready var restart_button: Button = %RestartButton
 @onready var menu_button: Button = %MenuButton
+@onready var pa_label: Label = %PALabel
+@onready var undo_hint: Label = %UndoHint
+@onready var mode_label: Label = %ModeLabel
 
 
 func _ready() -> void:
@@ -23,22 +24,47 @@ func _ready() -> void:
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
+	chamber_node.self_trap_detected.connect(_on_self_trap)
+	chamber_node.undo_performed.connect(_on_undo)
+	DiegeticPA.line_played.connect(_on_pa_line)
 	_refresh_title()
 	_on_moves_changed(0)
-	# Chamber._ready fires before we wire up (children ready first), so pull the
-	# current caption once at scene start.
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(str(data.get("caption", "")))
+	_refresh_mode_label()
+	undo_hint.visible = false
+	pa_label.text = DiegeticPA.current_text()
 
 
 func _refresh_title() -> void:
 	var idx: int = GameState.current_chamber
 	var data: Dictionary = ChamberBook.get_chamber(idx)
-	title_label.text = "Chamber %d / %d — %s" % [
-		idx + 1,
-		ChamberBook.chamber_count(),
+	title_label.text = "%s — %s" % [
+		_mode_prefix(),
 		str(data.get("title", "")),
 	]
+
+
+func _mode_prefix() -> String:
+	match ModeService.active_mode:
+		ModeService.Mode.DAILY:
+			return "Daily"
+		ModeService.Mode.ENDLESS:
+			return "Shift %d" % (ModeService.endless_clears + 1)
+		ModeService.Mode.CAMPAIGN:
+			return "Chamber %d/%d" % [GameState.current_chamber + 1, ChamberBook.chamber_count()]
+		_:
+			return "Chamber %d/%d" % [GameState.current_chamber + 1, ChamberBook.chamber_count()]
+
+
+func _refresh_mode_label() -> void:
+	match ModeService.active_mode:
+		ModeService.Mode.DAILY:
+			mode_label.text = "SEED %s" % ModeService.daily_datestamp
+		ModeService.Mode.ENDLESS:
+			mode_label.text = "STREAK %d  BEST %d" % [ModeService.endless_clears, ModeService.endless_best]
+		_:
+			mode_label.text = ModeService.title_for(ModeService.active_mode).to_upper()
 
 
 func _on_chamber_won(chamber_id: int, moves: int) -> void:
@@ -51,7 +77,27 @@ func _on_moves_changed(moves: int) -> void:
 
 
 func _on_caption_changed(text: String) -> void:
+	# Keep captions short — never a wall. PA strip handles event lines.
 	caption_label.text = text
+
+
+func _on_self_trap() -> void:
+	undo_hint.visible = true
+	undo_hint.text = "Z · UNDO"
+
+
+func _on_undo() -> void:
+	undo_hint.visible = false
+
+
+func _on_pa_line(_id: String, text: String, channel: String) -> void:
+	if text == "":
+		pa_label.text = ""
+		return
+	if channel == "plate":
+		pa_label.text = "⟦ %s ⟧" % text
+	else:
+		pa_label.text = text
 
 
 func _unhandled_input(event: InputEvent) -> void:

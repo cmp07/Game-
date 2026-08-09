@@ -2,17 +2,15 @@ extends Node2D
 ##
 ## Chamber — one playable room of Echo Lattice.
 ##
-## Owns the tile grid, the player position, the local move buffer since the
-## last checkpoint, and applies rewrites when a checkpoint is entered.
-##
-## The scene has a self-drawn look: no external tile textures. Everything is
-## drawn in _draw() using solid rects, so the whole vertical slice runs
-## with only project.godot + icon.svg + scripts + scenes on disk.
-##
 
 signal chamber_won(chamber_id: int, moves: int)
 signal moves_changed(moves: int)
 signal caption_changed(text: String)
+signal rewrite_fired(transform_name: String)
+signal rewrite_settled(transform_name: String)
+signal move_blocked(by_echo: bool)
+signal self_trap_detected()
+signal undo_performed()
 
 enum Tile {
 	FLOOR,
@@ -27,7 +25,6 @@ const CELL_SIZE: int = 32
 const GRID_W: int = ChamberBook.GRID_W
 const GRID_H: int = ChamberBook.GRID_H
 
-# Palette — brutalist subway map: monochrome lattice + one accent.
 const COLOR_BG: Color              = Color("#0c0c11")
 const COLOR_FLOOR: Color           = Color("#181822")
 const COLOR_FLOOR_ALT: Color       = Color("#1c1c27")
@@ -44,25 +41,28 @@ const COLOR_PLAYER: Color          = Color("#e8e8f1")
 const COLOR_GHOST: Color           = Color(1.0, 0.36, 0.24, 0.35)
 const COLOR_GHOST_LINE: Color      = Color(1.0, 0.36, 0.24, 0.55)
 
-var grid: Array = []                 # 2D: grid[y][x] -> Tile
+var grid: Array = []
 var player_pos: Vector2i = Vector2i.ZERO
 var start_pos: Vector2i = Vector2i.ZERO
 var goal_pos: Vector2i = Vector2i.ZERO
 
 var move_count: int = 0
-var moves_since_checkpoint: Array = []   # Array[Vector2i]  positions walked since last rewrite
-var undo_stack: Array = []               # Array of dicts {pos, tile_at_prev, moves_pop}
-var checkpoints_triggered: Dictionary = {}   # Vector2i -> true
-var pending_echoes: Array = []           # Array[Vector2i] echoes still animating in
+var moves_since_checkpoint: Array = []
+var undo_stack: Array = []
+var checkpoints_triggered: Dictionary = {}
+var pending_echoes: Array = []
 var pending_echo_timer: float = 0.0
-var pending_echo_settle_time: float = 0.35
+var pending_echo_settle_time: float = 0.55
+var _rewrite_pending_signal: bool = false
 
 var chamber: Dictionary = {}
 var transform_name: String = "none"
 
 var goal_pulse_t: float = 0.0
-var move_accum: float = 0.0
 var has_won: bool = false
+var rewrites_done: int = 0
+var blocked_streak: int = 0
+var self_trap_armed: bool = false
 
 
 func _ready() -> void:
@@ -76,12 +76,15 @@ func _process(delta: float) -> void:
 	if pending_echoes.size() > 0:
 		pending_echo_timer += delta
 		if pending_echo_timer >= pending_echo_settle_time:
-			# Commit all pending echoes to real ECHO_WALL cells.
 			for p in pending_echoes:
 				if _in_bounds(p) and grid[p.y][p.x] == Tile.FLOOR:
 					grid[p.y][p.x] = Tile.ECHO_WALL
 			pending_echoes.clear()
 			pending_echo_timer = 0.0
+			if _rewrite_pending_signal:
+				_rewrite_pending_signal = false
+				emit_signal("rewrite_settled", transform_name)
+				_onboarding_rewrite_settled()
 			queue_redraw()
 	queue_redraw()
 
@@ -121,15 +124,21 @@ func load_chamber(id: int) -> void:
 	checkpoints_triggered.clear()
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	_rewrite_pending_signal = false
 	has_won = false
+	rewrites_done = 0
+	blocked_streak = 0
+	self_trap_armed = false
 	emit_signal("moves_changed", move_count)
 	emit_signal("caption_changed", str(chamber.get("caption", "")))
+	_onboarding_enter()
 	queue_redraw()
 
 
 func reset_chamber() -> void:
 	if chamber.is_empty():
 		return
+	DiegeticPA.play("pa.death.reset")
 	load_chamber(int(chamber.get("id", 0)))
 
 
@@ -156,14 +165,19 @@ func _try_move(dir: Vector2i) -> void:
 		return
 	var t: int = grid[target.y][target.x]
 	if t == Tile.WALL or t == Tile.ECHO_WALL:
+		var by_echo: bool = t == Tile.ECHO_WALL
+		blocked_streak += 1
+		emit_signal("move_blocked", by_echo)
+		_maybe_self_trap(by_echo)
 		return
-	# Persist an undo frame BEFORE any state change.
+	blocked_streak = 0
 	undo_stack.push_back({
 		"prev_pos": player_pos,
 		"prev_tile_at_target": t,
 		"moves_since_cp_len": moves_since_checkpoint.size(),
 		"triggered_snapshot": checkpoints_triggered.duplicate(true),
 		"grid_deltas": [],
+		"rewrites_done": rewrites_done,
 	})
 	player_pos = target
 	move_count += 1
@@ -180,30 +194,43 @@ func _try_move(dir: Vector2i) -> void:
 	queue_redraw()
 
 
+func _maybe_self_trap(by_echo: bool) -> void:
+	# Self-trap teach: after a rewrite, bumping echo/habit walls unlocks undo.
+	if rewrites_done <= 0:
+		return
+	if blocked_streak < 1:
+		return
+	if not self_trap_armed:
+		self_trap_armed = true
+		emit_signal("self_trap_detected")
+		DiegeticPA.play("pa.undo.hint")
+	elif by_echo and blocked_streak >= 2:
+		# Reinforce without a text wall — pulse the same short line once more if needed.
+		if not GameState.has_tutorial_flag("flag.undo_taught"):
+			DiegeticPA.play("pa.undo.hint")
+
+
 func _undo() -> void:
 	if undo_stack.is_empty():
 		return
-	# Commit any pending echoes first so undo state is deterministic.
 	_flush_pending_echoes()
 	var frame: Dictionary = undo_stack.pop_back()
-	# Revert player.
 	player_pos = frame["prev_pos"]
 	move_count = max(0, move_count - 1)
-	# Trim moves since checkpoint back to previous size.
 	while moves_since_checkpoint.size() > int(frame["moves_since_cp_len"]):
 		moves_since_checkpoint.pop_back()
-	# Restore triggered map — if a checkpoint just got used, un-use it and revert echoes.
 	var new_triggered: Dictionary = frame["triggered_snapshot"]
-	# Any checkpoint that IS triggered now but wasn't before: revert its cell and its echoes.
 	for pos in checkpoints_triggered.keys():
 		if not new_triggered.has(pos):
-			# Un-trigger — put the CHECKPOINT tile back.
 			if _in_bounds(pos):
 				grid[pos.y][pos.x] = Tile.CHECKPOINT
-			# Clear ECHO_WALL tiles back to FLOOR (best-effort revert).
 			_clear_all_echoes()
+			rewrites_done = int(frame.get("rewrites_done", max(0, rewrites_done - 1)))
 	checkpoints_triggered = new_triggered
+	blocked_streak = 0
 	emit_signal("moves_changed", move_count)
+	emit_signal("undo_performed")
+	DiegeticPA.play("pa.undo.confirm")
 	queue_redraw()
 
 
@@ -213,6 +240,10 @@ func _flush_pending_echoes() -> void:
 			grid[p.y][p.x] = Tile.ECHO_WALL
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	if _rewrite_pending_signal:
+		_rewrite_pending_signal = false
+		emit_signal("rewrite_settled", transform_name)
+		_onboarding_rewrite_settled()
 
 
 func _clear_all_echoes() -> void:
@@ -223,14 +254,15 @@ func _clear_all_echoes() -> void:
 
 
 func _trigger_rewrite() -> void:
-	# The rewrite is a deterministic transform of the path walked since last checkpoint.
-	# We compute the transformed cells and mark them as pending echoes so the visual
-	# has a moment to communicate causation.
 	var path: Array = moves_since_checkpoint.duplicate()
 	if path.is_empty():
 		path.append(player_pos)
+	# Checkpoint with no transform still arms the buffer — short PA only.
+	if transform_name == "none":
+		moves_since_checkpoint.clear()
+		DiegeticPA.play("pa.checkpoint.armed")
+		return
 	var transformed: Array = _apply_transform(transform_name, path)
-	# Deduplicate + filter to placeable candidates.
 	var seen := {}
 	var candidates: Array = []
 	for p in transformed:
@@ -245,19 +277,46 @@ func _trigger_rewrite() -> void:
 			continue
 		seen[p] = true
 		candidates.append(p)
-	# Solvability safety net — never seal the goal off from the player.
-	# Add candidates one by one; skip any that would break player→goal connectivity.
 	pending_echoes.clear()
 	for p in candidates:
 		if _would_still_be_reachable(p):
 			pending_echoes.append(p)
 	pending_echo_timer = 0.0
 	moves_since_checkpoint.clear()
+	rewrites_done += 1
+	_rewrite_pending_signal = pending_echoes.size() > 0
+	emit_signal("rewrite_fired", transform_name)
+	DiegeticPA.play("pa.rewrite.fired")
+	if pending_echoes.is_empty():
+		# Nothing to settle visually — still fire matched line for spectacle chambers.
+		_onboarding_rewrite_settled()
+		emit_signal("rewrite_settled", transform_name)
+
+
+func _onboarding_enter() -> void:
+	var id: int = int(chamber.get("id", -1))
+	if ModeService.active_mode != ModeService.Mode.CAMPAIGN \
+		and ModeService.active_mode != ModeService.Mode.NONE:
+		return
+	if GameState.induction_complete:
+		return
+	match id:
+		0:
+			DiegeticPA.play("plate.walk_span")
+		1:
+			pass
+		2:
+			pass
+
+
+func _onboarding_rewrite_settled() -> void:
+	if bool(chamber.get("spectacle", false)) or int(chamber.get("id", -1)) == 2:
+		DiegeticPA.play("pa.rewrite.matched")
+	else:
+		DiegeticPA.play("pa.rewrite.matched.variant")
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
-	# Treat WALL / ECHO_WALL / the proposed new_wall / any already-pending echo as blocked.
-	# Player must remain able to reach the goal.
 	var w: int = GRID_W
 	var h: int = GRID_H
 	var blocked := {}
@@ -302,7 +361,6 @@ func _apply_transform(name: String, path: Array) -> Array:
 			for p in path:
 				out.append(Vector2i(GRID_W - 1 - int(p.x), GRID_H - 1 - int(p.y)))
 		"thicken":
-			# Habit solidifies on the same cells you just walked, minus the player's current tile.
 			for p in path:
 				out.append(Vector2i(int(p.x), int(p.y)))
 		"mirror_v_then_h":
@@ -318,16 +376,22 @@ func _on_win() -> void:
 	if has_won:
 		return
 	has_won = true
-	GameState.record_chamber_win(int(chamber.get("id", 0)), move_count)
-	# Small delay so the goal tile animation reads before the transition.
+	var cid: int = int(chamber.get("id", 0))
+	GameState.record_chamber_win(cid, move_count)
+	if cid == 0:
+		DiegeticPA.play("toast.span_clear")
 	var t := get_tree().create_timer(0.35)
 	t.timeout.connect(func():
-		emit_signal("chamber_won", int(chamber.get("id", 0)), move_count)
+		emit_signal("chamber_won", cid, move_count)
 	)
 
 
 func _in_bounds(p: Vector2i) -> bool:
 	return p.x >= 0 and p.x < GRID_W and p.y >= 0 and p.y < GRID_H
+
+
+func is_goal_reachable() -> bool:
+	return _would_still_be_reachable(Vector2i(-99, -99))
 
 
 # ---------------- rendering ----------------
@@ -337,10 +401,8 @@ func _draw() -> void:
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
 	var offset: Vector2 = ((vp_size - grid_px) * 0.5).floor()
 
-	# Background wash
 	draw_rect(Rect2(Vector2.ZERO, vp_size), COLOR_BG, true)
 
-	# Tiles
 	for y in range(GRID_H):
 		for x in range(GRID_W):
 			var t: int = grid[y][x]
@@ -362,10 +424,8 @@ func _draw() -> void:
 				_:
 					col = COLOR_FLOOR
 			draw_rect(rect, col, true)
-			# Fine grid line
 			draw_rect(rect, COLOR_GRID, false, 1.0)
 
-			# Decorations over floor.
 			match t:
 				Tile.WALL:
 					var inner := rect.grow(-2.0)
@@ -386,12 +446,10 @@ func _draw() -> void:
 					var inner2 := rect.grow(-3.0)
 					draw_rect(inner2, COLOR_ECHO_SOFT, true)
 
-	# Ghost trail — the path walked since last checkpoint.
 	for i in range(moves_since_checkpoint.size()):
 		var p: Vector2i = moves_since_checkpoint[i]
 		var r := Rect2(offset + Vector2(p.x * CELL_SIZE + 12, p.y * CELL_SIZE + 12), Vector2(CELL_SIZE - 24, CELL_SIZE - 24))
 		draw_rect(r, COLOR_GHOST, true)
-	# Ghost trail lines (connecting)
 	if moves_since_checkpoint.size() >= 2:
 		var pts: PackedVector2Array = PackedVector2Array()
 		for p in moves_since_checkpoint:
@@ -399,7 +457,6 @@ func _draw() -> void:
 		for i in range(pts.size() - 1):
 			draw_line(pts[i], pts[i + 1], COLOR_GHOST_LINE, 2.0, true)
 
-	# Pending echoes (animate in).
 	if pending_echoes.size() > 0:
 		var t_norm: float = clamp(pending_echo_timer / pending_echo_settle_time, 0.0, 1.0)
 		var pulse: float = 0.35 + 0.65 * (1.0 - abs(sin(t_norm * PI * 2.0)))
@@ -409,8 +466,13 @@ func _draw() -> void:
 			c.a = pulse
 			draw_rect(r.grow(-2.0), c, true)
 
-	# Player
 	var pr := Rect2(offset + Vector2(player_pos.x * CELL_SIZE + 6, player_pos.y * CELL_SIZE + 6), Vector2(CELL_SIZE - 12, CELL_SIZE - 12))
 	draw_rect(pr, COLOR_PLAYER, true)
-	# Player outline for punch
 	draw_rect(pr.grow(1.0), Color(0, 0, 0, 0.5), false, 1.0)
+
+	# Undo affordance when self-trapped — visual only, no paragraph.
+	if self_trap_armed and not undo_stack.is_empty():
+		var pulse2: float = 0.45 + 0.55 * abs(sin(goal_pulse_t * 4.0))
+		var hint_col := Color(1.0, 0.82, 0.4, pulse2)
+		var tip := offset + Vector2(player_pos.x * CELL_SIZE + CELL_SIZE * 0.5, player_pos.y * CELL_SIZE - 10)
+		draw_circle(tip, 4.0, hint_col)
