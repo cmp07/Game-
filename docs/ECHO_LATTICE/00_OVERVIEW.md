@@ -5,7 +5,11 @@
 
 | Doc | Purpose |
 |---|---|
+| [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | **Executive vision** — pillars, have-vs-need, game-feel score; Steam paused for depth |
+| [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) | Phased execution (V3 → content → audio/art → meta → Steam resume) |
+| [`../VISION/README.md`](../VISION/README.md) | Vision corpus index |
 | [`../VISION/QUALITY_BAR.md`](../VISION/QUALITY_BAR.md) | **Craft ceiling** — polish / presentation / moment standards from authorship-adjacent Steam comps (no genre mash) |
+| [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Steam pack frozen until depth gates pass |
 | [`01_GDD.md`](01_GDD.md) | Full game design (when present on branch) |
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |

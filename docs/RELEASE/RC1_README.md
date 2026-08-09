@@ -78,13 +78,14 @@ Python contract suite: **22/22** green after media merge (incl. deck bindings).
 
 **Steam pack frozen (2026-08-09); next focus = game depth.**  
 Durable refs: branch + tag `backup/echo-lattice-rc1-steam-pack` @ `5f0d463`.  
-Resume Partner / Coming Soon later from [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) — do **not** delete `steam/`, Gate A media, or RELEASE/AUDIT packs.
+Resume Partner / Coming Soon later from [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) — do **not** delete `steam/`, Gate A media, or RELEASE/AUDIT packs. Depth gates before Steam resume: [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8 (G1–G4). Executive lock: [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md).
 
 ## Doc map
 
 | Area | Entry |
 |---|---|
-| Steam pack freeze / resume | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
+| **Vision 1000× (pause Steam, deepen game)** | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) · [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) |
+| **Steam pack freeze** | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
 | Release index | [`README.md`](README.md) |
 | Vision / craft quality bar | [`../VISION/QUALITY_BAR.md`](../VISION/QUALITY_BAR.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |

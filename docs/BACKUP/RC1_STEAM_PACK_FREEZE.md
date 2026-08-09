@@ -1,7 +1,8 @@
 # RC1 Steam pack — freeze / resume
 
 **Status:** Steam pack frozen. **Next focus = game depth.**  
-**Policy:** Do **not** delete Steam / RELEASE / AUDIT work. Resume Partner + store upload from this freeze later.
+**Policy:** Do **not** delete Steam / RELEASE / AUDIT work. Resume Partner + store upload from this freeze **only after** depth gates G1–G4 in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8.  
+**Vision lock:** [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) — game-feel **41/100** vs pack ship-readiness **78/100**; pause Coming Soon until feel/depth land.
 
 | Field | Value |
 |---|---|
@@ -118,6 +119,8 @@ Until those are done, **public Coming Soon stays blocked**. In-repo pack remains
 
 | Doc | Role |
 |---|---|
+| [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Executive vision — pause Steam, deepen game |
+| [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) | Ordered waves + G1–G4 before Steam resume |
 | [`../RELEASE/RC1_README.md`](../RELEASE/RC1_README.md) | RC1 integration hub |
 | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) | Scorecard ~78 + gates |
 | [`KEY_PATHS.md`](KEY_PATHS.md) | Navigable tree of frozen areas |
