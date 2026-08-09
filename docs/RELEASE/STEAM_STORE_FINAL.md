@@ -288,7 +288,7 @@ Longer ~90 s launch trailer can reuse the same spine with one full chamber solve
 
 ## 10. AI disclosure (store + survey)
 
-**Gameplay / ship content: none.** Aligns with [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) §1.3 and Steam checklist policy.
+**Gameplay / ship content: none.** Paste-ready Partner answers: [`legal/AI_DISCLOSURE.md`](legal/AI_DISCLOSURE.md). Aligns with [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) §1.3 and Steam checklist policy.
 
 | Content | Generative AI? | Steam answer |
 |---|---|---|
@@ -357,6 +357,7 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 | [`capsules/`](capsules/) | Capsule briefs + placeholders |
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-store + Deck + regional pricing (#63) |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Survey / ratings / privacy (#64) |
+| [`legal/`](legal/) | Gate A Partner paste pack |
 | [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Screenshot source |
 | [`../ECHO_LATTICE/05_ART_BIBLE.md`](../ECHO_LATTICE/05_ART_BIBLE.md) §7 | Capsule / trailer still language |
 | [`../ECHO_LATTICE/08_STEAM_CHECKLIST.md`](../ECHO_LATTICE/08_STEAM_CHECKLIST.md) | Depot / GodotSteam checklist *(when merged)* |
