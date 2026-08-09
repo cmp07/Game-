@@ -108,12 +108,22 @@ func _refresh_title() -> void:
 	var mode_tag: String = ""
 	if GameState.run_mode == "daily":
 		mode_tag = tr("hud.daily_tag") % GameState.daily_label
-	title_label.text = "%s / %s — %s%s" % [
-		GameState.run_progress_index() + 1,
-		GameState.chambers_in_run(),
-		_localized_title(data),
-		mode_tag,
-	]
+	elif GameState.run_mode == "endless":
+		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
+		mode_tag = tr("hud.endless_tag") % [GameState.endless_label, pct]
+	if GameState.run_mode == "endless":
+		title_label.text = "%s — %s%s" % [
+			tr("hud.endless_depth") % (GameState.endless_depth + 1),
+			_localized_title(data),
+			mode_tag,
+		]
+	else:
+		title_label.text = "%s / %s — %s%s" % [
+			GameState.run_progress_index() + 1,
+			GameState.chambers_in_run(),
+			_localized_title(data),
+			mode_tag,
+		]
 
 
 func _localized_title(data: Dictionary) -> String:

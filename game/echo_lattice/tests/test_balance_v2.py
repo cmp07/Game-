@@ -62,6 +62,9 @@ class BalanceV2Tests(unittest.TestCase):
         self.assertLess(
             modes["cold"]["tempo_multiplier"], modes["standard"]["tempo_multiplier"]
         )
+        self.assertIn("endless", modes)
+        self.assertGreaterEqual(modes["endless"]["soft_hard_bias"], modes["standard"]["soft_hard_bias"])
+        self.assertLessEqual(modes["endless"]["star_slack"], modes["standard"]["star_slack"])
 
     def test_archetypes_present(self) -> None:
         arch = self.data["habit_archetypes"]

@@ -64,6 +64,10 @@ func save_to_disk() -> bool:
 		"daily_seed": GameState.daily_seed,
 		"daily_label": GameState.daily_label,
 		"daily_best_stars": GameState.daily_best_stars,
+		"endless_seed": GameState.endless_seed,
+		"endless_depth": GameState.endless_depth,
+		"endless_best_depth": GameState.endless_best_depth,
+		"endless_label": GameState.endless_label,
 		"run_started": GameState.run_started,
 	}
 	var payload: String = JSON.stringify(data, "\t")
@@ -299,6 +303,10 @@ func _apply_save(parsed: Dictionary) -> void:
 	GameState.queue_pos = int(parsed.get("queue_pos", 0))
 	GameState.daily_seed = int(parsed.get("daily_seed", 0))
 	GameState.daily_label = str(parsed.get("daily_label", ""))
+	GameState.endless_seed = int(parsed.get("endless_seed", 0))
+	GameState.endless_depth = int(parsed.get("endless_depth", 0))
+	GameState.endless_best_depth = int(parsed.get("endless_best_depth", 0))
+	GameState.endless_label = str(parsed.get("endless_label", ""))
 	GameState.run_started = bool(parsed.get("run_started", false))
 	var rq = parsed.get("run_queue", [])
 	if typeof(rq) == TYPE_ARRAY:
@@ -316,6 +324,11 @@ func _apply_save(parsed: Dictionary) -> void:
 	if GameState.run_queue.is_empty() and GameState.run_mode == "standard":
 		for i in range(ChamberBook.chamber_count()):
 			GameState.run_queue.append(i)
+	elif GameState.run_queue.is_empty() and GameState.run_mode == "endless" and GameState.endless_seed != 0:
+		GameState.run_queue = ChamberBook.endless_chamber_batch(
+			GameState.endless_seed, GameState.endless_depth, GameState.ENDLESS_BATCH, {}
+		)
+		GameState.queue_pos = 0
 	if GameState.queue_pos < 0:
 		GameState.queue_pos = 0
 	if GameState.run_queue.size() > 0:

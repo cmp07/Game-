@@ -7,6 +7,7 @@ extends Control
 signal start_new_pressed()
 signal continue_pressed()
 signal daily_pressed()
+signal endless_pressed()
 signal settings_pressed()
 signal quit_pressed()
 signal wishlist_pressed()
@@ -16,6 +17,7 @@ const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn"
 @onready var continue_button: Button = %ContinueButton
 @onready var start_button: Button = %StartButton
 @onready var daily_button: Button = %DailyButton
+@onready var endless_button: Button = %EndlessButton
 @onready var settings_button: Button = %SettingsButton
 @onready var quit_button: Button = %QuitButton
 @onready var subtitle: Label = %Subtitle
@@ -56,11 +58,12 @@ func _ready() -> void:
 	var today: String = GameState._today_label()
 	var dseed: int = GameState._today_seed()
 	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
+	var ebest: int = int(GameState.endless_best_depth)
 	if DemoBuild.is_demo():
 		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
 		meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
 	else:
-		meta_label.text = tr("menu.daily_meta") % [today, dbest]
+		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
@@ -69,6 +72,8 @@ func _ready() -> void:
 			emit_signal("continue_pressed")
 	)
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
+	if endless_button:
+		endless_button.pressed.connect(func(): emit_signal("endless_pressed"))
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
 	if DemoBuild.is_demo():
@@ -80,6 +85,8 @@ func _ready() -> void:
 	_style_as_index_button(start_button, true)
 	_style_as_index_button(continue_button, false)
 	_style_as_index_button(daily_button, false)
+	if endless_button:
+		_style_as_index_button(endless_button, false)
 	_style_as_index_button(settings_button, false)
 	_style_as_index_button(quit_button, false)
 	if _wishlist_button != null:
@@ -94,6 +101,8 @@ func _localize_chrome() -> void:
 	continue_button.text = tr("menu.continue")
 	start_button.text = tr("menu.start_new")
 	daily_button.text = tr("menu.daily")
+	if endless_button:
+		endless_button.text = tr("menu.endless")
 	if settings_button:
 		settings_button.text = tr("menu.settings")
 	quit_button.text = tr("menu.quit")
@@ -153,7 +162,11 @@ func _style_as_index_button(btn: Button, primary: bool) -> void:
 
 
 func _ensure_gamepad_focus_chain() -> void:
-	var order: Array = [continue_button, start_button, daily_button, settings_button, quit_button]
+	var order: Array = [continue_button, start_button, daily_button]
+	if endless_button:
+		order.append(endless_button)
+	order.append(settings_button)
+	order.append(quit_button)
 	if _wishlist_button != null:
 		order.insert(order.size() - 1, _wishlist_button)
 
@@ -342,7 +355,11 @@ func _controls_hint() -> String:
 
 
 func _draw_button_underlines(_card: Rect2) -> void:
-	var buttons: Array = [continue_button, start_button, daily_button, settings_button, quit_button]
+	var buttons: Array = [continue_button, start_button, daily_button]
+	if endless_button:
+		buttons.append(endless_button)
+	buttons.append(settings_button)
+	buttons.append(quit_button)
 	if _wishlist_button != null:
 		buttons.insert(buttons.size() - 1, _wishlist_button)
 	for btn in buttons:

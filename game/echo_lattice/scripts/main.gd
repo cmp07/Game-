@@ -487,6 +487,39 @@ func _run_self_test() -> bool:
 	var daily_n: int = mini(5, ChamberBook.chamber_count())
 	if GameState.run_queue.size() != daily_n:
 		printerr("daily wing expected %d chambers got %d" % [daily_n, GameState.run_queue.size()]); ok = false
+	# Endless: seeded catalog batch + pressure climb (never marks wing complete).
+	GameState.start_endless_run()
+	if GameState.run_mode != "endless":
+		printerr("start_endless_run did not set run_mode"); ok = false
+	if GameState.run_queue.is_empty():
+		printerr("endless queue empty"); ok = false
+	if GameState.is_run_complete():
+		printerr("endless should never report run complete at start"); ok = false
+	var endless_q1: Array = GameState.run_queue.duplicate()
+	var pressure0: float = GameState.rewrite_pressure()
+	GameState.endless_depth = 8
+	var pressure1: float = GameState.rewrite_pressure()
+	if pressure1 <= pressure0:
+		printerr("endless rewrite pressure should rise with depth"); ok = false
+	GameState.endless_depth = 0
+	GameState.record_chamber_win(int(GameState.run_queue[0]), 20, 18)
+	if GameState.endless_depth != 1:
+		printerr("endless_depth expected 1 after clear got %d" % GameState.endless_depth); ok = false
+	if not GameState.advance_chamber():
+		printerr("endless advance_chamber should keep climbing"); ok = false
+	var t_soft: String = ChamberBook.endless_pressure_transform("mirror_v", 0.2, 1)
+	var t_hard: String = ChamberBook.endless_pressure_transform("mirror_v", 0.9, 1)
+	if t_soft != "mirror_v":
+		printerr("low pressure should keep mirror_v"); ok = false
+	if t_hard != "mirror_v_then_h":
+		printerr("high pressure should stack mirrors"); ok = false
+	# Determinism: same seed+depth → same batch.
+	var batch_a: Array = ChamberBook.endless_chamber_batch(424242, 0, 5, {})
+	var batch_b: Array = ChamberBook.endless_chamber_batch(424242, 0, 5, {})
+	if batch_a != batch_b or batch_a.is_empty():
+		printerr("endless batch not deterministic"); ok = false
+	if endless_q1.is_empty():
+		printerr("endless start queue vanished"); ok = false
 	GameState.start_new_run()
 	# Re-assert the lifetime best survived the mode switch.
 	GameState.best_moves[0] = 42
@@ -886,6 +919,8 @@ func show_menu() -> void:
 		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
 	if m.has_signal("daily_pressed"):
 		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
+	if m.has_signal("endless_pressed"):
+		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
 	if has_node("/root/SteamService"):
 		SteamService.set_menu_presence()
 
@@ -948,6 +983,11 @@ func _on_menu_continue() -> void:
 
 func _on_menu_daily() -> void:
 	GameState.start_daily_run()
+	show_chamber()
+
+
+func _on_menu_endless() -> void:
+	GameState.start_endless_run()
 	show_chamber()
 
 

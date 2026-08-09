@@ -16,7 +16,7 @@ Severity: **P0** ship-blocker / broken progression · **P1** major mode or fairn
 | CORE-01 | P0 | Campaign / Daily Continue vs lifetime `completed` | **Fixed** on this branch |
 | CORE-02 | P0 | Wing-complete Continue parks on last chamber (SL-6 regress) | **Fixed** on this branch |
 | CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | Open |
-| CORE-04 | P1 | Endless mode advertised, not implemented | Open |
+| CORE-04 | P1 | Endless mode advertised, not implemented | **Fixed** on `cursor/fix-endless` (thin vertical) |
 | CORE-05 | P1 | Soft/hard adaptation + RewriteEngine unwired from playable loop | Open |
 | CORE-06 | P1 | Habit archetypes / score bias never affect rewrites | Open |
 | CORE-07 | P2 | Stars always rated as mode `"standard"` (ignores daily/reader/cold) | Open |
@@ -100,18 +100,16 @@ Wire `start_daily_run` through `DailyCalendar.pick_for_date` (fallback `DailySee
 
 ### CORE-04 — Endless mode missing
 
-**Repro**
+**Status:** Fixed on `cursor/fix-endless` (thin vertical).
+
+**Repro (historical)**
 
 1. RC1 README: “Campaign / Daily / Endless run entirely offline.”
-2. Menu exposes Start / Continue / Daily only — no endless entry, no `run_mode == "endless"`.
+2. Menu exposed Start / Continue / Daily only — no endless entry, no `run_mode == "endless"`.
 
-**Root cause**
+**Fix landed**
 
-Mode never implemented in `GameState` / `menu.gd` / `main.gd`.
-
-**Recommended fix**
-
-Either implement a seeded endless queue (reuse daily catalog + rising acts) or remove Endless from ship-facing copy until it exists.
+`GameState.start_endless_run()` builds a deterministic seeded queue from `DailySeeds` catalog → campaign indices, appends batches as depth climbs, raises rewrite pressure (act floor + mirror stack via `ChamberBook.endless_pressure_transform`), menu **Endless** entry, save fields, HUD/won copy, balance mode `endless`.
 
 ---
 
@@ -223,7 +221,7 @@ Keep recovery; add CI assert that auto-solver playthroughs never emit recovery; 
 | Goal/player corruption | Flush never fossils `player_pos` / `goal_pos`; win path separate | OK at P0 |
 | Campaign | `acts.json` order via `ChamberBook` | OK |
 | Daily | Shuffle of campaign indices | Calendar/seeds unused (CORE-03) |
-| Endless | — | Missing (CORE-04) |
+| Endless | Seeded catalog climb + rewrite pressure | Thin vertical on `cursor/fix-endless` |
 
 ---
 

@@ -15,6 +15,7 @@
 		"menu": "At the Field Ledger",
 		"chamber_template": "Chamber {index}: {title}",
 		"daily_template": "Daily {label}",
+		"endless_template": "Endless {label} · depth {depth}",
 		"won_template": "Cleared {title}",
 		"end": "Wing complete"
 	}

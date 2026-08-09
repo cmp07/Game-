@@ -117,6 +117,11 @@ func set_chamber_presence(chamber_id: int) -> void:
 		status = str(tpl.get("daily_template", "Daily {label}")).format({
 			"label": GameState.daily_label,
 		})
+	elif has_node("/root/GameState") and GameState.run_mode == "endless":
+		status = str(tpl.get("endless_template", "Endless {label} · depth {depth}")).format({
+			"label": GameState.endless_label,
+			"depth": GameState.endless_depth + 1,
+		})
 	else:
 		status = str(tpl.get("chamber_template", "Chamber {index}: {title}")).format({
 			"index": chamber_id + 1,

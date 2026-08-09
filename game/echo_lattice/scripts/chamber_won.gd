@@ -54,10 +54,16 @@ func configure(chamber_id: int, moves: int) -> void:
 		next_text = tr("won.next_chamber") if not is_last else tr("won.finish_demo")
 	elif GameState.run_mode == "daily":
 		next_text = tr("won.next_daily") if not is_last else tr("won.daily_complete")
+	elif GameState.run_mode == "endless":
+		next_text = tr("won.next_endless")
+		is_last = false
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
 		mode_line = tr("won.daily_line") % GameState.daily_label
+	elif GameState.run_mode == "endless":
+		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
+		mode_line = tr("won.endless_line") % [GameState.endless_label, GameState.endless_depth, pct]
 	stats_label.text = tr("won.stats") % [
 		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_summary()
 	]

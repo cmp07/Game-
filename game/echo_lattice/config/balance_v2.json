@@ -29,6 +29,16 @@
       "tempo_multiplier": 0.85,
       "star_slack": 0.9,
       "hard_ops_allowed_from_act": 1
+    },
+    "endless": {
+      "soft_hard_bias": 0.62,
+      "magnitude_scale": 1.1,
+      "undo_budget_per_chamber": 18,
+      "rewind_budget_per_chamber": 4,
+      "tempo_multiplier": 0.95,
+      "star_slack": 0.95,
+      "hard_ops_allowed_from_act": 1,
+      "note": "Climb mode — act floor + transform pressure escalate with depth; bias is the floor."
     }
   },
   "acts": {
