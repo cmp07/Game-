@@ -17,6 +17,7 @@ const SAVE_MAX_CHAMBER_INDEX: int = 1023
 const SAVE_MAX_STRING_LEN: int = 256
 const SAVE_ALLOWED_KEYS: Array[String] = [
 	"version",
+	"updated_at",
 	"build_flavor",
 	"current_chamber",
 	"best_moves",
@@ -29,8 +30,19 @@ const SAVE_ALLOWED_KEYS: Array[String] = [
 	"queue_pos",
 	"daily_seed",
 	"daily_label",
+	"daily_friend_code",
+	"daily_chamber_id",
+	"daily_source",
+	"daily_variation",
 	"daily_best_stars",
+	"endless_seed",
+	"endless_depth",
+	"endless_best_depth",
+	"endless_label",
 	"run_started",
+	"habit_identity_unlocked",
+	"identity_stamps",
+	"tutorial_flags",
 ]
 
 
@@ -76,6 +88,7 @@ func save_to_disk() -> bool:
 		"run_started": GameState.run_started,
 		"habit_identity_unlocked": GameState.habit_identity_unlocked,
 		"identity_stamps": GameState.identity_stamps,
+		"tutorial_flags": GameState.tutorial_flags,
 	}
 	var payload: String = JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_TMP, FileAccess.WRITE)
@@ -200,7 +213,7 @@ static func validate_save_dict(data: Dictionary) -> Dictionary:
 		var mode := str(data.get("run_mode", ""))
 		if mode.length() > SAVE_MAX_STRING_LEN:
 			return {"ok": false, "reason": "run_mode_too_long"}
-		if mode != "" and mode != "standard" and mode != "daily":
+		if mode != "" and mode != "standard" and mode != "daily" and mode != "endless":
 			return {"ok": false, "reason": "run_mode_invalid"}
 	if data.has("daily_label") and str(data.get("daily_label", "")).length() > SAVE_MAX_STRING_LEN:
 		return {"ok": false, "reason": "daily_label_too_long"}
@@ -339,6 +352,11 @@ func _apply_save(parsed: Dictionary) -> void:
 		GameState.identity_stamps = _stringify_int_keys(stamps)
 	else:
 		GameState.identity_stamps = {}
+	var tflags = parsed.get("tutorial_flags", {})
+	if typeof(tflags) == TYPE_DICTIONARY:
+		GameState.tutorial_flags = (tflags as Dictionary).duplicate(true)
+	else:
+		GameState.tutorial_flags = {}
 	_sync_habit_unlock_from_progress()
 	# Drop chamber indices the active build cannot address (demo↔full / corrupt).
 	_sanitize_queue_against_book()

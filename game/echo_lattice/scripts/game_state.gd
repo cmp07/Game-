@@ -34,6 +34,8 @@ var last_identity_stamp: Dictionary = {}
 var identity_stamps: Dictionary = {}
 ## Habit identity HUD unlocks after a Mirror Birth (or Looking Glass) moment.
 var habit_identity_unlocked: bool = false
+## One-shot teach flags (checkpoint literacy, post-rewrite coach, undo hint).
+var tutorial_flags: Dictionary = {}
 
 # Endless: deterministic seeded climb through DailySeeds catalog + rewrite pressure.
 var endless_seed: int = 0
@@ -226,6 +228,19 @@ func reveal_habit_identity() -> void:
 
 func is_habit_identity_visible() -> bool:
 	return habit_identity_unlocked
+
+
+func has_tutorial_flag(flag: String) -> bool:
+	if flag.is_empty():
+		return false
+	return bool(tutorial_flags.get(flag, false))
+
+
+func set_tutorial_flag(flag: String) -> void:
+	if flag.is_empty() or bool(tutorial_flags.get(flag, false)):
+		return
+	tutorial_flags[flag] = true
+	SaveManager.save_to_disk()
 
 
 func habit_hand_id() -> String:

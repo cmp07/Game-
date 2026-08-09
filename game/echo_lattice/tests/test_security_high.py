@@ -39,6 +39,7 @@ SAVE_MAX_CHAMBER_INDEX = 1023
 SAVE_MAX_STRING_LEN = 256
 SAVE_ALLOWED_KEYS = {
     "version",
+    "updated_at",
     "build_flavor",
     "current_chamber",
     "best_moves",
@@ -51,8 +52,19 @@ SAVE_ALLOWED_KEYS = {
     "queue_pos",
     "daily_seed",
     "daily_label",
+    "daily_friend_code",
+    "daily_chamber_id",
+    "daily_source",
+    "daily_variation",
     "daily_best_stars",
+    "endless_seed",
+    "endless_depth",
+    "endless_best_depth",
+    "endless_label",
     "run_started",
+    "habit_identity_unlocked",
+    "identity_stamps",
+    "tutorial_flags",
 }
 
 
@@ -90,7 +102,7 @@ def validate_save_dict(data: dict) -> dict:
         mode = str(data.get("run_mode", ""))
         if len(mode) > SAVE_MAX_STRING_LEN:
             return {"ok": False, "reason": "run_mode_too_long"}
-        if mode and mode not in ("standard", "daily"):
+        if mode and mode not in ("standard", "daily", "endless"):
             return {"ok": False, "reason": "run_mode_invalid"}
     if "daily_label" in data and len(str(data.get("daily_label", ""))) > SAVE_MAX_STRING_LEN:
         return {"ok": False, "reason": "daily_label_too_long"}

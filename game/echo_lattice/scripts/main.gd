@@ -414,6 +414,7 @@ func _run_self_test() -> bool:
 			])
 	if DemoBuild.is_demo():
 		ok = _selftest_demo_scope(acts) and ok
+	ok = _selftest_onboarding_path() and ok
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
 		var rows: Array = data.get("map", [])
@@ -460,6 +461,7 @@ func _run_self_test() -> bool:
 	GameState.identity_stamps.clear()
 	GameState.last_identity_stamp = {}
 	GameState.habit_identity_unlocked = false
+	GameState.tutorial_flags.clear()
 	GameState.start_new_run()
 	if DemoBuild.is_demo():
 		var expect_n: int = DemoBuild.allowed_campaign_ids().size()
@@ -878,7 +880,55 @@ func _selftest_demo_scope(acts: Array) -> bool:
 	# Placeholder AppID / itch / DRM-free builds must not surface a live CTA.
 	if DemoBuild.wishlist_url().find("YOUR_APP_ID") >= 0:
 		printerr("demo wishlist URL still contains YOUR_APP_ID"); ok = false
+	if DemoBuild.wishlist_cta_enabled() and DemoBuild.wishlist_url().is_empty():
+		printerr("wishlist CTA enabled with empty URL"); ok = false
 	print("demo scope: Act I (%d) + Mirror Birth + wishlist gates OK" % expect.size())
+	return ok
+
+
+func _selftest_onboarding_path() -> bool:
+	## Guarantee Quiet Span → Echo Plate → Mirror Birth fits a 0–3 min first-hook path.
+	## Budget: shortest-path sum ≤ 90 steps (~90s deliberate / well under 3 minutes).
+	var ok := true
+	var budget := 0
+	var ids: PackedStringArray = PackedStringArray([
+		"00_quiet_span", "01_echo_plate", DemoBuild.MIRROR_BIRTH_ID,
+	])
+	for cid in ids:
+		var data: Dictionary = ChamberBook.get_chamber_by_content_id(cid)
+		if data.is_empty():
+			printerr("onboarding missing chamber %s" % cid)
+			ok = false
+			continue
+		var sp: int = _bfs_shortest_len(data)
+		if sp < 0:
+			printerr("onboarding %s has no path to goal" % cid)
+			ok = false
+			continue
+		budget += sp
+		print("  onboarding shortest path %s = %d" % [cid, sp])
+		var hints = data.get("hints", [])
+		if typeof(hints) != TYPE_ARRAY or hints.is_empty():
+			printerr("onboarding %s missing teach hints[]" % cid)
+			ok = false
+	var echo: Dictionary = ChamberBook.get_chamber_by_content_id("01_echo_plate")
+	if not echo.is_empty():
+		var rows: Array = echo.get("map", [])
+		var cps := 0
+		for row in rows:
+			cps += str(row).count("C")
+		if cps < 1:
+			printerr("Echo Plate must teach a checkpoint plate (C)"); ok = false
+		if int(echo.get("rewrite_cap", 99)) != 0:
+			printerr("Echo Plate rewrite_cap must be 0 (literacy, no fossils)"); ok = false
+	var mirror: Dictionary = ChamberBook.get_chamber_by_content_id(DemoBuild.MIRROR_BIRTH_ID)
+	if not mirror.is_empty() and str(mirror.get("transform", "")) != "mirror_v":
+		printerr("Mirror Birth must teach mirror_v"); ok = false
+	if budget > 90:
+		printerr("onboarding shortest-path sum %d exceeds 90-move / ~3min budget" % budget)
+		ok = false
+	elif ok:
+		print("  onboarding path budget OK (%d steps across Quiet Span→Mirror Birth)" % budget)
 	return ok
 
 
@@ -992,6 +1042,10 @@ func _bfs_next_step(chamber: Node2D, target: Vector2i) -> Vector2i:
 
 
 static func _bfs_reachable(data: Dictionary) -> bool:
+	return _bfs_shortest_len(data) >= 0
+
+
+static func _bfs_shortest_len(data: Dictionary) -> int:
 	var rows: Array = data.get("map", [])
 	var h: int = rows.size()
 	var w: int = int(ChamberBook.GRID_W)
@@ -1008,14 +1062,15 @@ static func _bfs_reachable(data: Dictionary) -> bool:
 			elif c == "G":
 				goal = Vector2i(x, y)
 	if start == Vector2i(-1, -1) or goal == Vector2i(-1, -1):
-		return false
+		return -1
 	var seen := {}
 	var q: Array = [start]
+	var dist := {start: 0}
 	seen[start] = true
 	while q.size() > 0:
 		var p: Vector2i = q.pop_front()
 		if p == goal:
-			return true
+			return int(dist[p])
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var n: Vector2i = p + d
 			if n.x < 0 or n.x >= w or n.y < 0 or n.y >= h:
@@ -1029,8 +1084,9 @@ static func _bfs_reachable(data: Dictionary) -> bool:
 			if ch == "#":
 				continue
 			seen[n] = true
+			dist[n] = int(dist[p]) + 1
 			q.append(n)
-	return false
+	return -1
 
 
 func _clear_stage() -> void:

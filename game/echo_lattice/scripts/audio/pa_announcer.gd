@@ -69,7 +69,10 @@ func _subtitle_for_pa(line_or_event: String) -> void:
 		"pa.rewrite_armed":
 			stub = "pa.checkpoint.armed"
 		"pa.board_tick":
+			# Prefer the original diegetic line id when play_line already mapped it.
 			stub = "pa.ghost.floor"
 		"pa.wing_clear":
 			stub = "pa.wing.clear"
+		"pa.rewrite.matched", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor":
+			stub = line_or_event
 	overlay.call("show_line", stub)

@@ -42,6 +42,12 @@ jobs:
       - name: Demo spec gate
         run: python3 game/echo_lattice/tests/test_demo_spec.py
 
+      - name: Onboarding path / teach hooks gate
+        run: python3 game/echo_lattice/tests/test_onboarding_path.py
+
+      - name: Wishlist CTA gates
+        run: python3 game/echo_lattice/tests/test_wishlist_gates.py
+
       - name: Deck bindings gate
         run: python3 game/echo_lattice/tests/check_deck_bindings.py
 

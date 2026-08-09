@@ -41,10 +41,15 @@ func _on_locale_changed(_locale: String) -> void:
 	if DemoBuild.is_demo():
 		title_label.text = tr("end.demo_title")
 		tagline_label.text = tr("end.demo_tagline")
-		footer_label.text = tr("end.demo_footer")
 		restart_button.text = tr("end.demo_replay")
-		if _wishlist_button != null:
-			_wishlist_button.text = tr("menu.wishlist")
+		if DemoBuild.wishlist_cta_enabled():
+			footer_label.text = tr("end.demo_footer")
+			if _wishlist_button != null:
+				_wishlist_button.text = tr("menu.wishlist")
+		else:
+			footer_label.text = tr("end.demo_footer_no_wishlist")
+			if _wishlist_button != null:
+				_wishlist_button.visible = false
 	stats_label.text = _summary()
 
 

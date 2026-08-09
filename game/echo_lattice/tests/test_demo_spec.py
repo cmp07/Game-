@@ -134,8 +134,17 @@ def main() -> None:
 
     # Spec doc mentions the key surfaces.
     spec = DEMO_SPEC.read_text(encoding="utf-8")
-    for needle in ("Mirror Birth", "Windows Demo", "wishlist", "Act I", "--demo", "test_demo_spec.py"):
-        if needle.lower() not in spec.lower():
+    for needle in (
+        "Mirror Birth",
+        "Windows Demo",
+        "wishlist",
+        "Act I",
+        "--demo",
+        "test_demo_spec.py",
+        "0–3",
+        "test_onboarding_path.py",
+    ):
+        if needle.lower() not in spec.lower() and needle not in spec:
             fail(f"DEMO_SPEC.md missing mention of {needle!r}")
 
     print(f"  Act I chambers: {len(ALLOWED)}")

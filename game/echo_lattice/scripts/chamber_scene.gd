@@ -13,6 +13,8 @@ const PUNCHCARD_CELLS: int = 30
 @onready var chamber_node: Node2D = %Chamber
 @onready var title_label: Label = %ChamberTitle
 @onready var caption_label: Label = %Caption
+@onready var teach_hint_label: Label = get_node_or_null("%TeachHint")
+@onready var undo_hint_label: Label = get_node_or_null("%UndoHint")
 @onready var moves_label: Label = %MovesLabel
 @onready var habit_label: Label = %HabitLabel
 @onready var restart_button: Button = %RestartButton
@@ -41,6 +43,10 @@ func _ready() -> void:
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
+	if chamber_node.has_signal("teach_hint"):
+		chamber_node.teach_hint.connect(_on_teach_hint)
+	if chamber_node.has_signal("undo_hint_changed"):
+		chamber_node.undo_hint_changed.connect(_on_undo_hint_changed)
 	## Keep D-Pad on movement — HUD chrome is clickable but not focus-stealing.
 	restart_button.focus_mode = Control.FOCUS_NONE
 	if settings_button:
@@ -239,6 +245,32 @@ func _on_caption_changed(text: String) -> void:
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	var localized: String = _localized_caption(data)
 	caption_label.text = localized if localized != "" else text
+
+
+func _on_teach_hint(text: String) -> void:
+	if teach_hint_label == null:
+		return
+	var trimmed: String = text.strip_edges()
+	if trimmed.is_empty():
+		teach_hint_label.visible = false
+		teach_hint_label.text = ""
+		return
+	teach_hint_label.text = trimmed
+	teach_hint_label.visible = true
+
+
+func _on_undo_hint_changed(armed: bool) -> void:
+	if undo_hint_label == null:
+		return
+	if not armed:
+		undo_hint_label.visible = false
+		undo_hint_label.text = ""
+		return
+	var glyph := "Z"
+	if has_node("/root/InputGlyphs") and InputGlyphs.has_method("undo_label"):
+		glyph = str(InputGlyphs.undo_label())
+	undo_hint_label.text = tr("hud.undo_hint") % glyph
+	undo_hint_label.visible = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
