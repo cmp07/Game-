@@ -7,18 +7,18 @@ class_name LedgerChrome
 ##
 
 ## ART_DIRECTION_V3 §3.2 — published title-page type scale (px @ ~1080p).
-## Brand 64–80 presence; tagline secondary; Field Index 18–22. Meta never competes.
-const TYPE_BRAND := 76
-const TYPE_TAGLINE := 22
-const TYPE_BLURB := 16
-const TYPE_INDEX_PRIMARY := 22
+## Partners menu-restore-rich composition: brand owns the left plane; index 18–24.
+const TYPE_BRAND := 92
+const TYPE_TAGLINE := 24
+const TYPE_BLURB := 17
+const TYPE_INDEX_PRIMARY := 24
 const TYPE_INDEX := 20
-const TYPE_META := 12
-const TYPE_FOLIO := 11
-const TYPE_SEED := 12
-const TYPE_CARD_HEADER := 13
-const BRAND_RULE_W := 3.0
-const BRAND_RULE_LEN := 460.0
+const TYPE_META := 13
+const TYPE_FOLIO := 12
+const TYPE_SEED := 13
+const TYPE_CARD_HEADER := 14
+const BRAND_RULE_W := 4.0
+const BRAND_RULE_LEN := 560.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
@@ -26,17 +26,17 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 52,
-			"tagline": 17,
-			"blurb": 13,
+			"brand": 56,
+			"tagline": 18,
+			"blurb": 14,
 			"index_primary": 17,
-			"index": 16,
-			"meta": 10,
+			"index": 15,
+			"meta": 11,
 			"folio": 10,
-			"seed": 10,
+			"seed": 11,
 			"card_header": 11,
-			"rule_w": 2.0,
-			"rule_len": 320.0,
+			"rule_w": 2.5,
+			"rule_len": 340.0,
 		}
 	return {
 		"brand": TYPE_BRAND,
@@ -189,7 +189,8 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		var max_w: float = minf(r.size.x - 4.0, 240.0)
+		# Wide Field Index rows need long ink rules — postage-stamp caps read as sparse chrome.
+		var max_w: float = minf(r.size.x - 8.0, 420.0)
 		var y: float = local_pos.y + r.size.y - 4.0
 		if focused and not disabled:
 			var w: float = max_w * eased
@@ -232,8 +233,8 @@ static func draw_index_underlines(
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
-				minf(max_w, 190.0),
-				1.0,
+				minf(max_w, 280.0),
+				1.2,
 				Palette.INK_SOFT,
 				hash(c.get_instance_id()) ^ 0x1D1E
 			)

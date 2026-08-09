@@ -78,26 +78,26 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_ledger_page",
             "draw_index_card",
             "draw_seal_stamp",
+            "draw_binder_clip",
         ):
             self.assertIn(f"func {name}", art)
-        # Desk surface sells cooler blotter edges + ambient vignette; seal is uneven rubber ink.
+        # Desk vignette + blotter; seal is imperfect rubber ink; card has thickness.
         self.assertIn("blotter", art.lower())
         self.assertIn("vignette", art.lower())
         self.assertIn("Imperfect rubber ink", art)
         self.assertIn("binder_holes", art)
-        self.assertIn("Contact shadow stack", art)
+        self.assertIn("contact wash", art.lower())
         self.assertIn('"thickness"', art)
 
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
         self.assertIn("func title_type_scale", chrome)
-        # Published brand presence 64–80; Field Index 18–22.
-        self.assertIn("const TYPE_BRAND := 76", chrome)
-        self.assertIn("const TYPE_TAGLINE := 22", chrome)
+        self.assertIn("const TYPE_BRAND := 92", chrome)
         self.assertIn("const TYPE_INDEX := 20", chrome)
-        self.assertIn("const TYPE_INDEX_PRIMARY := 22", chrome)
         self.assertIn("_draw_ink_rule", chrome)
         self.assertNotIn("CADMIUM_WARN", chrome)
+        self.assertIn("func draw_binder_clip", (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8"))
+        self.assertIn("TYPE_TAGLINE", chrome)
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)
         self.assertIn("ArtKit.draw_ledger_page", menu)

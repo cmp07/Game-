@@ -15,7 +15,7 @@ Looking Glass mid-slam — trail folding into walls; habit still sealed until Mi
 
 ![Main menu](02_brand_main_menu.png)
 
-Field Ledger title card: paper, ink, rust, **ECHO LATTICE** lockup, Field Index (survey / Daily / Endless / Museum / Colophon).
+Field Ledger title card: hero **ECHO LATTICE** brand + survey seal on the left; substantial Field Index card on the right (survey / Daily / Endless / Museum / Colophon). No chamber BUFFER / Move chrome.
 
 ## 03 — Chamber start
 

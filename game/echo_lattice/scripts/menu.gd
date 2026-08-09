@@ -135,43 +135,50 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 
 ## Chrome insets around CardColumn inside the Field Index plate.
 ## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
-const _INDEX_PAD_L: float = 36.0
-const _INDEX_PAD_R: float = 20.0
-const _INDEX_PAD_T: float = 48.0
-const _INDEX_PAD_B: float = 20.0
+const _INDEX_PAD_L: float = 48.0
+const _INDEX_PAD_R: float = 32.0
+const _INDEX_PAD_T: float = 72.0
+# Extra bottom pad for ink-craft underlines drawn below Control rects.
+const _INDEX_PAD_B: float = 48.0
 
 
-## Right-side Field Index plate — sized to the action column when available.
+## Right-side Field Index plate — ~45% of the page at 1080p; never a postage stamp.
 func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Rect2:
 	if vp.x < 2.0:
 		vp = size
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 	var page: Rect2 = _ledger_page_rect(vp)
-	# Brand lockup + seal sit on the left — keep clearance for hero type + glyph.
-	var brand_clear: float = page.position.x + minf(540.0, page.size.x * 0.50)
-	var right_pad: float = 28.0 if page.size.x < 1100.0 else 36.0
-	var card_w: float = 320.0 if page.size.x >= 1100.0 else 290.0
+	# Brand lockup + seal own the left ~55% — keep clearance for hero type + glyph.
+	var brand_clear: float = page.position.x + page.size.x * 0.52
+	var right_pad: float = 24.0 if page.size.x < 1100.0 else 48.0
+	var card_w: float = page.size.x * 0.42
+	if page.size.x >= 1100.0:
+		card_w = clampf(card_w, 620.0, 820.0)
+	else:
+		card_w = clampf(card_w, 300.0, 420.0)
 	var card_x: float = page.end.x - right_pad - card_w
 	if card_x < brand_clear:
 		card_x = brand_clear
-		card_w = maxf(220.0, page.end.x - right_pad - card_x)
-	# Generous vertical budget so Deck/1080p never orphan index rows under the plate.
-	var top_pad: float = 44.0 if page.size.y < 700.0 else 64.0
-	var bottom_pad: float = 44.0 if page.size.y < 700.0 else 56.0
+		card_w = maxf(260.0, page.end.x - right_pad - card_x)
+	# Tall index-card object — fills the right column with presence, not void.
+	var top_pad: float = 36.0 if page.size.y < 700.0 else 56.0
+	var bottom_pad: float = 36.0 if page.size.y < 700.0 else 48.0
 	var top: float = page.position.y + top_pad + y_off
 	var bottom_limit: float = page.end.y - bottom_pad
-	# Prefer a physical index-card height; grow only when rows need it.
-	var card_h: float = clampf(page.size.y * 0.58, 360.0, 560.0)
+	var card_h: float = clampf(page.size.y * 0.78, 420.0, 820.0)
 	var col: Control = get_node_or_null("CardColumn") as Control
 	if col != null and col.get_child_count() > 0:
 		var content_h: float = col.size.y
 		if content_h < 8.0:
 			content_h = col.get_combined_minimum_size().y
-		card_h = clampf(content_h + _INDEX_PAD_T + _INDEX_PAD_B, 300.0, bottom_limit - top)
+		# Hug content from below, but never shrink under a substantial plate height.
+		var needed: float = content_h + _INDEX_PAD_T + _INDEX_PAD_B
+		var presence: float = clampf(page.size.y * 0.72, 400.0, bottom_limit - top)
+		card_h = clampf(maxf(needed, presence), 340.0, bottom_limit - top)
 	else:
 		card_h = minf(card_h, bottom_limit - top)
-	return Rect2(card_x, top, card_w, maxf(260.0, card_h))
+	return Rect2(card_x, top, card_w, maxf(320.0, card_h))
 
 
 ## Inner content inset: binder holes left, FIELD INDEX header top.
@@ -179,8 +186,8 @@ func field_index_content_rect(card: Rect2) -> Rect2:
 	return Rect2(
 		card.position.x + _INDEX_PAD_L,
 		card.position.y + _INDEX_PAD_T,
-		maxf(180.0, card.size.x - _INDEX_PAD_L - _INDEX_PAD_R),
-		maxf(180.0, card.size.y - _INDEX_PAD_T - _INDEX_PAD_B)
+		maxf(200.0, card.size.x - _INDEX_PAD_L - _INDEX_PAD_R),
+		maxf(200.0, card.size.y - _INDEX_PAD_T - _INDEX_PAD_B)
 	)
 
 
@@ -244,9 +251,8 @@ func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
 
 
 func _apply_index_row_metrics(compact: bool) -> void:
-	# Published index scale (18–22) needs a touch more row advance than the flat UI path.
-	var row_h: float = 24.0 if compact else 34.0
-	var primary_h: float = 26.0 if compact else 38.0
+	var row_h: float = 26.0 if compact else 40.0
+	var primary_h: float = 30.0 if compact else 48.0
 	# Pack rows to the top of the Field Index plate — never vertically expand.
 	var shrink_top: int = Control.SIZE_SHRINK_BEGIN
 	_style_index_actions(compact)
@@ -260,41 +266,41 @@ func _apply_index_row_metrics(compact: bool) -> void:
 			continue
 		var btn: Button = b as Button
 		# Clamp after font style — content min-size can otherwise balloon past Deck budget.
-		btn.custom_minimum_size = Vector2(200.0, row_h)
+		btn.custom_minimum_size = Vector2(240.0, row_h)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.size_flags_vertical = shrink_top
 		btn.add_theme_constant_override("h_separation", 0)
 	if start_button:
-		start_button.custom_minimum_size = Vector2(200.0, primary_h)
+		start_button.custom_minimum_size = Vector2(240.0, primary_h)
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		start_button.size_flags_vertical = shrink_top
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
-	## Quiet ledger lines inside the card — never compete with brand.
+	## Quiet ledger lines inside the card header — never compete with brand.
 	if subtitle:
 		LedgerChrome.style_ink_label(
 			subtitle,
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.78),
-			10 if compact else 11
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.72),
+			11 if compact else 13
 		)
 		# Prefer single quiet lines — wrapping balloons the plate past Deck budget.
 		subtitle.autowrap_mode = TextServer.AUTOWRAP_OFF
 		subtitle.clip_text = true
 		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		subtitle.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		subtitle.custom_minimum_size = Vector2(0, 16 if compact else 18)
+		subtitle.custom_minimum_size = Vector2(0, 18 if compact else 22)
 	if meta_label:
 		LedgerChrome.style_ink_label(
 			meta_label,
-			Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.85),
-			10 if compact else 11
+			Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.80),
+			11 if compact else 13
 		)
 		meta_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 		meta_label.clip_text = true
 		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		meta_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		meta_label.custom_minimum_size = Vector2(0, 16 if compact else 18)
+		meta_label.custom_minimum_size = Vector2(0, 18 if compact else 22)
 
 
 func _sync_field_index_layout() -> void:
@@ -307,7 +313,7 @@ func _sync_field_index_layout() -> void:
 	var page: Rect2 = _ledger_page_rect(vp)
 	var compact: bool = page.size.y < 700.0
 	_apply_index_row_metrics(compact)
-	col.add_theme_constant_override("separation", 2 if compact else 4)
+	col.add_theme_constant_override("separation", 4 if compact else 8)
 	# Place column using the shared card geometry (content-driven height + slot settle).
 	var y_off: float = _slot_y_off()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
@@ -369,7 +375,7 @@ func verify_field_index_layout() -> bool:
 			ok = false
 	# Brand lockup must stay clear of the plate (no left-side clip).
 	var page: Rect2 = _ledger_page_rect(vp)
-	var brand_right: float = page.position.x + minf(520.0, page.size.x * 0.48)
+	var brand_right: float = page.position.x + page.size.x * 0.50
 	if card.position.x < brand_right - 0.5:
 		printerr(
 			"Field Index layout: card overlaps brand column (card.x=%.1f brand_right=%.1f)" % [
@@ -432,19 +438,25 @@ func _localize_chrome() -> void:
 
 
 func _refresh_progress_copy() -> void:
+	## Quiet diegetic header lines only — never clinical "Filed N/M 70%" chrome.
 	var has: bool = GameState.can_continue()
 	var stars: int = GameState.total_stars_earned()
 	if has:
+		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_progress") % [
 			GameState.run_progress_index() + 1,
 			GameState.chambers_in_run(),
 			stars,
 		]
 	elif DemoBuild.is_demo():
+		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_demo")
 	elif GameState.is_run_complete():
+		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
+		# Fresh title: keep the card header quiet — wing line alone is enough.
+		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
 	_refresh_hard_button()
 	var entry: Dictionary = GameState.today_daily_entry()
@@ -619,20 +631,17 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
-	# Lightbox desk + ledger page (shared V3 substrate).
-	if not TechArt.v3_enabled():
-		ArtKit.draw_desk_margin(self, vp, 3, 0.06)
-	else:
-		ArtKit.draw_desk_margin(self, vp, 3, 0.0)
+	# Lightbox desk + ledger page — warm atmosphere always (grain layer may stack).
+	ArtKit.draw_desk_margin(self, vp, 3, 0.07 if not TechArt.v3_enabled() else 0.035)
 	var page: Rect2 = _ledger_page_rect(vp)
 	ArtKit.draw_ledger_page(self, page, {
-		"shadow_off": Vector2(6, 8),
+		"shadow_off": Vector2(8, 11),
 		"grain_seed": 19,
-		"grain_a": 0.07 if not TechArt.v3_enabled() else 0.0,
+		"grain_a": 0.06 if not TechArt.v3_enabled() else 0.03,
 		"major_cell": 32,
-		"rule_w": 2.0,
+		"rule_w": 2.5,
 		"double_rule": true,
-		"skip_grain": TechArt.v3_enabled(),
+		"skip_grain": false,
 	})
 
 	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
@@ -648,33 +657,33 @@ func _draw() -> void:
 	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
 	draw_string(
 		_type("mono"),
-		page.position + Vector2(16, 22),
+		page.position + Vector2(20, 26),
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
 	ArtKit.draw_letterpress_rule(
 		self,
-		page.position + Vector2(16, 28),
-		page.position + Vector2(page.size.x - 16, 28),
+		page.position + Vector2(20, 34),
+		page.position + Vector2(page.size.x - 20, 34),
 		Palette.INK_SOFT,
-		1.0,
+		1.5,
 		19
 	)
 
-	# Seed header strip along top margin.
+	# Seed header strip along top margin (diegetic ledger, not chamber HUD).
 	var seed_tex: Texture2D = ArtKit.tex("res://art/ui/seed_header_256x24.png")
 	if seed_tex != null:
-		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(16, 36), Vector2(256, 24)), false)
+		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(20, 42), Vector2(256, 24)), false)
 	draw_string(
 		_type("mono"),
-		page.position + Vector2(280, 54),
+		page.position + Vector2(290, 60),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
-	# Brand lockup — hero-level published presence (64–80), left composition.
-	var brand_x: float = page.position.x + 48
-	var brand_y: float = page.position.y + page.size.y * 0.24
+	# Brand lockup — hero-level left plane (~55%).
+	var brand_x: float = page.position.x + 56
+	var brand_y: float = page.position.y + page.size.y * 0.22
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y),
@@ -682,31 +691,32 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
 	# Oxide brand rule — letterpress crush + flecks (never cadmium).
+	var brand_rule_len: float = minf(rule_len, (field_index_card_rect(vp, 0.0).position.x - brand_x) - 36.0)
 	ArtKit.draw_letterpress_rule(
 		self,
-		Vector2(brand_x, brand_y + 12.0),
-		Vector2(brand_x + rule_len, brand_y + 12.0),
+		Vector2(brand_x, brand_y + 14.0),
+		Vector2(brand_x + brand_rule_len, brand_y + 14.0),
 		Palette.RUST_FOSSIL,
 		rule_w,
 		42
 	)
 	ArtKit.draw_oxide_flecks(
 		self,
-		Rect2(brand_x, brand_y + 8.0, rule_len * 0.55, 10.0),
+		Rect2(brand_x, brand_y + 10.0, brand_rule_len * 0.55, 12.0),
 		43,
-		5,
+		6,
 		0.55
 	)
 
 	draw_string(
 		_type("display"),
-		Vector2(brand_x, brand_y + 44),
+		Vector2(brand_x, brand_y + 52),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
 		_type("body"),
-		Vector2(brand_x, brand_y + 72),
+		Vector2(brand_x, brand_y + 84),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
@@ -717,64 +727,63 @@ func _draw() -> void:
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
 	# Surveyor seal as hero glyph — imperfect rubber ink under the brand.
-	var seal_r: float = 48.0 if page.size.y >= 700.0 else 34.0
-	var seal_c := Vector2(brand_x + seal_r + 10.0, brand_y + 138.0)
-	if seal_c.x + seal_r + 16.0 > card.position.x:
-		seal_c.x = brand_x + seal_r + 4.0
+	var seal_r: float = 72.0 if page.size.y >= 700.0 else 42.0
+	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 168.0)
+	if seal_c.x + seal_r + 20.0 > card.position.x:
+		seal_c.x = brand_x + seal_r + 8.0
+	# Soft ink blot under the stamp so it reads as pressed into stock.
+	draw_circle(
+		seal_c + Vector2(3, 4),
+		seal_r + 6.0,
+		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.18)
+	)
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -4.5,
+		"rot_deg": -5.0,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.84,
+		"alpha": 0.88,
 		"seed": 42,
+		"ring_w": 3.2,
 		"caption": "FIELD",
 		"font": _type("display"),
-		"font_size": maxi(11, folio_px + 1),
-		"ring_w": 3.0,
+		"font_size": maxi(14, folio_px + 4),
 		"hero": true,
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.44)
+	_draw_seal_lattice(seal_c, seal_r * 0.48)
 	draw_string(
 		_type("mono"),
-		Vector2(brand_x, seal_c.y + seal_r + 26.0),
+		Vector2(brand_x, seal_c.y + seal_r + 28.0),
 		tr("menu.seal_caption"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.INK_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
 	)
-	# Ambient chalk path teaches the verb beside the seal — discrete stamps, no breathe.
-	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 28.0, seal_c.y - seal_r))
+	# Ambient chalk path fills the brand plane — discrete stamps, no breathe.
+	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 28.0, seal_c.y - seal_r * 0.35))
 
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(6, 8),
-		"binder_holes": 5,
+		"shadow_off": Vector2(8, 11),
+		"binder_holes": 7,
 		"grain_seed": 11,
-		"grain_a": 0.0 if TechArt.v3_enabled() else 0.05,
+		"grain_a": 0.055,
+		"fiber_a": 0.06,
 		"header_rules": true,
 		"deep_backer": true,
-		"skip_grain": TechArt.v3_enabled(),
+		"binder_clip": true,
 		"thickness": 3.5,
 		"oxide_accents": true,
+		"skip_grain": false,
 	})
 	draw_string(
 		_type("mono"),
-		card.position + Vector2(28, 28),
+		card.position + Vector2(32, 30),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
 		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot_a)
 	)
 
-	# Focus underlines — rust ink draw-in + selection tick (cadmium reserved).
+	# Focus underlines — rust ink craft + selection tick (cadmium reserved).
 	_draw_button_underlines(card)
 
-	# Bottom punch-card ribbon.
-	_draw_punchcard_ribbon(page)
-
-	# Footer controls hint — Deck glyphs > remap labels > localized default.
-	draw_string(
-		_type("mono"),
-		Vector2(page.position.x + 16, page.end.y - 14),
-		_footer_controls_hint(),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
-	)
+	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.
 
 
 func _draw_seal_lattice(center: Vector2, half: float) -> void:
@@ -796,79 +805,37 @@ func _draw_seal_lattice(center: Vector2, half: float) -> void:
 
 
 func _draw_ambient_chalk(seal_origin: Vector2) -> void:
-	## Writing chalk path beside the seal — discrete stamps, no fold pulse spam.
-	var cell: float = 10.0
-	var origin: Vector2 = seal_origin + Vector2(190.0, 40.0)
+	## Writing chalk path beside the seal — fills brand plane; discrete stamps, no breathe.
+	var cell: float = 14.0
+	var origin: Vector2 = seal_origin + Vector2(36.0, 28.0)
 	var visible: int = mini(_demo_path.size(), int(_demo_progress))
 	if visible < 2:
 		return
-	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.70)
+	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.82)
+	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.28)
 	for i in range(visible - 1):
 		var a: Vector2i = _demo_path[i]
 		var b: Vector2i = _demo_path[i + 1]
-		var pa: Vector2 = origin + Vector2(a.x * 0.45 * cell, (a.y - 6) * 0.45 * cell)
-		var pb: Vector2 = origin + Vector2(b.x * 0.45 * cell, (b.y - 6) * 0.45 * cell)
-		ArtKit.draw_dashed_line(self, pa, pb, chalk, 1.4, 3.0, 2.5)
+		var pa: Vector2 = origin + Vector2(a.x * 0.55 * cell, (a.y - 6) * 0.55 * cell)
+		var pb: Vector2 = origin + Vector2(b.x * 0.55 * cell, (b.y - 6) * 0.55 * cell)
+		ArtKit.draw_dashed_line(self, pa, pb, chalk, 2.0, 4.0, 2.5)
+		# Soft ink underprint so the path reads on bone paper.
+		draw_line(pa, pb, ink_trail, 1.0, true)
 	# Discrete fossil stamp when the demo buffer fills — no sin breathe.
 	var fill: int = int(_demo_progress) % 31
 	var fold_on: bool = fill > 22
 	if fold_on:
 		for j in range(3):
 			var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
-			var mx: float = origin.x + (22.0 - fp.x * 0.45) * cell
-			var my: float = origin.y + (fp.y - 6) * 0.45 * cell + j * cell * 0.5
+			var mx: float = origin.x + (22.0 - fp.x * 0.55) * cell
+			var my: float = origin.y + (fp.y - 6) * 0.55 * cell + j * cell * 0.55
 			var fr := Rect2(mx, my, cell - 1.0, cell - 1.0)
-			draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.78), true)
-
-
-func _footer_controls_hint() -> String:
-	# last_device is KEYBOARD=0 at boot — only use glyph path for gamepad / Deck.
-	if has_node("/root/InputGlyphs") and InputGlyphs.using_gamepad():
-		return InputGlyphs.controls_line()
-	return _controls_hint()
-
-
-func _controls_hint() -> String:
-	var remap := get_node_or_null("/root/ActionRemap")
-	if remap == null or not remap.has_method("get_binding_labels"):
-		return tr("menu.controls_hint")
-	var up: String = ", ".join(remap.get_binding_labels("move_up"))
-	var restart: String = ", ".join(remap.get_binding_labels("restart"))
-	var undo: String = ", ".join(remap.get_binding_labels("undo"))
-	var pause: String = ", ".join(remap.get_binding_labels("pause_menu"))
-	return tr("menu.controls_hint_remap") % [up, restart, undo, pause]
+			draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.82), true)
 
 
 func _draw_button_underlines(_card: Rect2) -> void:
 	var progress: float = clampf(_focus_underline_t / FOCUS_UNDERLINE_SEC, 0.0, 1.0)
 	LedgerChrome.draw_index_underlines(self, _index_buttons(), global_position, progress)
-
-
-func _draw_punchcard_ribbon(page: Rect2) -> void:
-	var y: float = page.end.y - 48
-	var x: float = page.position.x + 16
-	draw_string(_type("mono"), Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
-	x += 64
-	var cells: Array = [
-		ArtKit.tex("res://art/ui/punchcard_cell_empty.png"),
-		ArtKit.tex("res://art/ui/punchcard_cell_filled.png"),
-		ArtKit.tex("res://art/ui/punchcard_cell_rust.png"),
-		ArtKit.tex("res://art/ui/punchcard_cell_warn.png"),
-	]
-	for i in range(30):
-		var tex: Texture2D = cells[0]
-		if i < int(_demo_progress) % 31:
-			tex = cells[1]
-		if i > 22 and i < int(_demo_progress) % 31:
-			tex = cells[2]
-		# Discrete warn stamp on a full buffer — no blink pulse.
-		if i == 29 and (int(_demo_progress) % 31) > 28:
-			tex = cells[3]
-		var cell_r := Rect2(x + i * 14, y, 12, 16)
-		if tex != null:
-			draw_texture_rect(tex, cell_r, false)
-		else:
-			draw_rect(cell_r, Palette.INK_SOFT, false, 1.0)
 
 
 func _type(role: String = "display") -> Font:
