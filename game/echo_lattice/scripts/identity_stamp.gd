@@ -94,7 +94,7 @@ static func evaluate(
 		grade = GRADE_SIGNED
 	elif portrait >= 0.45:
 		grade = GRADE_READABLE
-	var mask: Array = _pack_mask(echo_cells)
+	var mask: Dictionary = _pack_mask(echo_cells)
 	var identity_tag: String = str(data.get("identity", ""))
 	if identity_tag == "" and is_birth_moment(data):
 		identity_tag = "birth_" + str(data.get("slug", "mirror"))

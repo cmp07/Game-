@@ -64,7 +64,7 @@ Scripts: [`../SOCIAL_CLIP_SCRIPTS.md`](../SOCIAL_CLIP_SCRIPTS.md).
 
 | Set | Location |
 |---|---|
-| Store tour stills | `docs/ECHO_LATTICE/screenshots/v2_complete/` |
+| Store tour stills | `docs/RELEASE/screenshots/` (1920×1080 Partner slate) |
 | GIF frame packs | `presskit/images/gif_sequences/` |
 | Logos / capsules | `presskit/images/logos/`, `presskit/images/capsules/` |
 

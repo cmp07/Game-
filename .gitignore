@@ -68,6 +68,8 @@ game/echo_lattice/.godot/*
 game/**/.import/
 game/**/builds/
 game/**/.capture_staging/
+# Godot runtime override used by capture_steam_store.sh (never commit).
+game/**/override.cfg
 
 __pycache__/
 *.py[cod]

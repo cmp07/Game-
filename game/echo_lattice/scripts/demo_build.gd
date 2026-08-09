@@ -25,7 +25,8 @@ const PRODUCT_NAME := "Echo Lattice Demo"
 const FEATURES_PATH := "res://config/steam_features.json"
 ## Format string for derived Steam store URLs when store_wishlist_url is empty.
 const STORE_WISHLIST_URL_TEMPLATE := "https://store.steampowered.com/app/%s/"
-const _DRM_FREE_FEATURE_TAGS: PackedStringArray = PackedStringArray(["itch", "drm_free"])
+# PackedStringArray(...) is not a const-expression in Godot 4.3; keep as static var.
+static var _DRM_FREE_FEATURE_TAGS: PackedStringArray = PackedStringArray(["itch", "drm_free"])
 
 
 static func is_demo() -> bool:

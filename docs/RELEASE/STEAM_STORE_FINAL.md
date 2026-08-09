@@ -16,7 +16,8 @@
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | #64 — Content Survey, ratings, privacy, AI survey **No** |
 | [`legal/`](legal/) | Gate A Partner paste pack (survey / AI / privacy page / ratings) |
 | [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
-| [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Live in-game screenshot source |
+| [`screenshots/`](screenshots/) | Steam Partner slate (1920×1080, store order) |
+| [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Lower-res loop-proof tour (not Partner upload) |
 
 This file is the **store page package**. Compliance answers live in #64; depot/CI live in #63. Marketing thesis: sell recognition — *the maze is a transcript of how I walked* — not mystery, not AI, not loot.
 
@@ -247,25 +248,26 @@ Upload checklist:
 
 ---
 
-## 8. Screenshot slate (from v2_complete)
+## 8. Screenshot slate (Steam Partner — 1920×1080)
 
-Source folder: [`docs/ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/)  
-Captions: [`TOUR.md`](../ECHO_LATTICE/screenshots/v2_complete/TOUR.md)
+**Upload folder:** [`screenshots/`](screenshots/)  
+**Captions:** [`screenshots/TOUR.md`](screenshots/TOUR.md)  
+**Capture tool:** [`../../game/echo_lattice/tools/capture_steam_store.sh`](../../game/echo_lattice/tools/capture_steam_store.sh)
 
-Steam wants ≥5; we ship **eight** candidates in store order. Prefer native ≥1920×1080 when re-capturing for Partner; current tour shots are valid loop proof and page placeholders until a hi-res pass.
+Steam wants ≥5; we ship **eight** native **1920×1080** (16:9) candidates in Partner upload order. The older [`v2_complete`](../ECHO_LATTICE/screenshots/v2_complete/) tour (1152×672) stays as loop-proof reference only — do **not** upload it to Partner.
 
 | # | Store job | File | Silent-legible claim |
 |---|---|---|---|
-| 1 | Hook / header still | [`05_rewrite_slam.png`](../ECHO_LATTICE/screenshots/v2_complete/05_rewrite_slam.png) | Origami rewrite — walls agreeing with the habit |
-| 2 | Brand / tone | [`01_main_menu.png`](../ECHO_LATTICE/screenshots/v2_complete/01_main_menu.png) | Field Ledger title card — paper, ink, rust |
-| 3 | Clean chamber read | [`03_chamber_start.png`](../ECHO_LATTICE/screenshots/v2_complete/03_chamber_start.png) | Ink walls, copper goal, habit unwritten |
-| 4 | Habit forming | [`04_walking_trail.png`](../ECHO_LATTICE/screenshots/v2_complete/04_walking_trail.png) | Chalk trail writing toward checkpoint |
-| 5 | Depth / pressure | [`06_mid_act_chamber.png`](../ECHO_LATTICE/screenshots/v2_complete/06_mid_act_chamber.png) | Later-act chamber, same materials under pressure |
-| 6 | Meta / stars | [`07_win_stars.png`](../ECHO_LATTICE/screenshots/v2_complete/07_win_stars.png) | 1–3★ clear, moves vs par |
-| 7 | Modes | [`02_daily_select.png`](../ECHO_LATTICE/screenshots/v2_complete/02_daily_select.png) | Daily Challenge on the ledger menu |
-| 8 | Run close | [`08_wing_clear.png`](../ECHO_LATTICE/screenshots/v2_complete/08_wing_clear.png) | End-of-run ledger / habit signature |
+| 1 | Hook / header still | [`01_hook_rewrite_slam.png`](screenshots/01_hook_rewrite_slam.png) | Origami rewrite — walls agreeing with the habit |
+| 2 | Brand / tone | [`02_brand_main_menu.png`](screenshots/02_brand_main_menu.png) | Field Ledger title card — paper, ink, rust |
+| 3 | Clean chamber read | [`03_chamber_start.png`](screenshots/03_chamber_start.png) | Ink walls, copper goal, habit unwritten |
+| 4 | Habit forming | [`04_walking_trail.png`](screenshots/04_walking_trail.png) | Chalk trail writing toward checkpoint |
+| 5 | Depth / pressure | [`05_mid_act_chamber.png`](screenshots/05_mid_act_chamber.png) | Later-act chamber, same materials under pressure |
+| 6 | Meta / stars | [`06_win_stars.png`](screenshots/06_win_stars.png) | 1–3★ clear, moves vs par |
+| 7 | Modes | [`07_daily_select.png`](screenshots/07_daily_select.png) | Daily Challenge on the ledger menu |
+| 8 | Run close | [`08_wing_clear.png`](screenshots/08_wing_clear.png) | End-of-run ledger / habit signature |
 
-**Rules:** no debug overlays, no Discord watermarks, no fake combat key art. Recapture at 1920×1080+ with `game/echo_lattice/tools/capture_v2_complete.sh` before final Partner review if current dims are below Steam’s preference.
+**Rules:** no debug overlays, no Discord watermarks, no fake combat key art. Regenerate with `./game/echo_lattice/tools/capture_steam_store.sh` (writes a temporary 1920×1080 `override.cfg`, then removes it).
 
 ---
 
@@ -356,7 +358,8 @@ Partner doc: [Steam Next Fest: October 2026](https://partner.steamgames.com/doc/
 - [ ] Long description pasted into Partner  
 - [ ] Tags + categories set in Partner  
 - [ ] Capsules uploaded (Gate A finals in `capsules/` — Partner upload pending)  
-- [ ] Screenshot slate uploaded (v2_complete slate)  
+- [x] Screenshot slate in-repo (`docs/RELEASE/screenshots/` 1920×1080) — Partner upload pending  
+
 - [ ] Trailer uploaded (announce cut)  
 - [ ] Sysreqs filled in Partner  
 - [ ] Price set to frozen **$6.99 USD** (band $4.99–$9.99)  
@@ -376,13 +379,14 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 |---|---|
 | [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze ledger + change control |
 | [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
+| [`screenshots/`](screenshots/) | Steam Partner 1920×1080 slate |
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-store + Deck + regional pricing (#63) |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Survey / ratings / privacy (#64) |
 | [`legal/`](legal/) | Gate A Partner paste pack |
-| [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Screenshot source |
+| [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Lower-res tour reference |
 | [`../ECHO_LATTICE/05_ART_BIBLE.md`](../ECHO_LATTICE/05_ART_BIBLE.md) §7 | Capsule / trailer still language |
 | [`../ECHO_LATTICE/08_STEAM_CHECKLIST.md`](../ECHO_LATTICE/08_STEAM_CHECKLIST.md) | Depot / GodotSteam checklist *(when merged)* |
 
 ---
 
-*Last updated: 2026-08-09 — Store copy frozen for Gate A; capsule finals under `capsules/`. AppID still placeholder. Store package only; no depot binaries in this PR.*
+*Last updated: 2026-08-09 — Store copy frozen for Gate A; capsule finals under `capsules/`; Partner screenshot slate under `screenshots/`. AppID still placeholder. Store package only; no depot binaries in this PR.*
