@@ -23,6 +23,7 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | Doc | Purpose |
 |---|---|
 | [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) | Coming Soon / Next Fest store package |
+| [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze + change control (short/long, tags, sysreqs, categories, pricing) |
 | [`capsules/`](capsules/) | Capsule art placeholders |
 | [`STEAMWORKS.md`](STEAMWORKS.md) | Offline stub + achievements + depot notes |
 | [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Achievement catalog |

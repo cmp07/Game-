@@ -120,7 +120,7 @@ Sorted by **Priority (Impact ÷ Effort)** descending, then Impact.
 | **U02** | **30s announce trailer (slam mid-point, muted-safe open)** | W | 5 | 3 | **1.7** | Beat sheet already in [`STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md) §9. Accept: ≥45% watch past first slam; ends on `IT LEARNED YOU` + wishlist. |
 | **U03** | **Demo minutes 0–3 teach → Mirror Birth without text wall** | F | 5 | 3 | **1.7** | Fest conversion lives here. Quiet Span → Echo Plate → **Mirror Birth** must fire the “I did that” beat. Accept: cold player clears to Mirror Birth; slam readable at 1280×800. |
 | **U04** | **Wishlist CTA with real AppID + one focused CTA** | W/F | 4 | 1 | **4.0** | Replace `YOUR_APP_ID`; demo end + menu only. Accept: shell_open hits live store; no competing store links. |
-| **U05** | **Store copy freeze (primary short + long; AI = No)** | W | 4 | 1 | **4.0** | Copy is paste-ready — ship it. Accept: tags/order locked; never lead with AI/mystery/loot. |
+| **U05** | **Store copy freeze (primary short + long; AI = No)** | W | 4 | 1 | **4.0** | **Done (docs):** [`STORE_COPY_FREEZE.md`](../RELEASE/STORE_COPY_FREEZE.md) + frozen §§ in [`STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md). Accept: tags/order locked; habits/Daily/Endless; never lead with AI/mystery/loot. |
 | **U06** | **Coming Soon page live (ASAP / pre–Aug 31 fest gate)** | W | 5 | 2 | **2.5** | Calendar hard gate in store final §11. Accept: capsules, ≥5 shots, trailer, sysreqs, price band, surveys. |
 
 ### P1 — Fest conversion & trust
