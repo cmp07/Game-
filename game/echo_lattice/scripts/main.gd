@@ -59,6 +59,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		var cidx: int = int(kind.substr(8))
 		GameState.start_new_run()
 		GameState.current_chamber = cidx
+		GameState.queue_pos = cidx
 		show_chamber()
 	elif kind.begins_with("walk_only:"):
 		# `walk_only:CHAMBER:STOP_BEFORE` — enter chamber, BFS-step toward the
@@ -72,6 +73,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 			stop_before = int(parts[1])
 		GameState.start_new_run()
 		GameState.current_chamber = cidx2
+		GameState.queue_pos = cidx2
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid_w: Node = stage.get_child(0)
@@ -111,6 +113,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		var idx2: int = int(kind.substr(8))
 		GameState.start_new_run()
 		GameState.current_chamber = idx2
+		GameState.queue_pos = idx2
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid: Node = stage.get_child(0)
@@ -145,6 +148,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		var idx3: int = int(kind.substr("rewrite_done:".length()))
 		GameState.start_new_run()
 		GameState.current_chamber = idx3
+		GameState.queue_pos = idx3
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid3: Node = stage.get_child(0)
@@ -169,6 +173,22 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 				break
 			chamber3._try_move(next3)
 			chamber3._flush_pending_echoes()
+	elif kind == "daily":
+		# Menu with Daily Challenge focused — populate today's best so meta reads live.
+		SaveManager.wipe()
+		GameState.best_moves.clear()
+		GameState.best_stars.clear()
+		GameState.completed.clear()
+		GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
+		GameState.move_ring.clear()
+		GameState.run_started = false
+		var dseed: int = GameState._today_seed()
+		GameState.daily_best_stars[str(dseed)] = 9
+		show_menu()
+		await get_tree().process_frame
+		var menu_n: Node = stage.get_child(0)
+		if menu_n != null and menu_n.has_node("%DailyButton"):
+			menu_n.get_node("%DailyButton").grab_focus()
 	elif kind == "end":
 		GameState.start_new_run()
 		for i in range(ChamberBook.chamber_count()):
