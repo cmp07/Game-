@@ -177,6 +177,8 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn('"hero": true', menu)
         self.assertIn("ArtKit.draw_oxide_flecks", menu)
+        self.assertNotIn("_draw_specimen_lattice", menu)
+        self.assertIn("Idle rows stay clean", (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text())
         self.assertIn("func draw_desk_vignette", (ROOT / "scripts" / "art_kit.gd").read_text())
         self.assertIn("_draw_ink_rule", (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text())
         # Title shell is not a paused chamber.

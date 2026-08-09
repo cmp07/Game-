@@ -6,19 +6,18 @@ class_name LedgerChrome
 ## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
-## ART_DIRECTION_V3 §3.2 — published title-page type scale (px @ ~1080p).
-## Partners menu-restore-rich composition: brand owns the left plane; index 18–24.
-const TYPE_BRAND := 92
+## Premium title-page type scale (px @ ~1080p). Brand owns the plane; actions are Medium.
+const TYPE_BRAND := 88
 const TYPE_TAGLINE := 24
-const TYPE_BLURB := 17
+const TYPE_BLURB := 18
 const TYPE_INDEX_PRIMARY := 24
 const TYPE_INDEX := 20
-const TYPE_META := 13
-const TYPE_FOLIO := 12
-const TYPE_SEED := 13
-const TYPE_CARD_HEADER := 14
+const TYPE_META := 12
+const TYPE_FOLIO := 11
+const TYPE_SEED := 12
+const TYPE_CARD_HEADER := 13
 const BRAND_RULE_W := 4.0
-const BRAND_RULE_LEN := 560.0
+const BRAND_RULE_LEN := 520.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
@@ -29,14 +28,18 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 			"brand": 56,
 			"tagline": 18,
 			"blurb": 14,
-			"index_primary": 17,
-			"index": 15,
+			"index_primary": 18,
+			"index": 16,
 			"meta": 11,
 			"folio": 10,
 			"seed": 11,
 			"card_header": 11,
 			"rule_w": 2.5,
-			"rule_len": 340.0,
+			"rule_len": 300.0,
+			"seal_r": 56.0,
+			"row_h": 28.0,
+			"primary_h": 34.0,
+			"row_sep": 6,
 		}
 	return {
 		"brand": TYPE_BRAND,
@@ -50,6 +53,10 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"card_header": TYPE_CARD_HEADER,
 		"rule_w": BRAND_RULE_W,
 		"rule_len": BRAND_RULE_LEN,
+		"seal_r": 124.0,
+		"row_h": 44.0,
+		"primary_h": 52.0,
+		"row_sep": 10,
 	}
 
 
@@ -78,7 +85,8 @@ static func style_index_button(btn: Button, primary: bool = false, font_size: in
 		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
 	var lt = _ledger_type()
 	if lt != null and lt.has_method("apply_to_control"):
-		lt.apply_to_control(btn, "display", px)
+		# UI actions: Plex Sans Condensed Medium — never mono, never ThemeDB.
+		lt.apply_to_control(btn, "action", px)
 	else:
 		btn.add_theme_font_size_override("font_size", px)
 
@@ -174,8 +182,9 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = rust ink craft (uneven letterpress rule + stamp tick). Hover = slate.
-	## Idle = soft hairline. Cadmium reserved — never used here. No filled pills / chrome.
+	## Selection = single rust ink rule + stamp tick. Hover = slate rule.
+	## Idle rows stay clean type — never underline-every-row spreadsheet chrome.
+	## Cadmium reserved — never used here. No filled pills.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -189,54 +198,40 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		# Wide Field Index rows need long ink rules — postage-stamp caps read as sparse chrome.
-		var max_w: float = minf(r.size.x - 8.0, 420.0)
-		var y: float = local_pos.y + r.size.y - 4.0
-		if focused and not disabled:
+		if disabled:
+			continue
+		var max_w: float = minf(r.size.x - 8.0, 380.0)
+		var y: float = local_pos.y + r.size.y - 5.0
+		if focused:
 			var w: float = max_w * eased
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
 				w,
-				2.4,
+				2.6,
 				Palette.RUST_FOSSIL,
 				hash(c.get_instance_id()) ^ 0x51F01D
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
-				# Imperfect rubber-ink selection tick — not a UI bullet chrome.
 				var tick_c := Color(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
-				var tick_p := Vector2(local_pos.x - 11.0, local_pos.y + r.size.y * 0.55)
-				host.draw_circle(tick_p, 2.4, tick_c)
-				host.draw_circle(tick_p + Vector2(1.2, 0.6), 1.1, Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55))
-		elif hovered and not disabled:
+				var tick_p := Vector2(local_pos.x - 12.0, local_pos.y + r.size.y * 0.52)
+				host.draw_circle(tick_p, 2.6, tick_c)
+				host.draw_circle(
+					tick_p + Vector2(1.3, 0.7),
+					1.15,
+					Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55)
+				)
+		elif hovered:
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
-				max_w,
-				2.0,
+				max_w * 0.92,
+				1.8,
 				Palette.SLATE_TEAL,
 				hash(c.get_instance_id()) ^ 0x51A7E
-			)
-		elif disabled:
-			_draw_ink_rule(
-				host,
-				Vector2(local_pos.x, y + 1.0),
-				minf(max_w, 120.0),
-				1.0,
-				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
-				11
-			)
-		else:
-			_draw_ink_rule(
-				host,
-				Vector2(local_pos.x, y),
-				minf(max_w, 280.0),
-				1.2,
-				Palette.INK_SOFT,
-				hash(c.get_instance_id()) ^ 0x1D1E
 			)
 
 

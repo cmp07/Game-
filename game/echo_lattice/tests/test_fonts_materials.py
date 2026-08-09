@@ -14,6 +14,8 @@ LATIN = ROOT / "fonts" / "latin"
 class TestFontsMaterials(unittest.TestCase):
     def test_latin_faces_committed(self) -> None:
         required = [
+            "IBMPlexSansCondensed-Bold.ttf",
+            "IBMPlexSansCondensed-Medium.ttf",
             "IBMPlexSansCondensed-SemiBold.ttf",
             "IBMPlexSansCondensed-Regular.ttf",
             "IBMPlexSerif-Regular.ttf",
@@ -92,7 +94,7 @@ class TestFontsMaterials(unittest.TestCase):
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
         self.assertIn("func title_type_scale", chrome)
-        self.assertIn("const TYPE_BRAND := 92", chrome)
+        self.assertIn("const TYPE_BRAND := 88", chrome)
         self.assertIn("const TYPE_INDEX := 20", chrome)
         self.assertIn("_draw_ink_rule", chrome)
         self.assertNotIn("CADMIUM_WARN", chrome)
@@ -109,6 +111,17 @@ class TestFontsMaterials(unittest.TestCase):
         # Field Index enclosure must stay on shared card geometry helpers.
         self.assertIn("field_index_card_rect(vp, y_off)", menu)
         self.assertIn("func verify_field_index_layout", menu)
+        # Premium title: Medium actions, Bold brand, selection-only rules.
+        type_src = (ROOT / "scripts" / "ledger_type.gd").read_text(encoding="utf-8")
+        self.assertIn("IBMPlexSansCondensed-Bold.ttf", type_src)
+        self.assertIn("IBMPlexSansCondensed-Medium.ttf", type_src)
+        self.assertIn('"action"', type_src)
+        self.assertIn("apply_to_control(btn, \"action\"", chrome)
+        self.assertIn("Idle rows stay clean", chrome)
+        self.assertIn('_type("action")', menu)
+        self.assertIn("Palette.RUST_FOSSIL", menu)
+        self.assertNotIn("return ThemeDB.fallback_font", menu)
+        self.assertNotIn("_draw_specimen_lattice", menu)
 
 
 if __name__ == "__main__":
