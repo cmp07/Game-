@@ -27,6 +27,11 @@ var _demo_progress: float = 0.0
 var _settings_overlay: Control = null
 var _wishlist_button: Button = null
 
+## Ambient chalk path does not need a full 60 Hz canvas rebuild.
+const AMBIENT_REDRAW_HZ: float = 15.0
+var _redraw_accum: float = 0.0
+var _last_demo_step: int = -1
+
 
 func _ready() -> void:
 	_localize_chrome()
@@ -185,7 +190,13 @@ func _build_demo_path() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	_demo_progress = fmod(_demo_progress + delta * 3.2, float(_demo_path.size()) + 8.0)
-	queue_redraw()
+	var step: int = int(_demo_progress)
+	_redraw_accum += delta
+	# Redraw when the chalk path advances a cell, or at a capped ambient rate for pulse.
+	if step != _last_demo_step or _redraw_accum >= 1.0 / AMBIENT_REDRAW_HZ:
+		_last_demo_step = step
+		_redraw_accum = 0.0
+		queue_redraw()
 
 
 func _draw() -> void:

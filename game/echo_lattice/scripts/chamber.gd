@@ -60,6 +60,18 @@ const HOLD_REPEAT_DELAY: float = 0.08
 var _hold_dir: Vector2i = Vector2i.ZERO
 var _hold_timer: float = 0.0
 
+## Idle pulse / lantern redraw throttle — slam + juice still redraw every frame.
+const PULSE_REDRAW_HZ: float = 12.0
+var _pulse_redraw_accum: float = 0.0
+var _telegraph_dirty: bool = true
+var _checkpoint_dist_cache: int = -1
+var _checkpoint_dist_valid: bool = false
+
+## Reused BFS scratch (generation-tagged seen + ring queue).
+var _bfs_seen_gen: PackedInt32Array = PackedInt32Array()
+var _bfs_q: PackedInt32Array = PackedInt32Array()
+var _bfs_gen: int = 1
+
 var tex_floor_fresh: Texture2D
 var tex_floor_walked: Texture2D
 var tex_wall_fresh: Texture2D
@@ -120,14 +132,32 @@ func _load_art() -> void:
 func _process(delta: float) -> void:
 	goal_pulse_t = fmod(goal_pulse_t + delta, TAU)
 	lantern_t = fmod(lantern_t + delta * 1.7, TAU)
+	var need_redraw := false
 	if pending_echoes.size() > 0 and not rewrite_freeze:
 		pending_echo_timer += delta
 		if pending_echo_timer >= pending_echo_settle_time:
 			_flush_pending_echoes()
-	elif not has_won and pending_echoes.is_empty():
+		need_redraw = true
+	elif pending_echoes.size() > 0:
+		# Screenshot freeze still paints the held slam pose when asked.
+		need_redraw = true
+	elif not has_won:
 		_update_hold_to_walk(delta)
-	_refresh_telegraph()
-	queue_redraw()
+	if _telegraph_dirty:
+		_refresh_telegraph()
+		_telegraph_dirty = false
+		need_redraw = true
+	if has_node("/root/Juice") and Juice.needs_redraw():
+		need_redraw = true
+	if need_redraw:
+		_pulse_redraw_accum = 0.0
+		queue_redraw()
+	else:
+		# Goal plate + lantern flicker only — 12 Hz is enough for Field Ledger pulse.
+		_pulse_redraw_accum += delta
+		if _pulse_redraw_accum >= 1.0 / PULSE_REDRAW_HZ:
+			_pulse_redraw_accum = 0.0
+			queue_redraw()
 
 
 func load_chamber(id: int) -> void:
@@ -173,6 +203,9 @@ func load_chamber(id: int) -> void:
 	rewrite_warn_armed = false
 	has_won = false
 	_assist_path.clear()
+	_telegraph_dirty = true
+	_invalidate_checkpoint_dist()
+	_pulse_redraw_accum = 0.0
 	if _ghost_assist != null:
 		_ghost_assist.begin_chamber(str(id))
 	_hold_dir = Vector2i.ZERO
@@ -327,6 +360,8 @@ func _try_move(dir: Vector2i) -> void:
 		_trigger_rewrite()
 	elif t == Tile.GOAL:
 		_on_win()
+	_telegraph_dirty = true
+	_invalidate_checkpoint_dist()
 	queue_redraw()
 
 
@@ -353,6 +388,8 @@ func _undo() -> void:
 			_clear_all_echoes()
 	checkpoints_triggered = new_triggered
 	emit_signal("moves_changed", move_count)
+	_telegraph_dirty = true
+	_invalidate_checkpoint_dist()
 	queue_redraw()
 
 
@@ -368,6 +405,8 @@ func _flush_pending_echoes() -> void:
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
 	rewrite_freeze = false
+	_telegraph_dirty = true
+	_invalidate_checkpoint_dist()
 	if placed.size() > 0 and not _goal_reachable_now():
 		_recover_softlock(placed)
 
@@ -399,9 +438,7 @@ func _trigger_rewrite() -> void:
 		seen[p] = true
 		candidates.append(p)
 	pending_echoes.clear()
-	for p in candidates:
-		if _would_still_be_reachable(p):
-			pending_echoes.append(p)
+	_select_reachable_echoes(candidates)
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
 	if _reduce_motion():
@@ -409,6 +446,7 @@ func _trigger_rewrite() -> void:
 		pending_echo_settle_time = 0.05
 	rewrite_freeze = false
 	telegraph_cells.clear()
+	_telegraph_dirty = false
 	moves_since_checkpoint.clear()
 	if has_node("/root/Juice"):
 		Juice.rewrite_punch(pending_echoes.size())
@@ -432,6 +470,23 @@ func _trigger_rewrite() -> void:
 			_subtitle_line("rewrite_begin")
 
 
+func _select_reachable_echoes(candidates: Array) -> void:
+	## Prefer one BFS with all candidates blocked. Fall back to greedy per-cell
+	## checks only when the full set would softlock (preserves prior accept order).
+	if candidates.is_empty():
+		return
+	var blocked_all := {}
+	for p in candidates:
+		blocked_all[p] = true
+	if _bfs_goal_open(blocked_all):
+		for p in candidates:
+			pending_echoes.append(p)
+		return
+	for p in candidates:
+		if _would_still_be_reachable(p):
+			pending_echoes.append(p)
+
+
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
 	var blocked := {}
 	blocked[new_wall] = true
@@ -444,27 +499,54 @@ func _goal_reachable_now() -> bool:
 	return _bfs_goal_open({})
 
 
+func _ensure_bfs_scratch() -> void:
+	var n: int = GRID_W * GRID_H
+	if _bfs_seen_gen.size() != n:
+		_bfs_seen_gen.resize(n)
+		_bfs_seen_gen.fill(0)
+		_bfs_q.resize(n)
+
+
 func _bfs_goal_open(extra_blocked: Dictionary) -> bool:
+	## Ring-buffer BFS over flat cell indices — no Array.pop_front() / Dictionary seen.
+	_ensure_bfs_scratch()
+	_bfs_gen += 1
+	if _bfs_gen >= 0x7fffffff:
+		_bfs_seen_gen.fill(0)
+		_bfs_gen = 1
 	var w: int = GRID_W
 	var h: int = GRID_H
-	var q: Array = [player_pos]
-	var seen := {}
-	seen[player_pos] = true
-	while q.size() > 0:
-		var cur: Vector2i = q.pop_front()
-		if cur == goal_pos:
+	var start_i: int = player_pos.y * w + player_pos.x
+	var goal_i: int = goal_pos.y * w + goal_pos.x
+	var head: int = 0
+	var tail: int = 0
+	_bfs_q[tail] = start_i
+	tail += 1
+	_bfs_seen_gen[start_i] = _bfs_gen
+	while head < tail:
+		var cur: int = _bfs_q[head]
+		head += 1
+		if cur == goal_i:
 			return true
+		var cx: int = cur % w
+		var cy: int = int(cur / w)
 		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-			var n: Vector2i = cur + d
-			if n.x < 0 or n.x >= w or n.y < 0 or n.y >= h:
+			var nx: int = cx + d.x
+			var ny: int = cy + d.y
+			if nx < 0 or nx >= w or ny < 0 or ny >= h:
 				continue
-			if seen.has(n) or extra_blocked.has(n):
+			var ni: int = ny * w + nx
+			if _bfs_seen_gen[ni] == _bfs_gen:
 				continue
-			var cell: int = grid[n.y][n.x]
+			var npos := Vector2i(nx, ny)
+			if extra_blocked.has(npos):
+				continue
+			var cell: int = grid[ny][nx]
 			if cell == Tile.WALL or cell == Tile.ECHO_WALL:
 				continue
-			seen[n] = true
-			q.append(n)
+			_bfs_seen_gen[ni] = _bfs_gen
+			_bfs_q[tail] = ni
+			tail += 1
 	return false
 
 
@@ -559,7 +641,13 @@ func _refresh_telegraph() -> void:
 			AudioDirector.set_rewrite_tension(0.0)
 
 
+func _invalidate_checkpoint_dist() -> void:
+	_checkpoint_dist_valid = false
+
+
 func _nearest_unused_checkpoint_dist() -> int:
+	if _checkpoint_dist_valid:
+		return _checkpoint_dist_cache
 	var best: int = -1
 	for y in range(GRID_H):
 		for x in range(GRID_W):
@@ -568,6 +656,8 @@ func _nearest_unused_checkpoint_dist() -> int:
 			var d: int = abs(x - player_pos.x) + abs(y - player_pos.y)
 			if best < 0 or d < best:
 				best = d
+	_checkpoint_dist_cache = best
+	_checkpoint_dist_valid = true
 	return best
 
 
@@ -715,12 +805,7 @@ func _draw() -> void:
 	_draw_player(offset)
 
 	if has_node("/root/Juice"):
-		for part in Juice.particles:
-			var pc: Color = part.get("color", Palette.RUST_FOSSIL)
-			var life: float = float(part.get("life", 0.0))
-			var max_life: float = maxf(0.001, float(part.get("max_life", 0.55)))
-			pc.a = clampf(life / max_life, 0.0, 1.0)
-			draw_circle(part.get("pos", Vector2.ZERO), float(part.get("size", 2.0)), pc)
+		Juice.draw_particles(self)
 		var fa: float = Juice.flash_alpha()
 		if fa > 0.01:
 			var fc: Color = Juice.flash_color

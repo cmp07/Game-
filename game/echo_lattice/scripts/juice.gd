@@ -5,8 +5,13 @@ extends Node
 ## Real-time systems advance on wall-clock so hitstop never freezes VFX.
 ## Palette-aligned colors keep rewrite / wall / win punches visually consistent.
 ##
+## Particles use a capped SoA pool (steal-oldest) — no Dictionary allocs in the
+## spawn/update hot path (docs/AUDIT/PERFORMANCE.md §3).
+##
 
 signal hitstop_ended()
+
+const PARTICLE_CAP: int = 200
 
 var trauma: float = 0.0
 var trauma_decay: float = 1.35
@@ -23,14 +28,45 @@ var flash_duration: float = 0.0
 var flash_color: Color = Color(1, 1, 1, 0)
 var flash_peak: float = 0.0
 
-var particles: Array = []  # Array[Dictionary]
+## SoA particle pool — index 0 .. _live_count-1 are active.
+var _px: PackedFloat32Array = PackedFloat32Array()
+var _py: PackedFloat32Array = PackedFloat32Array()
+var _vx: PackedFloat32Array = PackedFloat32Array()
+var _vy: PackedFloat32Array = PackedFloat32Array()
+var _life: PackedFloat32Array = PackedFloat32Array()
+var _max_life: PackedFloat32Array = PackedFloat32Array()
+var _size: PackedFloat32Array = PackedFloat32Array()
+var _cr: PackedFloat32Array = PackedFloat32Array()
+var _cg: PackedFloat32Array = PackedFloat32Array()
+var _cb: PackedFloat32Array = PackedFloat32Array()
+var _live_count: int = 0
+var _steal_cursor: int = 0
+
 var _last_msec: int = 0
+var _shake_scratch: Dictionary = {"dx": 0.0, "dy": 0.0, "rot": 0.0}
 
 
 func _ready() -> void:
 	set_process(true)
 	shake_seed = randf() * 1000.0
 	_last_msec = Time.get_ticks_msec()
+	_ensure_pool()
+
+
+func _ensure_pool() -> void:
+	if _px.size() == PARTICLE_CAP:
+		return
+	_px.resize(PARTICLE_CAP)
+	_py.resize(PARTICLE_CAP)
+	_vx.resize(PARTICLE_CAP)
+	_vy.resize(PARTICLE_CAP)
+	_life.resize(PARTICLE_CAP)
+	_max_life.resize(PARTICLE_CAP)
+	_size.resize(PARTICLE_CAP)
+	_cr.resize(PARTICLE_CAP)
+	_cg.resize(PARTICLE_CAP)
+	_cb.resize(PARTICLE_CAP)
+	_live_count = mini(_live_count, PARTICLE_CAP)
 
 
 func _process(_delta: float) -> void:
@@ -55,13 +91,16 @@ func bump(amount: float) -> void:
 func shake_offset(max_px: float = 10.0, max_rot_deg: float = 2.0) -> Dictionary:
 	var intensity: float = _shake_intensity()
 	if intensity <= 0.001 or trauma <= 0.0:
-		return {"dx": 0.0, "dy": 0.0, "rot": 0.0}
+		_shake_scratch["dx"] = 0.0
+		_shake_scratch["dy"] = 0.0
+		_shake_scratch["rot"] = 0.0
+		return _shake_scratch
 	var s: float = trauma * trauma * intensity
 	var f: float = shake_t * 42.0
-	var dx: float = max_px * s * _noise(shake_seed + 1.0, f)
-	var dy: float = max_px * s * _noise(shake_seed + 2.0, f)
-	var rot: float = deg_to_rad(max_rot_deg) * s * _noise(shake_seed + 3.0, f)
-	return {"dx": dx, "dy": dy, "rot": rot}
+	_shake_scratch["dx"] = max_px * s * _noise(shake_seed + 1.0, f)
+	_shake_scratch["dy"] = max_px * s * _noise(shake_seed + 2.0, f)
+	_shake_scratch["rot"] = deg_to_rad(max_rot_deg) * s * _noise(shake_seed + 3.0, f)
+	return _shake_scratch
 
 
 func hitstop(duration: float = 0.09, floor_scale: float = 0.06) -> void:
@@ -110,17 +149,103 @@ func rewrite_punch(segment_count: int = 1) -> void:
 
 
 func spawn_burst(world_pos: Vector2, color: Color, count: int = 8) -> void:
-	for i in range(count):
+	_ensure_pool()
+	for _i in range(count):
 		var ang: float = randf() * TAU
 		var spd: float = randf_range(40.0, 120.0)
-		particles.append({
-			"pos": world_pos,
-			"vel": Vector2(cos(ang), sin(ang)) * spd,
-			"life": randf_range(0.25, 0.55),
-			"max_life": 0.55,
-			"color": color,
-			"size": randf_range(2.0, 4.5),
-		})
+		var life: float = randf_range(0.25, 0.55)
+		_alloc_particle(
+			world_pos.x,
+			world_pos.y,
+			cos(ang) * spd,
+			sin(ang) * spd,
+			life,
+			0.55,
+			randf_range(2.0, 4.5),
+			color.r,
+			color.g,
+			color.b
+		)
+
+
+func _alloc_particle(
+	px: float, py: float, vx: float, vy: float,
+	life: float, max_life: float, size: float,
+	cr: float, cg: float, cb: float
+) -> void:
+	var idx: int
+	if _live_count < PARTICLE_CAP:
+		idx = _live_count
+		_live_count += 1
+	else:
+		# Steal-oldest ring — never grow past PARTICLE_CAP.
+		idx = _steal_cursor
+		_steal_cursor = (_steal_cursor + 1) % PARTICLE_CAP
+	_px[idx] = px
+	_py[idx] = py
+	_vx[idx] = vx
+	_vy[idx] = vy
+	_life[idx] = life
+	_max_life[idx] = max_life
+	_size[idx] = size
+	_cr[idx] = cr
+	_cg[idx] = cg
+	_cb[idx] = cb
+
+
+func live_particle_count() -> int:
+	return _live_count
+
+
+## Compatibility alias used by chamber draw / selftests. Prefer live_particle_count().
+var particles: Array:
+	get:
+		return _particles_view()
+
+
+func _particles_view() -> Array:
+	## Rare debug/compat path — hot draw uses draw_particles().
+	var out: Array = []
+	out.resize(_live_count)
+	for i in range(_live_count):
+		out[i] = {
+			"pos": Vector2(_px[i], _py[i]),
+			"vel": Vector2(_vx[i], _vy[i]),
+			"life": _life[i],
+			"max_life": _max_life[i],
+			"color": Color(_cr[i], _cg[i], _cb[i]),
+			"size": _size[i],
+		}
+	return out
+
+
+func draw_particles(canvas: CanvasItem) -> void:
+	for i in range(_live_count):
+		var max_life: float = maxf(0.001, _max_life[i])
+		var a: float = clampf(_life[i] / max_life, 0.0, 1.0)
+		canvas.draw_circle(Vector2(_px[i], _py[i]), _size[i], Color(_cr[i], _cg[i], _cb[i], a))
+
+
+func needs_redraw() -> bool:
+	return trauma > 0.001 or flash_left > 0.0 or _live_count > 0 or hitstop_left > 0.0
+
+
+func clear_particles() -> void:
+	_live_count = 0
+	_steal_cursor = 0
+
+
+func reset_transient() -> void:
+	## Call on stage swaps so autoload juice never bleeds across chambers/menus.
+	clear_particles()
+	trauma = 0.0
+	flash_left = 0.0
+	flash_duration = 0.0
+	flash_peak = 0.0
+	if hitstop_left > 0.0:
+		hitstop_left = 0.0
+		if DisplayServer.get_name() != "headless":
+			Engine.time_scale = _pre_hitstop_scale
 
 
 func flash_alpha() -> float:
@@ -144,14 +269,28 @@ func _update_hitstop(real_dt: float) -> void:
 
 func _update_particles(real_dt: float) -> void:
 	var i: int = 0
-	while i < particles.size():
-		var p: Dictionary = particles[i]
-		p["life"] = float(p["life"]) - real_dt
-		p["pos"] = p["pos"] + p["vel"] * real_dt
-		p["vel"] = p["vel"] * (1.0 - real_dt * 3.0)
-		particles[i] = p
-		if float(p["life"]) <= 0.0:
-			particles.remove_at(i)
+	while i < _live_count:
+		_life[i] = _life[i] - real_dt
+		_px[i] = _px[i] + _vx[i] * real_dt
+		_py[i] = _py[i] + _vy[i] * real_dt
+		var damp: float = 1.0 - real_dt * 3.0
+		_vx[i] = _vx[i] * damp
+		_vy[i] = _vy[i] * damp
+		if _life[i] <= 0.0:
+			# Swap-remove — no Array.remove_at shifts.
+			var last: int = _live_count - 1
+			if i != last:
+				_px[i] = _px[last]
+				_py[i] = _py[last]
+				_vx[i] = _vx[last]
+				_vy[i] = _vy[last]
+				_life[i] = _life[last]
+				_max_life[i] = _max_life[last]
+				_size[i] = _size[last]
+				_cr[i] = _cr[last]
+				_cg[i] = _cg[last]
+				_cb[i] = _cb[last]
+			_live_count = last
 		else:
 			i += 1
 
