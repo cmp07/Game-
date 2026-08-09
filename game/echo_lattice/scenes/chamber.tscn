@@ -1,0 +1,125 @@
+[gd_scene load_steps=3 format=3 uid="uid://cel_chamber_00001"]
+
+[ext_resource type="Script" path="res://scripts/chamber_scene.gd" id="1_scene"]
+[ext_resource type="Script" path="res://scripts/chamber.gd" id="2_chamber"]
+
+[node name="ChamberScene" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_scene")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.047, 0.047, 0.067, 1)
+
+[node name="Chamber" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_chamber")
+
+[node name="TopBar" type="PanelContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 44.0
+grow_horizontal = 2
+
+[node name="TopMargin" type="MarginContainer" parent="TopBar"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="TopRow" type="HBoxContainer" parent="TopBar/TopMargin"]
+theme_override_constants/separation = 16
+
+[node name="ChamberTitle" type="Label" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Chamber"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.91, 0.91, 0.94, 1)
+
+[node name="ModeLabel" type="Label" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "CAMPAIGN"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 0.36, 0.24, 1)
+
+[node name="MovesLabel" type="Label" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Moves: 0"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
+
+[node name="HabitLabel" type="Label" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Habit: unwritten"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.36, 0.24, 1)
+
+[node name="Spacer" type="Control" parent="TopBar/TopMargin/TopRow"]
+size_flags_horizontal = 3
+
+[node name="UndoHint" type="Label" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+visible = false
+text = "Z · UNDO"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
+
+[node name="RestartButton" type="Button" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Restart (R)"
+theme_override_font_sizes/font_size = 14
+
+[node name="MenuButton" type="Button" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Menu (Esc)"
+theme_override_font_sizes/font_size = 14
+
+[node name="PAStrip" type="PanelContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 44.0
+offset_bottom = 76.0
+grow_horizontal = 2
+
+[node name="PAMargin" type="MarginContainer" parent="PAStrip"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="PALabel" type="Label" parent="PAStrip/PAMargin"]
+unique_name_in_owner = true
+horizontal_alignment = 1
+vertical_alignment = 1
+text = ""
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.95, 0.78, 0.42, 1)
+
+[node name="BottomBar" type="PanelContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BottomMargin" type="MarginContainer" parent="BottomBar"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="Caption" type="Label" parent="BottomBar/BottomMargin"]
+unique_name_in_owner = true
+horizontal_alignment = 1
+text = ""
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
