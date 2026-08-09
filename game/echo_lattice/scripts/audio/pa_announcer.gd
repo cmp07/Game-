@@ -75,10 +75,6 @@ func _subtitle_for_pa(line_or_event: String) -> void:
 			stub = "pa.ghost.floor"
 		"pa.wing_clear":
 			stub = "pa.wing.clear"
-<<<<<<< HEAD
-		"pa.rewrite.matched", "pa.rewrite.second_birth", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor":
-=======
-		"pa.rewrite.matched", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor", "pa.ghost.race":
->>>>>>> origin/cursor/g1-ghost-self
+		"pa.rewrite.matched", "pa.rewrite.second_birth", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor", "pa.ghost.race":
 			stub = line_or_event
 	overlay.call("show_line", stub)

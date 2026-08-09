@@ -103,6 +103,7 @@ func draw_paper_grain(canvas: CanvasItem, rect: Rect2, seed: int = 7, opacity: f
 
 
 func draw_ledger_grid(canvas: CanvasItem, rect: Rect2, cell: int = 32) -> void:
+	## Major cell grid (default 32). Prefer draw_page_fiber_grid for V3 4 px sub-grid.
 	var c: Color = Palette.INK_SOFT
 	c.a = 0.10
 	var x: float = rect.position.x
@@ -113,6 +114,123 @@ func draw_ledger_grid(canvas: CanvasItem, rect: Rect2, cell: int = 32) -> void:
 	while y <= rect.end.y:
 		canvas.draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y), c, 1.0)
 		y += cell
+
+
+func draw_page_fiber_grid(canvas: CanvasItem, rect: Rect2, major_cell: int = 32) -> void:
+	## ART_DIRECTION_V3 §2.1 — 4 px ledger sub-grid @ ~6% + major cell accents.
+	## CPU canvas only (no shader rewrite).
+	var fine: Color = Palette.INK_SOFT
+	fine.a = 0.06
+	var step: float = 4.0
+	var x: float = rect.position.x
+	while x <= rect.end.x + 0.001:
+		canvas.draw_line(Vector2(x, rect.position.y), Vector2(x, rect.end.y), fine, 1.0)
+		x += step
+	var y: float = rect.position.y
+	while y <= rect.end.y + 0.001:
+		canvas.draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y), fine, 1.0)
+		y += step
+	if major_cell > 4:
+		var major: Color = Palette.INK_SOFT
+		major.a = 0.10
+		x = rect.position.x
+		while x <= rect.end.x + 0.001:
+			canvas.draw_line(Vector2(x, rect.position.y), Vector2(x, rect.end.y), major, 1.0)
+			x += float(major_cell)
+		y = rect.position.y
+		while y <= rect.end.y + 0.001:
+			canvas.draw_line(Vector2(rect.position.x, y), Vector2(rect.end.x, y), major, 1.0)
+			y += float(major_cell)
+
+
+func draw_desk_margin(canvas: CanvasItem, vp: Vector2, grain_seed: int = 11, grain_a: float = 0.05) -> void:
+	## Cool-neutral desk / lightbox under the ledger page (paper_margin wash).
+	canvas.draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
+	draw_paper_grain(canvas, Rect2(Vector2.ZERO, vp), grain_seed, grain_a)
+
+
+func draw_ledger_page(
+	canvas: CanvasItem,
+	page: Rect2,
+	opts: Dictionary = {}
+) -> void:
+	## Shared page substrate for chamber + menu (V3 page anatomy, CPU path).
+	## opts: shadow_off, grain_seed, grain_a, major_cell, rule_w, spine, double_rule
+	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(5, 7))
+	var grain_seed: int = int(opts.get("grain_seed", 42))
+	var grain_a: float = float(opts.get("grain_a", 0.08))
+	var major_cell: int = int(opts.get("major_cell", 16))
+	var rule_w: float = float(opts.get("rule_w", 2.0))
+	var spine: bool = bool(opts.get("spine", false))
+	var double_rule: bool = bool(opts.get("double_rule", true))
+
+	canvas.draw_rect(Rect2(page.position + shadow_off, page.size), Palette.PAPER_SHADOW, true)
+	canvas.draw_rect(page, Palette.PAPER_BONE, true)
+	if spine:
+		var spine_r := Rect2(page.position, Vector2(14.0, page.size.y))
+		canvas.draw_rect(spine_r, Palette.PAPER_DEEP, true)
+		canvas.draw_line(
+			page.position + Vector2(14.0, 0.0),
+			page.position + Vector2(14.0, page.size.y),
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+			1.0
+		)
+	draw_page_fiber_grid(canvas, page, major_cell)
+	draw_paper_grain(canvas, page, grain_seed, grain_a)
+	canvas.draw_rect(page, Palette.INK_SOFT, false, rule_w)
+	if double_rule:
+		canvas.draw_rect(
+			page.grow(-3.0),
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5),
+			false,
+			1.0
+		)
+
+
+func draw_index_card(canvas: CanvasItem, card: Rect2) -> void:
+	## Physical index-card plate: contact shadow, bone fill, ink hairline, inner rule.
+	canvas.draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
+	canvas.draw_rect(card, Palette.PAPER_BONE, true)
+	canvas.draw_rect(card, Palette.INK_SOFT, false, 1.5)
+	canvas.draw_rect(
+		card.grow(-3.0),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45),
+		false,
+		1.0
+	)
+
+
+func draw_letterpress_wall(
+	canvas: CanvasItem,
+	rect: Rect2,
+	fossil: bool = false,
+	paper_sides: int = 15
+) -> void:
+	## Fresh ink / fossil wall with letterpress squash — 1 px ink_soft hairline
+	## on the paper side only (bitflags: 1=N 2=E 4=S 8=W). Avoids thickening
+	## joins when two wall rects abut. CPU path — no shader rewrite.
+	var fill: Color = Palette.RUST_FOSSIL if fossil else Palette.INK_BLACK
+	canvas.draw_rect(rect, fill, true)
+	var hair: Color = Palette.INK_SOFT
+	hair.a = 0.85 if not fossil else 0.65
+	var x0: float = rect.position.x
+	var y0: float = rect.position.y
+	var x1: float = rect.end.x
+	var y1: float = rect.end.y
+	if paper_sides & 1:
+		canvas.draw_line(Vector2(x0, y0 - 1.0), Vector2(x1, y0 - 1.0), hair, 1.0)
+	if paper_sides & 4:
+		canvas.draw_line(Vector2(x0, y1 + 1.0), Vector2(x1, y1 + 1.0), hair, 1.0)
+	if paper_sides & 8:
+		canvas.draw_line(Vector2(x0 - 1.0, y0), Vector2(x0 - 1.0, y1), hair, 1.0)
+	if paper_sides & 2:
+		canvas.draw_line(Vector2(x1 + 1.0, y0), Vector2(x1 + 1.0, y1), hair, 1.0)
+	if fossil:
+		var seam: Color = Palette.RUST_DEEP
+		canvas.draw_rect(rect.grow(-1.0), seam, false, 1.5)
+	else:
+		# Inner ruling-pen edge — keeps dense walls from reading as flat blobs.
+		canvas.draw_rect(rect, Palette.INK_SOFT, false, 1.0)
 
 
 func draw_dashed_line(canvas: CanvasItem, a: Vector2, b: Vector2, color: Color, width: float = 1.0, dash: float = 5.0, gap: float = 4.0) -> void:
