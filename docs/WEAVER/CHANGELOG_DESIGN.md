@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-08-09 — 1000× positioning (comp fences + 20 hooks)
+
+**Branch:** `cursor/weaver-1000x-position` · **Base:** `cursor/echo-lattice-rc1`
+
+- New [`1000X/15_POSITIONING.md`](1000X/15_POSITIONING.md) — uniqueness vs Noita / craft sandbox / idle / cosmic
+- Twenty prioritized hooks for trailer → demo → 1.0
+- Indexed from [`README.md`](README.md)
+
+---
+
 ## 2026-08-09 — Weaver on Lattice (hybrid launch)
 
 **Branch:** `cursor/weaver-on-lattice-3a1d` · **Base:** `cursor/echo-lattice-rc1`  
