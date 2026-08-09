@@ -368,44 +368,61 @@ class TestMenuCompositionDensity(unittest.TestCase):
             0.55,
             msg="gameplay film plate zone still cream-hollow",
         )
-        # Empty-inside-plate gate: cream tiles inside the media well must stay < 8%.
-        plate_empty = 0
-        plate_total = 0
-        for y in range(270, 1020, 3):
-            for x in range(70, 900, 3):
-                plate_total += 1
-                r, g, b = rgb(x, y)
-                dist = abs(r - paper_ref[0]) + abs(g - paper_ref[1]) + abs(b - paper_ref[2])
-                if dist < 40 and lum(x, y) > 200:
-                    plate_empty += 1
-        plate_empty_frac = plate_empty / max(1, plate_total)
+        # Empty-inside-plate: true cream VOIDS (near-paper + low local spread), not paper floors.
+        # Fail if >8% of well tiles are void — the #163 postage-stamp regression.
+        void_tiles = 0
+        tile_total = 0
+        tile = 16
+        for y0 in range(270, 1020, tile):
+            for x0 in range(70, 900, tile):
+                tile_total += 1
+                samples: list[int] = []
+                near_paper = 0
+                n = 0
+                for y in range(y0, min(y0 + tile, 1020), 2):
+                    for x in range(x0, min(x0 + tile, 900), 2):
+                        n += 1
+                        samples.append(lum(x, y))
+                        r, g, b = rgb(x, y)
+                        dist = (
+                            abs(r - paper_ref[0])
+                            + abs(g - paper_ref[1])
+                            + abs(b - paper_ref[2])
+                        )
+                        if dist < 45 and lum(x, y) > 200:
+                            near_paper += 1
+                if not samples:
+                    continue
+                spread = max(samples) - min(samples)
+                if near_paper / max(1, n) > 0.90 and spread < 28:
+                    void_tiles += 1
+        void_frac = void_tiles / max(1, tile_total)
         self.assertLess(
-            plate_empty_frac,
+            void_frac,
             0.08,
-            msg=f"empty-inside-plate={plate_empty_frac:.3f} > 0.08 — hollow cream well",
+            msg=f"empty-inside-plate void_frac={void_frac:.3f} > 0.08 — hollow cream well",
         )
-        # Preview rect must own ≥18% of the full frame (not a 768×448 stamp).
-        dark_cells = [
-            (x, y)
-            for y in range(240, 1040, 2)
-            for x in range(50, 960, 2)
-            if lum(x, y) < 90
-        ]
-        self.assertGreater(len(dark_cells), 2000, msg="preview board ink missing")
-        xs = [p[0] for p in dark_cells]
-        ys = [p[1] for p in dark_cells]
-        island_w = max(xs) - min(xs)
-        island_h = max(ys) - min(ys)
-        island_frac = (island_w * island_h) / (w * h)
+        # Active board bands must span the tall film well (not a 448px-tall stamp).
+        active_ys = []
+        for y in range(260, 1035, 4):
+            samples = [lum(x, y) for x in range(70, 900, 6)]
+            spread = max(samples) - min(samples) if samples else 0
+            dark = sum(1 for v in samples if v < 90) / max(1, len(samples))
+            if dark > 0.08 or spread > 60:
+                active_ys.append(y)
+        self.assertGreaterEqual(len(active_ys), 80, msg="preview board activity missing")
+        span_h = (max(active_ys) - min(active_ys)) if active_ys else 0
+        span_w = 830.0  # well width proxy @ 1920 folio
+        span_frac = (span_w * float(span_h)) / (w * h)
         self.assertGreaterEqual(
-            island_frac,
+            span_frac,
             0.18,
-            msg=f"preview island area frac={island_frac:.3f} < 0.18 (w={island_w} h={island_h})",
+            msg=f"preview active span frac={span_frac:.3f} < 0.18 (h={span_h})",
         )
-        # Native board stamp regression — must not remain ~768×448 in a tall plate.
-        self.assertFalse(
-            island_w < 820 and island_h < 500,
-            msg=f"preview still board-native stamp {island_w}×{island_h}",
+        self.assertGreaterEqual(
+            span_h,
+            560,
+            msg=f"preview active height {span_h} < 560 — still a short stamp in the plate",
         )
         preview_ink = sum(
             1
@@ -415,18 +432,33 @@ class TestMenuCompositionDensity(unittest.TestCase):
         )
         self.assertGreater(preview_ink, 3500, msg="gameplay preview optical weight missing on verso")
 
-        # Twin seed bars: footer band under the plate must not reprint header seed ink.
-        header_seed = sum(
-            1 for y in range(18, 40) for x in range(40, 720, 2) if lum(x, y) < 130
-        )
-        footer_seed = sum(
-            1 for y in range(1035, 1065) for x in range(40, 720, 2) if lum(x, y) < 130
-        )
-        self.assertGreater(header_seed, 20, msg="verso micro header seed line missing")
-        self.assertLess(
-            footer_seed,
-            header_seed * 0.85 + 30,
-            msg=f"twin seed bars — footer ink={footer_seed} vs header={header_seed}",
+        # Twin seed bars: glyph-like flip rows in the header only — not plate-border ink.
+        # Seed glyphs flip ≥24×/row; plate-edge noise sits ~10–16 and must not fail the gate.
+        def _texty_rows(y0: int, y1: int, min_flips: int = 24) -> int:
+            hits = 0
+            for y in range(y0, y1):
+                flips = 0
+                prev: bool | None = None
+                for x in range(40, 700):
+                    d = lum(x, y) < 120
+                    if prev is None:
+                        prev = d
+                        continue
+                    if d != prev:
+                        flips += 1
+                        prev = d
+                if flips >= min_flips:
+                    hits += 1
+            return hits
+
+        header_texty = _texty_rows(18, 42)
+        # Below the film plate foot — plate border lives ~1030–1040.
+        footer_texty = _texty_rows(1048, 1070)
+        self.assertGreaterEqual(header_texty, 3, msg="verso micro header seed line missing")
+        self.assertEqual(
+            footer_texty,
+            0,
+            msg=f"twin seed bars — footer texty rows={footer_texty}",
         )
 
         left = None

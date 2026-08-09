@@ -142,15 +142,16 @@ func _fit_media_to_size(sz: Vector2) -> void:
 
 
 func _cover_scale_chamber(vp: Vector2) -> void:
-	## Scale the native board so it COVERS the SubViewport — no cream letterbox.
+	## Stretch the native board to EXACTLY fill the SubViewport — no cream letterbox,
+	## no wall-slab crop. Slight aspect squash is fine for a diegetic film well;
+	## the whole walk+slam loop must read inside the plate.
 	if _chamber == null or not is_instance_valid(_chamber):
 		return
 	var grid_px := Vector2(float(BOARD_W), float(BOARD_H))
 	if grid_px.x < 1.0 or grid_px.y < 1.0 or vp.x < 1.0 or vp.y < 1.0:
 		return
-	var s: float = maxf(vp.x / grid_px.x, vp.y / grid_px.y)
-	_chamber.scale = Vector2(s, s)
-	_chamber.position = ((vp - grid_px * s) * 0.5).floor()
+	_chamber.scale = Vector2(vp.x / grid_px.x, vp.y / grid_px.y)
+	_chamber.position = Vector2.ZERO
 	if _chamber.has_method("queue_redraw"):
 		_chamber.queue_redraw()
 
