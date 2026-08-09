@@ -60,7 +60,8 @@
 ### 3.6 Multiplayer
 
 - **MVP default: none.**
-- Optional later fence: async ghost Structures / share codes — see [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md) when present.
+- Optional later fence: async ghost Structures / share codes — see [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md).
+- Post-1.0 realtime, if ever: **co-op only** — seamless competitive killed ([`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md)).
 - Never gate single-player content on multiplayer.
 
 ### 3.7 Economy

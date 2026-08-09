@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### Post-1.0 fences
+
+| Doc | Topic |
+|---|---|
+| [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) | Post-1.0 co-op only; seamless competitive killed |
+
 ---
 
 ## Sibling PR sources (design wave)

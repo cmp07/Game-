@@ -65,7 +65,7 @@ Exact folder names may shift; the **separation from** `game/echo_lattice/` does 
 
 | Temptation | Cut for MVP | Revisit when… |
 |---|---|---|
-| Dedicated / relay servers | **Cut** | Never, unless MP product reboot ([`12_MULTIPLAYER.md`](12_MULTIPLAYER.md)) |
+| Dedicated / relay servers | **Cut** | Never for competitive; co-op reopen only per [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) (still no shard fleet) |
 | LLM / online generative dungeon | **Cut** | Fantasy forbids AI-dungeon store lead |
 | Steam Cloud | **Cut** | After local save is boring-reliable |
 | Workshop UGC pipeline | **Cut** | Post-1.0 + moderation plan |
