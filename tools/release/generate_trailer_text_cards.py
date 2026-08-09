@@ -23,7 +23,12 @@ W, H = 1920, 1080
 
 
 def _font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    # Prefer Field Ledger Plex Condensed (G1), then system fallbacks.
+    plex_dir = REPO / "game" / "echo_lattice" / "fonts" / "latin"
+    tools_fonts = REPO / "game" / "echo_lattice" / "tools" / "fonts"
     candidates = [
+        str(tools_fonts / ("IBMPlexSansCondensed-Bold.ttf" if bold else "IBMPlexSansCondensed-Medium.ttf")),
+        str(plex_dir / ("IBMPlexSansCondensed-SemiBold.ttf" if bold else "IBMPlexSansCondensed-Regular.ttf")),
         "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf" if bold else "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",

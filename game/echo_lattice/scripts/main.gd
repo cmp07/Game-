@@ -812,15 +812,15 @@ func _run_self_test() -> bool:
 
 
 func _selftest_type_kit() -> bool:
-	## ART_DIRECTION_V3 §3 — IBM Plex latin stack must load; brand/seed roles resolve.
+	## ART_DIRECTION_V3 §3 — IBM Plex latin stack via LedgerType; brand/seed roles resolve.
 	var ok := true
-	if not has_node("/root/TypeKit"):
-		printerr("TypeKit autoload missing"); return false
-	if not TypeKit.is_ready():
-		printerr("TypeKit latin faces not loaded (fonts/latin/)")
+	if not has_node("/root/LedgerType"):
+		printerr("LedgerType autoload missing"); return false
+	if not LedgerType.is_latin_ready():
+		printerr("LedgerType latin faces not loaded (fonts/latin/)")
 		ok = false
 	else:
-		print("  TypeKit display/body/mono loaded")
+		print("  LedgerType display/body/mono loaded")
 	var required: Array = [
 		"res://fonts/latin/IBMPlexSansCondensed-SemiBold.ttf",
 		"res://fonts/latin/IBMPlexSerif-Regular.ttf",
@@ -831,14 +831,13 @@ func _selftest_type_kit() -> bool:
 		if not FileAccess.file_exists(str(path)):
 			printerr("missing vendored font/license: %s" % str(path))
 			ok = false
-	if TypeKit.display_font() == null or TypeKit.mono_font() == null:
-		printerr("TypeKit display/mono helpers returned null")
+	if LedgerType.display == null or LedgerType.mono == null:
+		printerr("LedgerType display/mono faces returned null")
 		ok = false
-	# ThemeDB fallback must not remain the bare engine default when Plex body exists.
-	if TypeKit.body_font() != null and ThemeDB.fallback_font != TypeKit.body_font():
-		# CJK locale may legitimately diverge; only enforce on latin.
+	# LedgerType boots ThemeDB.fallback_font to the display face on latin.
+	if LedgerType.display != null and ThemeDB.fallback_font != LedgerType.display:
 		if not str(LocaleManager.current_locale).begins_with("zh"):
-			printerr("ThemeDB.fallback_font is not TypeKit body on latin locale")
+			printerr("ThemeDB.fallback_font is not LedgerType display on latin locale")
 			ok = false
 	# ArtKit material helpers present (letterpress / page substrate).
 	if not ArtKit.has_method("draw_letterpress_wall") or not ArtKit.has_method("draw_ledger_page"):
