@@ -41,6 +41,7 @@ func _ready() -> void:
 	_populate_static_options()
 	_load_from_services()
 	_build_binding_rows()
+	_style_as_index_card()
 	visibility_changed.connect(_on_visibility_changed)
 	if not visible:
 		# Instantiated as overlay — start hidden unless opened.
@@ -53,12 +54,36 @@ func open_menu() -> void:
 	var _title_tr := tr("settings.title")
 	if _status:
 		_status.text = _title_tr
+	var title_lbl: Label = get_node_or_null("Panel/Margin/VBox/Title")
+	if title_lbl:
+		title_lbl.text = _title_tr
+		title_lbl.add_theme_color_override("font_color", Palette.INK_BLACK)
 	_load_from_services()
 	_refresh_binding_labels()
 	if _language_option:
 		_language_option.grab_focus()
 	elif _colorblind_option:
 		_colorblind_option.grab_focus()
+
+
+func _style_as_index_card() -> void:
+	## Field Ledger plate — paper over paper, not charcoal glass (QW-3).
+	var dim: ColorRect = get_node_or_null("Dim")
+	if dim:
+		dim.color = Color(Palette.PAPER_MARGIN.r, Palette.PAPER_MARGIN.g, Palette.PAPER_MARGIN.b, 0.92)
+	var panel: PanelContainer = get_node_or_null("Panel")
+	if panel == null:
+		return
+	var plate := StyleBoxFlat.new()
+	plate.bg_color = Palette.PAPER_BONE
+	plate.border_color = Palette.INK_SOFT
+	plate.set_border_width_all(2)
+	plate.shadow_size = 0
+	plate.corner_radius_top_left = 0
+	plate.corner_radius_top_right = 0
+	plate.corner_radius_bottom_left = 0
+	plate.corner_radius_bottom_right = 0
+	panel.add_theme_stylebox_override("panel", plate)
 
 
 func close_menu() -> void:

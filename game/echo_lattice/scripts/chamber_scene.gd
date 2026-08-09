@@ -225,10 +225,14 @@ func _refresh_punchcard() -> void:
 	else:
 		filled = mini(GameState.move_ring.size(), PUNCHCARD_CELLS)
 	filled = clampi(filled, 0, PUNCHCARD_CELLS)
-	var near_cp: int = -1
-	if chamber_node != null and chamber_node.has_method("nearest_unused_checkpoint_dist"):
-		near_cp = int(chamber_node.nearest_unused_checkpoint_dist())
-	var warn: bool = near_cp >= 0 and near_cp <= 3 and filled > 0
+	var warn: bool = filled > 0
+	if chamber_node != null and chamber_node.has_method("is_rewrite_warn_active"):
+		warn = warn and bool(chamber_node.is_rewrite_warn_active())
+	else:
+		var near_cp: int = -1
+		if chamber_node != null and chamber_node.has_method("nearest_unused_checkpoint_dist"):
+			near_cp = int(chamber_node.nearest_unused_checkpoint_dist())
+		warn = warn and near_cp >= 0 and near_cp <= 3
 	for i in range(PUNCHCARD_CELLS):
 		var cell: TextureRect = _punch_rects[i]
 		var tex: Texture2D = _tex_empty

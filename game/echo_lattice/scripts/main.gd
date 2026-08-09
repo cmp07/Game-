@@ -12,10 +12,12 @@ const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
 const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
 const MUSEUM_SCENE:   PackedScene = preload("res://scenes/museum_screen.tscn")
 const SUBTITLE_SCENE: PackedScene = preload("res://scenes/ui/subtitle_overlay.tscn")
+const BOOT_SCENE:     PackedScene = preload("res://scenes/boot_title.tscn")
 
 @onready var stage: Node = $Stage
 
 var _subtitle_overlay: CanvasLayer = null
+var _boot_shown: bool = false
 
 
 func _ready() -> void:
@@ -56,7 +58,26 @@ func _ready() -> void:
 		await _capture_screenshot(kind, safe_out)
 		get_tree().quit(0)
 		return
+	# Cold-boot Field Ledger title plate once, then menu (QW-1).
+	await _show_boot_title_if_needed()
 	show_menu()
+
+
+func _show_boot_title_if_needed() -> void:
+	if _boot_shown:
+		return
+	_boot_shown = true
+	_clear_stage()
+	var boot: Node = BOOT_SCENE.instantiate()
+	stage.add_child(boot)
+	if boot.has_signal("finished"):
+		await boot.finished
+	else:
+		await get_tree().create_timer(1.2).timeout
+	if is_instance_valid(boot):
+		boot.queue_free()
+	# Let the free apply before menu instantiate.
+	await get_tree().process_frame
 
 
 func _ensure_subtitle_overlay() -> void:

@@ -31,6 +31,11 @@ const GRID_H: int = ChamberBook.GRID_H
 ## Rewrite slam total duration (~12 beats × 75 ms).
 const REWRITE_DURATION: float = 0.90
 const REWRITE_HEARTBEAT: float = 0.07
+## Warn hysteresis — arm close, disarm farther (stops threshold spam).
+const WARN_ARM_DIST: int = 3
+const WARN_DISARM_DIST: int = 5
+## Ledger page pad around the grid (diagram margin framing).
+const PAGE_PAD: float = 40.0
 
 var grid: Array = []
 var player_pos: Vector2i = Vector2i.ZERO
@@ -783,14 +788,32 @@ func _refresh_telegraph() -> void:
 		telegraph_cells.append(hp)
 		habit_telegraph_cells.append(hp)
 	var near_cp := _nearest_unused_checkpoint_dist()
-	if near_cp >= 0 and near_cp <= 3 and telegraph_cells.size() > 0:
+	_update_rewrite_warn_state(near_cp)
+
+
+func _update_rewrite_warn_state(near_cp: int) -> void:
+	## Arm at ≤3, stay armed through 4, disarm at ≥5 or when telegraph dies (QW-5).
+	var has_tele: bool = telegraph_cells.size() > 0
+	if near_cp < 0 or not has_tele:
+		rewrite_warn_armed = false
+		if has_node("/root/AudioDirector"):
+			AudioDirector.set_rewrite_tension(0.0)
+		return
+	if near_cp <= WARN_ARM_DIST:
 		if not rewrite_warn_armed and has_node("/root/AudioDirector"):
 			AudioDirector.on_rewrite_warn()
-			rewrite_warn_armed = true
+		rewrite_warn_armed = true
 		if has_node("/root/AudioDirector"):
-			AudioDirector.set_rewrite_tension(1.0 - float(near_cp) / 3.0)
-	else:
+			AudioDirector.set_rewrite_tension(1.0 - float(near_cp) / float(WARN_ARM_DIST))
+	elif near_cp >= WARN_DISARM_DIST:
 		rewrite_warn_armed = false
+		if has_node("/root/AudioDirector"):
+			AudioDirector.set_rewrite_tension(0.0)
+	elif rewrite_warn_armed:
+		# Hysteresis band (dist 4): keep a soft tension, do not re-fire warn.
+		if has_node("/root/AudioDirector"):
+			AudioDirector.set_rewrite_tension(0.25)
+	else:
 		if has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(0.0)
 
@@ -818,6 +841,22 @@ func _nearest_unused_checkpoint_dist() -> int:
 func nearest_unused_checkpoint_dist() -> int:
 	## Public HUD/telegraph accessor (diegetic punch-card warn state).
 	return _nearest_unused_checkpoint_dist()
+
+
+func is_rewrite_warn_active() -> bool:
+	## Shared arm state for punch-card / page tension (hysteresis-aware).
+	return rewrite_warn_armed and telegraph_cells.size() > 0 and not has_won
+
+
+func rewrite_warn_tension() -> float:
+	if not is_rewrite_warn_active():
+		return 0.0
+	var near_cp: int = _nearest_unused_checkpoint_dist()
+	if near_cp < 0:
+		return 0.0
+	if near_cp <= WARN_ARM_DIST:
+		return clampf(1.0 - float(near_cp) / float(WARN_ARM_DIST), 0.0, 1.0)
+	return 0.25
 
 
 func buffer_fill_count() -> int:
@@ -926,7 +965,8 @@ func _draw() -> void:
 		var sh: Dictionary = Juice.shake_offset(8.0, 1.5)
 		offset += Vector2(float(sh.get("dx", 0.0)), float(sh.get("dy", 0.0)))
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
-	var page := Rect2(offset - Vector2(24, 24), grid_px + Vector2(48, 48))
+	var page := Rect2(offset - Vector2(PAGE_PAD, PAGE_PAD), grid_px + Vector2(PAGE_PAD * 2.0, PAGE_PAD * 2.0))
+	var warn_tension: float = rewrite_warn_tension()
 
 	# Full viewport paper wash + margin.
 	draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
@@ -935,11 +975,23 @@ func _draw() -> void:
 	# Cast shadow under the ledger page.
 	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
 	draw_rect(page, Palette.PAPER_BONE, true)
+	# Binding wash — left spine of the field ledger (QW-4).
+	var spine := Rect2(page.position, Vector2(14.0, page.size.y))
+	draw_rect(spine, Palette.PAPER_DEEP, true)
+	draw_line(
+		page.position + Vector2(14.0, 0.0),
+		page.position + Vector2(14.0, page.size.y),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+		1.0
+	)
 	ArtKit.draw_ledger_grid(self, page, 16)
 	ArtKit.draw_paper_grain(self, page, 42, 0.08)
 
-	# Page border — ink rule.
-	draw_rect(page, Palette.INK_SOFT, false, 2.0)
+	# Page border — double ink rule; heavier when rewrite is imminent.
+	var rule_w: float = 2.0 + (1.5 if warn_tension > 0.01 else 0.0)
+	draw_rect(page, Palette.INK_SOFT, false, rule_w)
+	draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5), false, 1.0)
+	_draw_page_registration(page, warn_tension)
 
 	# Tiles
 	for y in range(GRID_H):
@@ -951,23 +1003,20 @@ func _draw() -> void:
 	_draw_assist_path(offset)
 
 	# Telegraph ticks — slate/chalk diagram marks by default; cadmium only when
-	# rewrite is ≤3 steps away (art bible cadmium exclusivity ≤1%).
+	# rewrite warn is armed (hysteresis; art bible cadmium exclusivity ≤1%).
 	if telegraph_cells.size() > 0 and pending_echoes.is_empty():
-		var near_cp2 := _nearest_unused_checkpoint_dist()
-		var near_warn: bool = near_cp2 >= 0 and near_cp2 <= 3
-		var tension: float = 0.0
-		if near_warn:
-			tension = 1.0 - float(near_cp2) / 3.0
+		var near_warn: bool = is_rewrite_warn_active()
+		var tension: float = rewrite_warn_tension()
 		for p in telegraph_cells:
 			var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
 			var c: Color
-			if near_warn:
+			if near_warn and tension >= 0.34:
 				c = _role_color(FossilPalette.FossilRole.WARN)
 				c.a = 0.40 + 0.35 * tension
 			else:
 				c = _role_color(FossilPalette.FossilRole.CHECKPOINT)
-				c.a = 0.30
-			var tick := 4.0
+				c.a = 0.30 + (0.12 if near_warn else 0.0)
+			var tick := 4.0 + (2.0 * tension if near_warn else 0.0)
 			draw_line(r.position, r.position + Vector2(tick, 0), c, 1.5)
 			draw_line(r.position, r.position + Vector2(0, tick), c, 1.5)
 			draw_line(r.position + Vector2(r.size.x, 0), r.position + Vector2(r.size.x - tick, 0), c, 1.5)
@@ -991,6 +1040,26 @@ func _draw() -> void:
 			var fc: Color = Juice.flash_color
 			fc.a = fa
 			draw_rect(Rect2(Vector2.ZERO, vp_size), fc, true)
+
+
+func _draw_page_registration(page: Rect2, warn_tension: float) -> void:
+	## Cartographer corner ticks — slate far, cadmium when rewrite is armed (QW-4/5).
+	var tick: float = 10.0
+	var c: Color = Palette.SLATE_TEAL_SOFT
+	c.a = 0.55
+	if warn_tension > 0.01:
+		c = Palette.SLATE_TEAL_SOFT.lerp(Palette.CADMIUM_WARN, clampf(warn_tension, 0.0, 1.0))
+		c.a = 0.55 + 0.35 * warn_tension
+	var corners: Array = [
+		page.position + Vector2(18, 18),
+		Vector2(page.end.x - 18.0, page.position.y + 18.0),
+		Vector2(page.position.x + 18.0, page.end.y - 18.0),
+		page.end - Vector2(18, 18),
+	]
+	for p in corners:
+		var o: Vector2 = p
+		draw_line(o + Vector2(-tick, 0), o + Vector2(tick, 0), c, 1.5)
+		draw_line(o + Vector2(0, -tick), o + Vector2(0, tick), c, 1.5)
 
 
 func _draw_tile(p: Vector2i, offset: Vector2) -> void:
@@ -1056,9 +1125,8 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 			var c2: Vector2 = rect.get_center()
 			draw_circle(c2, 3.0, Palette.INK_SOFT)
 		Tile.GOAL:
-			# Copper keyhole plate — dry-plate etch, not neon.
-			var pulse: float = 0.5 + 0.5 * sin(goal_pulse_t * 2.0)
-			var gcol: Color = Palette.COPPER_KEY.lerp(Palette.SLATE_TEAL, 0.15 * pulse)
+			# Copper keyhole plate — dry-plate etch, static stamp (paper is still).
+			var gcol: Color = Palette.COPPER_KEY.lerp(Palette.SLATE_TEAL, 0.08)
 			draw_rect(rect.grow(-5.0), gcol, false, 2.0)
 			draw_rect(rect.grow(-10.0), gcol, true)
 			draw_rect(rect.grow(-13.0), Palette.PAPER_BONE, true)
