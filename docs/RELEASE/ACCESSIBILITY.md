@@ -30,7 +30,7 @@ Map to common ACR topic areas (not a substitute for the official questionnaire �
 
 | ACR theme | Echo Lattice response | Status |
 |---|---|---|
-| **Configurable controls** | Full keyboard remap; Xbox/Steam Deck defaults kept (D-pad + left stick, A confirm, B assist, X undo, Y restart, Start pause) | ✅ |
+| **Configurable controls** | Full keyboard remap; Xbox/Steam Deck defaults kept (D-pad + left stick, A confirm, B/Start pause, X undo, Y restart, LB ghost assist) | ✅ |
 | **UI / text scale** | `ui_scale` 0.85–1.5 via content scale factor | ✅ |
 | **Subtitles / captions** | System/PA/rewrite stubs with size + background; audio is never the sole channel | ✅ |
 | **Colorblind support** | 6 modes (default Field Ledger, protan, deutan, tritan, high contrast, mono+patterns) + non-color pattern channel | ✅ |
@@ -52,7 +52,7 @@ Test on Deck OLED/LCD (or 1280×800 window at 100% / 125% scale):
 - [ ] Boot → Menu: brand + primary actions readable at default and **UI scale 1.25**
 - [ ] **Settings / Accessibility** reachable with trackpads + A; Close / Esc returns focus
 - [ ] Left stick + D-pad move one tile per press/axis tick; hold-to-walk optional
-- [ ] Start opens menu; Y restart; X undo; B ghost assist (when enabled)
+- [ ] Start/B opens menu; Y restart; X undo; LB ghost assist (when enabled)
 - [ ] Colorblind Protanopia + patterns: echo walls distinct from ink walls
 - [ ] Reduce flash + reduce motion during a multi-checkpoint chamber — no white strobe
 - [ ] Subtitles large: rewrite line clears above bottom deck bezel

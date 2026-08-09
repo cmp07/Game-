@@ -281,12 +281,16 @@ func _run_deck_layout_check() -> bool:
 	else:
 		print("  OSK: not required (no text-entry controls)")
 
-	print("  TDP target (doc): %dW verified / %dW battery" % [
-		DeckProfile.TDP_TARGET_WATTS, DeckProfile.TDP_BATTERY_WATTS
+	print("  TDP target (doc): %dW verified / %dW battery (active recommend %dW)" % [
+		DeckProfile.TDP_TARGET_WATTS, DeckProfile.TDP_BATTERY_WATTS,
+		DeckProfile.recommended_tdp_watts()
 	])
 	print("  FPS target: %d verified / %d battery" % [
 		DeckProfile.TARGET_FPS_VERIFIED, DeckProfile.TARGET_FPS_BATTERY
 	])
+	if DeckProfile.TDP_TARGET_WATTS != 7 or DeckProfile.TARGET_FPS_VERIFIED != 60:
+		printerr("  DeckProfile Verified defaults must be 60 FPS @ 7W")
+		ok = false
 	print("result: %s" % ("OK" if ok else "FAIL"))
 	return ok
 
@@ -527,6 +531,21 @@ func _run_self_test() -> bool:
 		var labels: PackedStringArray = remap.get_binding_labels("undo")
 		if labels.is_empty():
 			printerr("undo binding labels empty"); ok = false
+		## Pad defaults must survive keyboard remap reset (B+Start menu, LB ghost).
+		var pause_btns: Array = []
+		var ghost_btns: Array = []
+		for ev in InputMap.action_get_events("pause_menu"):
+			if ev is InputEventJoypadButton:
+				pause_btns.append((ev as InputEventJoypadButton).button_index)
+		for ev in InputMap.action_get_events("ghost_assist"):
+			if ev is InputEventJoypadButton:
+				ghost_btns.append((ev as InputEventJoypadButton).button_index)
+		if not (JOY_BUTTON_B in pause_btns and JOY_BUTTON_START in pause_btns):
+			printerr("pause_menu pad defaults missing B+Start: %s" % str(pause_btns)); ok = false
+		if JOY_BUTTON_LEFT_SHOULDER not in ghost_btns:
+			printerr("ghost_assist pad default missing LB: %s" % str(ghost_btns)); ok = false
+		if DeckProfile.recommended_tdp_watts() != DeckProfile.TDP_TARGET_WATTS:
+			printerr("DeckProfile default TDP should be 7W verified"); ok = false
 		a11y.set_reduce_flash(false)
 		a11y.set_ui_scale(1.0)
 		a11y.set_colorblind_mode(FossilPalette.Mode.DEFAULT)

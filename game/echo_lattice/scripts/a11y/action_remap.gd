@@ -32,6 +32,7 @@ const DISPLAY_NAMES := {
 }
 
 ## Default gamepad bindings kept when keyboard remaps (Xbox / Steam Deck).
+## Must match joypad events in project.godot so reset / first remap keeps pad feel.
 const GAMEPAD_DEFAULTS := {
 	"move_up": [JOY_BUTTON_DPAD_UP],
 	"move_down": [JOY_BUTTON_DPAD_DOWN],
@@ -39,9 +40,9 @@ const GAMEPAD_DEFAULTS := {
 	"move_right": [JOY_BUTTON_DPAD_RIGHT],
 	"undo": [JOY_BUTTON_X],
 	"restart": [JOY_BUTTON_Y],
-	"pause_menu": [JOY_BUTTON_START],
+	"pause_menu": [JOY_BUTTON_B, JOY_BUTTON_START],
 	"confirm": [JOY_BUTTON_A],
-	"ghost_assist": [JOY_BUTTON_B],
+	"ghost_assist": [JOY_BUTTON_LEFT_SHOULDER],
 }
 
 var _store: Node = null
