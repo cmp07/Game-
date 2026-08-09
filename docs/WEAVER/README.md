@@ -72,11 +72,11 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
-### 30 — Store draft
+### 20+ — Feel & follow-ons
 
 | Doc | Topic |
 |---|---|
-| [`30_STEAM_PITCH.md`](30_STEAM_PITCH.md) | Steam page draft + pricing rethink vs $24.99 |
+| [`23_WEAVE_VERB.md`](23_WEAVE_VERB.md) | Second-by-second weave feel (weight → scrape → seat → feet) |
 
 ---
 
@@ -92,7 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-steam-pitch` | [`30_STEAM_PITCH.md`](30_STEAM_PITCH.md) |
+| `cursor/weaver-weave-verb` | Feel: `23_WEAVE_VERB` |
 
 ---
 
