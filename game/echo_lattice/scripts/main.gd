@@ -34,7 +34,9 @@ func _ready() -> void:
 		var deck_ok: bool = await _run_deck_layout_check()
 		get_tree().quit(0 if deck_ok else 1)
 		return
-	# Screenshot capture — `-- --screenshot menu|chamber:N|won:N|end   out_dir`.
+	# Screenshot capture — `-- --screenshot menu|chamber:N|won:N|end --out DIR`.
+	# SEC-03: `--out` must resolve under user:// or the project tree (see
+	# `_resolve_screenshot_out_dir`). Capture scripts under tools/ are non-retail.
 	if all_args.has("--screenshot"):
 		var kind := ""
 		var out_dir := "user://shots"
@@ -45,7 +47,12 @@ func _ready() -> void:
 			if all_args[i2] == "--out" and i2 + 1 < all_args.size():
 				out_dir = all_args[i2 + 1]
 			i2 += 1
-		await _capture_screenshot(kind, out_dir)
+		var safe_out: String = _resolve_screenshot_out_dir(out_dir)
+		if safe_out == "":
+			printerr("screenshot --out rejected (must be user:// or under project root): %s" % out_dir)
+			get_tree().quit(2)
+			return
+		await _capture_screenshot(kind, safe_out)
 		get_tree().quit(0)
 		return
 	show_menu()
@@ -56,6 +63,60 @@ func _ensure_subtitle_overlay() -> void:
 		return
 	_subtitle_overlay = SUBTITLE_SCENE.instantiate()
 	add_child(_subtitle_overlay)
+
+
+## SEC-03: allow only user:// or absolute paths inside the project directory.
+## Rejects `..`, empty, and absolute paths outside those roots.
+static func _resolve_screenshot_out_dir(out_dir: String) -> String:
+	var raw := out_dir.strip_edges()
+	if raw == "":
+		return ""
+	if raw.find("..") >= 0:
+		return ""
+	if raw.begins_with("user://"):
+		var rest := raw.substr("user://".length())
+		if rest.find("..") >= 0 or rest.begins_with("/") or rest.begins_with("\\"):
+			return ""
+		# Normalize to a concrete absolute path under userdata.
+		return ProjectSettings.globalize_path(raw)
+	var project_root: String = ProjectSettings.globalize_path("res://").trim_suffix("/").trim_suffix("\\")
+	var abs_out: String = raw
+	if not raw.is_absolute_path():
+		abs_out = project_root.path_join(raw)
+	abs_out = abs_out.simplify_path()
+	var root_norm: String = project_root.simplify_path()
+	if abs_out == root_norm:
+		return abs_out
+	var prefix: String = root_norm.rstrip("/\\") + "/"
+	var abs_norm: String = abs_out.replace("\\", "/")
+	var prefix_norm: String = prefix.replace("\\", "/")
+	if abs_norm.begins_with(prefix_norm):
+		return abs_out
+	return ""
+
+
+static func _safe_screenshot_filename(kind: String) -> String:
+	var out := ""
+	for i in range(kind.length()):
+		var ch: String = kind.substr(i, 1)
+		var code: int = ch.unicode_at(0)
+		var ok_char := (
+			(code >= 48 and code <= 57) # 0-9
+			or (code >= 65 and code <= 90) # A-Z
+			or (code >= 97 and code <= 122) # a-z
+			or ch == "_" or ch == "-" or ch == "."
+		)
+		if ch == ":":
+			out += "_"
+		elif ok_char:
+			out += ch
+		else:
+			out += "_"
+	if out == "" or out == "." or out == "..":
+		return "shot"
+	if out.length() > 64:
+		out = out.substr(0, 64)
+	return out
 
 
 func _capture_screenshot(kind: String, out_dir: String) -> void:
@@ -224,7 +285,8 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 	for _f in range(6):
 		await get_tree().process_frame
 	var img: Image = get_viewport().get_texture().get_image()
-	var path: String = "%s/%s.png" % [out_dir, kind.replace(":", "_")]
+	var safe_name: String = _safe_screenshot_filename(kind)
+	var path: String = "%s/%s.png" % [out_dir, safe_name]
 	img.save_png(path)
 	print("saved %s" % path)
 

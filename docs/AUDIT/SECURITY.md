@@ -32,6 +32,7 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | | |
 |---|---|
 | **Severity** | High |
+| **Status** | **FIXED** (`cursor/fix-sec-high`) — fail-closed; `allow_spacewar_dev` gated to editor/debug. See [`SECURITY_HIGH_FIXES.md`](SECURITY_HIGH_FIXES.md). |
 | **Area** | Steam AppID stub abuse |
 | **Evidence** | `scripts/steam/steam_service.gd` → `_resolve_app_id()`; `config/steam_features.json` (`spacewar_dev_app_id: 480`, `app_id_placeholder: "YOUR_APP_ID"`) |
 
@@ -51,6 +52,7 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | | |
 |---|---|
 | **Severity** | High |
+| **Status** | **FIXED** (`cursor/fix-sec-high`) — `SaveManager.validate_save_*` + atomic cloud tmp. See [`SECURITY_HIGH_FIXES.md`](SECURITY_HIGH_FIXES.md). |
 | **Area** | Cloud save |
 | **Evidence** | `scripts/steam/steam_cloud_save.gd` → `pull_if_newer()`; consumed by `SaveManager._apply_save()` |
 
@@ -70,6 +72,7 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | | |
 |---|---|
 | **Severity** | High |
+| **Status** | **FIXED** (`cursor/fix-sec-high`) — `user://` or project-root allowlist; tools use `.capture_staging/`. See [`SECURITY_HIGH_FIXES.md`](SECURITY_HIGH_FIXES.md). |
 | **Area** | Path traversal / arbitrary write (local) |
 | **Evidence** | `scripts/main.gd` → `_ready()` / `_capture_screenshot()` |
 

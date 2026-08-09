@@ -45,6 +45,10 @@ All requested `cursor/release-*` packs present at integration time are merged ab
 
 Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **54/100**; Gate A still blocked on AppID / capsules / trailer).
 
+### Security High code landed (2026-08-09)
+
+SEC-01 / SEC-02 / SEC-03 from [`../AUDIT/SECURITY.md`](../AUDIT/SECURITY.md) — fail-closed AppID (no Spacewar fallback), Cloud pull schema validation before `save.json` write, and constrained `--screenshot --out` paths. Note: [`../AUDIT/SECURITY_HIGH_FIXES.md`](../AUDIT/SECURITY_HIGH_FIXES.md). Tests: `python3 game/echo_lattice/tests/test_security_high.py`.
+
 ---
 
 ## Doc map

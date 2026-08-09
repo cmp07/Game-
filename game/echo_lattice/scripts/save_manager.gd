@@ -8,6 +8,30 @@ const SAVE_PATH: String = "user://save.json"
 const SAVE_TMP: String = "user://save.json.tmp"
 const SAVE_BAK: String = "user://save.json.bak"
 const SAVE_VERSION: int = 2
+## Bounds for SEC-02 cloud / untrusted save validation (also useful locally).
+const SAVE_VERSION_MIN: int = 1
+const SAVE_MAX_BYTES: int = 262144
+const SAVE_MAX_MAP_ENTRIES: int = 256
+const SAVE_MAX_QUEUE_LEN: int = 128
+const SAVE_MAX_CHAMBER_INDEX: int = 1023
+const SAVE_MAX_STRING_LEN: int = 256
+const SAVE_ALLOWED_KEYS: Array[String] = [
+	"version",
+	"build_flavor",
+	"current_chamber",
+	"best_moves",
+	"best_stars",
+	"completed",
+	"run_cleared",
+	"habit_profile",
+	"run_mode",
+	"run_queue",
+	"queue_pos",
+	"daily_seed",
+	"daily_label",
+	"daily_best_stars",
+	"run_started",
+]
 
 
 func _notification(what: int) -> void:
@@ -129,6 +153,96 @@ func wipe() -> void:
 	for p in [SAVE_PATH, SAVE_TMP, SAVE_BAK]:
 		if FileAccess.file_exists(p):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(p))
+
+
+## SEC-02 / SEC-06: validate untrusted save JSON (Steam Cloud pull, corrupt files).
+## Returns { "ok": bool, "data": Dictionary?, "reason": String }.
+static func validate_save_text(text: String) -> Dictionary:
+	if text.length() > SAVE_MAX_BYTES:
+		return {"ok": false, "reason": "payload_too_large"}
+	var stripped := text.strip_edges()
+	if stripped == "":
+		return {"ok": false, "reason": "empty"}
+	var parsed: Variant = JSON.parse_string(stripped)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {"ok": false, "reason": "not_object"}
+	return validate_save_dict(parsed as Dictionary)
+
+
+static func validate_save_dict(data: Dictionary) -> Dictionary:
+	if not data.has("version"):
+		return {"ok": false, "reason": "missing_version"}
+	var version: int = int(data.get("version", -1))
+	if version < SAVE_VERSION_MIN or version > SAVE_VERSION:
+		return {"ok": false, "reason": "version_out_of_range"}
+	for k in data.keys():
+		var key := str(k)
+		if key not in SAVE_ALLOWED_KEYS:
+			return {"ok": false, "reason": "unknown_key:%s" % key}
+	if data.has("build_flavor"):
+		var flavor := str(data.get("build_flavor", ""))
+		if flavor.length() > SAVE_MAX_STRING_LEN:
+			return {"ok": false, "reason": "build_flavor_too_long"}
+		if flavor != "" and flavor != "demo" and flavor != "full":
+			return {"ok": false, "reason": "build_flavor_invalid"}
+	if data.has("run_mode"):
+		var mode := str(data.get("run_mode", ""))
+		if mode.length() > SAVE_MAX_STRING_LEN:
+			return {"ok": false, "reason": "run_mode_too_long"}
+		if mode != "" and mode != "standard" and mode != "daily":
+			return {"ok": false, "reason": "run_mode_invalid"}
+	if data.has("daily_label") and str(data.get("daily_label", "")).length() > SAVE_MAX_STRING_LEN:
+		return {"ok": false, "reason": "daily_label_too_long"}
+	for int_field in ["current_chamber", "queue_pos", "daily_seed"]:
+		if data.has(int_field) and typeof(data[int_field]) not in [TYPE_INT, TYPE_FLOAT]:
+			return {"ok": false, "reason": "%s_not_number" % int_field}
+	if data.has("current_chamber"):
+		var cc: int = int(data.get("current_chamber", 0))
+		if cc < 0 or cc > SAVE_MAX_CHAMBER_INDEX:
+			return {"ok": false, "reason": "current_chamber_out_of_range"}
+	if data.has("queue_pos"):
+		var qp: int = int(data.get("queue_pos", 0))
+		if qp < 0 or qp > SAVE_MAX_QUEUE_LEN:
+			return {"ok": false, "reason": "queue_pos_out_of_range"}
+	if data.has("run_started") and typeof(data["run_started"]) != TYPE_BOOL:
+		# JSON has no bool distinction from int in some parsers; allow 0/1 ints.
+		if typeof(data["run_started"]) not in [TYPE_BOOL, TYPE_INT, TYPE_FLOAT]:
+			return {"ok": false, "reason": "run_started_not_bool"}
+	for map_key in ["best_moves", "best_stars", "completed", "run_cleared", "daily_best_stars"]:
+		if not data.has(map_key):
+			continue
+		if typeof(data[map_key]) != TYPE_DICTIONARY:
+			return {"ok": false, "reason": "%s_not_object" % map_key}
+		var m: Dictionary = data[map_key]
+		if m.size() > SAVE_MAX_MAP_ENTRIES:
+			return {"ok": false, "reason": "%s_too_many_keys" % map_key}
+		if map_key != "daily_best_stars":
+			for mk in m.keys():
+				var idx: int = int(mk)
+				if idx < 0 or idx > SAVE_MAX_CHAMBER_INDEX:
+					return {"ok": false, "reason": "%s_bad_index" % map_key}
+	if data.has("habit_profile"):
+		if typeof(data["habit_profile"]) != TYPE_DICTIONARY:
+			return {"ok": false, "reason": "habit_profile_not_object"}
+		var habit: Dictionary = data["habit_profile"]
+		if habit.size() > 8:
+			return {"ok": false, "reason": "habit_profile_too_many_keys"}
+		for hk in habit.keys():
+			if str(hk) not in ["up", "down", "left", "right"]:
+				return {"ok": false, "reason": "habit_profile_unknown_key"}
+	if data.has("run_queue"):
+		if typeof(data["run_queue"]) != TYPE_ARRAY:
+			return {"ok": false, "reason": "run_queue_not_array"}
+		var rq: Array = data["run_queue"]
+		if rq.size() > SAVE_MAX_QUEUE_LEN:
+			return {"ok": false, "reason": "run_queue_too_long"}
+		for idx_v in rq:
+			if typeof(idx_v) not in [TYPE_INT, TYPE_FLOAT]:
+				return {"ok": false, "reason": "run_queue_entry_not_number"}
+			var qi: int = int(idx_v)
+			if qi < 0 or qi > SAVE_MAX_CHAMBER_INDEX:
+				return {"ok": false, "reason": "run_queue_index_out_of_range"}
+	return {"ok": true, "data": data, "reason": ""}
 
 
 func _read_json_file(path: String) -> Variant:

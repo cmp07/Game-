@@ -17,9 +17,10 @@ HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "$HERE/.." && pwd)"
 REPO_ROOT="$(cd -- "$PROJECT_DIR/../.." && pwd)"
 OUT_DIR="$REPO_ROOT/docs/ECHO_LATTICE/screenshots/tour"
-STAGING="$(mktemp -d)"
-
-mkdir -p "$OUT_DIR"
+# SEC-03: --out must stay under the Godot project root (not /tmp).
+STAGING="$PROJECT_DIR/.capture_staging"
+rm -rf "$STAGING"
+mkdir -p "$STAGING" "$OUT_DIR"
 
 # Wipe any leftover save so the menu shot always shows a fresh boot.
 rm -rf "$HOME/.local/share/godot/app_userdata/Echo Lattice" || true

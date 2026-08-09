@@ -54,8 +54,11 @@ Autoload order (see `project.godot.steamworks.fragment`):
 | `cloud_save_enabled` | `false` | Optional Cloud sync of `save.json` |
 | `overlay_pause_enabled` | `true` | Pause tree when overlay opens |
 | `prefer_godotsteam_when_present` | `true` | Use real backend only if singleton exists |
+| `allow_spacewar_dev` | `false` | **SEC-01:** Permit AppID `480` only in editor/debug when explicitly true. Shipping builds never fall back to Spacewar. |
 
 **itch / DRM-free:** leave `steam_enabled` false (default). Do not ship Steam DLLs in itch zips.
+
+**AppID fail-closed (SEC-01):** `_resolve_app_id()` requires a positive non-Spacewar AppID from `steam_appid.txt` or a numeric `app_id_placeholder`. Missing/invalid → AppID `0`, Steam init skipped while `steam_enabled` is true.
 
 ---
 
@@ -104,6 +107,7 @@ When enabling for 1.0:
 3. Map root path to Godot userdata (`%APPDATA%\Godot\app_userdata\Echo Lattice\` on Windows, or a custom `user://` override).
 4. Remote file name: `save.json` (`cloud_remote_path`).
 5. Conflict policy today: **prefer local if both differ**; pull only when local missing/empty. Revisit before marketing Cloud as a feature.
+6. **SEC-02:** Cloud pulls run `SaveManager.validate_save_text` (version bounds, allowlisted keys, size/queue caps) before atomic write to `user://save.json`. Invalid remotes are refused.
 
 Exclude: crash dumps, screenshots, `telemetry/`, editor scratch.
 
@@ -127,7 +131,7 @@ Stub testing: `SteamService.debug_simulate_overlay(true|false)`.
 1. Install GodotSteam GDExtension matching Godot **4.3.x** into `game/echo_lattice/addons/godotsteam/` (do not commit Valve redistributables without license review).
 2. Pin the exact GodotSteam + Godot version pair in release notes.
 3. Set `steam_enabled: true` for Steam export presets only (`custom_features` may include `steam`).
-4. Local exported testing: `steam_appid.txt` beside the exe (`YOUR_APP_ID` or Spacewar `480` for SDK bring-up). **Never ship `480` or `steam_appid.txt` in retail depots.**
+4. Local exported testing: `steam_appid.txt` beside the exe with the **real** AppID. Spacewar `480` only with `allow_spacewar_dev: true` in editor/debug — never as a silent fallback. **Never ship `480` or `steam_appid.txt` in retail depots.**
 5. Smoke: init → unlock one achievement → Shift+Tab overlay pause → quit flush.
 
 ---
@@ -188,6 +192,8 @@ steam/echo_lattice/
 ```bash
 # Catalog + flag + doc acceptance (no Godot / no Steam required)
 python3 game/echo_lattice/tests/test_steamworks.py
+# SEC-01 / SEC-02 / SEC-03 contracts
+python3 game/echo_lattice/tests/test_security_high.py
 ```
 
 Manual (Steam branch build):

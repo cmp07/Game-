@@ -3,9 +3,11 @@ extends RefCounted
 ##
 ## Optional Steam Cloud bridge for user://save.json.
 ## Local disk remains authoritative; cloud is best-effort sync.
+## SEC-02: remote payloads are schema-validated before replacing local save.
 ##
 
 const LOCAL_SAVE: String = "user://save.json"
+const LOCAL_SAVE_CLOUD_TMP: String = "user://save.json.cloud.tmp"
 
 signal pulled(ok: bool)
 signal pushed(ok: bool)
@@ -22,8 +24,20 @@ func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
 	if bytes.is_empty():
 		pulled.emit(false)
 		return false
+	if bytes.size() > SaveManager.SAVE_MAX_BYTES:
+		push_warning("SteamCloudSave: remote save exceeds size cap; refusing pull.")
+		pulled.emit(false)
+		return false
 	var remote_text := bytes.get_string_from_utf8()
 	if remote_text.strip_edges() == "":
+		pulled.emit(false)
+		return false
+	var validation: Dictionary = SaveManager.validate_save_text(remote_text)
+	if not bool(validation.get("ok", false)):
+		push_warning(
+			"SteamCloudSave: remote save failed schema validation (%s); refusing pull."
+			% str(validation.get("reason", "unknown"))
+		)
 		pulled.emit(false)
 		return false
 	# Prefer cloud when local missing; otherwise last-write-wins by mtime approx.
@@ -41,12 +55,9 @@ func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
 			if local_text.strip_edges() != "":
 				pulled.emit(false)
 				return false
-	var out := FileAccess.open(LOCAL_SAVE, FileAccess.WRITE)
-	if out == null:
+	if not _atomic_write_local(remote_text):
 		pulled.emit(false)
 		return false
-	out.store_string(remote_text)
-	out.close()
 	pulled.emit(true)
 	return true
 
@@ -64,6 +75,36 @@ func push_local(backend: SteamBackend, remote_path: String) -> bool:
 		return false
 	var text := f.get_as_text()
 	f.close()
+	var validation: Dictionary = SaveManager.validate_save_text(text)
+	if not bool(validation.get("ok", false)):
+		push_warning(
+			"SteamCloudSave: refusing to push invalid local save (%s)."
+			% str(validation.get("reason", "unknown"))
+		)
+		pushed.emit(false)
+		return false
 	var ok: bool = backend.cloud_write_file(remote_path, text.to_utf8_buffer())
 	pushed.emit(ok)
 	return ok
+
+
+func _atomic_write_local(payload: String) -> bool:
+	var tmp := FileAccess.open(LOCAL_SAVE_CLOUD_TMP, FileAccess.WRITE)
+	if tmp == null:
+		push_warning("SteamCloudSave: could not open cloud tmp for write.")
+		return false
+	tmp.store_string(payload)
+	tmp.close()
+	var abs_path: String = ProjectSettings.globalize_path(LOCAL_SAVE)
+	var abs_tmp: String = ProjectSettings.globalize_path(LOCAL_SAVE_CLOUD_TMP)
+	var ren: Error = DirAccess.rename_absolute(abs_tmp, abs_path)
+	if ren != OK:
+		var direct := FileAccess.open(LOCAL_SAVE, FileAccess.WRITE)
+		if direct == null:
+			push_warning("SteamCloudSave: atomic rename failed (%s)." % ren)
+			return false
+		direct.store_string(payload)
+		direct.close()
+		if FileAccess.file_exists(LOCAL_SAVE_CLOUD_TMP):
+			DirAccess.remove_absolute(abs_tmp)
+	return true
