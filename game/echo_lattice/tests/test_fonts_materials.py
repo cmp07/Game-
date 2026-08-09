@@ -134,7 +134,7 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn('"action"', type_src)
         self.assertIn("apply_to_control(btn, \"action\"", chrome)
         self.assertIn("Idle rows stay clean", chrome)
-        self.assertIn('_type("action")', menu)
+        self.assertIn('font_for_role("action"', menu)
         self.assertIn("Palette.RUST_FOSSIL", menu)
         self.assertNotIn("return ThemeDB.fallback_font", menu)
         self.assertNotIn("_draw_specimen_lattice", menu)

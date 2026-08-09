@@ -97,7 +97,7 @@ class TestMenuWiresRoles(unittest.TestCase):
         self.assertIn('_type("deck")', menu)
         self.assertIn('_type("meta")', menu)
         self.assertIn('_type("micro")', menu)
-        self.assertIn('_type("display")', menu)
+        self.assertIn('font_for_role("action"', menu)
         self.assertIn("MENU_TYPE_SYSTEM", menu)
         self.assertIn('scale.get("action"', menu)
 
