@@ -152,3 +152,52 @@ static func wire_vertical_focus(buttons: Array) -> void:
 		cur.focus_neighbor_right = cur.get_path_to(cur)
 		cur.focus_previous = cur.get_path_to(prev)
 		cur.focus_next = cur.get_path_to(next)
+
+
+## Premium Field Index feel — select / hover / confirm only (no layout).
+## Pair with AudioDirector.arm_ui_feel() after grab_focus so open stays silent.
+static func wire_index_feel(buttons: Array) -> void:
+	for btn in buttons:
+		if btn == null or not (btn is BaseButton):
+			continue
+		var b: BaseButton = btn
+		if bool(b.get_meta("_ledger_feel_wired", false)):
+			continue
+		b.set_meta("_ledger_feel_wired", true)
+		b.focus_entered.connect(func(): _on_index_focus(b))
+		b.mouse_entered.connect(func(): _on_index_hover(b))
+		b.pressed.connect(func(): _on_index_confirm(b))
+
+
+static func _director() -> Node:
+	var tree := Engine.get_main_loop()
+	if tree == null or not (tree is SceneTree):
+		return null
+	return (tree as SceneTree).root.get_node_or_null("/root/AudioDirector")
+
+
+static func _on_index_focus(btn: BaseButton) -> void:
+	if btn == null or btn.disabled or not btn.visible:
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_select"):
+		director.call("on_ui_select")
+
+
+static func _on_index_hover(btn: BaseButton) -> void:
+	if btn == null or btn.disabled or not btn.visible:
+		return
+	# Focus already owns the selection tick — hover is mouse-only whisper.
+	if btn.has_focus():
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_hover"):
+		director.call("on_ui_hover")
+
+
+static func _on_index_confirm(btn: BaseButton) -> void:
+	if btn == null or btn.disabled:
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_confirm"):
+		director.call("on_ui_confirm")

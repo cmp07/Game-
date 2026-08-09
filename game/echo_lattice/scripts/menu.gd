@@ -50,6 +50,9 @@ func _ready() -> void:
 	var has: bool = GameState.can_continue()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.40)
+	# Arm before any grab_focus so cold boot cannot chirp (QW-2).
+	if has_node("/root/AudioDirector"):
+		AudioDirector.arm_ui_feel()
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
@@ -111,7 +114,8 @@ func _ready() -> void:
 		LedgerChrome.style_index_button(_wishlist_button, false)
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
-	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
+	_wire_index_feel()
+	# Cold boot stays silent — ui.select/hover only after arm window (QW-2 / AUDIO_V3 §6.4).
 
 
 func _notification(what: int) -> void:
@@ -383,8 +387,6 @@ func _open_settings() -> void:
 				start_button.grab_focus()
 		)
 	_settings_overlay.open_menu()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
 
 
 func _open_colophon() -> void:
@@ -420,14 +422,15 @@ func _ensure_wishlist_button() -> void:
 		DemoBuild.open_wishlist()
 	)
 	LedgerChrome.style_index_button(_wishlist_button, false)
+	_wire_index_feel()
 	_sync_field_index_layout()
 
 
-func _ensure_gamepad_focus_chain() -> void:
+func _index_action_buttons() -> Array:
 	var order: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		order.append(endless_button)
-	if hard_button and hard_button.visible and not hard_button.disabled:
+	if hard_button:
 		order.append(hard_button)
 	if museum_button:
 		order.append(museum_button)
@@ -437,7 +440,24 @@ func _ensure_gamepad_focus_chain() -> void:
 	order.append(quit_button)
 	if _wishlist_button != null:
 		order.insert(order.size() - 1, _wishlist_button)
-	LedgerChrome.wire_vertical_focus(order)
+	return order
+
+
+func _wire_index_feel() -> void:
+	LedgerChrome.wire_index_feel(_index_action_buttons())
+
+
+func _ensure_gamepad_focus_chain() -> void:
+	var order: Array = _index_action_buttons()
+	# Focus chain skips hidden/disabled Hard; feel wiring still covers the control.
+	var focus_order: Array = []
+	for btn in order:
+		if btn == null:
+			continue
+		if btn == hard_button and (not hard_button.visible or hard_button.disabled):
+			continue
+		focus_order.append(btn)
+	LedgerChrome.wire_vertical_focus(focus_order)
 
 
 func _build_demo_path() -> void:

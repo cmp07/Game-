@@ -472,8 +472,9 @@ Map 1:1 to [`echo_lattice.palette.json`](../../game/echo_lattice/art/palette/ech
 
 | Event | When | Bible |
 |---|---|---|
-| `ui.click` | Confirm IndexAction / toggle stamp | Soft tick — **not** on shell `_ready` |
-| `ui.hover` (optional) | Focus move | Extremely soft; omit if noisy |
+| `ui.select` | Focus move / selection | Paper/ink tick; silence gaps via `AudioDirector.on_ui_select` |
+| `ui.hover` (optional) | Mouse hover (unfocused) | Extremely soft fiber; omit if noisy |
+| `ui.click` | Confirm IndexAction / toggle stamp | Soft ledger confirm stinger — **not** on shell `_ready` |
 | `ui.turn` | PaperTurn between leaves | Paper crease |
 | `ui.stamp` | FolioToggle on / star stamp | Rubber stamp |
 

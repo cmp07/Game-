@@ -242,8 +242,12 @@ When `habit_tension ≥ 0.7` for 2+ steps, layer a thin metallic overtone (same 
 
 | Event | Bus | Notes |
 |---|---|---|
-| `ui.click` | UI | Soft ticks; never compete with rewrite/PA |
+| `ui.select` | UI | Focus move — paper/ink selection tick; `AudioDirector.on_ui_select` enforces silence gaps |
+| `ui.hover` | UI | Extremely soft mouse-hover fiber; skipped when focused / noisy |
+| `ui.click` | UI | Confirm stinger on IndexAction activate (`on_ui_confirm`); never on shell `_ready` |
 | Pause | — | Music ducks −8 dB; SFX/PA unchanged |
+
+Shell wiring: `LedgerChrome.wire_index_feel` + `AudioDirector.arm_ui_feel()` after `grab_focus` so open stays silent (AUDIO_V3 §6.4).
 
 ---
 

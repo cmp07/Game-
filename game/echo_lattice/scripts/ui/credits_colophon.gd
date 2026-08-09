@@ -56,6 +56,7 @@ func _build() -> void:
 	_file_away.custom_minimum_size = Vector2(220, 34)
 	LedgerChrome.style_index_button(_file_away, true)
 	_file_away.pressed.connect(close_colophon)
+	LedgerChrome.wire_index_feel([_file_away])
 	col.add_child(_file_away)
 
 
@@ -68,11 +69,11 @@ func open_colophon() -> void:
 	if has_node("/root/AccessibilityService"):
 		var snap: Dictionary = AccessibilityService.accessibility_snapshot()
 		reduce = bool(snap.get("reduce_motion", false))
+	if has_node("/root/AudioDirector"):
+		AudioDirector.arm_ui_feel()
 	_file_away.grab_focus()
 	set_process(not reduce)
 	queue_redraw()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
 
 
 func close_colophon() -> void:
