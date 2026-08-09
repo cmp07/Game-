@@ -78,19 +78,20 @@ static func all_mode_ids() -> PackedStringArray:
 
 
 static func display_name(mode: Mode) -> String:
+	# Static context: use TranslationServer (tr() is instance-only).
 	match mode:
 		Mode.PROTANOPIA:
-			return tr("colorblind.protanopia")
+			return TranslationServer.translate("colorblind.protanopia")
 		Mode.DEUTERANOPIA:
-			return tr("colorblind.deuteranopia")
+			return TranslationServer.translate("colorblind.deuteranopia")
 		Mode.TRITANOPIA:
-			return tr("colorblind.tritanopia")
+			return TranslationServer.translate("colorblind.tritanopia")
 		Mode.HIGH_CONTRAST:
-			return tr("colorblind.high_contrast")
+			return TranslationServer.translate("colorblind.high_contrast")
 		Mode.MONO_PATTERN:
-			return tr("colorblind.mono_pattern")
+			return TranslationServer.translate("colorblind.mono_pattern")
 		_:
-			return tr("colorblind.default")
+			return TranslationServer.translate("colorblind.default")
 
 
 static func color_for(mode: Mode, role: FossilRole) -> Color:

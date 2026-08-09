@@ -21,6 +21,7 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | Doc | Purpose |
 |---|---|
 | [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) | Coming Soon / Next Fest store package |
+| [`screenshots/`](screenshots/) | Steam Partner 1920×1080 screenshot slate |
 | [`capsules/`](capsules/) | Capsule art placeholders |
 | [`STEAMWORKS.md`](STEAMWORKS.md) | Offline stub + achievements + depot notes |
 | [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Achievement catalog |
@@ -40,9 +41,10 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | [`INFLUENCER_OUTREACH.md`](INFLUENCER_OUTREACH.md) | Outreach CRM + email skeleton |
 | [`WISHLIST_MILESTONES.md`](WISHLIST_MILESTONES.md) | Wishlist tiers + creative unlocks |
 
-Regenerate GIF frame packs:
+Regenerate store screenshots (1920×1080) and GIF frame packs:
 
 ```bash
+./game/echo_lattice/tools/capture_steam_store.sh
 ./game/echo_lattice/tools/capture_press_gifs.sh
 ```
 

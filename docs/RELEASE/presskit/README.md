@@ -26,7 +26,7 @@ export PATH="$HOME/bin:$PATH"   # Godot 4.3
 ./game/echo_lattice/tools/capture_press_gifs.sh
 ```
 
-Stills for the store page can also be pulled from `docs/ECHO_LATTICE/screenshots/v2_complete/`.
+Steam Partner stills: `docs/RELEASE/screenshots/` (1920×1080). Loop-proof tour: `docs/ECHO_LATTICE/screenshots/v2_complete/`.
 
 ## Do / don’t for third parties
 
