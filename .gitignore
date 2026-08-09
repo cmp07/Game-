@@ -47,6 +47,14 @@ $RECYCLE.BIN/
 *.temp
 .import/
 
+# Steam / Steamworks local artifacts
+steam_appid.txt
+steam/**/depot_build/**
+!steam/**/depot_build/**/
+!steam/**/depot_build/**/.gitkeep
+steam/**/steam_build_output/
+dist/
+
 # Godot 4 imports & editor artifacts
 game/**/.godot/
 # Keep global class cache so headless CI / selftest can resolve class_name without an editor pass.

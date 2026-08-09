@@ -1,0 +1,20 @@
+// Windows content depot for Echo Lattice.
+// Staging folder should contain EchoLattice.exe + EchoLattice.pck (+ Steam DLLs when used).
+// Do NOT include steam_appid.txt in retail uploads.
+// Docs: docs/RELEASE/STEAMWORKS.md
+
+"DepotBuildConfig"
+{
+	"DepotID" "YOUR_DEPOT_ID"
+	"ContentRoot" "depot_build\\windows"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"recursive" "1"
+	}
+	"FileExclusion" "*.pdb"
+	"FileExclusion" "steam_appid.txt"
+	"FileExclusion" "*.tmp"
+	"FileExclusion" "*.log"
+}

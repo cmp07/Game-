@@ -673,6 +673,8 @@ func show_menu() -> void:
 		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
 	if m.has_signal("daily_pressed"):
 		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
+	if has_node("/root/SteamService"):
+		SteamService.set_menu_presence()
 
 
 func show_chamber() -> void:
@@ -684,6 +686,8 @@ func show_chamber() -> void:
 		c.connect("chamber_won", Callable(self, "_on_chamber_won"))
 	if c.has_signal("menu_requested"):
 		c.connect("menu_requested", Callable(self, "_on_menu_requested"))
+	if has_node("/root/SteamService"):
+		SteamService.set_chamber_presence(GameState.current_chamber)
 
 
 func show_chamber_won(chamber_id: int, moves: int) -> void:
@@ -698,6 +702,8 @@ func show_chamber_won(chamber_id: int, moves: int) -> void:
 		w.connect("replay_pressed", Callable(self, "_on_win_replay"))
 	if w.has_signal("menu_pressed"):
 		w.connect("menu_pressed", Callable(self, "_on_win_menu"))
+	if has_node("/root/SteamService"):
+		SteamService.set_won_presence(chamber_id)
 
 
 func show_end_screen() -> void:
@@ -708,6 +714,8 @@ func show_end_screen() -> void:
 		e.connect("restart_pressed", Callable(self, "_on_end_restart"))
 	if e.has_signal("menu_pressed"):
 		e.connect("menu_pressed", Callable(self, "_on_end_menu"))
+	if has_node("/root/SteamService"):
+		SteamService.set_end_presence()
 
 
 # ---------- menu callbacks ----------

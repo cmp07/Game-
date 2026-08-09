@@ -18,9 +18,12 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 - `docs/` — game plan, design notes, Steam checklist
 - `docs/RELEASE/` — RC1 / multi-platform store strategy + CI build sketch ([`RC1_README.md`](docs/RELEASE/RC1_README.md))
 - `docs/RELEASE/STEAM_DECK.md` — Echo Lattice Steam Deck Verified prep
+- `docs/RELEASE/STEAMWORKS.md` — Steamworks readiness (offline stub by default)
+- `docs/RELEASE/ACHIEVEMENTS.json` — Steam achievement catalog
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
 - `game/echo_lattice/` — Godot 4.3 project (Echo Lattice)
+- `steam/echo_lattice/` — SteamPipe VDF templates (placeholder AppID)
 
 ## Stack
 
