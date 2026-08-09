@@ -170,11 +170,14 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertIn("binder_holes", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
         self.assertIn("LedgerChrome.title_type_scale", menu)
-        # Cadmium reserved — selection is rust underline + ink tick.
+        # Cadmium reserved — selection is rust ink craft + stamp tick.
         self.assertNotIn("CADMIUM_WARN", menu)
         self.assertIn("_draw_seal_lattice", menu)
         self.assertIn("begin_boot_handoff", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
+        self.assertIn('"hero": true', menu)
+        self.assertIn("func draw_desk_vignette", (ROOT / "scripts" / "art_kit.gd").read_text())
+        self.assertIn("_draw_ink_rule", (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text())
 
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()

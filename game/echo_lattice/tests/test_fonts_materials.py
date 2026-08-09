@@ -71,26 +71,40 @@ class TestFontsMaterials(unittest.TestCase):
         for name in (
             "draw_page_fiber_grid",
             "draw_desk_margin",
+            "draw_desk_vignette",
+            "draw_fiber_streaks",
+            "draw_letterpress_rule",
+            "draw_oxide_flecks",
             "draw_ledger_page",
             "draw_index_card",
             "draw_seal_stamp",
         ):
             self.assertIn(f"func {name}", art)
-        # Desk surface sells cooler blotter edges; seal is uneven rubber ink.
+        # Desk surface sells cooler blotter edges + ambient vignette; seal is uneven rubber ink.
         self.assertIn("blotter", art.lower())
-        self.assertIn("Uneven ring", art)
+        self.assertIn("vignette", art.lower())
+        self.assertIn("Imperfect rubber ink", art)
         self.assertIn("binder_holes", art)
+        self.assertIn("Contact shadow stack", art)
+        self.assertIn('"thickness"', art)
 
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
         self.assertIn("func title_type_scale", chrome)
-        self.assertIn("const TYPE_BRAND := 72", chrome)
-        self.assertIn("TYPE_TAGLINE", chrome)
+        # Published brand presence 64–80; Field Index 18–22.
+        self.assertIn("const TYPE_BRAND := 76", chrome)
+        self.assertIn("const TYPE_TAGLINE := 22", chrome)
+        self.assertIn("const TYPE_INDEX := 20", chrome)
+        self.assertIn("const TYPE_INDEX_PRIMARY := 22", chrome)
+        self.assertIn("_draw_ink_rule", chrome)
+        self.assertNotIn("CADMIUM_WARN", chrome)
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)
         self.assertIn("ArtKit.draw_ledger_page", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn('"hero": true', menu)
+        self.assertIn("ArtKit.draw_oxide_flecks", menu)
         self.assertIn("LedgerChrome.title_type_scale", menu)
         # Field Index enclosure must stay on shared card geometry helpers.
         self.assertIn("field_index_card_rect(vp, y_off)", menu)

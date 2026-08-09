@@ -6,37 +6,37 @@ class_name LedgerChrome
 ## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
-## ART_DIRECTION_V3 §3.2 — title-page type scale (px @ ~1080p reference).
-## Brand is the hero signal; meta/seed never compete with brand size.
-const TYPE_BRAND := 72
-const TYPE_TAGLINE := 20
-const TYPE_BLURB := 15
-const TYPE_INDEX_PRIMARY := 18
-const TYPE_INDEX := 16
+## ART_DIRECTION_V3 §3.2 — published title-page type scale (px @ ~1080p).
+## Brand 64–80 presence; tagline secondary; Field Index 18–22. Meta never competes.
+const TYPE_BRAND := 76
+const TYPE_TAGLINE := 22
+const TYPE_BLURB := 16
+const TYPE_INDEX_PRIMARY := 22
+const TYPE_INDEX := 20
 const TYPE_META := 12
 const TYPE_FOLIO := 11
 const TYPE_SEED := 12
-const TYPE_CARD_HEADER := 12
+const TYPE_CARD_HEADER := 13
 const BRAND_RULE_W := 3.0
-const BRAND_RULE_LEN := 440.0
+const BRAND_RULE_LEN := 460.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
-	## Compact (Deck / short page) vs full title-card scale.
+	## Compact (Deck / short page) vs full published title-card scale.
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 48,
-			"tagline": 16,
+			"brand": 52,
+			"tagline": 17,
 			"blurb": 13,
-			"index_primary": 15,
-			"index": 14,
+			"index_primary": 17,
+			"index": 16,
 			"meta": 10,
 			"folio": 10,
 			"seed": 10,
-			"card_header": 10,
+			"card_header": 11,
 			"rule_w": 2.0,
-			"rule_len": 300.0,
+			"rule_len": 320.0,
 		}
 	return {
 		"brand": TYPE_BRAND,
@@ -174,8 +174,8 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = rust ink underline (draw-in). Hover = slate. Idle = soft hairline.
-	## Cadmium reserved — never used here.
+	## Selection = rust ink craft (uneven letterpress rule + stamp tick). Hover = slate.
+	## Idle = soft hairline. Cadmium reserved — never used here. No filled pills / chrome.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -189,42 +189,84 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		var max_w: float = minf(r.size.x - 4.0, 220.0)
+		var max_w: float = minf(r.size.x - 4.0, 240.0)
+		var y: float = local_pos.y + r.size.y - 4.0
 		if focused and not disabled:
 			var w: float = max_w * eased
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, w, 2.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				w,
+				2.4,
 				Palette.RUST_FOSSIL,
-				true
+				hash(c.get_instance_id()) ^ 0x51F01D
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
+				# Imperfect rubber-ink selection tick — not a UI bullet chrome.
 				var tick_c := Color(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
-				host.draw_circle(
-					Vector2(local_pos.x - 10.0, local_pos.y + r.size.y * 0.55),
-					2.2,
-					tick_c
-				)
+				var tick_p := Vector2(local_pos.x - 11.0, local_pos.y + r.size.y * 0.55)
+				host.draw_circle(tick_p, 2.4, tick_c)
+				host.draw_circle(tick_p + Vector2(1.2, 0.6), 1.1, Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55))
 		elif hovered and not disabled:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, max_w, 2.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				max_w,
+				2.0,
 				Palette.SLATE_TEAL,
-				true
+				hash(c.get_instance_id()) ^ 0x51A7E
 			)
 		elif disabled:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 3.0, minf(max_w, 120.0), 1.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y + 1.0),
+				minf(max_w, 120.0),
+				1.0,
 				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
-				true
+				11
 			)
 		else:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 180.0), 1.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				minf(max_w, 190.0),
+				1.0,
 				Palette.INK_SOFT,
-				true
+				hash(c.get_instance_id()) ^ 0x1D1E
 			)
+
+
+static func _draw_ink_rule(
+	host: CanvasItem,
+	origin: Vector2,
+	width: float,
+	thickness: float,
+	color: Color,
+	seed: int
+) -> void:
+	## Segmented ink rule with pressure breaks — selection reads as craft, not StyleBox.
+	if width < 1.0:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed if seed != 0 else 17
+	var x: float = 0.0
+	var y: float = origin.y
+	while x < width:
+		var seg: float = rng.randf_range(5.0, 11.0)
+		if rng.randf() < 0.12:
+			# Broken letterpress gap.
+			x += rng.randf_range(1.5, 3.0)
+			continue
+		var w: float = minf(seg, width - x)
+		var pressure: float = rng.randf_range(0.72, 1.0)
+		var tw: float = thickness * rng.randf_range(0.85, 1.2)
+		var c := Color(color.r, color.g, color.b, color.a * pressure)
+		var y_off: float = rng.randf_range(-0.4, 0.4)
+		host.draw_rect(Rect2(origin.x + x, y + y_off, w, tw), c, true)
+		x += w
 
 
 static func wire_vertical_focus(buttons: Array) -> void:

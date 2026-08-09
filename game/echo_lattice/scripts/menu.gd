@@ -244,8 +244,9 @@ func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
 
 
 func _apply_index_row_metrics(compact: bool) -> void:
-	var row_h: float = 22.0 if compact else 30.0
-	var primary_h: float = 24.0 if compact else 34.0
+	# Published index scale (18–22) needs a touch more row advance than the flat UI path.
+	var row_h: float = 24.0 if compact else 34.0
+	var primary_h: float = 26.0 if compact else 38.0
 	# Pack rows to the top of the Field Index plate — never vertically expand.
 	var shrink_top: int = Control.SIZE_SHRINK_BEGIN
 	_style_index_actions(compact)
@@ -651,11 +652,13 @@ func _draw() -> void:
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
-	draw_line(
+	ArtKit.draw_letterpress_rule(
+		self,
 		page.position + Vector2(16, 28),
 		page.position + Vector2(page.size.x - 16, 28),
 		Palette.INK_SOFT,
-		1.0
+		1.0,
+		19
 	)
 
 	# Seed header strip along top margin.
@@ -669,27 +672,41 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
-	# Brand lockup — hero-level, left composition.
+	# Brand lockup — hero-level published presence (64–80), left composition.
 	var brand_x: float = page.position.x + 48
-	var brand_y: float = page.position.y + page.size.y * 0.26
+	var brand_y: float = page.position.y + page.size.y * 0.24
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
-	# Rust rule under the title — the brand underline (never cadmium).
-	draw_rect(Rect2(brand_x, brand_y + 10, rule_len, rule_w), Palette.RUST_FOSSIL, true)
+	# Oxide brand rule — letterpress crush + flecks (never cadmium).
+	ArtKit.draw_letterpress_rule(
+		self,
+		Vector2(brand_x, brand_y + 12.0),
+		Vector2(brand_x + rule_len, brand_y + 12.0),
+		Palette.RUST_FOSSIL,
+		rule_w,
+		42
+	)
+	ArtKit.draw_oxide_flecks(
+		self,
+		Rect2(brand_x, brand_y + 8.0, rule_len * 0.55, 10.0),
+		43,
+		5,
+		0.55
+	)
 
 	draw_string(
 		_type("display"),
-		Vector2(brand_x, brand_y + 40),
+		Vector2(brand_x, brand_y + 44),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
 		_type("body"),
-		Vector2(brand_x, brand_y + 66),
+		Vector2(brand_x, brand_y + 72),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
@@ -699,39 +716,43 @@ func _draw() -> void:
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
-	# Surveyor seal + lattice glyph — real visual anchor under the brand.
-	var seal_r: float = 34.0 if page.size.y >= 700.0 else 26.0
-	var seal_c := Vector2(brand_x + seal_r + 8.0, brand_y + 118.0)
+	# Surveyor seal as hero glyph — imperfect rubber ink under the brand.
+	var seal_r: float = 48.0 if page.size.y >= 700.0 else 34.0
+	var seal_c := Vector2(brand_x + seal_r + 10.0, brand_y + 138.0)
 	if seal_c.x + seal_r + 16.0 > card.position.x:
 		seal_c.x = brand_x + seal_r + 4.0
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -4.0,
+		"rot_deg": -4.5,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.80,
+		"alpha": 0.84,
 		"seed": 42,
 		"caption": "FIELD",
 		"font": _type("display"),
-		"font_size": maxi(10, folio_px),
+		"font_size": maxi(11, folio_px + 1),
+		"ring_w": 3.0,
+		"hero": true,
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.42)
+	_draw_seal_lattice(seal_c, seal_r * 0.44)
 	draw_string(
 		_type("mono"),
-		Vector2(brand_x, seal_c.y + seal_r + 22.0),
+		Vector2(brand_x, seal_c.y + seal_r + 26.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.INK_SOFT
 	)
 	# Ambient chalk path teaches the verb beside the seal — discrete stamps, no breathe.
-	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 24.0, seal_c.y - seal_r))
+	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 28.0, seal_c.y - seal_r))
 
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(5, 7),
+		"shadow_off": Vector2(6, 8),
 		"binder_holes": 5,
 		"grain_seed": 11,
-		"grain_a": 0.0 if TechArt.v3_enabled() else 0.045,
+		"grain_a": 0.0 if TechArt.v3_enabled() else 0.05,
 		"header_rules": true,
 		"deep_backer": true,
 		"skip_grain": TechArt.v3_enabled(),
+		"thickness": 3.5,
+		"oxide_accents": true,
 	})
 	draw_string(
 		_type("mono"),
