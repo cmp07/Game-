@@ -1,0 +1,5 @@
+; Merge into project.godot [autoload] when wiring CrashLogHook for a shipping build.
+; Local-only by default — leave upload URL empty in configure().
+;
+; [autoload]
+; CrashLogHook="*res://scripts/ops/crash_log_hook.gd"
