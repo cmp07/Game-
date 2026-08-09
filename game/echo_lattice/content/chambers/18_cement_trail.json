@@ -3,7 +3,7 @@
   "index": 18,
   "slug": "cement_trail",
   "title": "Cement Trail",
-  "caption": "Thicken under pressure. One path, no return.",
+  "caption": "One path thickens. Do not return.",
   "act": "pressure",
   "act_index": 2,
   "act_title": "Pressure",
@@ -61,7 +61,7 @@
       ],
       "unique": true,
       "operator": "thicken",
-      "banner": "Thicken under pressure. One path, no return."
+      "banner": "One path thickens. Do not return."
     }
   ],
   "resonance": {

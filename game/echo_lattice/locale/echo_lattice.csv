@@ -202,7 +202,7 @@ chamber.11_opposite_room.caption,Turn the chamber inside-out with one rotation.,
 chamber.12_looking_glass.title,Looking Glass,窥镜
 chamber.12_looking_glass.caption,Vertical and horizontal mirrors fire together.,垂直与水平镜同时触发。
 chamber.13_gallery_walk.title,Gallery Walk,长廊漫步
-chamber.13_gallery_walk.caption,A long hall of pillars. Reflect carefully.,柱廊长厅。小心反射。
+chamber.13_gallery_walk.caption,A colonnade of pillars. Reflect carefully.,柱廊成列。小心反射。
 chamber.14_horizon_fold.title,Horizon Fold,地平折叠
 chamber.14_horizon_fold.caption,Two horizontal folds. The middle remembers both.,两次水平折叠。中间记住两者。
 chamber.15_spin_gallery.title,Spin Gallery,旋廊
@@ -212,7 +212,7 @@ chamber.16_false_twin.caption,Symmetry lies. Choose which half becomes wall.,对
 chamber.17_identity_reflection.title,Portrait,肖像
 chamber.17_identity_reflection.caption,Boss. Both axes. Your path becomes a face.,首领。双轴。你的路径成一张脸。
 chamber.18_cement_trail.title,Cement Trail,水泥足迹
-chamber.18_cement_trail.caption,"Thicken under pressure. One path, no return.",压力下增厚。一条路，不回头。
+chamber.18_cement_trail.caption,One path thickens. Do not return.,一条路增厚。勿回头。
 chamber.19_no_retread.title,No Retread,不重踏
 chamber.19_no_retread.caption,"A braid of corridors. Solidify once, commit.",走廊辫结。凝固一次，就承诺。
 chamber.20_squeeze_mirror.title,Squeeze Mirror,挤压镜
@@ -220,7 +220,7 @@ chamber.20_squeeze_mirror.caption,Tight lanes. A messy path seals everything.,�
 chamber.21_stacked_echo.title,Stacked Echo,叠回声
 chamber.21_stacked_echo.caption,Three checkpoints. Each rewrite tightens the net.,三个检查点。每次改写收紧网。
 chamber.22_spin_trap.title,Spin Trap,旋阱
-chamber.22_spin_trap.caption,Rotation under load. Opposite corner seals exits.,负载下旋转。对角封住出口。
+chamber.22_spin_trap.caption,Opposite corner seals the exits you need.,对角封住你需要的出口。
 chamber.23_ceiling_press.title,Ceiling Press,顶压
 chamber.23_ceiling_press.caption,Horizontal mirror in a low room. Keep the floor.,低室中的水平镜。守住地板。
 chamber.24_compound_fracture.title,Compound Fracture,复合裂
@@ -238,7 +238,7 @@ chamber.29_two_axes.caption,"Compose both mirrors with a short, sharp stroke.",�
 chamber.30_habit_orchestra.title,Habit Orchestra,习惯管弦
 chamber.30_habit_orchestra.caption,Three vertical mirrors. Conduct three phrases.,三面垂直镜。指挥三段乐句。
 chamber.31_last_buffer.title,Last Buffer,末段缓冲
-chamber.31_last_buffer.caption,Thicken mastery — the buffer is almost full.,增厚精通——缓冲几乎满了。
+chamber.31_last_buffer.caption,The buffer is almost full. Thicken once.,缓冲几乎满了。增厚一次。
 chamber.32_signature_stack.title,Signature Stack,签名叠层
 chamber.32_signature_stack.caption,"Both axes, twice. Stack two portraits.",双轴，两次。叠两幅肖像。
 chamber.33_nameplate.title,Nameplate,铭牌
@@ -246,13 +246,13 @@ chamber.33_nameplate.caption,Boss. Final identity — sign the lattice.,首领�
 chamber.34_open_lattice.title,Open Lattice,开放晶格
 chamber.34_open_lattice.caption,Epilogue. Same seed a friend can share.,尾声。朋友可分享的同一种子。
 chamber.35_mirror_birth_hard.title,Mirror Birth+,镜生+
-chamber.35_mirror_birth_hard.caption,"Hard. Less floor. Same lesson, less forgiveness.",困难。更少地板。同样课题，更少宽恕。
+chamber.35_mirror_birth_hard.caption,"Hard. Same birth, less floor to wander.",困难。同样的诞生，更少闲逛的地板。
 chamber.36_looking_glass_hard.title,Looking Glass+,窥镜+
 chamber.36_looking_glass_hard.caption,Hard. Dual-axis with thinner corridors.,困难。双轴，更窄走廊。
 chamber.37_cement_trail_hard.title,Cement Trail+,水泥足迹+
 chamber.37_cement_trail_hard.caption,Hard. Thicken with fewer detours.,困难。更少绕路的增厚。
 chamber.38_nameplate_hard.title,Nameplate+,铭牌+
-chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
+chamber.38_nameplate_hard.caption,Hard. Sign the lattice with less floor.,困难。用更少地板签署晶格。
 menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
 end.summary,"%s
 Escaped %s / %s chambers.
