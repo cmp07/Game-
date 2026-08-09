@@ -1,0 +1,216 @@
+{
+  "version": 2,
+  "product": "Echo Lattice",
+  "notes": "Structured audio events for Godot AudioDirector. Paths are res:// relative to the echo_lattice project root. Prefer .ogg; AudioManager falls back to .wav.",
+  "buses": ["Master", "SFX", "Music", "UI", "PA"],
+  "operators": [
+    "fossilize_hot_cell",
+    "place_deflector",
+    "carve_shortcut",
+    "grow_wall_far_from_path",
+    "widen_hot_corridor",
+    "mirror",
+    "rotate",
+    "thicken",
+    "invert"
+  ],
+  "events": {
+    "sfx.footstep": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/footstep_placeholder.ogg",
+      "category": "locomotion",
+      "pitch_jitter": 0.04,
+      "habit_pitch_lerp": [1.0, 1.18]
+    },
+    "sfx.footstep_blocked": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/footstep_blocked_placeholder.ogg",
+      "category": "locomotion"
+    },
+    "sfx.rewrite_warn": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite_warn_placeholder.ogg",
+      "category": "rewrite",
+      "duck_music_db": -2.0,
+      "duck_ms": 250
+    },
+    "sfx.rewrite": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite_placeholder.ogg",
+      "category": "rewrite",
+      "duck_music_db": -4.0,
+      "duck_ms": 400,
+      "fallback_operator_stream_prefix": "res://audio/sfx/rewrite/"
+    },
+    "sfx.rewrite.fossilize_hot_cell": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/fossilize_hot_cell.ogg",
+      "category": "rewrite",
+      "operator": "fossilize_hot_cell",
+      "duck_music_db": -4.0,
+      "duck_ms": 420
+    },
+    "sfx.rewrite.place_deflector": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/place_deflector.ogg",
+      "category": "rewrite",
+      "operator": "place_deflector",
+      "duck_music_db": -4.0,
+      "duck_ms": 380
+    },
+    "sfx.rewrite.carve_shortcut": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/carve_shortcut.ogg",
+      "category": "rewrite",
+      "operator": "carve_shortcut",
+      "duck_music_db": -3.5,
+      "duck_ms": 360
+    },
+    "sfx.rewrite.grow_wall_far_from_path": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/grow_wall_far_from_path.ogg",
+      "category": "rewrite",
+      "operator": "grow_wall_far_from_path",
+      "duck_music_db": -4.0,
+      "duck_ms": 450
+    },
+    "sfx.rewrite.widen_hot_corridor": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/widen_hot_corridor.ogg",
+      "category": "rewrite",
+      "operator": "widen_hot_corridor",
+      "duck_music_db": -3.5,
+      "duck_ms": 380
+    },
+    "sfx.rewrite.mirror": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/mirror.ogg",
+      "category": "rewrite",
+      "operator": "mirror",
+      "duck_music_db": -4.0,
+      "duck_ms": 420
+    },
+    "sfx.rewrite.rotate": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/rotate.ogg",
+      "category": "rewrite",
+      "operator": "rotate",
+      "duck_music_db": -4.0,
+      "duck_ms": 400
+    },
+    "sfx.rewrite.thicken": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/thicken.ogg",
+      "category": "rewrite",
+      "operator": "thicken",
+      "duck_music_db": -4.5,
+      "duck_ms": 480
+    },
+    "sfx.rewrite.invert": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/rewrite/invert.ogg",
+      "category": "rewrite",
+      "operator": "invert",
+      "duck_music_db": -4.0,
+      "duck_ms": 400
+    },
+    "pa.attention": {
+      "bus": "PA",
+      "stream": "res://audio/sfx/pa/attention_chime.ogg",
+      "category": "pa",
+      "duck_music_db": -2.0,
+      "duck_ms": 800,
+      "diegetic": true
+    },
+    "pa.board_tick": {
+      "bus": "PA",
+      "stream": "res://audio/sfx/pa/board_tick.ogg",
+      "category": "pa",
+      "diegetic": true
+    },
+    "pa.rewrite_armed": {
+      "bus": "PA",
+      "stream": "res://audio/sfx/pa/rewrite_armed.ogg",
+      "category": "pa",
+      "duck_music_db": -2.0,
+      "duck_ms": 900,
+      "diegetic": true
+    },
+    "pa.wing_clear": {
+      "bus": "PA",
+      "stream": "res://audio/sfx/pa/wing_clear.ogg",
+      "category": "pa",
+      "duck_music_db": -3.0,
+      "duck_ms": 1200,
+      "diegetic": true
+    },
+    "win.chamber": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/win/chamber_resolve.ogg",
+      "category": "win",
+      "follow_up": "win.queue_next",
+      "follow_up_delay_ms": 80,
+      "music_hook": "on_chamber_win"
+    },
+    "win.queue_next": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/win/queue_next.ogg",
+      "category": "win",
+      "addiction": "open_loop"
+    },
+    "win.fanfare": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/win/fanfare.ogg",
+      "category": "win",
+      "music_hook": "on_chamber_win"
+    },
+    "win.wing": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/win/wing_clear.ogg",
+      "category": "win",
+      "music_hook": "on_chamber_win"
+    },
+    "ui.click": {
+      "bus": "UI",
+      "stream": "res://audio/ui/ui_click_placeholder.ogg",
+      "category": "ui"
+    },
+    "music.layer.L0": {
+      "bus": "Music",
+      "stream": "res://audio/music/L0_bed.ogg",
+      "category": "music",
+      "loop": true
+    },
+    "music.layer.L1": {
+      "bus": "Music",
+      "stream": "res://audio/music/L1_lattice.ogg",
+      "category": "music",
+      "loop": true,
+      "intensity_gate": 0.25
+    },
+    "music.layer.L2": {
+      "bus": "Music",
+      "stream": "res://audio/music/L2_habit.ogg",
+      "category": "music",
+      "loop": true,
+      "intensity_gate": 0.55
+    },
+    "music.layer.L3": {
+      "bus": "Music",
+      "stream": "res://audio/music/L3_rewrite.ogg",
+      "category": "music",
+      "loop": true,
+      "intensity_gate": 0.8
+    }
+  },
+  "silence_policy": {
+    "early_chambers_max_intensity": {
+      "0": 0.0,
+      "1": 0.1,
+      "2": 0.25,
+      "3": 0.45
+    },
+    "default_max_intensity": 1.0,
+    "notes": "Quiet Span and Induction keep Music near silence; footsteps + PA carry identity."
+  }
+}
