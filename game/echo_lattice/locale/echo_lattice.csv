@@ -273,3 +273,6 @@ won.stamp_boss,Ledger stamp · %s · portrait %s%%,账本印记 · %s · 肖像 
 won.stamp_grade_scribble,scribble,潦草
 won.stamp_grade_readable,readable,可读
 won.stamp_grade_signed,signed,署名
+settings.rebind_prompt,Press key… (Esc cancel),按下按键…（Esc 取消）
+settings.bindings_saved,Bindings saved.,绑定已保存。
+settings.a11y_reset,Accessibility reset to defaults.,无障碍设置已恢复默认。

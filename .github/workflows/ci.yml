@@ -1,0 +1,171 @@
+# Echo Lattice — validate + export sketch
+# Authority: docs/RELEASE/CI_BUILDS.md, docs/AUDIT/STEAM_READINESS.md §7
+#
+# validate  — always required (Python gates; no Godot needed)
+# export-*  — Godot via container; sketch for Steam/itch artifacts
+
+name: CI
+
+on:
+  push:
+    branches: [main, "cursor/**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: "4.3"
+  PROJECT_PATH: game/echo_lattice
+
+jobs:
+  validate:
+    name: Validate (Python + chambers)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Chamber JSON validation
+        run: python3 game/echo_lattice/tests/validate_chambers.py
+
+      - name: Steamworks catalog / flags gate
+        run: python3 game/echo_lattice/tests/test_steamworks.py
+
+      - name: Demo spec gate
+        run: python3 game/echo_lattice/tests/test_demo_spec.py
+
+      - name: Deck bindings gate
+        run: python3 game/echo_lattice/tests/check_deck_bindings.py
+
+      - name: Locale gate
+        run: python3 game/echo_lattice/tests/validate_locale.py
+
+      - name: Accessibility settings gate
+        run: python3 game/echo_lattice/tests/test_a11y_settings.py
+
+  # ---------------------------------------------------------------------------
+  # Godot export sketch (container). Templates ship under /root in the image;
+  # move them into the Actions user home before export (abarichello/godot-ci).
+  # Publish to Steam/itch remains manual (see steam/ + CI_BUILDS.md secrets).
+  # ---------------------------------------------------------------------------
+  export-linux:
+    name: Export Linux (Godot container)
+    needs: validate
+    runs-on: ubuntu-latest
+    # Sketch: do not block merge if the public image/tag drifts; validate is the ship gate.
+    continue-on-error: true
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+
+      - name: Export Linux/X11 release
+        working-directory: ${{ env.PROJECT_PATH }}
+        # Container default shell is sh (not bash) — keep POSIX.
+        run: |
+          set -eu
+          mkdir -p builds/linux
+          godot --headless --path . --export-release "Linux/X11" builds/linux/EchoLattice.x86_64
+          test -f builds/linux/EchoLattice.x86_64
+          chmod +x builds/linux/EchoLattice.x86_64
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: echo-lattice-linux-x86_64
+          path: game/echo_lattice/builds/linux/
+          if-no-files-found: warn
+
+  export-windows:
+    name: Export Windows (Godot container)
+    needs: validate
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+
+      - name: Export Windows Desktop release
+        working-directory: ${{ env.PROJECT_PATH }}
+        run: |
+          set -eu
+          mkdir -p builds/windows
+          godot --headless --path . --export-release "Windows Desktop" builds/windows/EchoLattice.exe
+          test -f builds/windows/EchoLattice.exe
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: echo-lattice-windows-x86_64
+          path: game/echo_lattice/builds/windows/
+          if-no-files-found: warn
+
+  export-windows-demo:
+    name: Export Windows Demo (Godot container)
+    needs: validate
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+
+      - name: Export Windows Demo
+        working-directory: ${{ env.PROJECT_PATH }}
+        run: |
+          set -eu
+          mkdir -p builds/windows_demo
+          godot --headless --path . --export-release "Windows Demo" builds/windows_demo/EchoLatticeDemo.exe
+          test -f builds/windows_demo/EchoLatticeDemo.exe
+
+      - name: Upload Windows Demo artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: echo-lattice-windows-demo-x86_64
+          path: game/echo_lattice/builds/windows_demo/
+          if-no-files-found: warn

@@ -1,10 +1,19 @@
-# CI builds sketch (Godot desktop)
+# CI builds (Godot desktop)
 
-Sketch for automating the matrix in [`PLATFORMS.md`](PLATFORMS.md). Not a committed workflow yet — copy into `.github/workflows/export.yml` (or equivalent) when secrets and runners are ready.
+Automates the matrix in [`PLATFORMS.md`](PLATFORMS.md).
+
+**Committed workflow:** [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+
+| Job | Required? | Notes |
+|---|---|---|
+| `validate` | **Yes** | Chamber validate + Python gates (Steamworks, demo, Deck, locale, a11y) |
+| `export-linux` / `export-windows` / `export-windows-demo` | Sketch | Godot **4.3** via `barichello/godot-ci:4.3` container; `continue-on-error` until templates/image are pinned for merge-blocking |
+
+macOS notarization / SteamCMD / itch butler publish remain manual (secrets checklist below). AppID / depot placeholders: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md).
 
 **Engine:** Godot **4.3-stable**  
 **Project:** `game/echo_lattice`  
-**Presets:** `Windows Desktop` · `Linux/X11` · `macOS`
+**Presets:** `Windows Desktop` · `Linux/X11` · `macOS` · `Windows Demo`
 
 ---
 
@@ -32,24 +41,24 @@ validate ──┬── export-windows ──┐
 
 ## Validate job
 
-```yaml
-# sketch — names/versions illustrative
-validate:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - name: Chamber JSON validation
-      run: python3 game/echo_lattice/tests/validate_chambers.py
-    - name: Install Godot 4.3
-      run: |
-        # download Godot_v4.3-stable_linux.x86_64.zip from godotengine/godot-builds
-        # install to $HOME/bin/godot && chmod +x
-    - name: Headless self-test
-      working-directory: game/echo_lattice
-      run: godot --headless --path . -- --selftest
+Implemented in `.github/workflows/ci.yml` (`validate`). Python-only; no Godot required for merge gate:
+
+```bash
+python3 game/echo_lattice/tests/validate_chambers.py
+python3 game/echo_lattice/tests/test_steamworks.py
+python3 game/echo_lattice/tests/test_demo_spec.py
+python3 game/echo_lattice/tests/check_deck_bindings.py
+python3 game/echo_lattice/tests/validate_locale.py
+python3 game/echo_lattice/tests/test_a11y_settings.py
 ```
 
-Fail the pipeline if self-test ≠ `result: OK`.
+Optional Godot headless self-test (local or future hard gate once the container job is merge-blocking):
+
+```bash
+godot --headless --path game/echo_lattice -- --selftest
+```
+
+Fail the pipeline if validate ≠ `result: OK` / unittest OK.
 
 ---
 

@@ -165,7 +165,7 @@ func _labels_for(action: String) -> String:
 func _on_rebind_pressed(action: String, btn: Button) -> void:
 	if _remap == null:
 		return
-	btn.text = "Press key… (Esc cancel)"
+	btn.text = tr("settings.rebind_prompt")
 	_status.text = "Rebinding %s" % action
 	_remap.start_rebind(action)
 	if not _remap.bindings_changed.is_connected(_on_bindings_changed):
@@ -174,7 +174,7 @@ func _on_rebind_pressed(action: String, btn: Button) -> void:
 
 func _on_bindings_changed() -> void:
 	_refresh_binding_labels()
-	_status.text = "Bindings saved."
+	_status.text = tr("settings.bindings_saved")
 
 
 func _on_visibility_changed() -> void:
@@ -305,7 +305,7 @@ func _on_reset_accessibility() -> void:
 	if _a11y != null and _a11y.has_method("apply_ui_scale"):
 		_a11y.apply_ui_scale()
 	_load_from_services()
-	_status.text = "Accessibility reset to defaults."
+	_status.text = tr("settings.a11y_reset")
 
 
 func _on_reset_bindings() -> void:

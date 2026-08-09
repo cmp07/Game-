@@ -137,7 +137,11 @@ Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excl
 | `YOUR_APP_ID` / empty store URLs | `config/steam_features.json` → `app_id_placeholder`, `store_wishlist_url`, `store_page_url` | Set real full-game AppID **or** explicit Steam store URL before enabling CTA |
 | `wishlist_cta_enabled` | same JSON | Leave `true`; set `false` to force-hide even on Steam demos |
 | Demo AppID / DepotID | Steamworks + `steam/echo_lattice/` (when present) | Separate demo app depot |
+| `YOUR_APP_ID` | `scripts/demo_build.gd` → `WISHLIST_URL` | Full game Steam AppID |
+| `YOUR_DEMO_APP_ID` / `YOUR_DEMO_DEPOT_ID` | `steam/echo_lattice/app_build_demo.vdf`, `depot_windows_demo.vdf` | Separate demo app + Windows depot |
 | Exit survey | Marketing §9.4 | Optional follow-up; not required for this code gate |
+
+Full placeholder gate list: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md).
 
 ---
 
