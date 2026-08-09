@@ -4,9 +4,10 @@
 
 | Role | Face | File |
 |---|---|---|
-| Display | IBM Plex Sans Condensed SemiBold (Regular fallback) | `latin/IBMPlexSansCondensed-SemiBold.ttf` |
+| Display (Brand) | IBM Plex Sans Condensed Bold (SemiBold fallback) | `latin/IBMPlexSansCondensed-Bold.ttf` |
+| Action (Field Index) | IBM Plex Sans Condensed Medium | `latin/IBMPlexSansCondensed-Medium.ttf` |
 | Body | IBM Plex Serif Regular | `latin/IBMPlexSerif-Regular.ttf` |
-| Mono (seed / buffer / folio) | IBM Plex Mono Regular | `latin/IBMPlexMono-Regular.ttf` |
+| Mono (seed / meta / folio) | IBM Plex Mono Regular | `latin/IBMPlexMono-Regular.ttf` |
 
 OFL notice: `latin/OFL.txt` (IBM Plex® © IBM Corp., SIL OFL 1.1).
 

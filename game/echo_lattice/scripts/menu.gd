@@ -1,7 +1,8 @@
 extends Control
 ##
 ## Main menu — premium Field Ledger title shell (UI_DIEGETIC_V3 · ART_DIRECTION_V3).
-## Left: brand hero + surveyor seal. Right: physical Field Index card (all actions + meta).
+## Type roles: MENU_TYPE_SYSTEM.md via LedgerType.
+## Left: brand hero + surveyor seal. Right: boutique Field Index card (actions + meta).
 ## No glass, no glow, no purple, no cadmium on chrome (cadmium reserved for rewrite).
 ##
 
@@ -134,35 +135,36 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 
 
 ## Chrome insets around CardColumn inside the Field Index plate.
-## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
-const _INDEX_PAD_L: float = 48.0
-const _INDEX_PAD_R: float = 32.0
-const _INDEX_PAD_T: float = 72.0
-# Extra bottom pad for ink-craft underlines drawn below Control rects.
-const _INDEX_PAD_B: float = 48.0
+## Balanced padding — content column composed, not left-scraped into a void.
+const _INDEX_PAD_L: float = 44.0
+const _INDEX_PAD_R: float = 44.0
+const _INDEX_PAD_T: float = 70.0
+# Extra bottom pad for selection baseline drawn below Control rects.
+const _INDEX_PAD_B: float = 44.0
 
 
-## Right-side Field Index plate — ~45% of the page at 1080p; never a postage stamp.
+## Right-side Field Index plate — composed card width, never a postage stamp or empty slab.
 func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Rect2:
 	if vp.x < 2.0:
 		vp = size
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 	var page: Rect2 = _ledger_page_rect(vp)
-	# Brand lockup + seal own the left ~55% — keep clearance for hero type + glyph.
-	var brand_clear: float = page.position.x + page.size.x * 0.52
-	var right_pad: float = 24.0 if page.size.x < 1100.0 else 48.0
-	var card_w: float = page.size.x * 0.42
+	# Brand lockup + seal own the left ~54% — keep clearance for hero type + glyph.
+	var brand_clear: float = page.position.x + page.size.x * 0.54
+	var right_pad: float = 28.0 if page.size.x < 1100.0 else 40.0
+	# Boutique width hugs action type + balanced pads (~640–700 @1080p).
+	var card_w: float = page.size.x * 0.36
 	if page.size.x >= 1100.0:
-		card_w = clampf(card_w, 620.0, 820.0)
+		card_w = clampf(card_w, 640.0, 720.0)
 	else:
-		card_w = clampf(card_w, 300.0, 420.0)
+		card_w = clampf(card_w, 300.0, 400.0)
 	var card_x: float = page.end.x - right_pad - card_w
 	if card_x < brand_clear:
 		card_x = brand_clear
 		card_w = maxf(260.0, page.end.x - right_pad - card_x)
 	# Tall index-card object — fills the right column nearly to the page foot.
-	var top_pad: float = 32.0 if page.size.y < 700.0 else 48.0
+	var top_pad: float = 32.0 if page.size.y < 700.0 else 44.0
 	var bottom_pad: float = 28.0 if page.size.y < 700.0 else 32.0
 	var top: float = page.position.y + top_pad + y_off
 	var bottom_limit: float = page.end.y - bottom_pad
@@ -203,10 +205,12 @@ func _slot_alpha() -> float:
 
 
 func _style_index_actions(compact: bool = false) -> void:
-	# title_type_scale treats page_h < 700 as compact — do not pass 720 here.
+	# title_type_scale / LedgerType roles: page_h < 700 = Deck compact — do not pass 720 here.
 	var scale: Dictionary = LedgerChrome.title_type_scale(560.0 if compact else 1080.0)
-	var idx_px: int = int(scale.get("index", LedgerChrome.TYPE_INDEX))
-	var primary_px: int = int(scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	var idx_px: int = int(scale.get("action", scale.get("index", LedgerChrome.TYPE_INDEX)))
+	var primary_px: int = int(
+		scale.get("action_primary", scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	)
 	LedgerChrome.style_index_button(start_button, true, primary_px)
 	LedgerChrome.style_index_button(continue_button, false, idx_px)
 	LedgerChrome.style_index_button(daily_button, false, idx_px)
@@ -228,10 +232,13 @@ func _style_index_actions(compact: bool = false) -> void:
 
 
 func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
-	## Short pages: Regular face + zeroed StyleBox margins so rows stay Deck-safe.
+	## Short pages: Action Medium face (never mono) + zeroed StyleBox margins.
 	var face: Font = null
 	if has_node("/root/LedgerType"):
-		face = LedgerType.font_or_fallback("display")
+		if LedgerType.has_method("font_for_role"):
+			face = LedgerType.font_for_role("action", idx_px)
+		else:
+			face = LedgerType.font_or_fallback("action")
 	var buttons: Array = _index_action_buttons()
 	for b in buttons:
 		if b == null:
@@ -277,30 +284,26 @@ func _apply_index_row_metrics(compact: bool) -> void:
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
-	## Quiet ledger lines inside the card header — never compete with brand.
+	## One quiet Meta line (micro mono, low contrast) — never compete with brand / actions.
+	var page_h: float = 560.0 if compact else 1080.0
+	var meta_px: int = 10 if compact else 12
+	if has_node("/root/LedgerType") and LedgerType.has_method("role_size"):
+		meta_px = int(LedgerType.role_size("meta", page_h))
+	# Subtitle folded into the single meta line — hide the second label.
 	if subtitle:
-		LedgerChrome.style_ink_label(
-			subtitle,
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.72),
-			11 if compact else 13
-		)
-		# Prefer single quiet lines — wrapping balloons the plate past Deck budget.
-		subtitle.autowrap_mode = TextServer.AUTOWRAP_OFF
-		subtitle.clip_text = true
-		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		subtitle.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		subtitle.custom_minimum_size = Vector2(0, 18 if compact else 22)
+		subtitle.visible = false
+		subtitle.custom_minimum_size = Vector2(0, 0)
 	if meta_label:
 		LedgerChrome.style_ink_label(
 			meta_label,
-			Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.80),
-			11 if compact else 13
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+			meta_px
 		)
 		meta_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 		meta_label.clip_text = true
 		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		meta_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		meta_label.custom_minimum_size = Vector2(0, 18 if compact else 22)
+		meta_label.custom_minimum_size = Vector2(0, 16 if compact else 20)
 
 
 func _sync_field_index_layout() -> void:
@@ -438,51 +441,19 @@ func _localize_chrome() -> void:
 
 
 func _refresh_progress_copy() -> void:
-	## Quiet diegetic header lines only — never clinical "Filed N/M 70%" chrome.
-	var has: bool = GameState.can_continue()
-	var stars: int = GameState.total_stars_earned()
-	if has:
-		subtitle.visible = true
-		subtitle.text = tr("menu.subtitle_progress") % [
-			GameState.run_progress_index() + 1,
-			GameState.chambers_in_run(),
-			stars,
-		]
-	elif DemoBuild.is_demo():
-		subtitle.visible = true
-		subtitle.text = tr("menu.subtitle_demo")
-	elif GameState.is_run_complete():
-		subtitle.visible = true
-		subtitle.text = tr("menu.subtitle_wing_complete") % stars
-	else:
-		# Fresh title: keep the card header quiet — wing line alone is enough.
-		subtitle.visible = true
-		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
+	## One micro Meta line: date · EL code (low contrast). Never clinical % chrome.
+	if subtitle:
+		subtitle.visible = false
+		subtitle.text = ""
 	_refresh_hard_button()
 	var entry: Dictionary = GameState.today_daily_entry()
 	var today: String = str(entry.get("date", GameState._today_label()))
 	var friend_code: String = str(entry.get("friend_code", ""))
-	var dbest: int = GameState.daily_best_for_today()
-	var ebest: int = int(GameState.endless_best_depth)
-	# Quiet header: omit zero bests so a fresh ledger does not read as clinical stats.
-	if dbest <= 0 and ebest <= 0 and not DemoBuild.is_demo():
-		if friend_code != "":
-			meta_label.text = tr("menu.daily_meta_quiet_code") % [today, friend_code]
-		else:
-			meta_label.text = tr("menu.daily_meta_quiet") % today
-	elif DemoBuild.is_demo():
-		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
-		if friend_code != "":
-			meta_label.text = tr("menu.demo_daily_meta_code") % [today, friend_code, dbest]
-		else:
-			meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
-	elif friend_code != "":
-		meta_label.text = tr("menu.daily_endless_meta_code") % [today, friend_code, dbest, ebest]
+	# Fresh boutique header: date + friend/EL code only — omit zero bests / stats chorus.
+	if friend_code != "":
+		meta_label.text = tr("menu.daily_meta_quiet_code") % [today, friend_code]
 	else:
-		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
-	var museum_n: int = GameState.museum_count()
-	if museum_n > 0:
-		meta_label.text = "%s  ·  %s" % [meta_label.text, tr("menu.museum_meta") % museum_n]
+		meta_label.text = tr("menu.daily_meta_quiet") % today
 
 
 func _refresh_hard_button() -> void:
@@ -662,9 +633,9 @@ func _draw() -> void:
 	var rule_len: float = float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN))
 	var header_px: int = int(scale.get("card_header", LedgerChrome.TYPE_CARD_HEADER))
 
-	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
+	# Folio mark — Micro role so the shell stays on-world.
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		page.position + Vector2(20, 26),
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
@@ -683,7 +654,7 @@ func _draw() -> void:
 	if seed_tex != null:
 		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(20, 42), Vector2(256, 24)), false)
 	draw_string(
-		_type("mono"),
+		_type("meta"),
 		page.position + Vector2(290, 60),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
@@ -693,7 +664,7 @@ func _draw() -> void:
 	var brand_x: float = page.position.x + 56
 	var brand_y: float = page.position.y + page.size.y * 0.22
 	draw_string(
-		_type("display"),
+		_type("brand"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
@@ -717,13 +688,13 @@ func _draw() -> void:
 	)
 
 	draw_string(
-		_type("display"),
+		_type("tagline"),
 		Vector2(brand_x, brand_y + 52),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
-		_type("body"),
+		_type("deck"),
 		Vector2(brand_x, brand_y + 84),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
@@ -776,7 +747,7 @@ func _draw() -> void:
 	})
 	_draw_seal_lattice(seal_c, seal_r * 0.50)
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		Vector2(brand_x, seal_c.y + seal_r + 30.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
@@ -787,37 +758,40 @@ func _draw() -> void:
 		_draw_specimen_lattice(specimen_origin, 15.0 if page.size.y >= 700.0 else 11.0)
 	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 16.0, seal_c.y - seal_r * 0.15))
 
+	# Boutique Field Index — sharp paper, soft shadow, clip (no hollow bullet holes).
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(8, 11),
-		"binder_holes": 7,
+		"shadow_off": Vector2(6, 9),
+		"binder_holes": 0,
 		"grain_seed": 11,
-		"grain_a": 0.055,
-		"fiber_a": 0.06,
+		"grain_a": 0.042,
+		"fiber_a": 0.035,
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
-		"thickness": 3.5,
-		"oxide_accents": true,
+		"thickness": 3.0,
+		"oxide_accents": false,
 		"skip_grain": false,
+		"ruled_stock": false,
+		"sharp_edge": true,
 	})
 	draw_string(
-		_type("mono"),
-		card.position + Vector2(32, 30),
+		_type("micro"),
+		card.position + Vector2(36, 30),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
-		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot_a)
+		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.85 * slot_a)
 	)
 	# Quiet foot line inside the plate — fills the card object without chamber HUD.
 	draw_string(
-		_type("mono"),
-		Vector2(card.position.x + 32.0, card.end.y - 18.0),
+		_type("micro"),
+		Vector2(card.position.x + 36.0, card.end.y - 20.0),
 		tr("menu.card_foot"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.42 * slot_a)
 	)
 
-	# Focus underlines — rust ink craft + selection tick (cadmium reserved).
+	# Selection — solid tick + text-width rust baseline only (MENU_TYPE_SYSTEM §4).
 	_draw_button_underlines(card)
 
 	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.
@@ -895,6 +869,13 @@ func _draw_button_underlines(_card: Rect2) -> void:
 
 
 func _type(role: String = "display") -> Font:
+	## Face or MENU_TYPE_SYSTEM role → Font (tracked when role has spacing).
 	if has_node("/root/LedgerType"):
+		match role:
+			"brand", "tagline", "deck", "action", "action_disabled", "meta", "micro":
+				if LedgerType.has_method("tracked_font_for_role"):
+					return LedgerType.tracked_font_for_role(role, size.y if size.y > 2.0 else 1080.0)
+				if LedgerType.has_method("font_for_role"):
+					return LedgerType.font_for_role(role)
 		return LedgerType.font_or_fallback(role)
 	return ThemeDB.fallback_font

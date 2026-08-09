@@ -14,6 +14,8 @@ LATIN = ROOT / "fonts" / "latin"
 class TestFontsMaterials(unittest.TestCase):
     def test_latin_faces_committed(self) -> None:
         required = [
+            "IBMPlexSansCondensed-Bold.ttf",
+            "IBMPlexSansCondensed-Medium.ttf",
             "IBMPlexSansCondensed-SemiBold.ttf",
             "IBMPlexSansCondensed-Regular.ttf",
             "IBMPlexSerif-Regular.ttf",
@@ -94,7 +96,7 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("func title_type_scale", chrome)
         self.assertIn("const TYPE_BRAND := 92", chrome)
         self.assertIn("const TYPE_INDEX := 20", chrome)
-        self.assertIn("_draw_ink_rule", chrome)
+        self.assertIn("_draw_selection_baseline", chrome)
         self.assertNotIn("CADMIUM_WARN", chrome)
         self.assertIn("func draw_binder_clip", (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8"))
         self.assertIn("TYPE_TAGLINE", chrome)

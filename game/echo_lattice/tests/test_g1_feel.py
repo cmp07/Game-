@@ -72,6 +72,8 @@ class TestW1ALatinType(unittest.TestCase):
         for name in (
             "IBMPlexSansCondensed-Regular.ttf",
             "IBMPlexSansCondensed-SemiBold.ttf",
+            "IBMPlexSansCondensed-Medium.ttf",
+            "IBMPlexSansCondensed-Bold.ttf",
             "IBMPlexSerif-Regular.ttf",
             "IBMPlexMono-Regular.ttf",
             "OFL.txt",
@@ -83,6 +85,7 @@ class TestW1ALatinType(unittest.TestCase):
         self.assertIn('LedgerType="*res://scripts/ledger_type.gd"', project)
         self.assertTrue((ROOT / "scripts" / "ledger_type.gd").is_file())
         menu = (ROOT / "scripts" / "menu.gd").read_text()
+        self.assertIn('_type("brand")', menu)
         self.assertIn('_type("display")', menu)
         self.assertIn("LedgerType.font_or_fallback", menu)
 

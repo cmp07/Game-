@@ -1,12 +1,18 @@
 extends Node
 ##
-## LedgerType — Field Ledger latin font stack (IBM Plex OFL).
-## Autoload; loads display / body / mono for draw_string + ThemeDB fallback.
-## Falls back to ThemeDB.fallback_font when vendor files are missing.
+## LedgerType — Field Ledger latin font stack (IBM Plex OFL) + title-menu roles.
+## Autoload; loads Bold / Medium / Serif / Mono for draw_string + Control themes.
+## Brand = Bold Condensed. Actions = Medium Condensed (never mono).
+## Role contract: docs/VISION/MENU_TYPE_SYSTEM.md.
 ##
 
 const DISPLAY_CANDIDATES := [
+	"res://fonts/latin/IBMPlexSansCondensed-Bold.ttf",
 	"res://fonts/latin/IBMPlexSansCondensed-SemiBold.ttf",
+	"res://fonts/latin/IBMPlexSansCondensed-Regular.ttf",
+]
+const ACTION_CANDIDATES := [
+	"res://fonts/latin/IBMPlexSansCondensed-Medium.ttf",
 	"res://fonts/latin/IBMPlexSansCondensed-Regular.ttf",
 ]
 const BODY_CANDIDATES := [
@@ -16,11 +22,51 @@ const MONO_CANDIDATES := [
 	"res://fonts/latin/IBMPlexMono-Regular.ttf",
 ]
 
+## Canonical title-menu roles (MENU_TYPE_SYSTEM.md §1).
+const ROLE_BRAND := "brand"
+const ROLE_TAGLINE := "tagline"
+const ROLE_DECK := "deck"
+const ROLE_ACTION := "action"
+const ROLE_ACTION_DISABLED := "action_disabled"
+const ROLE_META := "meta"
+const ROLE_MICRO := "micro"
+
+## Published sizes @ 1080p (px).
+const SIZE_BRAND_1080 := 92
+const SIZE_TAGLINE_1080 := 24
+const SIZE_DECK_1080 := 17
+const SIZE_ACTION_1080 := 20
+const SIZE_ACTION_PRIMARY_1080 := 24
+const SIZE_META_1080 := 12
+const SIZE_MICRO_1080 := 12
+
+## Tracking @ 1080p (Godot letter_spacing / spacing_glyph px).
+const TRACK_BRAND_1080 := -3.0
+const TRACK_TAGLINE_1080 := 1.5
+const TRACK_DECK_1080 := 0.0
+const TRACK_ACTION_1080 := 0.0
+const TRACK_META_1080 := 0.0
+const TRACK_MICRO_1080 := 0.5
+
+## Line-height multipliers (constant across scales).
+const LH_BRAND := 1.00
+const LH_TAGLINE := 1.15
+const LH_DECK := 1.35
+const LH_ACTION := 1.20
+const LH_META := 1.25
+const LH_MICRO := 1.20
+
+## Meta may use mono only at or below this size (1080p gate, absolute px).
+const META_MONO_MAX_PX := 13
+
 var display: Font = null
+var action: Font = null
 var body: Font = null
 var mono: Font = null
 var _engine_fallback: Font = null
 var _latin_ready: bool = false
+## role -> FontVariation with tracking baked for draw_string callers.
+var _tracked: Dictionary = {}
 
 
 func _ready() -> void:
@@ -36,12 +82,15 @@ func is_latin_ready() -> bool:
 
 
 func font_or_fallback(role: String = "display") -> Font:
+	## Prefer the authored Plex face for the role. Title chrome never asks ThemeDB first.
 	var f: Font = null
 	match role:
 		"body":
 			f = body
 		"mono":
 			f = mono
+		"action", "ui", "index":
+			f = action if action != null else display
 		_:
 			f = display
 	if f != null:
@@ -49,6 +98,163 @@ func font_or_fallback(role: String = "display") -> Font:
 	if ThemeDB.fallback_font != null:
 		return ThemeDB.fallback_font
 	return _engine_fallback
+
+
+func scale_factor(page_h: float = 1080.0) -> float:
+	## MENU_TYPE_SYSTEM.md §3 — Deck compact / 1080p / soft 1440p lift.
+	if page_h < 700.0:
+		return 0.62
+	if page_h >= 1200.0:
+		return clampf(page_h / 1080.0, 1.0, 1.15)
+	return 1.0
+
+
+func role_face(role: String, size_px: int = -1) -> String:
+	## Face stack for a role. Action → Medium ("action"). Meta → mono ≤ META_MONO_MAX_PX.
+	match role:
+		ROLE_BRAND, ROLE_TAGLINE:
+			return "display"
+		ROLE_ACTION, ROLE_ACTION_DISABLED:
+			return "action"
+		ROLE_DECK:
+			return "body"
+		ROLE_META:
+			var px: int = size_px if size_px > 0 else SIZE_META_1080
+			return "mono" if px <= META_MONO_MAX_PX else "body"
+		ROLE_MICRO:
+			return "mono"
+		"display", "body", "mono", "action":
+			return role
+		_:
+			return "display"
+
+
+func role_size(role: String, page_h: float = 1080.0, primary: bool = false) -> int:
+	var base: int = SIZE_ACTION_1080
+	match role:
+		ROLE_BRAND:
+			base = SIZE_BRAND_1080
+		ROLE_TAGLINE:
+			base = SIZE_TAGLINE_1080
+		ROLE_DECK:
+			base = SIZE_DECK_1080
+		ROLE_ACTION, ROLE_ACTION_DISABLED:
+			base = SIZE_ACTION_PRIMARY_1080 if primary else SIZE_ACTION_1080
+		ROLE_META:
+			base = SIZE_META_1080
+		ROLE_MICRO:
+			base = SIZE_MICRO_1080
+		_:
+			base = SIZE_ACTION_1080
+	return maxi(8, int(round(float(base) * scale_factor(page_h))))
+
+
+func role_tracking(role: String, page_h: float = 1080.0) -> float:
+	var base: float = 0.0
+	match role:
+		ROLE_BRAND:
+			base = TRACK_BRAND_1080
+		ROLE_TAGLINE:
+			base = TRACK_TAGLINE_1080
+		ROLE_DECK:
+			base = TRACK_DECK_1080
+		ROLE_ACTION, ROLE_ACTION_DISABLED:
+			base = TRACK_ACTION_1080
+		ROLE_META:
+			base = TRACK_META_1080
+		ROLE_MICRO:
+			base = TRACK_MICRO_1080
+		_:
+			base = 0.0
+	return base * scale_factor(page_h)
+
+
+func role_line_height(role: String) -> float:
+	match role:
+		ROLE_BRAND:
+			return LH_BRAND
+		ROLE_TAGLINE:
+			return LH_TAGLINE
+		ROLE_DECK:
+			return LH_DECK
+		ROLE_ACTION, ROLE_ACTION_DISABLED:
+			return LH_ACTION
+		ROLE_META:
+			return LH_META
+		ROLE_MICRO:
+			return LH_MICRO
+		_:
+			return 1.2
+
+
+func font_for_role(role: String, size_px: int = -1) -> Font:
+	return font_or_fallback(role_face(role, size_px))
+
+
+func tracked_font_for_role(role: String, page_h: float = 1080.0, size_px: int = -1) -> Font:
+	## FontVariation with role tracking for draw_string (Actions never mono).
+	var px: int = size_px if size_px > 0 else role_size(role, page_h)
+	var face_role: String = role_face(role, px)
+	## Actions must never resolve to mono — belt + suspenders.
+	if role == ROLE_ACTION or role == ROLE_ACTION_DISABLED:
+		face_role = "action"
+	var track: float = role_tracking(role, page_h)
+	if absf(track) < 0.01:
+		return font_or_fallback(face_role)
+	var key := "%s:%.2f" % [face_role, track]
+	if _tracked.has(key):
+		return _tracked[key] as Font
+	var base: Font = font_or_fallback(face_role)
+	if base == null:
+		return null
+	var fv := FontVariation.new()
+	fv.base_font = base
+	fv.spacing_glyph = int(round(track))
+	_tracked[key] = fv
+	return fv
+
+
+func title_role_scale(page_h: float = 1080.0) -> Dictionary:
+	## Token map for menu draw + LedgerChrome (includes legacy aliases).
+	var f: float = scale_factor(page_h)
+	var brand: int = role_size(ROLE_BRAND, page_h)
+	var tagline: int = role_size(ROLE_TAGLINE, page_h)
+	var deck: int = role_size(ROLE_DECK, page_h)
+	var action_px: int = role_size(ROLE_ACTION, page_h, false)
+	var action_primary: int = role_size(ROLE_ACTION, page_h, true)
+	var meta: int = role_size(ROLE_META, page_h)
+	var micro: int = role_size(ROLE_MICRO, page_h)
+	return {
+		"brand": brand,
+		"tagline": tagline,
+		"deck": deck,
+		"blurb": deck,
+		"action": action_px,
+		"action_primary": action_primary,
+		"action_disabled": action_px,
+		"index": action_px,
+		"index_primary": action_primary,
+		"meta": meta,
+		"micro": micro,
+		"folio": micro,
+		"seed": meta,
+		"card_header": maxi(micro, int(round(13.0 * f))),
+		"rule_w": 2.5 if f < 0.9 else 4.0,
+		"rule_len": 340.0 if f < 0.9 else 560.0,
+		"track_brand": role_tracking(ROLE_BRAND, page_h),
+		"track_tagline": role_tracking(ROLE_TAGLINE, page_h),
+		"track_deck": role_tracking(ROLE_DECK, page_h),
+		"track_action": role_tracking(ROLE_ACTION, page_h),
+		"track_meta": role_tracking(ROLE_META, page_h),
+		"track_micro": role_tracking(ROLE_MICRO, page_h),
+		"lh_brand": LH_BRAND,
+		"lh_tagline": LH_TAGLINE,
+		"lh_deck": LH_DECK,
+		"lh_action": LH_ACTION,
+		"lh_meta": LH_META,
+		"lh_micro": LH_MICRO,
+		"scale": f,
+	}
 
 
 func apply_to_control(control: Control, role: String = "body", size: int = 16) -> void:
@@ -59,6 +265,35 @@ func apply_to_control(control: Control, role: String = "body", size: int = 16) -
 		control.add_theme_font_override("font", f)
 	if size > 0:
 		control.add_theme_font_size_override("font_size", size)
+
+
+func apply_role(
+	control: Control,
+	role: String,
+	page_h: float = 1080.0,
+	primary: bool = false
+) -> void:
+	## Apply face + size + tracking for a MENU_TYPE_SYSTEM role.
+	if control == null:
+		return
+	var px: int = role_size(role, page_h, primary)
+	var face: String = role_face(role, px)
+	## Actions must never resolve to mono — Medium Condensed via "action".
+	if role == ROLE_ACTION or role == ROLE_ACTION_DISABLED:
+		face = "action"
+	var f: Font = font_or_fallback(face)
+	if f != null:
+		control.add_theme_font_override("font", f)
+	control.add_theme_font_size_override("font_size", px)
+	var track: float = role_tracking(role, page_h)
+	## Label supports letter_spacing; Buttons ignore unknown constants safely.
+	control.add_theme_constant_override("letter_spacing", int(round(track)))
+	if control is Label:
+		var lh: float = role_line_height(role)
+		(control as Label).add_theme_constant_override(
+			"line_spacing",
+			maxi(0, int(round(float(px) * (lh - 1.0))))
+		)
 
 
 func stars_ink(n: int, max_n: int = 3) -> String:
@@ -72,13 +307,15 @@ func stars_ink(n: int, max_n: int = 3) -> String:
 
 func _load_stack() -> void:
 	display = _load_first(DISPLAY_CANDIDATES)
+	action = _load_first(ACTION_CANDIDATES)
 	body = _load_first(BODY_CANDIDATES)
 	mono = _load_first(MONO_CANDIDATES)
-	_latin_ready = display != null and mono != null
+	_latin_ready = display != null and action != null and body != null and mono != null
+	_tracked.clear()
 	if not _latin_ready:
 		push_warning(
 			"LedgerType: latin faces missing under res://fonts/latin/. "
-			+ "Run tools/fonts/fetch_ibm_plex_latin.py"
+			+ "Need Bold/SemiBold + Medium + Serif + Mono (see fonts/latin/README.md)."
 		)
 
 

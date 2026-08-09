@@ -3,12 +3,14 @@
 | File | Role |
 |---|---|
 | `OFL.txt` | SIL Open Font License 1.1 (IBM Plex) |
-| `IBMPlexSansCondensed-SemiBold.ttf` | Display — brand, chamber titles |
-| `IBMPlexSansCondensed-Regular.ttf` | UI actions / index underlines |
+| `IBMPlexSansCondensed-Bold.ttf` | Display — brand lockup (preferred) |
+| `IBMPlexSansCondensed-SemiBold.ttf` | Display fallback |
+| `IBMPlexSansCondensed-Medium.ttf` | Action — Field Index rows (MENU_TYPE_SYSTEM) |
+| `IBMPlexSansCondensed-Regular.ttf` | Action / display fallback |
 | `IBMPlexSerif-Regular.ttf` | Body — blurbs, settings, captions |
-| `IBMPlexMono-Regular.ttf` | Mono — seed header, punch-card labels |
+| `IBMPlexMono-Regular.ttf` | Mono — seed header, meta, punch-card labels |
 
-Loaded at runtime by `scripts/type_kit.gd` (autoload `TypeKit`).
+Loaded at runtime by `scripts/ledger_type.gd` (autoload `LedgerType`).
 
 ## Fetch / refresh
 
