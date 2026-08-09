@@ -10,6 +10,7 @@ extends Area2D
 
 var _player_inside: bool = false
 var _taken: bool = false
+var auto_collect: bool = true
 
 
 func _ready() -> void:
@@ -19,6 +20,17 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	_pulse_in()
+
+
+## Photo / staging helper — remove without adding to inventory.
+func debug_despawn() -> void:
+	_taken = true
+	monitoring = false
+	queue_free()
+
+
+func set_auto_collect(enabled: bool) -> void:
+	auto_collect = enabled
 
 
 func _pulse_in() -> void:
@@ -39,7 +51,8 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_player_inside = true
 		# Auto-collect on touch for the stub — E still works if needed.
-		_try_collect()
+		if auto_collect:
+			_try_collect()
 
 
 func _on_body_exited(body: Node2D) -> void:

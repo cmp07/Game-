@@ -36,6 +36,16 @@ func show_panel() -> void:
 	visible = true
 
 
+## Photo helper — open panel with a pre-selected pair (indices into inventory).
+func stage_photo_selection(indices: Array) -> void:
+	_selected.clear()
+	for idx in indices:
+		_selected.append(int(idx))
+	_rebuild_slots()
+	_preview()
+	visible = true
+
+
 func hide_panel() -> void:
 	visible = false
 	_selected.clear()

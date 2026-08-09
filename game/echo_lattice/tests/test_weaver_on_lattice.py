@@ -87,6 +87,13 @@ def test_main_routes_weaver() -> None:
         _fail("main.gd missing archive chambers callback")
     if "--weaver-selftest" not in main:
         _fail("main.gd missing --weaver-selftest hook")
+    if "--weaver-photos" not in main:
+        _fail("main.gd missing --weaver-photos hook")
+    if "_run_weaver_photos" not in main:
+        _fail("main.gd missing _run_weaver_photos")
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    if "func run_photo_beats(" not in field:
+        _fail("field.gd missing run_photo_beats")
 
 
 def test_locale_brand() -> None:
