@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://cel_menu_00001"]
+
+[ext_resource type="Script" path="res://scripts/menu.gd" id="1_menu"]
+
+[node name="Menu" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_menu")
+
+[node name="CardColumn" type="VBoxContainer" parent="."]
+anchors_preset = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -120.0
+offset_right = -80.0
+offset_bottom = 200.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Subtitle" type="Label" parent="CardColumn"]
+unique_name_in_owner = true
+text = "Four Acts. Ink on paper."
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
+
+[node name="MetaLabel" type="Label" parent="CardColumn"]
+unique_name_in_owner = true
+text = "Daily"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.29, 0.42, 0.467, 1)
+
+[node name="ContinueButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 34)
+text = "Continue"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
+[node name="StartButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 38)
+text = "Start New Run"
+flat = true
+theme_override_font_sizes/font_size = 22
+alignment = 0
+
+[node name="DailyButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 34)
+text = "Daily Challenge"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
+[node name="QuitButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 34)
+text = "Quit"
+flat = true
+theme_override_font_sizes/font_size = 18
+alignment = 0

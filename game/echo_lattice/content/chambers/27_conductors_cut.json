@@ -1,0 +1,96 @@
+{
+  "id": "27_conductors_cut",
+  "index": 27,
+  "slug": "conductors_cut",
+  "title": "Conductor's Cut",
+  "caption": "Master vertical mirror \u2014 carve with intent.",
+  "act": "mastery",
+  "act_index": 3,
+  "act_title": "Mastery",
+  "teaches": "mirror_v",
+  "transform": "mirror_v",
+  "difficulty": 4,
+  "role": "lesson",
+  "seed": 14001,
+  "daily_eligible": true,
+  "par_moves": 72,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P....#....#....#......#",
+      "#.###.#.##.#.##.#.####.#",
+      "#.....#....#....#......#",
+      "#.####.###.####.###.##.#",
+      "#..........C...........#",
+      "#.##.###.####.###.####.#",
+      "#......#....#....#.....#",
+      "#.####.#.##.#.##.#.###.#",
+      "#......#....#....#.....#",
+      "#.##.###.####.###.####.#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P....#....#....#......#",
+    "#.###.#.##.#.##.#.####.#",
+    "#.....#....#....#......#",
+    "#.####.###.####.###.##.#",
+    "#..........C...........#",
+    "#.##.###.####.###.####.#",
+    "#......#....#....#.....#",
+    "#.####.#.##.#.##.#.###.#",
+    "#......#....#....#.....#",
+    "#.##.###.####.###.####.#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        5
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": "Master vertical mirror \u2014 carve with intent."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 3,
+    "forced_op": "mirror_v",
+    "soft_hard_bias": 0.8500000000000001,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "mastery",
+    "mirror_v",
+    "mirror_v",
+    "lesson"
+  ]
+}

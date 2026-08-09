@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "echo_lattice/chamber.schema.json",
+  "title": "Echo Lattice Chamber (playable v2)",
+  "type": "object",
+  "required": [
+    "id", "index", "slug", "title", "caption", "act", "act_index",
+    "teaches", "transform", "difficulty", "role", "seed", "par_moves",
+    "lattice", "map", "resonance", "rewrite", "variations"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9]{2}_[a-z0-9_]+$" },
+    "index": { "type": "integer", "minimum": 0 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "title": { "type": "string", "maxLength": 60 },
+    "caption": { "type": "string", "maxLength": 160 },
+    "act": {
+      "type": "string",
+      "enum": ["induction", "reflection", "pressure", "mastery"]
+    },
+    "act_index": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "act_title": { "type": "string" },
+    "teaches": {
+      "type": "string",
+      "enum": [
+        "move", "turn", "mirror_v", "mirror_h", "rotate_180", "thicken",
+        "mirror_v_then_h", "composition", "identity", "free", "intro"
+      ]
+    },
+    "transform": {
+      "type": "string",
+      "enum": [
+        "none", "mirror_v", "mirror_h", "rotate_180", "thicken", "mirror_v_then_h"
+      ]
+    },
+    "difficulty": { "type": "integer", "minimum": 0, "maximum": 5 },
+    "role": {
+      "type": "string",
+      "enum": ["lesson", "remix", "boss", "hard", "daily_showcase"]
+    },
+    "identity": { "type": ["string", "null"] },
+    "seed": { "type": "integer" },
+    "daily_eligible": { "type": "boolean" },
+    "hard_variant_of": { "type": ["string", "null"] },
+    "par_moves": { "type": "integer", "minimum": 1 },
+    "tempo_start": { "type": "integer", "minimum": 1 },
+    "lattice": {
+      "type": "object",
+      "required": ["rows", "cols", "cells"],
+      "properties": {
+        "rows": { "type": "integer", "const": 14 },
+        "cols": { "type": "integer", "const": 24 },
+        "cells": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "items": { "type": "string", "minLength": 1, "maxLength": 24 }
+        }
+      }
+    },
+    "map": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": { "type": "string", "minLength": 1, "maxLength": 24 }
+    },
+    "motifs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "cell"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["CHECKPOINT"] },
+          "cell": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "unique": { "type": "boolean" },
+          "operator": { "type": ["string", "null"] },
+          "banner": { "type": "string" }
+        }
+      }
+    },
+    "resonance": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["REACH_GOAL", "REACH_GOAL_AND_ALL_MOTIFS"]
+        }
+      }
+    },
+    "rewrite": {
+      "type": "object",
+      "properties": {
+        "cap": { "type": "integer", "minimum": 0 },
+        "forced_op": { "type": ["string", "null"] },
+        "soft_hard_bias": { "type": "number", "minimum": 0, "maximum": 1 },
+        "require_shorter_or_equal": { "type": "boolean" }
+      }
+    },
+    "hints": { "type": "array", "items": { "type": "string" } },
+    "variations": { "type": "object" },
+    "unlocks": { "type": "array" },
+    "tags": { "type": "array", "items": { "type": "string" } }
+  }
+}

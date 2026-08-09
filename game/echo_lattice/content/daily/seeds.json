@@ -1,0 +1,463 @@
+{
+  "format": 2,
+  "game": "echo_lattice",
+  "note": "Daily mode picks seed = hash(YYYY-MM-DD) % len(seeds). Same day \u2192 same chamber+variation.",
+  "hash": "fnv1a32(date_string) % len(seeds)",
+  "seeds": [
+    {
+      "seed": 11004,
+      "chamber_id": "03_break_the_loop",
+      "slug": "break_the_loop",
+      "label": "daily/break_the_loop",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-11004"
+    },
+    {
+      "seed": 11006,
+      "chamber_id": "05_two_glances",
+      "slug": "two_glances",
+      "label": "daily/two_glances",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-11006"
+    },
+    {
+      "seed": 11007,
+      "chamber_id": "06_far_side",
+      "slug": "far_side",
+      "label": "daily/far_side",
+      "variation": {
+        "rotate": 0,
+        "reflect": "vertical",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-11007"
+    },
+    {
+      "seed": 11008,
+      "chamber_id": "07_first_thicken",
+      "slug": "first_thicken",
+      "label": "daily/first_thicken",
+      "variation": {
+        "rotate": 180,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-11008"
+    },
+    {
+      "seed": 11009,
+      "chamber_id": "08_identity_induction",
+      "slug": "identity_induction",
+      "label": "daily/identity_induction",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-11009"
+    },
+    {
+      "seed": 12001,
+      "chamber_id": "09_twin_rail",
+      "slug": "twin_rail",
+      "label": "daily/twin_rail",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-12001"
+    },
+    {
+      "seed": 12002,
+      "chamber_id": "10_roof_writing",
+      "slug": "roof_writing",
+      "label": "daily/roof_writing",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-12002"
+    },
+    {
+      "seed": 12003,
+      "chamber_id": "11_opposite_room",
+      "slug": "opposite_room",
+      "label": "daily/opposite_room",
+      "variation": {
+        "rotate": 0,
+        "reflect": "vertical",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-12003"
+    },
+    {
+      "seed": 12004,
+      "chamber_id": "12_looking_glass",
+      "slug": "looking_glass",
+      "label": "daily/looking_glass",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-12004"
+    },
+    {
+      "seed": 12005,
+      "chamber_id": "13_gallery_walk",
+      "slug": "gallery_walk",
+      "label": "daily/gallery_walk",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-12005"
+    },
+    {
+      "seed": 12006,
+      "chamber_id": "14_horizon_fold",
+      "slug": "horizon_fold",
+      "label": "daily/horizon_fold",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-12006"
+    },
+    {
+      "seed": 12007,
+      "chamber_id": "15_spin_gallery",
+      "slug": "spin_gallery",
+      "label": "daily/spin_gallery",
+      "variation": {
+        "rotate": 0,
+        "reflect": "horizontal",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-12007"
+    },
+    {
+      "seed": 12008,
+      "chamber_id": "16_false_twin",
+      "slug": "false_twin",
+      "label": "daily/false_twin",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-12008"
+    },
+    {
+      "seed": 12009,
+      "chamber_id": "17_identity_reflection",
+      "slug": "identity_reflection",
+      "label": "daily/identity_reflection",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-12009"
+    },
+    {
+      "seed": 13001,
+      "chamber_id": "18_cement_trail",
+      "slug": "cement_trail",
+      "label": "daily/cement_trail",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-13001"
+    },
+    {
+      "seed": 13002,
+      "chamber_id": "19_no_retread",
+      "slug": "no_retread",
+      "label": "daily/no_retread",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-13002"
+    },
+    {
+      "seed": 13003,
+      "chamber_id": "20_squeeze_mirror",
+      "slug": "squeeze_mirror",
+      "label": "daily/squeeze_mirror",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-13003"
+    },
+    {
+      "seed": 13004,
+      "chamber_id": "21_stacked_echo",
+      "slug": "stacked_echo",
+      "label": "daily/stacked_echo",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-13004"
+    },
+    {
+      "seed": 13005,
+      "chamber_id": "22_spin_trap",
+      "slug": "spin_trap",
+      "label": "daily/spin_trap",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-13005"
+    },
+    {
+      "seed": 13006,
+      "chamber_id": "23_ceiling_press",
+      "slug": "ceiling_press",
+      "label": "daily/ceiling_press",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-13006"
+    },
+    {
+      "seed": 13007,
+      "chamber_id": "24_compound_fracture",
+      "slug": "compound_fracture",
+      "label": "daily/compound_fracture",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-13007"
+    },
+    {
+      "seed": 13008,
+      "chamber_id": "25_panic_lattice",
+      "slug": "panic_lattice",
+      "label": "daily/panic_lattice",
+      "variation": {
+        "rotate": 0,
+        "reflect": "horizontal",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-13008"
+    },
+    {
+      "seed": 13009,
+      "chamber_id": "26_identity_pressure",
+      "slug": "identity_pressure",
+      "label": "daily/identity_pressure",
+      "variation": {
+        "rotate": 0,
+        "reflect": "vertical",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-13009"
+    },
+    {
+      "seed": 14001,
+      "chamber_id": "27_conductors_cut",
+      "slug": "conductors_cut",
+      "label": "daily/conductors_cut",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-14001"
+    },
+    {
+      "seed": 14002,
+      "chamber_id": "28_invert_ballet",
+      "slug": "invert_ballet",
+      "label": "daily/invert_ballet",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-14002"
+    },
+    {
+      "seed": 14003,
+      "chamber_id": "29_two_axes",
+      "slug": "two_axes",
+      "label": "daily/two_axes",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-14003"
+    },
+    {
+      "seed": 14004,
+      "chamber_id": "30_habit_orchestra",
+      "slug": "habit_orchestra",
+      "label": "daily/habit_orchestra",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-14004"
+    },
+    {
+      "seed": 14005,
+      "chamber_id": "31_last_buffer",
+      "slug": "last_buffer",
+      "label": "daily/last_buffer",
+      "variation": {
+        "rotate": 0,
+        "reflect": "vertical",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-14005"
+    },
+    {
+      "seed": 14006,
+      "chamber_id": "32_signature_stack",
+      "slug": "signature_stack",
+      "label": "daily/signature_stack",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-14006"
+    },
+    {
+      "seed": 14007,
+      "chamber_id": "33_nameplate",
+      "slug": "nameplate",
+      "label": "daily/nameplate",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-14007"
+    },
+    {
+      "seed": 14008,
+      "chamber_id": "34_open_lattice",
+      "slug": "open_lattice",
+      "label": "daily/open_lattice",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": false
+      },
+      "friend_code": "EL-14008"
+    },
+    {
+      "seed": 21003,
+      "chamber_id": "35_mirror_birth_hard",
+      "slug": "mirror_birth_hard",
+      "label": "daily/mirror_birth_hard",
+      "variation": {
+        "rotate": 0,
+        "reflect": "horizontal",
+        "palette": "cool",
+        "hard": false
+      },
+      "friend_code": "EL-21003"
+    },
+    {
+      "seed": 22004,
+      "chamber_id": "36_looking_glass_hard",
+      "slug": "looking_glass_hard",
+      "label": "daily/looking_glass_hard",
+      "variation": {
+        "rotate": 0,
+        "reflect": "vertical",
+        "palette": "warm",
+        "hard": false
+      },
+      "friend_code": "EL-22004"
+    },
+    {
+      "seed": 23001,
+      "chamber_id": "37_cement_trail_hard",
+      "slug": "cement_trail_hard",
+      "label": "daily/cement_trail_hard",
+      "variation": {
+        "rotate": 180,
+        "reflect": "none",
+        "palette": "mono",
+        "hard": false
+      },
+      "friend_code": "EL-23001"
+    },
+    {
+      "seed": 24007,
+      "chamber_id": "38_nameplate_hard",
+      "slug": "nameplate_hard",
+      "label": "daily/nameplate_hard",
+      "variation": {
+        "rotate": 0,
+        "reflect": "none",
+        "palette": "default",
+        "hard": true
+      },
+      "friend_code": "EL-24007"
+    }
+  ]
+}

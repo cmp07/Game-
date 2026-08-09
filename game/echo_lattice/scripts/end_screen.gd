@@ -1,0 +1,43 @@
+extends Control
+##
+## End-of-slice / end-of-daily screen.
+##
+
+signal restart_pressed()
+signal menu_pressed()
+
+@onready var stats_label: Label = %Stats
+@onready var restart_button: Button = %RestartButton
+@onready var menu_button: Button = %MenuButton
+
+
+func _ready() -> void:
+	restart_button.pressed.connect(func(): emit_signal("restart_pressed"))
+	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
+	menu_button.grab_focus()
+	stats_label.text = _summary()
+	if has_node("/root/AudioDirector"):
+		AudioDirector.on_wing_clear()
+
+
+func _summary() -> String:
+	var total_best: int = 0
+	var beat: int = 0
+	var stars: int = 0
+	var ids: Array = GameState.run_queue if GameState.run_queue.size() > 0 else range(ChamberBook.chamber_count())
+	for i in ids:
+		var idx: int = int(i)
+		if GameState.best_moves.has(idx):
+			total_best += int(GameState.best_moves[idx])
+			beat += 1
+		stars += int(GameState.best_stars.get(idx, 0))
+	var dom: String = GameState.dominant_habit()
+	var hp: Dictionary = GameState.habit_profile
+	var header: String = "Wing complete."
+	if GameState.run_mode == "daily":
+		header = "Daily %s complete." % GameState.daily_label
+	return "%s\nEscaped %d / %d chambers.\nStars this wing: %d★\nTotal best moves: %d\nHabit signature: %s\n(u:%d  d:%d  l:%d  r:%d)" % [
+		header, beat, ids.size(), stars, total_best, dom,
+		int(hp.get("up", 0)), int(hp.get("down", 0)),
+		int(hp.get("left", 0)), int(hp.get("right", 0)),
+	]
