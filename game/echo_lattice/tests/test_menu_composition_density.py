@@ -6,8 +6,12 @@ Fails if:
   - Measured empty (no ink/ui layout mass) ≥ 28% of the inner page
   - LEFT (verso) pixel empty mass ≥ 22%
   - Gameplay film plate missing / too short on the verso
+  - Preview media rect area < 18% of viewport (postage-stamp regression)
+  - SubViewport stays board-native while the plate Control is larger (hollow plate)
+  - Same seed string drawn twice on the title (header + film-plate footer)
   - Field Index rows stretch with sparse leading
   - Store slate 02_brand_main_menu.png lacks brand + film preview + Field Index
+    or shows cream hollow inside the plate (>8% empty-inside-plate)
 """
 
 from __future__ import annotations
@@ -236,6 +240,15 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertIn("pause_preview", PREVIEW)
         self.assertIn("MOUSE_FILTER_IGNORE", PREVIEW)
         self.assertIn("SubViewport", PREVIEW)
+        self.assertIn("sync_media_rect", PREVIEW)
+        self.assertIn("_cover_scale_chamber", PREVIEW)
+        self.assertIn("sync_media_rect", MENU)
+        # Must not FULL_RECT the preview Control against the menu (fought media sizing).
+        self.assertNotIn(
+            "set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)",
+            PREVIEW.split("func _build_chrome")[0],
+            msg="GameplayPreview self must stay top-left; menu drives media well size",
+        )
         # Giant static habit silhouette must not own the title verso anymore.
         self.assertNotIn("ArtKit.draw_habit_silhouette", MENU)
         self.assertNotIn("ArtKit.draw_seal_stamp", MENU)
@@ -243,6 +256,43 @@ class TestMenuCompositionDensity(unittest.TestCase):
             self.assertNotIn('"caption": "FIELD"', src, msg=label)
             self.assertNotIn("SURVEY SEAL", src, msg=label)
         self.assertNotIn("SURVEY SEAL", LOCALE)
+
+    def test_preview_media_area_and_no_twin_seed(self) -> None:
+        """Preview must dominate the verso; seed strip once on the title."""
+        lay = _layout_rects()
+        preview = lay["preview"]
+        media_w = max(20.0, preview[2] - 20.0)
+        media_h = max(20.0, preview[3] - 32.0)
+        media_frac = (media_w * media_h) / (VP_W * VP_H)
+        self.assertGreaterEqual(
+            media_frac,
+            0.18,
+            msg=f"preview media area frac={media_frac:.3f} < 0.18 — postage stamp",
+        )
+        # Board-native SubViewport must be cover-scaled into the well (not left at 768×448).
+        self.assertIn("BOARD_W", PREVIEW)
+        self.assertIn("_cover_scale_chamber", PREVIEW)
+        self.assertIn("sync_media_rect", PREVIEW)
+        # ONE seed line — micro header only; film plate must not reprint menu.seed_strip.
+        draw = re.search(r"func _draw\(\) -> void:\n([\s\S]*?)\nfunc ", MENU)
+        self.assertIsNotNone(draw)
+        body = draw.group(1)
+        seed_hits = len(re.findall(r'tr\("menu\.seed_strip"\)', body))
+        self.assertEqual(
+            seed_hits,
+            1,
+            msg=f"menu.seed_strip drawn {seed_hits}× on title — twin seed bars",
+        )
+        plate_call = re.search(
+            r"ArtKit\.draw_ledger_film_plate\([\s\S]*?\)",
+            body,
+        )
+        self.assertIsNotNone(plate_call)
+        self.assertNotIn(
+            "seed_strip",
+            plate_call.group(0),
+            msg="film plate footer must not repeat the header seed strip",
+        )
 
     def test_brand_slate_shows_brand_film_preview_and_field_index(self) -> None:
         if not SHOT.is_file():
@@ -318,13 +368,66 @@ class TestMenuCompositionDensity(unittest.TestCase):
             0.55,
             msg="gameplay film plate zone still cream-hollow",
         )
+        # Empty-inside-plate gate: cream tiles inside the media well must stay < 8%.
+        plate_empty = 0
+        plate_total = 0
+        for y in range(270, 1020, 3):
+            for x in range(70, 900, 3):
+                plate_total += 1
+                r, g, b = rgb(x, y)
+                dist = abs(r - paper_ref[0]) + abs(g - paper_ref[1]) + abs(b - paper_ref[2])
+                if dist < 40 and lum(x, y) > 200:
+                    plate_empty += 1
+        plate_empty_frac = plate_empty / max(1, plate_total)
+        self.assertLess(
+            plate_empty_frac,
+            0.08,
+            msg=f"empty-inside-plate={plate_empty_frac:.3f} > 0.08 — hollow cream well",
+        )
+        # Preview rect must own ≥18% of the full frame (not a 768×448 stamp).
+        dark_cells = [
+            (x, y)
+            for y in range(240, 1040, 2)
+            for x in range(50, 960, 2)
+            if lum(x, y) < 90
+        ]
+        self.assertGreater(len(dark_cells), 2000, msg="preview board ink missing")
+        xs = [p[0] for p in dark_cells]
+        ys = [p[1] for p in dark_cells]
+        island_w = max(xs) - min(xs)
+        island_h = max(ys) - min(ys)
+        island_frac = (island_w * island_h) / (w * h)
+        self.assertGreaterEqual(
+            island_frac,
+            0.18,
+            msg=f"preview island area frac={island_frac:.3f} < 0.18 (w={island_w} h={island_h})",
+        )
+        # Native board stamp regression — must not remain ~768×448 in a tall plate.
+        self.assertFalse(
+            island_w < 820 and island_h < 500,
+            msg=f"preview still board-native stamp {island_w}×{island_h}",
+        )
         preview_ink = sum(
             1
-            for y in range(420, 1020, 3)
+            for y in range(280, 1020, 3)
             for x in range(80, 900, 3)
             if lum(x, y) < 120
         )
-        self.assertGreater(preview_ink, 1800, msg="gameplay preview optical weight missing on verso")
+        self.assertGreater(preview_ink, 3500, msg="gameplay preview optical weight missing on verso")
+
+        # Twin seed bars: footer band under the plate must not reprint header seed ink.
+        header_seed = sum(
+            1 for y in range(18, 40) for x in range(40, 720, 2) if lum(x, y) < 130
+        )
+        footer_seed = sum(
+            1 for y in range(1035, 1065) for x in range(40, 720, 2) if lum(x, y) < 130
+        )
+        self.assertGreater(header_seed, 20, msg="verso micro header seed line missing")
+        self.assertLess(
+            footer_seed,
+            header_seed * 0.85 + 30,
+            msg=f"twin seed bars — footer ink={footer_seed} vs header={header_seed}",
+        )
 
         left = None
         for x in range(1040, 1280):

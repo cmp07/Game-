@@ -5,11 +5,19 @@ extends Control
 ## Fallback: looping Theora (.ogv) or PNG frame strip from media/menu_preview/.
 ## Never steals focus / mouse / authorship (GameState / AudioDirector muted).
 ##
+## Layout contract: this Control is sized to the film-plate media well by menu.gd.
+## The SubViewport must match that well and the board must COVER it — never a
+## native-resolution postage stamp inside a hollow cream plate (#163 regression).
+##
 
 const PREVIEW_CHAMBER_ID: int = 2
-## Match chamber grid pixels (24×32 / 14×32) so the film well is board-dense, not desk cream.
-const VIEW_W: int = 768
-const VIEW_H: int = 448
+## Native board pixels (24×32 / 14×32). Used as the unscaled chamber draw size;
+## runtime SubViewport is resized to the media well and the board is cover-scaled.
+const BOARD_W: int = 768
+const BOARD_H: int = 448
+## Back-compat aliases (density tests / older call sites).
+const VIEW_W: int = BOARD_W
+const VIEW_H: int = BOARD_H
 const STEP_SEC: float = 0.11
 const HOLD_AFTER_SLAM_SEC: float = 0.55
 const HOLD_END_SEC: float = 0.70
@@ -38,14 +46,32 @@ var _phase: String = "walk"  ## walk | slam | post | end
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	focus_mode = Control.FOCUS_NONE
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Top-left anchors — menu.gd drives position/size to the media well.
+	# FULL_RECT fought explicit sizing and left the SubViewport at board-native
+	# 768×448 stamped into a much larger plate (#163 hollow-plate root cause).
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 0.0
+	anchor_bottom = 0.0
 	_build_chrome()
 	if _reduce_motion():
 		_start_still_or_frames(true)
 	elif not _start_live():
 		if not _start_video():
 			_start_still_or_frames(false)
+	_fit_media_to_size(size)
 	set_process(true)
+
+
+func sync_media_rect(media: Rect2) -> void:
+	## Called by menu._sync_preview_layout — plate well == preview Control == filled board.
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 0.0
+	anchor_bottom = 0.0
+	position = media.position
+	size = media.size
+	_fit_media_to_size(media.size)
 
 
 func pause_preview() -> void:
@@ -69,7 +95,9 @@ func resume_preview() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_VISIBILITY_CHANGED:
+	if what == NOTIFICATION_RESIZED:
+		_fit_media_to_size(size)
+	elif what == NOTIFICATION_VISIBILITY_CHANGED:
 		if not is_visible_in_tree():
 			pause_preview()
 		elif not _reduce_motion():
@@ -84,14 +112,55 @@ func _build_chrome() -> void:
 	_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_host.focus_mode = Control.FOCUS_NONE
 	_host.stretch = true
-	_host.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_host.anchor_left = 0.0
+	_host.anchor_top = 0.0
+	_host.anchor_right = 0.0
+	_host.anchor_bottom = 0.0
+	_host.position = Vector2.ZERO
 	add_child(_host)
+
+
+func _fit_media_to_size(sz: Vector2) -> void:
+	if sz.x < 8.0 or sz.y < 8.0:
+		return
+	if _host != null and is_instance_valid(_host):
+		_host.position = Vector2.ZERO
+		_host.size = sz
+		_host.stretch = true
+	if _sv != null and is_instance_valid(_sv):
+		var w: int = maxi(64, int(round(sz.x)))
+		var h: int = maxi(64, int(round(sz.y)))
+		if _sv.size.x != w or _sv.size.y != h:
+			_sv.size = Vector2i(w, h)
+		_cover_scale_chamber(Vector2(float(w), float(h)))
+	if _video != null and is_instance_valid(_video):
+		_video.position = Vector2.ZERO
+		_video.size = sz
+	if _frame_rect != null and is_instance_valid(_frame_rect):
+		_frame_rect.position = Vector2.ZERO
+		_frame_rect.size = sz
+
+
+func _cover_scale_chamber(vp: Vector2) -> void:
+	## Scale the native board so it COVERS the SubViewport — no cream letterbox.
+	if _chamber == null or not is_instance_valid(_chamber):
+		return
+	var grid_px := Vector2(float(BOARD_W), float(BOARD_H))
+	if grid_px.x < 1.0 or grid_px.y < 1.0 or vp.x < 1.0 or vp.y < 1.0:
+		return
+	var s: float = maxf(vp.x / grid_px.x, vp.y / grid_px.y)
+	_chamber.scale = Vector2(s, s)
+	_chamber.position = ((vp - grid_px * s) * 0.5).floor()
+	if _chamber.has_method("queue_redraw"):
+		_chamber.queue_redraw()
 
 
 func _start_live() -> bool:
 	_sv = SubViewport.new()
 	_sv.name = "PreviewViewport"
-	_sv.size = Vector2i(VIEW_W, VIEW_H)
+	var boot_w: int = maxi(BOARD_W, int(round(size.x))) if size.x >= 8.0 else BOARD_W
+	var boot_h: int = maxi(BOARD_H, int(round(size.y))) if size.y >= 8.0 else BOARD_H
+	_sv.size = Vector2i(boot_w, boot_h)
 	_sv.transparent_bg = false
 	_sv.handle_input_locally = false
 	_sv.gui_disable_input = true
@@ -113,6 +182,7 @@ func _start_live() -> bool:
 		_sv = null
 		return false
 	_prime_mid_walk()
+	_cover_scale_chamber(Vector2(_sv.size))
 	_mode = Mode.LIVE
 	_phase = "walk"
 	_step_t = 0.0
@@ -128,7 +198,12 @@ func _start_video() -> bool:
 	_video.focus_mode = Control.FOCUS_NONE
 	_video.expand = true
 	_video.volume_db = -80.0
-	_video.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_video.anchor_left = 0.0
+	_video.anchor_top = 0.0
+	_video.anchor_right = 0.0
+	_video.anchor_bottom = 0.0
+	_video.position = Vector2.ZERO
+	_video.size = size if size.x >= 8.0 else Vector2(BOARD_W, BOARD_H)
 	# Prefer placing video as a direct child so it fills the film window.
 	add_child(_video)
 	move_child(_video, 0)
@@ -163,7 +238,12 @@ func _start_still_or_frames(still_only: bool) -> void:
 	_frame_rect.focus_mode = Control.FOCUS_NONE
 	_frame_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_frame_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_frame_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_frame_rect.anchor_left = 0.0
+	_frame_rect.anchor_top = 0.0
+	_frame_rect.anchor_right = 0.0
+	_frame_rect.anchor_bottom = 0.0
+	_frame_rect.position = Vector2.ZERO
+	_frame_rect.size = size if size.x >= 8.0 else Vector2(BOARD_W, BOARD_H)
 	add_child(_frame_rect)
 	move_child(_frame_rect, 0)
 	if _host != null:
@@ -269,6 +349,8 @@ func _reset_live_loop() -> void:
 	_phase = "walk"
 	_step_t = 0.0
 	_hold_t = 0.0
+	if _sv != null:
+		_cover_scale_chamber(Vector2(_sv.size))
 
 
 func _prime_mid_walk() -> void:

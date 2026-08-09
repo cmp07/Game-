@@ -97,6 +97,15 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
         self.assertNotIn("Sheet", quiet.group(1))
         self.assertIn("%s", quiet.group(1))
 
+    def test_seed_strip_once_on_title(self) -> None:
+        """Header owns the seed line — film plate must not reprint it at the foot."""
+        body = _draw_body()
+        hits = len(re.findall(r'tr\("menu\.seed_strip"\)', body))
+        self.assertEqual(hits, 1, msg=f"menu.seed_strip ×{hits} — twin seed bars")
+        plate = re.search(r"ArtKit\.draw_ledger_film_plate\([\s\S]*?\)", body)
+        self.assertIsNotNone(plate)
+        self.assertNotIn("seed_strip", plate.group(0))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -641,8 +641,13 @@ func _sync_preview_layout() -> void:
 	var layout: Dictionary = composition_layout(vp)
 	var plate: Rect2 = layout["preview_plate"]
 	var media: Rect2 = ArtKit.film_plate_media_rect(plate)
-	_gameplay_preview.position = media.position
-	_gameplay_preview.size = media.size
+	# Drive preview via sync_media_rect so SubViewport + board COVER the well.
+	# Setting position/size alone left a board-native 768×448 stamp (#163).
+	if _gameplay_preview.has_method("sync_media_rect"):
+		_gameplay_preview.sync_media_rect(media)
+	else:
+		_gameplay_preview.position = media.position
+		_gameplay_preview.size = media.size
 	_gameplay_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
@@ -956,13 +961,11 @@ func _draw() -> void:
 
 	# Gameplay film plate — diegetic media window; SubViewport / loop sits in the well.
 	# Not a static empty maze, not YouTube chrome, no chamber HUD overlay.
+	# Seed already lives on the verso micro header — never reprint it under the well.
 	if preview_plate.size.y >= 120.0 and preview_plate.size.x >= 80.0:
 		ArtKit.draw_ledger_film_plate(self, preview_plate, {
 			"seed": 71,
 			"alpha": 1.0,
-			"label": tr("menu.seed_strip"),
-			"font": _type("micro"),
-			"font_size": maxi(10, seed_px - 1),
 		})
 
 	# Recto Field Index — fills ~42% width, full readable height.

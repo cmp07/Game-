@@ -1059,8 +1059,9 @@ func _draw() -> void:
 	var warn_tension: float = rewrite_warn_tension()
 
 	if menu_preview_mode:
-		# Dense film-plate board only — skip chamber HUD page chrome / desk wash.
-		draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_DEEP, true)
+		# Board only (native grid_px). MenuGameplayPreview cover-scales this Node2D
+		# into the film well — do NOT paint a full-viewport wash here or scale leaves
+		# a hollow cream stamp (#163). SubViewport clear + plate matte handle edges.
 		draw_rect(Rect2(offset, grid_px), Palette.PAPER_BONE, true)
 		if not TechArt.v3_enabled():
 			ArtKit.draw_paper_grain(self, Rect2(offset, grid_px), 42, 0.05)
