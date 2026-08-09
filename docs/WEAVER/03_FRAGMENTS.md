@@ -3,7 +3,7 @@
 **Doc:** `docs/WEAVER/03_FRAGMENTS.md`  
 **Status:** Systems lock — atomic craft units (CLOUD ONLY)  
 **Product line:** Weaver  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) (recover juice · silhouette · beat color)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) (recover juice · silhouette · beat color) · [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) (1.0 families · grades · mutations)
 
 ---
 

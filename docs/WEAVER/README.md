@@ -100,11 +100,13 @@
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 
-### 1000× — Competitive / vision elevations
+### 1000× deepen pack
+
+Cloud-only expansions under [`1000X/`](1000X/). MVP locks in `01`–`35` still win on caps and bans; 1000× docs deepen roster / feel / systems without reopening purple Time or rarity ladders.
 
 | Doc | Topic |
 |---|---|
-| [`1000X/15_POSITIONING.md`](1000X/15_POSITIONING.md) | Unique vs Noita / craft / idle / cosmic · 20 hooks |
+| [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) | Families (≤12) · grades · mutations · silhouette grammar |
 
 ---
 

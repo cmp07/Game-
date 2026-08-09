@@ -6,13 +6,15 @@
 
 ---
 
-## 2026-08-09 — 1000× positioning (comp fences + 20 hooks)
+## 2026-08-09 — Weaver 1000× Fragments
 
-**Branch:** `cursor/weaver-1000x-position` · **Base:** `cursor/echo-lattice-rc1`
+**Branch:** `cursor/weaver-1000x-fragments` · **Base:** `cursor/echo-lattice-rc1`
 
-- New [`1000X/15_POSITIONING.md`](1000X/15_POSITIONING.md) — uniqueness vs Noita / craft sandbox / idle / cosmic
-- Twenty prioritized hooks for trailer → demo → 1.0
-- Indexed from [`README.md`](README.md)
+### Corpus
+
+- [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) — expand Fragment families to the 1.0 twelve, plain size×temper **grades**, authored field **mutations**, and full greyscale **silhouette grammar**
+- Hard ban reaffirmed: no purple Time / chronoshards / rarity rainbow
+- MVP locks unchanged: [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) · caps in [`17_MVP.md`](17_MVP.md)
 
 ---
 
