@@ -86,10 +86,10 @@
 
 ### Wave 1D — Diegetic shell / UI
 
-| PR wave | Branch pattern | Scope | Acceptance |
-|---|---|---|---|
-| **W1D.1** | `cursor/v3-ui-diegetic-*` | Punch-card pause / settings-as-object / transitions as page turns | No frosted-glass OS prefs |
-| **W1D.2** | `cursor/v3-first-10-polish-*` | Quiet Span → Mirror Birth premium timing + undo teach once | Matches [`FIRST_TEN_MINUTES`](FIRST_TEN_MINUTES.md) spine |
+| PR wave | Branch pattern | Scope | Acceptance | Status |
+|---|---|---|---|---|
+| **W1D.1** | `cursor/g1-ui-shell` → `cursor/execute-g1` | Punch-card pause / settings-as-object / Colophon leaf | No frosted-glass OS prefs | [x] Pause Index + Credits Colophon MVP |
+| **W1D.2** | `cursor/v3-first-10-polish-*` | Quiet Span → Mirror Birth premium timing + undo teach once | Matches [`FIRST_TEN_MINUTES`](FIRST_TEN_MINUTES.md) spine | [ ] open |
 
 **Docs:** [`UI_DIEGETIC_V3.md`](UI_DIEGETIC_V3.md) · [`NARRATIVE_ARC.md`](NARRATIVE_ARC.md)
 
