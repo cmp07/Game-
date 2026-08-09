@@ -626,6 +626,9 @@ func _run_self_test() -> bool:
 			chamber.pending_echoes.clear()
 		inst.queue_free()
 
+	# Perf P0/P1: baked grain + particle pool caps (docs/AUDIT/PERFORMANCE.md).
+	ok = _selftest_perf_budgets() and ok
+
 	# Static solvability check for every chamber (BFS ignoring rewrites).
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
@@ -645,6 +648,43 @@ func _run_self_test() -> bool:
 			print("  playthrough chamber %d OK" % i)
 
 	print("result: %s" % ("OK" if ok else "FAIL"))
+	return ok
+
+
+func _selftest_perf_budgets() -> bool:
+	## Cloud-safe checks for grain bake + Juice particle pool (no GPU timing).
+	var ok := true
+	if not has_node("/root/ArtKit"):
+		printerr("ArtKit autoload missing"); return false
+	# Force-bake the seeds used by chamber + menu draw paths.
+	var seeds: Array = [3, 11, 19, 42]
+	for s in seeds:
+		var tex: Texture2D = ArtKit.grain_texture(int(s))
+		if tex == null:
+			printerr("grain bake failed for seed %s" % str(s)); ok = false
+		elif not ArtKit.has_baked_grain(int(s)):
+			printerr("grain cache miss after bake seed %s" % str(s)); ok = false
+	if ArtKit.baked_grain_seed_count() < seeds.size():
+		printerr("expected ≥%d baked grain seeds, got %d" % [seeds.size(), ArtKit.baked_grain_seed_count()])
+		ok = false
+	else:
+		print("  grain bake: %d seeds cached (tiled ImageTexture)" % ArtKit.baked_grain_seed_count())
+
+	if not has_node("/root/Juice"):
+		printerr("Juice autoload missing"); return false
+	Juice.reset_transient()
+	# Over-cap burst must steal-oldest, never grow past PARTICLE_CAP.
+	var cap: int = int(Juice.PARTICLE_CAP)
+	for _i in range(cap + 80):
+		Juice.spawn_burst(Vector2(10, 10), Palette.RUST_FOSSIL, 1)
+	var live: int = Juice.live_particle_count()
+	if live > cap:
+		printerr("particle pool exceeded cap: %d > %d" % [live, cap]); ok = false
+	else:
+		print("  particle pool: live=%d cap=%d (steal-oldest OK)" % [live, cap])
+	Juice.reset_transient()
+	if Juice.live_particle_count() != 0:
+		printerr("reset_transient did not clear particles"); ok = false
 	return ok
 
 
@@ -828,6 +868,8 @@ static func _bfs_reachable(data: Dictionary) -> bool:
 
 
 func _clear_stage() -> void:
+	if has_node("/root/Juice") and Juice.has_method("reset_transient"):
+		Juice.reset_transient()
 	for c in stage.get_children():
 		c.queue_free()
 
