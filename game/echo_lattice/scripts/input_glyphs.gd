@@ -52,7 +52,8 @@ func prefer_gamepad_on_deck() -> bool:
 
 func move_label() -> String:
 	if prefer_gamepad_on_deck():
-		return tr("glyphs.move_pad")
+		var pad := tr("glyphs.move_pad")
+		return pad if pad != "glyphs.move_pad" else DECK_MOVE_GLYPH
 	var up := _binding_label("move_up", "W")
 	var left := _binding_label("move_left", "A")
 	var down := _binding_label("move_down", "S")

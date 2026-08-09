@@ -75,6 +75,7 @@ REQUIRED_UI_KEYS = {
     "end.demo_title",
     "end.demo_tagline",
     "end.demo_footer",
+    "end.demo_footer_no_wishlist",
     "end.demo_replay",
     "locale.language",
     "locale.en",
