@@ -1,11 +1,11 @@
 extends Control
 ##
-## Main menu — HARD composition reset (boutique Field Ledger title).
+## Main menu — dense Field Ledger craft (boutique title shell).
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + letterpress plate + silhouette)
-## | spine | recto ~42% (Field Index, all actions). Explicit anchors — never hope.
+## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + one mid-page specimen)
+## | spine | recto ~42% (Field Index, compact action block). Explicit anchors — never hope.
 ## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
-## Rectangular letterpress seal only — NO dashed concentric circles / FIELD watermark.
+## One habit specimen with integrated letterpress seal — NO dual seals / dashed circles.
 ##
 
 signal start_new_pressed()
@@ -144,16 +144,22 @@ const BRAND_MIN_PX: int = 72
 const PAGE_MARGIN_X: float = 20.0
 const PAGE_MARGIN_Y: float = 14.0
 ## Max empty (no ink/ui layout mass) fraction of the inner page at 1920×1080.
-const MAX_EMPTY_FRAC: float = 0.35
+const MAX_EMPTY_FRAC: float = 0.28
+## Blurb → specimen air — dense ledger packing (never a mid-leaf cream band).
+const SPECIMEN_GAP: float = 24.0
+## Field Index action pitch @ 1080p — compact block, not stretched leading.
+const INDEX_ROW_H: float = 38.0
+const INDEX_PRIMARY_H: float = 42.0
+const INDEX_ROW_SEP: int = 4
 
 ## Chrome insets around CardColumn inside the Field Index plate.
-## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
+## Top pad holds ONE Field Index title + letterpress rules (meta lives in column).
 ## Left pad is content-hugging (no binder-hole gutter on boutique title card).
 const _INDEX_PAD_L: float = 36.0
 const _INDEX_PAD_R: float = 28.0
-const _INDEX_PAD_T: float = 64.0
+const _INDEX_PAD_T: float = 52.0
 # Extra bottom pad for selection baseline drawn below Control rects.
-const _INDEX_PAD_B: float = 36.0
+const _INDEX_PAD_B: float = 28.0
 
 
 ## Outer folio frame — paper page fills the viewport (tight desk margin, no dead void).
@@ -240,41 +246,42 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	var scale: Dictionary = LedgerChrome.title_type_scale(outer.size.y)
 	var brand_px: int = maxi(BRAND_MIN_PX, int(scale.get("brand", LedgerChrome.TYPE_BRAND)))
 	var brand_x: float = left.position.x + 36.0
-	var brand_y: float = left.position.y + left.size.y * 0.118
+	# Compact brand stack — tight under folio/seed chrome (12–20px rhythm, no mid void).
+	var brand_top: float = left.position.y + 88.0
+	var brand_y: float = brand_top + float(brand_px)
 	# Brand rule spans most of the verso — kills the cream column beside the lockup.
 	var brand_w: float = minf(
 		maxf(float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN)), left.size.x * 0.78),
 		left.size.x - 64.0
 	)
-	# Brand lockup mass (title + rust rule + tagline + serif blurb).
+	# Brand lockup mass (title + rust rule + tagline + serif blurb) — compacted.
 	var brand_block := Rect2(
 		brand_x,
-		brand_y - float(brand_px),
+		brand_top,
 		brand_w,
-		float(brand_px) + 96.0
+		float(brand_px) + 62.0
 	)
-	# Letterpress seal plate sits under the brand — rectangular die, never a circle.
-	var seal_half: float = 128.0 if left.size.y >= 700.0 else 58.0
-	seal_half = minf(seal_half, left.size.x * 0.26)
-	var seal_top: float = brand_block.end.y + 8.0
+	# ONE mid-page habit specimen under blurb — fills remaining verso (no void band).
+	var sil_top: float = brand_block.end.y + SPECIMEN_GAP
+	var sil := Rect2(
+		brand_x - 4.0,
+		sil_top,
+		maxf(200.0, left.end.x - (brand_x - 4.0) - 20.0),
+		maxf(160.0, left.end.y - sil_top - 16.0)
+	)
+	# Small letterpress seal inset on the specimen (integrated mark — not a second maze).
+	var seal_half: float = 38.0 if left.size.y >= 700.0 else 28.0
+	seal_half = minf(seal_half, sil.size.x * 0.10)
 	var seal_plate := Rect2(
-		brand_x + 4.0,
-		seal_top,
+		sil.position.x + 12.0,
+		sil.position.y + 12.0,
 		seal_half * 2.0,
 		seal_half * 2.0
 	)
-	# Habit silhouette fills the remaining verso — one visual plane, no mid-leaf void.
-	var sil_top: float = seal_plate.end.y + 28.0
-	var sil := Rect2(
-		left.position.x + 24.0,
-		sil_top,
-		maxf(200.0, left.size.x - 48.0),
-		maxf(120.0, left.end.y - sil_top - 24.0)
-	)
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
+	# Seal lives inside specimen — do not double-count its area.
 	var occupied: float = (
 		brand_block.get_area()
-		+ seal_plate.get_area()
 		+ sil.get_area()
 		+ card.get_area()
 		+ float(leaves["spine"].get_area()) * 0.35
@@ -366,33 +373,14 @@ func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
 
 func _apply_index_row_metrics(compact: bool, fill_h: float = 0.0) -> void:
 	var scale: Dictionary = LedgerChrome.title_type_scale(560.0 if compact else 1080.0)
-	var row_h: float = float(scale.get("row_h", 44.0 if not compact else 26.0))
-	var primary_h: float = float(scale.get("primary_h", 52.0 if not compact else 32.0))
-	# Title hard-reset: spread actions through the plate height (Obra Dinn density).
-	# Deck/compact keeps tight rows so the plate can still hug content.
-	if not compact and fill_h > 200.0:
-		var meta_budget: float = 0.0
-		if subtitle and subtitle.visible:
-			meta_budget += 22.0
-		if meta_label and meta_label.visible:
-			meta_budget += 22.0
-		var actions: Array = []
-		for b in _index_action_buttons():
-			if b == null:
-				continue
-			var btn0: Button = b as Button
-			if btn0 == hard_button and (not hard_button.visible or hard_button.disabled):
-				continue
-			actions.append(btn0)
-		var n: int = actions.size()
-		var sep: float = 10.0
-		if n > 0:
-			var usable: float = maxf(180.0, fill_h - meta_budget - sep * float(maxi(0, n - 1) + 2))
-			var even: float = usable / float(n)
-			row_h = clampf(even, 40.0, 72.0)
-			primary_h = clampf(even + 6.0, 46.0, 80.0)
-	# Title: expand rows through the plate. Deck: pack tight at the top.
-	var vflag: int = Control.SIZE_SHRINK_BEGIN if compact else Control.SIZE_EXPAND_FILL
+	var row_h: float = float(scale.get("row_h", INDEX_ROW_H if not compact else 26.0))
+	var primary_h: float = float(scale.get("primary_h", INDEX_PRIMARY_H if not compact else 32.0))
+	# Dense craft: fixed tight pitch (~36–44px @ 1080p) — never stretch rows with air.
+	if not compact:
+		row_h = clampf(row_h, 36.0, 44.0)
+		primary_h = clampf(primary_h, 40.0, 48.0)
+	# Always pack as a compact block (upper 2/3 / optical center) — never EXPAND_FILL.
+	var vflag: int = Control.SIZE_SHRINK_BEGIN
 	_style_index_actions(compact)
 	_style_meta_as_ledger_lines(compact)
 	var buttons: Array = [
@@ -416,6 +404,33 @@ func _apply_index_row_metrics(compact: bool, fill_h: float = 0.0) -> void:
 		subtitle.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	if meta_label:
 		meta_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+
+
+func _field_index_block_height(compact: bool, sep: int) -> float:
+	## Natural height of meta + visible actions at the dense row pitch.
+	var h: float = 0.0
+	var n_rows: int = 0
+	if meta_label and meta_label.visible:
+		h += float(meta_label.custom_minimum_size.y if meta_label.custom_minimum_size.y > 0.0 else (18.0 if compact else 22.0))
+		n_rows += 1
+	if subtitle and subtitle.visible:
+		h += float(subtitle.custom_minimum_size.y if subtitle.custom_minimum_size.y > 0.0 else (18.0 if compact else 22.0))
+		n_rows += 1
+	var row_h: float = 26.0 if compact else INDEX_ROW_H
+	var primary_h: float = 32.0 if compact else INDEX_PRIMARY_H
+	for b in _index_action_buttons():
+		if b == null:
+			continue
+		var btn: Button = b as Button
+		if not btn.visible:
+			continue
+		if btn == hard_button and hard_button.disabled:
+			continue
+		h += primary_h if btn == start_button else row_h
+		n_rows += 1
+	if n_rows > 1:
+		h += float(sep) * float(n_rows - 1)
+	return h
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
@@ -457,17 +472,19 @@ func _sync_field_index_layout() -> void:
 	var y_off: float = _slot_y_off()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 	var inset: Rect2 = field_index_content_rect(card)
-	# First pass: size rows to fill the plate, then place the column.
+	# Dense pitch first, then pack as a compact block in the upper 2/3.
 	_apply_index_row_metrics(compact, inset.size.y)
 	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
-	var sep: int = int(scale.get("row_sep", 4 if compact else 10))
+	var sep: int = int(scale.get("row_sep", 4 if compact else INDEX_ROW_SEP))
 	if not compact:
-		sep = maxi(sep, 10)
+		sep = clampi(sep, 4, INDEX_ROW_SEP)
 	col.add_theme_constant_override("separation", sep)
 	col.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	col.position = inset.position
-	# Fill the content rect — actions spread through the plate, not a top postage stamp.
-	col.size = Vector2(inset.size.x, inset.size.y)
+	var block_h: float = _field_index_block_height(compact, sep)
+	# Compact block tight under the card title — upper 2/3 of the plate, no stretch.
+	var y_pad: float = 4.0 if not compact else 0.0
+	col.position = Vector2(inset.position.x, inset.position.y + y_pad)
+	col.size = Vector2(inset.size.x, minf(block_h + 4.0, inset.size.y - y_pad))
 	col.modulate = Color(1, 1, 1, _slot_alpha())
 
 
@@ -618,16 +635,16 @@ func _refresh_progress_copy() -> void:
 		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
-		# Fresh title: keep the card header quiet — wing line alone is enough.
-		subtitle.visible = true
-		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
+		# Fresh title: wing lives once on the verso folio mark — do not restate here.
+		subtitle.visible = false
+		subtitle.text = ""
 	_refresh_hard_button()
 	var entry: Dictionary = GameState.today_daily_entry()
 	var today: String = str(entry.get("date", GameState._today_label()))
 	var friend_code: String = str(entry.get("friend_code", ""))
 	var dbest: int = GameState.daily_best_for_today()
 	var ebest: int = int(GameState.endless_best_depth)
-	# Quiet header: omit zero bests so a fresh ledger does not read as clinical stats.
+	# Quiet header: one meta line (date · EL-#####) — never a second wing/chamber restatement.
 	if dbest <= 0 and ebest <= 0 and not DemoBuild.is_demo():
 		if friend_code != "":
 			meta_label.text = tr("menu.daily_meta_quiet_code") % [today, friend_code]
@@ -646,6 +663,7 @@ func _refresh_progress_copy() -> void:
 	var museum_n: int = GameState.museum_count()
 	if museum_n > 0:
 		meta_label.text = "%s  ·  %s" % [meta_label.text, tr("menu.museum_meta") % museum_n]
+	meta_label.visible = meta_label.text.strip_edges() != ""
 
 
 func _refresh_hard_button() -> void:
@@ -807,7 +825,6 @@ func _draw() -> void:
 	var layout: Dictionary = composition_layout(vp)
 	var outer: Rect2 = layout["outer"]
 	var left: Rect2 = layout["left"]
-	var right: Rect2 = layout["right"]
 	var spine: Rect2 = layout["spine"]
 	ArtKit.draw_open_folio(self, outer, {
 		"grain_seed": 19,
@@ -868,78 +885,60 @@ func _draw() -> void:
 	)
 	var brand_rule_len: float = brand_block.size.x
 	draw_rect(
-		Rect2(brand_x, brand_y + 12.0, brand_rule_len, rule_w),
+		Rect2(brand_x, brand_y + 10.0, brand_rule_len, rule_w),
 		Palette.RUST_FOSSIL,
 		true
 	)
 	ArtKit.draw_oxide_flecks(
 		self,
-		Rect2(brand_x, brand_y + 8.0, brand_rule_len * 0.45, 10.0),
+		Rect2(brand_x, brand_y + 6.0, brand_rule_len * 0.45, 10.0),
 		43,
 		5,
 		0.45
 	)
-	# Tagline secondary — rust, never larger than ~30% of brand.
+	# Tagline / blurb — 12–20px stack rhythm under the brand rule.
 	draw_string(
 		_type("tagline"),
-		Vector2(brand_x, brand_y + 48.0),
+		Vector2(brand_x, brand_y + 36.0),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.RUST_FOSSIL
 	)
 	draw_string(
 		_type("deck"),
-		Vector2(brand_x, brand_y + 78.0),
+		Vector2(brand_x, brand_y + 58.0),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Letterpress survey seal — rectangular plate under brand. NO circles / FIELD caption.
-	var seal_r: float = seal_plate.size.x * 0.5
-	var seal_c: Vector2 = seal_plate.get_center()
-	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -3.5,
-		"color": Palette.SLATE_TEAL,
-		"alpha": 0.94,
-		"seed": 42,
-		"hero": true,
-		"maze": true,
-		"rust_accent": true,
-		"plate_w": seal_plate.size.x,
-		"plate_h": seal_plate.size.y,
-		"caption": "",
-	})
-	# Caption sits in the air between seal die and silhouette — never overlaps the plate.
-	draw_string(
-		_type("micro"),
-		Vector2(seal_plate.position.x, minf(seal_plate.end.y + 18.0, sil.position.y - 10.0)),
-		tr("menu.seal_caption"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
-	)
-
-	# Habit silhouette fills the remaining verso — ink mass kills the cream void.
+	# ONE mid-page habit specimen under blurb — fills remaining verso (no void band).
+	# Small letterpress seal is inset on the specimen; never a second framed maze below.
 	if sil.size.y >= 100.0:
-		draw_string(
-			_type("micro"),
-			Vector2(sil.position.x + 10.0, sil.position.y + 16.0),
-			tr("menu.habit_silhouette"),
-			HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
-		)
 		ArtKit.draw_habit_silhouette(self, sil, {
 			"seed": 61,
 			"progress": _demo_progress,
-			"cell": 18.0 if left.size.y >= 700.0 else 12.0,
+			"cell": 14.0 if left.size.y >= 700.0 else 11.0,
+		})
+		# Letterpress die stamped into the specimen corner — one plane, no floating gap.
+		var seal_r: float = seal_plate.size.x * 0.5
+		var seal_c: Vector2 = seal_plate.get_center()
+		ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
+			"rot_deg": -2.5,
+			"color": Palette.SLATE_TEAL,
+			"alpha": 0.92,
+			"seed": 42,
+			"hero": true,
+			"maze": true,
+			"rust_accent": true,
+			"plate_w": seal_plate.size.x,
+			"plate_h": seal_plate.size.y,
+			"caption": "",
 		})
 
 	# Recto Field Index — fills ~42% width, full readable height.
+	# ONE Field Index title on the card — no duplicate recto micro header.
 	var y_off: float = _slot_y_off()
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
-	draw_string(
-		_type("micro"),
-		right.position + Vector2(22, 18),
-		tr("menu.recto_mark"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
-	)
 
 	# Boutique Field Index — sharp paper, soft shadow, clip (no hollow bullet holes).
 	ArtKit.draw_index_card(self, card, {

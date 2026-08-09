@@ -27,8 +27,8 @@ menu.subtitle_progress,Survey open  ·  chamber %s of %s  ·  %s★,勘测进行
 menu.subtitle_wing_complete,Wing filed  ·  %s★ — open a new survey,本翼已归档  ·  %s★ — 开启新勘测
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
 menu.daily_endless_meta,Sheet %s  ·  daily best %s★  ·  corridor %s,页 %s  ·  每日最佳 %s★  ·  廊道 %s
-menu.daily_meta_quiet,Sheet %s,页 %s
-menu.daily_meta_quiet_code,Sheet %s  ·  %s,页 %s  ·  %s
+menu.daily_meta_quiet,%s,%s
+menu.daily_meta_quiet_code,%s  ·  %s,%s  ·  %s
 menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15
 menu.demo_daily_meta_code,Demo sheet  ·  Daily %s  ·  %s  ·  best %s★,试玩页  ·  每日 %s  ·  %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引

@@ -1,14 +1,14 @@
 # Menu 10/10 — Title Shell Acceptance (HARD RESET)
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
-**Branch:** `cursor/menu-hard-reset` ([#160](https://github.com/cmp07/Game-/pull/160)) merged into `cursor/echo-lattice-rc1` tip `e853ecc` (not `main`)  
-**Supersedes soft passes after #158** — USER rated prior tip **4/10**; this doc is the fail-CI bar.
+**Branch:** `cursor/menu-dense-craft` (on RC1 tip after #160 hard-reset) · not `main`  
+**Supersedes soft passes after #158 / sparse #160 packing** — dense authored ledger page is the fail-CI bar.
 
 ---
 
 ## 0. Thesis
 
-One composed Field Ledger folio. **ECHO LATTICE** owns the verso as the largest type; a rectangular letterpress survey seal sits under the brand; a full-height Field Index owns the recto. Filled paper atmosphere (Obra Dinn / Gorogoa craft density — still ink/paper/rust Field Ledger). Zero chamber HUD. **No dashed concentric circle seal. No FIELD watermark in the die.**
+One composed Field Ledger folio. **ECHO LATTICE** owns the verso as the largest type; **one** mid-page habit specimen (small letterpress seal inset) sits tight under the blurb; a full-height Field Index owns the recto with a **compact** action block. Filled paper atmosphere (Obra Dinn / Gorogoa craft density — still ink/paper/rust Field Ledger). Zero chamber HUD. **No dashed concentric circle seal. No FIELD watermark. No duplicate Field Index / Wing labels.**
 
 ---
 
@@ -16,13 +16,14 @@ One composed Field Ledger folio. **ECHO LATTICE** owns the verso as the largest 
 
 | Zone | Must |
 |---|---|
-| **Brand column LEFT ~52%** | `ECHO LATTICE` ≥ **72px** Condensed Bold; tagline `IT LEARNED YOU` secondary rust; one Serif sentence; **rectangular** letterpress seal plate under brand |
-| **Field Index RIGHT ~42%** | Sharp card, **all 8 actions** visible, Plex Medium actions, selection tick+baseline only; card width **40–48%** of viewport; full readable height |
-| **Empty region** | Measured empty (no ink/ui layout mass) **< 35%** of inner page — `test_menu_composition_density.py` |
+| **Brand column LEFT ~52%** | `ECHO LATTICE` ≥ **72px** Condensed Bold; tagline `IT LEARNED YOU` secondary rust; one Serif sentence; **one** habit specimen under blurb (gap ≤40px) with integrated letterpress seal |
+| **Field Index RIGHT ~42%** | Sharp card, **all 8 actions** visible, Plex Condensed Medium actions, selection tick+baseline only; row pitch **~36–44px**; compact block in upper 2/3 (not stretched); card width **40–48%** |
+| **Copy** | ONE `FIELD INDEX` title; ONE `FIELD LEDGER · WING I` micro header; meta = single quiet `date · EL-#####` line |
+| **Empty region** | Measured empty (no ink/ui layout mass) **< 28%** of inner page — `test_menu_composition_density.py` |
 | **Chamber HUD** | **Forbidden** |
 | **Capture** | `02_brand_main_menu.png` MUST show BOTH brand and full Field Index in one frame |
 
-Rejected forever: dashed circle seal · FIELD watermark · ~90% cream void · brand collapsed so tagline reads as hero · torn paper / black bar foot junk · Field Index off-screen.
+Rejected forever: dashed circle seal · FIELD watermark · dual seal+maze with void band · duplicate Field Index/Wing labels · stretched sparse action leading · brand collapsed so tagline reads as hero · torn paper / black bar foot junk · Field Index off-screen.
 
 ---
 
@@ -55,11 +56,12 @@ Rejected forever: dashed circle seal · FIELD watermark · ~90% cream void · br
 - [ ] Seal is rectangular letterpress plate + habit-maze mark
 - [ ] `ECHO LATTICE` is the largest type; tagline secondary rust
 - [ ] Field Index ~40–48% width, full height, all actions visible
-- [ ] Layout empty_frac < 0.35 (`composition_layout` + density test)
+- [ ] Layout empty_frac < 0.28 (`composition_layout` + density test)
+- [ ] No redundant Field Index / Wing labels (`test_menu_no_redundant_labels`)
 - [ ] Sharp folio edges — no torn deckle / black bar foot junk
 - [ ] Zero chamber HUD on title stage
 - [ ] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
-- [ ] Gates: `test_menu_composition_density` · `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
+- [ ] Gates: `test_menu_composition_density` · `test_menu_no_redundant_labels` · `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
 
 ---
 

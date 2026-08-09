@@ -75,9 +75,9 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"rule_w": BRAND_RULE_W,
 		"rule_len": BRAND_RULE_LEN,
 		"seal_r": 118.0,
-		"row_h": 48.0,
-		"primary_h": 56.0,
-		"row_sep": 12,
+		"row_h": 38.0,
+		"primary_h": 42.0,
+		"row_sep": 4,
 	}
 
 
