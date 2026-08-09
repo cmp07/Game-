@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://c8menufeelhover02"
-path="res://.godot/imported/ui_hover_placeholder.wav-menufeel01.sample"
+uid="uid://3qs2hwl8yirp"
+path="res://.godot/imported/ui_hover_placeholder.wav-36d3bc4163a8732a50dcbdf8f9bf1fb6.sample"
 
 [deps]
 
 source_file="res://audio/ui/ui_hover_placeholder.wav"
-dest_files=["res://.godot/imported/ui_hover_placeholder.wav-menufeel01.sample"]
+dest_files=["res://.godot/imported/ui_hover_placeholder.wav-36d3bc4163a8732a50dcbdf8f9bf1fb6.sample"]
 
 [params]
 

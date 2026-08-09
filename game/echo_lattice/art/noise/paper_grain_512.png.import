@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgrain512echo01"
-path="res://.godot/imported/paper_grain_512.png-techartv3grain.ctex"
+uid="uid://bdat5xtpah38s"
+path="res://.godot/imported/paper_grain_512.png-b2ee64f7b5a2e73fbc3571b68e14409b.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://art/noise/paper_grain_512.png"
-dest_files=["res://.godot/imported/paper_grain_512.png-techartv3grain.ctex"]
+dest_files=["res://.godot/imported/paper_grain_512.png-b2ee64f7b5a2e73fbc3571b68e14409b.ctex"]
 
 [params]
 

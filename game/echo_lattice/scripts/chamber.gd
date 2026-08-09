@@ -1037,6 +1037,9 @@ func _in_bounds(p: Vector2i) -> bool:
 func _grid_offset() -> Vector2:
 	var vp_size: Vector2 = get_viewport_rect().size
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
+	if menu_preview_mode:
+		# Edge-to-edge board inside the title film plate — no desk margin cream.
+		return Vector2.ZERO
 	return ((vp_size - grid_px) * 0.5).floor()
 
 
@@ -1049,36 +1052,46 @@ func _draw() -> void:
 		var sh: Dictionary = Juice.shake_offset(8.0, 1.5)
 		offset += Vector2(float(sh.get("dx", 0.0)), float(sh.get("dy", 0.0)))
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
-	var page := Rect2(offset - Vector2(PAGE_PAD, PAGE_PAD), grid_px + Vector2(PAGE_PAD * 2.0, PAGE_PAD * 2.0))
+	var page := Rect2(offset, grid_px) if menu_preview_mode else Rect2(
+		offset - Vector2(PAGE_PAD, PAGE_PAD),
+		grid_px + Vector2(PAGE_PAD * 2.0, PAGE_PAD * 2.0)
+	)
 	var warn_tension: float = rewrite_warn_tension()
 
-	# Full viewport paper wash + margin.
-	draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
-	# TECH ART v3: PaperGrainLayer (scene host) owns grain; RC1 keeps CPU blit.
-	if not TechArt.v3_enabled():
-		ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
+	if menu_preview_mode:
+		# Dense film-plate board only — skip chamber HUD page chrome / desk wash.
+		draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_DEEP, true)
+		draw_rect(Rect2(offset, grid_px), Palette.PAPER_BONE, true)
+		if not TechArt.v3_enabled():
+			ArtKit.draw_paper_grain(self, Rect2(offset, grid_px), 42, 0.05)
+	else:
+		# Full viewport paper wash + margin.
+		draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
+		# TECH ART v3: PaperGrainLayer (scene host) owns grain; RC1 keeps CPU blit.
+		if not TechArt.v3_enabled():
+			ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
 
-	# Cast shadow under the ledger page.
-	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
-	draw_rect(page, Palette.PAPER_BONE, true)
-	# Binding wash — left spine of the field ledger (QW-4).
-	var spine := Rect2(page.position, Vector2(14.0, page.size.y))
-	draw_rect(spine, Palette.PAPER_DEEP, true)
-	draw_line(
-		page.position + Vector2(14.0, 0.0),
-		page.position + Vector2(14.0, page.size.y),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
-		1.0
-	)
-	ArtKit.draw_ledger_grid(self, page, 16)
-	if not TechArt.v3_enabled():
-		ArtKit.draw_paper_grain(self, page, 42, 0.08)
+		# Cast shadow under the ledger page.
+		draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
+		draw_rect(page, Palette.PAPER_BONE, true)
+		# Binding wash — left spine of the field ledger (QW-4).
+		var spine := Rect2(page.position, Vector2(14.0, page.size.y))
+		draw_rect(spine, Palette.PAPER_DEEP, true)
+		draw_line(
+			page.position + Vector2(14.0, 0.0),
+			page.position + Vector2(14.0, page.size.y),
+			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+			1.0
+		)
+		ArtKit.draw_ledger_grid(self, page, 16)
+		if not TechArt.v3_enabled():
+			ArtKit.draw_paper_grain(self, page, 42, 0.08)
 
-	# Page border — double ink rule; heavier when rewrite is imminent.
-	var rule_w: float = 2.0 + (1.5 if warn_tension > 0.01 else 0.0)
-	draw_rect(page, Palette.INK_SOFT, false, rule_w)
-	draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5), false, 1.0)
-	_draw_page_registration(page, warn_tension)
+		# Page border — double ink rule; heavier when rewrite is imminent.
+		var rule_w: float = 2.0 + (1.5 if warn_tension > 0.01 else 0.0)
+		draw_rect(page, Palette.INK_SOFT, false, rule_w)
+		draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5), false, 1.0)
+		_draw_page_registration(page, warn_tension)
 
 	# Tiles
 	for y in range(GRID_H):

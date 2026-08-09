@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://bq8failresetwav01"
-path="res://.godot/imported/reset.wav-audio_v3_fail_reset.sample"
+uid="uid://dcsj62bssvxoa"
+path="res://.godot/imported/reset.wav-9d6ff2b83163650082df82c4f19b3a72.sample"
 
 [deps]
 
 source_file="res://audio/sfx/fail/reset.wav"
-dest_files=["res://.godot/imported/reset.wav-audio_v3_fail_reset.sample"]
+dest_files=["res://.godot/imported/reset.wav-9d6ff2b83163650082df82c4f19b3a72.sample"]
 
 [params]
 

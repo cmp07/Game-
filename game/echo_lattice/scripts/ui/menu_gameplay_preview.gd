@@ -7,8 +7,9 @@ extends Control
 ##
 
 const PREVIEW_CHAMBER_ID: int = 2
-const VIEW_W: int = 840
-const VIEW_H: int = 520
+## Match chamber grid pixels (24×32 / 14×32) so the film well is board-dense, not desk cream.
+const VIEW_W: int = 768
+const VIEW_H: int = 448
 const STEP_SEC: float = 0.11
 const HOLD_AFTER_SLAM_SEC: float = 0.55
 const HOLD_END_SEC: float = 0.70

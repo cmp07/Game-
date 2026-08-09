@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://c8menufeelselect2"
-path="res://.godot/imported/ui_select_placeholder.wav-menufeel01.sample"
+uid="uid://3qs2h8bxx2lp"
+path="res://.godot/imported/ui_select_placeholder.wav-1cd1cbeee24ce658e8a42dee93cadd66.sample"
 
 [deps]
 
 source_file="res://audio/ui/ui_select_placeholder.wav"
-dest_files=["res://.godot/imported/ui_select_placeholder.wav-menufeel01.sample"]
+dest_files=["res://.godot/imported/ui_select_placeholder.wav-1cd1cbeee24ce658e8a42dee93cadd66.sample"]
 
 [params]
 

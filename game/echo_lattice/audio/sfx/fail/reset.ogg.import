@@ -2,13 +2,13 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://bq8failresetogg01"
-path="res://.godot/imported/reset.ogg-audio_v3_fail_reset.oggvorbisstr"
+uid="uid://dcsj62bsk2ioa"
+path="res://.godot/imported/reset.ogg-2b63c529c07b1ef5700d5352f03308f3.oggvorbisstr"
 
 [deps]
 
 source_file="res://audio/sfx/fail/reset.ogg"
-dest_files=["res://.godot/imported/reset.ogg-audio_v3_fail_reset.oggvorbisstr"]
+dest_files=["res://.godot/imported/reset.ogg-2b63c529c07b1ef5700d5352f03308f3.oggvorbisstr"]
 
 [params]
 

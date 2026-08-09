@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8wkqdva8sd3y"
-path="res://.godot/imported/bleed_edge_lut.png-930a81102b4899c173418570d7ab18dc.ctex"
+uid="uid://btygw03on3g2t"
+path="res://.godot/imported/frame_08.png-8097658625f54cf02fdcd25e20c093e8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/noise/bleed_edge_lut.png"
-dest_files=["res://.godot/imported/bleed_edge_lut.png-930a81102b4899c173418570d7ab18dc.ctex"]
+source_file="res://media/menu_preview/frame_08.png"
+dest_files=["res://.godot/imported/frame_08.png-8097658625f54cf02fdcd25e20c093e8.ctex"]
 
 [params]
 
@@ -25,7 +25,7 @@ mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
-process/fix_alpha_border=false
+process/fix_alpha_border=true
 process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://ibmplexmediumcond"
-path="res://.godot/imported/IBMPlexSansCondensed-Medium.ttf.fontdata"
+uid="uid://drlgxvjpd48lt"
+path="res://.godot/imported/IBMPlexSansCondensed-Medium.ttf-45137ade2ceb5252bf23a1763d80ef54.fontdata"
 
 [deps]
 
 source_file="res://fonts/latin/IBMPlexSansCondensed-Medium.ttf"
-dest_files=["res://.godot/imported/IBMPlexSansCondensed-Medium.ttf.fontdata"]
+dest_files=["res://.godot/imported/IBMPlexSansCondensed-Medium.ttf-45137ade2ceb5252bf23a1763d80ef54.fontdata"]
 
 [params]
 

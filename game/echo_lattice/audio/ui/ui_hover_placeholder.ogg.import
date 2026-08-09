@@ -2,13 +2,13 @@
 
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
-uid="uid://c8menufeelhover01"
-path="res://.godot/imported/ui_hover_placeholder.ogg-menufeel01.oggvorbisstr"
+uid="uid://3qs2hwl8yiro"
+path="res://.godot/imported/ui_hover_placeholder.ogg-5110d37f4ed0ececa78503ddd712a97a.oggvorbisstr"
 
 [deps]
 
 source_file="res://audio/ui/ui_hover_placeholder.ogg"
-dest_files=["res://.godot/imported/ui_hover_placeholder.ogg-menufeel01.oggvorbisstr"]
+dest_files=["res://.godot/imported/ui_hover_placeholder.ogg-5110d37f4ed0ececa78503ddd712a97a.oggvorbisstr"]
 
 [params]
 
