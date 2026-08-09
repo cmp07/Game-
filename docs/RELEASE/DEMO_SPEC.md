@@ -1,6 +1,7 @@
 # Echo Lattice — Next Fest Demo Spec
 
 **Authority:** shipping demo gates for `game/echo_lattice/`.  
+**Player-feel path:** [`../VISION/FIRST_TEN_MINUTES.md`](../VISION/FIRST_TEN_MINUTES.md) — second-resolution first 10 minutes + chamber-by-chamber beats.  
 **Marketing context:** store / trailer Next Fest notes in `docs/ECHO_LATTICE/11_STORE_AND_TRAILER.md` §9 (when present on branch).  
 **Code gate:** `DemoBuild` (`scripts/demo_build.gd`) + export custom feature `demo`.
 
