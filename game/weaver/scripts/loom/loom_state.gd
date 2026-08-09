@@ -27,6 +27,7 @@ var recipes: Dictionary = {}
 var _rng := RandomNumberGenerator.new()
 var pending_selftest: bool = false
 var pending_screenshot: bool = false
+var pending_photos: bool = false
 var api_selftest_result: Dictionary = {}
 
 
@@ -34,7 +35,11 @@ func _ready() -> void:
 	_rng.randomize()
 	load_recipes()
 	var args := OS.get_cmdline_user_args()
-	if args.has("--selftest"):
+	if args.has("--photos") or args.has("--weaver-photos"):
+		pending_photos = true
+		pending_selftest = false
+		pending_screenshot = false
+	elif args.has("--selftest"):
 		pending_selftest = true
 		pending_screenshot = args.has("--screenshot")
 		api_selftest_result = selftest_loop(7)

@@ -52,7 +52,7 @@ Authority: [`docs/WEAVER/35_JUICE.md`](../../docs/WEAVER/35_JUICE.md).
 
 Controls (loop): **WASD** move · **E** collect · **C** combine · **Space** weave · **Esc** title.
 
-Screenshots: [`docs/WEAVER/screenshots/`](../../docs/WEAVER/screenshots/).
+Gameplay photos: [`docs/WEAVER/media/photos/`](../../docs/WEAVER/media/photos/) · gallery [`docs/WEAVER/VIEW_SCREENSHOTS.md`](../../docs/WEAVER/VIEW_SCREENSHOTS.md).
 
 ## Layout
 

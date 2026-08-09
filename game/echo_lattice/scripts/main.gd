@@ -34,6 +34,23 @@ func _ready() -> void:
 		var weaver_ok: bool = await _run_weaver_self_test()
 		get_tree().quit(0 if weaver_ok else 1)
 		return
+	# Weaver gameplay photo pack — `-- --weaver-photos [--out DIR]`.
+	# SEC-03: `--out` must resolve under user:// or the project tree.
+	if all_args.has("--weaver-photos"):
+		var photo_out := ".capture_staging/weaver_photos"
+		var pi := 0
+		while pi < all_args.size():
+			if all_args[pi] == "--out" and pi + 1 < all_args.size():
+				photo_out = all_args[pi + 1]
+			pi += 1
+		var safe_photo_out: String = _resolve_screenshot_out_dir(photo_out)
+		if safe_photo_out == "":
+			printerr("weaver-photos --out rejected (must be user:// or under project root): %s" % photo_out)
+			get_tree().quit(2)
+			return
+		var photos_ok: bool = await _run_weaver_photos(safe_photo_out)
+		get_tree().quit(0 if photos_ok else 1)
+		return
 	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
 		var ok: bool = await _run_self_test()
@@ -1426,6 +1443,54 @@ func _run_weaver_self_test() -> bool:
 		int(api.get("structures", 0)),
 		emitted,
 	])
+	return true
+
+
+func _run_weaver_photos(out_dir: String) -> bool:
+	## Capture menu/yard enter + staged field loop stills into `out_dir`.
+	print("== The Weaver — gameplay photo pack ==")
+	if not has_node("/root/Loom"):
+		printerr("Loom autoload missing")
+		return false
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	# 01 — branded menu / Enter the Yard
+	if has_node("/root/SaveManager"):
+		SaveManager.wipe()
+	GameState.current_chamber = 0
+	GameState.best_moves.clear()
+	GameState.completed.clear()
+	GameState.run_cleared.clear()
+	GameState.habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
+	GameState.move_ring.clear()
+	GameState.run_started = false
+	show_menu()
+	for _f in range(32):
+		await get_tree().process_frame
+	var menu_img: Image = get_viewport().get_texture().get_image()
+	if menu_img == null:
+		printerr("weaver-photos: menu capture failed")
+		return false
+	var menu_path: String = out_dir.path_join("01_menu_yard_enter.png")
+	var menu_err := menu_img.save_png(menu_path)
+	if menu_err != OK:
+		printerr("weaver-photos: menu save failed %s" % menu_path)
+		return false
+	print("weaver-photos: wrote %s" % menu_path)
+	# 02–06 — teaching field beats
+	show_weaver_field()
+	for _i in range(10):
+		await get_tree().process_frame
+	var field: Node = null
+	if stage.get_child_count() > 0:
+		field = stage.get_child(0)
+	if field == null or not field.has_method("run_photo_beats"):
+		printerr("weaver field missing run_photo_beats")
+		return false
+	var ok: bool = await field.run_photo_beats(out_dir)
+	if not ok:
+		printerr("weaver-photos: field beats failed")
+		return false
+	print("weaver-photos: PASS → %s" % out_dir)
 	return true
 
 
