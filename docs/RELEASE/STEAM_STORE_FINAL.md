@@ -12,6 +12,7 @@
 |---|---|
 | [`PLATFORMS.md`](PLATFORMS.md) | #63 — store priority, build matrix, regional pricing notes |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | #64 — Content Survey, ratings, privacy, AI survey **No** |
+| [`legal/`](legal/) | Gate A Partner paste pack (survey / AI / privacy page / ratings) |
 | [`capsules/`](capsules/) | Capsule briefs + size-correct placeholders |
 | [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Live in-game screenshot source |
 

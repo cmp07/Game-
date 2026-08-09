@@ -4,9 +4,10 @@
 **Engine:** Godot 4.3+ (Windows desktop Steam `.exe`)  
 **Doc:** `docs/RELEASE/COMPLIANCE_FINAL.md`  
 **Status:** Draft answers for Partner / store submission — fill AppID / legal entity names before publish  
+**Gate A paste pack:** [`legal/`](legal/) — Content Survey, AI disclosure, hostable privacy page, ratings notes  
 **Companions:** [`docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md`](../ECHO_LATTICE/08_STEAM_CHECKLIST.md) (when merged), [`14_BALANCE_V2.md`](../ECHO_LATTICE/14_BALANCE_V2.md) (local telemetry), [`05_ART_BIBLE.md`](../ECHO_LATTICE/05_ART_BIBLE.md) (fonts)
 
-Use this file when completing Steamworks **Content Survey**, age-rating fields, store privacy URL, and in-game / depot credits. Answers below match the **shipping puzzle product** (habit→geometry labyrinth), not the older tension/horror research lane in `GAME_PLAN.md`.
+Use this file for the full compliance pack (survey rationale, credits, depot notices, C1–C12). For **Partner paste**, prefer [`legal/STEAM_CONTENT_SURVEY.md`](legal/STEAM_CONTENT_SURVEY.md), [`legal/AI_DISCLOSURE.md`](legal/AI_DISCLOSURE.md), [`legal/PRIVACY_POLICY.md`](legal/PRIVACY_POLICY.md), and [`legal/RATINGS_NOTES.md`](legal/RATINGS_NOTES.md). Answers match the **shipping puzzle product** (habit→geometry labyrinth), not the older tension/horror research lane in `GAME_PLAN.md`. **Do not invent an AppID.**
 
 ---
 
@@ -26,6 +27,8 @@ Use this file when completing Steamworks **Content Survey**, age-rating fields, 
 ---
 
 ## 1. Steam Content Survey — draft answers
+
+**Paste-ready Partner copy:** [`legal/STEAM_CONTENT_SURVEY.md`](legal/STEAM_CONTENT_SURVEY.md) · AI section: [`legal/AI_DISCLOSURE.md`](legal/AI_DISCLOSURE.md).
 
 Steamworks → App Admin → **Content Survey** (General / Mature / Generative AI).  
 Valve compares these answers to the build and store page. Do not invent mature content “to be safe.”
@@ -99,6 +102,8 @@ Steam’s focus (2026 clarification): **player-consumed** AI content (art, sound
 
 ## 2. ESRB / PEGI / IARC expectation
 
+**Paste-ready ratings notes:** [`legal/RATINGS_NOTES.md`](legal/RATINGS_NOTES.md).
+
 Echo Lattice is an **Everyone-ish abstract puzzle**. Expect automatic IARC-style outcomes in that band when the Content Survey is answered as above. Official board certificates are optional for Steam PC if you rely on Steam’s questionnaire-derived ratings; obtain formal ratings only if a platform/region requires them.
 
 | Board | Expected rating | Content descriptors |
@@ -136,7 +141,7 @@ Telemetry **exists**: `LocalTelemetry` appends JSON Lines to
 | Opt-out | Settings may disable (`enabled` flag / `enabled_default`); ship UI toggle before 1.0 if default stays on |
 | Steam Cloud | Optional later for **saves** only — do **not** sync telemetry JSONL to Cloud |
 
-Because any on-device logging can still be described as “data collection,” publish a short privacy URL on the Steam store (Partner → Edit Store Page → Legal). Paste-ready stub:
+Because any on-device logging can still be described as “data collection,” publish a short privacy URL on the Steam store (Partner → Edit Store Page → Legal). **Hostable page (preferred):** [`legal/PRIVACY_POLICY.md`](legal/PRIVACY_POLICY.md). Inline stub below matches that page.
 
 ### 3.1 Paste-ready privacy policy (stub)
 
@@ -278,3 +283,4 @@ Privacy: [PRIVACY_POLICY_URL]
 | Date | Change |
 |---|---|
 | 2026-08-09 | Initial final-compliance pack: Steam Content Survey drafts, E/PEGI 3 expectation, privacy stub for local telemetry, font/audio credits. |
+| 2026-08-09 | Linked Gate A Partner paste pack under [`legal/`](legal/) (survey, AI disclosure, privacy page, ratings notes). |
