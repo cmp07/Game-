@@ -1,23 +1,28 @@
-# Echo Lattice — Steam capsule briefs & placeholders
+# Echo Lattice — Steam capsule finals (Field Ledger)
 
 **Product:** Echo Lattice  
-**Look:** Field Ledger — paper bone / ink / rust (VISUAL v2). Not neon, not purple, not fantasy key art.  
-**Status:** Placeholder PNGs for Partner upload scaffolding. Final art still needs an illustrator pass against the briefs below.  
+**Look:** Field Ledger — paper bone / ink / rust (VISUAL v2 + `echo_lattice.palette.json`). Not neon, not purple, not fantasy key art.  
+**Status:** **Gate A finals** — size-correct sRGB PNGs generated from the briefs below. No `PLACEHOLDER` stamp.  
+**Generator:** [`../../../game/echo_lattice/tools/generate_steam_capsules.py`](../../../game/echo_lattice/tools/generate_steam_capsules.py)  
 **Master package:** [`../STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md)
 
-Palette lock (must match in-game ArtKit):
+Palette lock (must match in-game ArtKit / `palette.json`):
 
-| Token | Approx hex | Job |
+| Token | Hex | Job |
 |---|---|---|
-| `paper_bone` | `#F4EFE4` | Substrate / background |
-| `ink_black` | `#1C1A18` | Walls, wordmark |
-| `rust` | `#B04A2A` | Habit fossil / accent underline |
-| `slate_teal` | `#4A686C` | Tagline / secondary type |
-| `chalk` | `#D2CDC3` | Habit trail / ghost |
+| `paper_bone` | `#EFE6D2` | Substrate / background |
+| `paper_deep` | `#D9CDB0` | Walked floor / folded faces |
+| `ink_black` | `#141210` | Walls, wordmark |
+| `ink_soft` | `#3A342C` | Grid / secondary line |
+| `rust_fossil` | `#8B3A1F` | Habit fossil / accent underline |
+| `rust_deep` | `#5E2412` | Old rust seams |
+| `slate_teal` | `#2D4A55` | Tagline / secondary type |
+| `chalk_white` | `#F5EFDD` | Habit trail / ghost |
+| `copper_key` | `#B8763A` | Chest lantern |
 
 ---
 
-## Inventory (placeholders in this folder)
+## Inventory (finals in this folder)
 
 | File | Size (px) | Steam slot |
 |---|---|---|
@@ -26,18 +31,24 @@ Palette lock (must match in-game ArtKit):
 | [`small_231x87.png`](small_231x87.png) | 231×87 | Small capsule |
 | [`vertical_374x448.png`](vertical_374x448.png) | 374×448 | Vertical / library capsule |
 | [`library_hero_1920x620.png`](library_hero_1920x620.png) | 1920×620 | Library hero *(2× master optional later)* |
-| [`library_logo_1280x720.png`](library_logo_1280x720.png) | 1280×720 | Library logo (transparent) |
+| [`library_logo_1280x720.png`](library_logo_1280x720.png) | 1280×720 | Library logo (transparent RGBA) |
 | [`community_icon_184x184.png`](community_icon_184x184.png) | 184×184 | Community icon |
 | [`page_background_1438x810.png`](page_background_1438x810.png) | 1438×810 | Store page background (optional) |
 
-Each PNG is stamped `PLACEHOLDER` so it cannot accidentally ship as final art.
+Regenerate:
 
-Also reuse the older keyart thumb when useful:  
+```bash
+python3 game/echo_lattice/tools/generate_steam_capsules.py
+```
+
+Fonts (OFL): [`../../../game/echo_lattice/tools/fonts/`](../../../game/echo_lattice/tools/fonts/) (Oswald Bold / Medium).
+
+Older keyart thumb (historical):  
 [`game/echo_lattice/art/keyart/capsule_header_460x215_thumb.png`](../../../game/echo_lattice/art/keyart/capsule_header_460x215_thumb.png)
 
 ---
 
-## Briefs (final art)
+## Briefs (what these finals encode)
 
 ### Header capsule — 460×215
 
@@ -46,7 +57,7 @@ Surveyor mid-step in a right-angled ledger corridor. Behind them, three walls fo
 
 ### Main capsule — 616×353
 
-Same key visual, low 3/4 angle. Chest lantern optional (small copper stamp light). Chalk footprints receding; dashed chalk ghost of previous route. Checkpoint stamp (`§ 04`) on the tile ahead. Wordmark lower-left or lower-right; tagline half-size under it. No review scores, no “OUT NOW” banners.
+Same key visual, low 3/4 angle. Chest lantern (copper stamp light). Chalk footprints receding; dashed chalk ghost of previous route. Checkpoint stamp (`§ 04`) on the tile ahead. Wordmark lower-left; tagline under rust underline. No review scores, no “OUT NOW” banners.
 
 ### Small capsule — 231×87
 
@@ -56,13 +67,13 @@ Silhouette of surveyor stepping through a folded-paper doorway. Zero background 
 
 Portrait crop of main motif: player stamp in upper third, rust wall bloom in lower third, chalk habit path connecting them like handwriting. Wordmark mid-height.
 
-### Library hero — 1920×620 (prefer 3840×1240 master)
+### Library hero — 1920×620 (prefer 3840×1240 master later)
 
 Wide overhead of a wing as **pages in a bound ledger** (spine visible). Three chambers clean paper, three rust-colonized. Ghost path threads all six. No baked-in text — library logo overlays separately.
 
 ### Library logo — 1280×720 transparent
 
-Wordmark + rust underline + optional `IT LEARNED YOU`. No busy background. Centered safe area.
+Wordmark + rust underline + `IT LEARNED YOU`. No busy background. Centered safe area.
 
 ### Community icon — 184×184
 
@@ -74,13 +85,15 @@ Full-bleed ledger grid at low contrast; spine suggestion; no player; no collapse
 
 ---
 
-## Acceptance (before replacing placeholders)
+## Acceptance
 
 1. Would this frame look at home on a Vignelli transit poster?  
 2. Can a stranger name the loop from the still (“maze rebuilds from my walk”)?  
 3. No saturated purple / cyan / magenta, no bloom, no lens flare.  
 4. Wordmark legible on small capsule.  
-5. Delivery: sRGB PNG-24 (RGBA for logo), no embedded ICC drama.
+5. Delivery: sRGB PNG-24 (RGBA for logo), no embedded ICC drama.  
+6. Exact Steam pixel sizes (IHDR) match the inventory table.  
+7. No `PLACEHOLDER` stamp in any PNG.
 
 ---
 
@@ -88,4 +101,4 @@ Full-bleed ledger grid at low contrast; spine suggestion; no player; no collapse
 
 - Art bible capsule section: [`../../ECHO_LATTICE/05_ART_BIBLE.md`](../../ECHO_LATTICE/05_ART_BIBLE.md) §7  
 - Screenshot slate + trailer: [`../STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md)  
-- Platform asset reuse: [`../PLATFORMS.md`](../PLATFORMS.md) *(PR #63, when merged)*
+- Platform asset reuse: [`../PLATFORMS.md`](../PLATFORMS.md)

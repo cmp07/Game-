@@ -15,7 +15,7 @@
 | [`PLATFORMS.md`](PLATFORMS.md) | #63 — store priority, build matrix, regional pricing notes |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | #64 — Content Survey, ratings, privacy, AI survey **No** |
 | [`legal/`](legal/) | Gate A Partner paste pack (survey / AI / privacy page / ratings) |
-| [`capsules/`](capsules/) | Capsule briefs + size-correct placeholders |
+| [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
 | [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Live in-game screenshot source |
 
 This file is the **store page package**. Compliance answers live in #64; depot/CI live in #63. Marketing thesis: sell recognition — *the maze is a transcript of how I walked* — not mystery, not AI, not loot.
@@ -216,21 +216,34 @@ Godot 4.3 2D puzzle — light GPU load. Numbers are honest floors, not marketing
 
 ---
 
-## 7. Capsule assets
+## 7. Capsule assets (Gate A finals)
 
-Briefs + placeholders: **[`capsules/README.md`](capsules/README.md)**.
+Briefs + **Field Ledger finals** (exact Steam pixel sizes, no `PLACEHOLDER` stamp): **[`capsules/README.md`](capsules/README.md)**.  
+Generator: `game/echo_lattice/tools/generate_steam_capsules.py` (palette locked to `echo_lattice.palette.json` — ink / paper / rust; no purple).
+
+| Slot | File | Size | Status |
+|---|---|---|---|
+| Header | [`capsules/header_460x215.png`](capsules/header_460x215.png) | 460×215 | **Final** |
+| Main | [`capsules/main_616x353.png`](capsules/main_616x353.png) | 616×353 | **Final** |
+| Small | [`capsules/small_231x87.png`](capsules/small_231x87.png) | 231×87 | **Final** |
+| Vertical | [`capsules/vertical_374x448.png`](capsules/vertical_374x448.png) | 374×448 | **Final** |
+| Library hero | [`capsules/library_hero_1920x620.png`](capsules/library_hero_1920x620.png) | 1920×620 | **Final** |
+| Library logo | [`capsules/library_logo_1280x720.png`](capsules/library_logo_1280x720.png) | 1280×720 RGBA | **Final** |
+| Community icon | [`capsules/community_icon_184x184.png`](capsules/community_icon_184x184.png) | 184×184 | **Final** |
+| Page background | [`capsules/page_background_1438x810.png`](capsules/page_background_1438x810.png) | 1438×810 | **Final** (optional slot) |
 
 Upload checklist:
 
-- [ ] Header 460×215  
-- [ ] Main 616×353  
-- [ ] Small 231×87  
-- [ ] Vertical 374×448  
-- [ ] Library hero 1920×620+  
-- [ ] Library logo 1280×720 transparent  
-- [ ] Community icon 184×184  
+- [x] Header 460×215  
+- [x] Main 616×353  
+- [x] Small 231×87  
+- [x] Vertical 374×448  
+- [x] Library hero 1920×620+  
+- [x] Library logo 1280×720 transparent  
+- [x] Community icon 184×184  
 - [ ] Client icon / `.ico` set  
-- [ ] Optional page background 1438×810  
+- [x] Optional page background 1438×810  
+- [ ] Uploaded to Steam Partner store page  
 
 ---
 
@@ -342,7 +355,7 @@ Partner doc: [Steam Next Fest: October 2026](https://partner.steamgames.com/doc/
 - [ ] Short description (primary) pasted into Partner  
 - [ ] Long description pasted into Partner  
 - [ ] Tags + categories set in Partner  
-- [ ] Capsules uploaded (final or clearly temporary)  
+- [ ] Capsules uploaded (Gate A finals in `capsules/` — Partner upload pending)  
 - [ ] Screenshot slate uploaded (v2_complete slate)  
 - [ ] Trailer uploaded (announce cut)  
 - [ ] Sysreqs filled in Partner  
@@ -362,7 +375,7 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 | Path | Role |
 |---|---|
 | [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze ledger + change control |
-| [`capsules/`](capsules/) | Capsule briefs + placeholders |
+| [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-store + Deck + regional pricing (#63) |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Survey / ratings / privacy (#64) |
 | [`legal/`](legal/) | Gate A Partner paste pack |
@@ -372,4 +385,4 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 
 ---
 
-*Last updated: 2026-08-09 — Store copy frozen for Gate A (habits / Daily / Endless / no AI). AppID still placeholder. Store package only; no depot binaries in this PR.*
+*Last updated: 2026-08-09 — Store copy frozen for Gate A; capsule finals under `capsules/`. AppID still placeholder. Store package only; no depot binaries in this PR.*

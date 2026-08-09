@@ -181,7 +181,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ### Gate A — Steam Coming Soon (must be green)
 
 - [ ] Real **AppID** + studio/legal names; zero `YOUR_*` in live store/compliance paste
-- [ ] Final **capsules** + ≥5 non-placeholder screenshots (≥1080p preferred)
+- [~] Final **capsules** landed under `docs/RELEASE/capsules/` (Gate A Field Ledger finals; no PLACEHOLDER stamp) — still need ≥5 screenshots at ≥1080p preferred (current tour 1152×672)
 - [ ] **Trailer** (30s) encoded; muted-safe first 5s; AI disclosure **No** submitted
 - [ ] Content Survey draft pasted into Partner; privacy URL live
 - [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **CI workflow landed; confirm green run**
