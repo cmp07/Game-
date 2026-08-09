@@ -329,6 +329,7 @@ Test on: laptop speakers, cheap earbuds, one reference headset.
 |---|---|
 | **v1** | Buses, generic placeholders, intensity stub |
 | **v2** | Habit-solidify layers, per-operator stingers, PA bus + tones, silence policy, structured events, queue-next win fanfare |
+| **v3** | Identity vision (authored mix) — slam as musical event, habit as motif, silence as tool: [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) + [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md) |
 
 ---
 
@@ -338,3 +339,4 @@ Test on: laptop speakers, cheap earbuds, one reference headset.
 - Art material notes (paper-crease, chalk-scuff): [`05_ART_BIBLE.md`](05_ART_BIBLE.md)
 - Operators: habit engine `rewrite_operators.gd` + systems transform packs
 - Risk note: cold/abstract → audio identity is load-bearing for Steam page and demo feel
+- **1.0 identity / cue sheet:** [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md), [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md)
