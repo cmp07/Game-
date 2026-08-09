@@ -164,7 +164,10 @@ class TestFeelQuickWins(unittest.TestCase):
         # Fold tease must not breathe.
         self.assertNotIn("sin(_t * 2.0)", menu)
         self.assertIn("fold_on", menu)
-        self.assertIn("Binder holes", menu)
+        # Binder holes live on ArtKit index-card materials (title-page elevation).
+        self.assertIn('"binder_holes": 5', menu)
+        art = (ROOT / "scripts" / "art_kit.gd").read_text()
+        self.assertIn("binder_holes", art)
 
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
@@ -246,14 +249,18 @@ class TestDiegeticShellMvp(unittest.TestCase):
         menu = (ROOT / "scripts" / "menu.gd").read_text()
         self.assertIn("menu.folio_mark", menu)
         self.assertIn("_card_slot_t", menu)
-        self.assertIn("PAPER_DEEP", menu)
+        self.assertIn("ArtKit.draw_index_card", menu)
+        self.assertIn("deep_backer", menu)
         self.assertIn("LedgerChrome", menu)
+        art = (ROOT / "scripts" / "art_kit.gd").read_text()
+        self.assertIn("PAPER_DEEP", art)
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
         self.assertIn("settings.folio_mark", settings)
         self.assertIn("_style_folio_controls", settings)
         self.assertIn("LedgerChrome.paper_plate_style", settings)
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
         self.assertIn("class_name LedgerChrome", chrome)
+        self.assertIn("title_type_scale", chrome)
 
     def test_field_index_card_syncs_with_card_column(self) -> None:
         """Regression: drawn Field Index plate and CardColumn must share layout."""

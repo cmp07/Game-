@@ -900,12 +900,18 @@ func _selftest_type_kit() -> bool:
 		if not str(LocaleManager.current_locale).begins_with("zh"):
 			printerr("ThemeDB.fallback_font is not LedgerType display on latin locale")
 			ok = false
-	# ArtKit material helpers present (letterpress / page substrate).
+	# ArtKit material helpers present (letterpress / page / title-card materials).
 	if not ArtKit.has_method("draw_letterpress_wall") or not ArtKit.has_method("draw_ledger_page"):
 		printerr("ArtKit missing letterpress/page material helpers")
 		ok = false
+	elif not ArtKit.has_method("draw_seal_stamp") or not ArtKit.has_method("draw_index_card"):
+		printerr("ArtKit missing seal/index-card title materials")
+		ok = false
+	elif not ArtKit.has_method("draw_desk_margin"):
+		printerr("ArtKit missing desk margin helper")
+		ok = false
 	else:
-		print("  ArtKit letterpress + ledger page helpers OK")
+		print("  ArtKit letterpress + ledger page + title materials OK")
 	return ok
 
 

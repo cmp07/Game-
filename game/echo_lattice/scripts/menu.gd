@@ -93,22 +93,8 @@ func _ready() -> void:
 	if remap != null and remap.has_signal("bindings_changed"):
 		if not remap.bindings_changed.is_connected(queue_redraw):
 			remap.bindings_changed.connect(queue_redraw)
-	# Restyle buttons as underlined type (art bible §6).
-	LedgerChrome.style_index_button(start_button, true)
-	LedgerChrome.style_index_button(continue_button, false)
-	LedgerChrome.style_index_button(daily_button, false)
-	if endless_button:
-		LedgerChrome.style_index_button(endless_button, false)
-	if hard_button:
-		LedgerChrome.style_index_button(hard_button, false)
-	if museum_button:
-		LedgerChrome.style_index_button(museum_button, false)
-	LedgerChrome.style_index_button(settings_button, false)
-	if colophon_button:
-		LedgerChrome.style_index_button(colophon_button, false)
-	LedgerChrome.style_index_button(quit_button, false)
-	if _wishlist_button != null:
-		LedgerChrome.style_index_button(_wishlist_button, false)
+	# Restyle buttons as underlined type (ART_DIRECTION_V3 §3 / §6).
+	_style_field_index_type()
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
 	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
@@ -175,6 +161,40 @@ func field_index_content_rect(card: Rect2) -> Rect2:
 	)
 
 
+func _style_field_index_type() -> void:
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	var page: Rect2 = _ledger_page_rect(vp)
+	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
+	var idx: int = int(scale.get("index", LedgerChrome.TYPE_INDEX))
+	var primary: int = int(scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	LedgerChrome.style_index_button(start_button, true, primary)
+	LedgerChrome.style_index_button(continue_button, false, idx)
+	LedgerChrome.style_index_button(daily_button, false, idx)
+	if endless_button:
+		LedgerChrome.style_index_button(endless_button, false, idx)
+	if hard_button:
+		LedgerChrome.style_index_button(hard_button, false, idx)
+	if museum_button:
+		LedgerChrome.style_index_button(museum_button, false, idx)
+	LedgerChrome.style_index_button(settings_button, false, idx)
+	if colophon_button:
+		LedgerChrome.style_index_button(colophon_button, false, idx)
+	LedgerChrome.style_index_button(quit_button, false, idx)
+	if _wishlist_button != null:
+		LedgerChrome.style_index_button(_wishlist_button, false, idx)
+	var meta_px: int = int(scale.get("meta", LedgerChrome.TYPE_META))
+	if subtitle and has_node("/root/LedgerType"):
+		LedgerType.apply_to_control(subtitle, "body", meta_px + 1)
+	elif subtitle:
+		subtitle.add_theme_font_size_override("font_size", meta_px + 1)
+	if meta_label and has_node("/root/LedgerType"):
+		LedgerType.apply_to_control(meta_label, "mono", meta_px)
+	elif meta_label:
+		meta_label.add_theme_font_size_override("font_size", meta_px)
+
+
 func _apply_index_row_metrics(compact: bool) -> void:
 	var row_h: float = 26.0 if compact else 32.0
 	var primary_h: float = 30.0 if compact else 36.0
@@ -196,12 +216,10 @@ func _apply_index_row_metrics(compact: bool) -> void:
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		start_button.size_flags_vertical = shrink_top
 	if subtitle:
-		subtitle.add_theme_font_size_override("font_size", 12 if compact else 13)
 		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		subtitle.size_flags_vertical = shrink_top
 	if meta_label:
-		meta_label.add_theme_font_size_override("font_size", 11 if compact else 12)
 		meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		meta_label.size_flags_vertical = shrink_top
@@ -217,6 +235,7 @@ func _sync_field_index_layout() -> void:
 	var page: Rect2 = _ledger_page_rect(vp)
 	var compact: bool = page.size.y < 700.0
 	_apply_index_row_metrics(compact)
+	_style_field_index_type()
 	col.add_theme_constant_override("separation", 3 if compact else 6)
 	# Place column using the shared card geometry (content-driven height).
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
@@ -419,7 +438,7 @@ func _ensure_wishlist_button() -> void:
 		emit_signal("wishlist_pressed")
 		DemoBuild.open_wishlist()
 	)
-	LedgerChrome.style_index_button(_wishlist_button, false)
+	_style_field_index_type()
 	_sync_field_index_layout()
 
 
@@ -473,26 +492,39 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
-	# Lightbox paper.
-	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
-	if not TechArt.v3_enabled():
-		ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 3, 0.06)
+	# Desk / lightbox surface (ART_DIRECTION_V3 §2.1 / §6.1).
+	var desk_grain: float = 0.0 if TechArt.v3_enabled() else 0.055
+	ArtKit.draw_desk_margin(self, vp, 3, desk_grain)
 
-	# Large ledger page.
+	# Large ledger page — fiber grid + contact shadow onto the desk.
 	var page: Rect2 = _ledger_page_rect(vp)
-	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), Palette.PAPER_SHADOW, true)
-	draw_rect(page, Palette.PAPER_BONE, true)
-	ArtKit.draw_ledger_grid(self, page, 32)
-	if not TechArt.v3_enabled():
-		ArtKit.draw_paper_grain(self, page, 19, 0.07)
-	draw_rect(page, Palette.INK_SOFT, false, 2.0)
+	ArtKit.draw_ledger_page(self, page, {
+		"shadow_off": Vector2(6, 8),
+		"grain_seed": 19,
+		"grain_a": 0.0 if TechArt.v3_enabled() else 0.07,
+		"major_cell": 32,
+		"rule_w": 2.0,
+		"spine": false,
+		"double_rule": true,
+		"skip_grain": TechArt.v3_enabled(),
+	})
+
+	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
+	var folio_px: int = int(scale.get("folio", LedgerChrome.TYPE_FOLIO))
+	var seed_px: int = int(scale.get("seed", LedgerChrome.TYPE_SEED))
+	var brand_px: int = int(scale.get("brand", LedgerChrome.TYPE_BRAND))
+	var tag_px: int = int(scale.get("tagline", LedgerChrome.TYPE_TAGLINE))
+	var blurb_px: int = int(scale.get("blurb", LedgerChrome.TYPE_BLURB))
+	var rule_w: float = float(scale.get("rule_w", LedgerChrome.BRAND_RULE_W))
+	var rule_len: float = float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN))
+	var header_px: int = int(scale.get("card_header", LedgerChrome.TYPE_CARD_HEADER))
 
 	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("mono"),
 		page.position + Vector2(16, 22),
 		tr("menu.folio_mark"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Palette.SLATE_TEAL
+		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
 	draw_line(
 		page.position + Vector2(16, 28),
@@ -509,70 +541,77 @@ func _draw() -> void:
 		_type("mono"),
 		page.position + Vector2(280, 54),
 		tr("menu.seed_strip"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
 	# Ambient maze — fossil walls + writing chalk path (the Steam capsule beat).
 	_draw_ambient_lattice(page)
 
-	# Brand lockup — hero-level, not nav text.
+	# Brand lockup — hero-level signal (nav-removal brand test).
 	var brand_x: float = page.position.x + 48
 	var brand_y: float = page.position.y + page.size.y * 0.28
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 64, Palette.INK_BLACK
+		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
 	# Rust rule under the title — the brand underline.
-	draw_rect(Rect2(brand_x, brand_y + 10, 420, 3), Palette.RUST_FOSSIL, true)
+	draw_rect(Rect2(brand_x, brand_y + 10, rule_len, rule_w), Palette.RUST_FOSSIL, true)
 
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y + 42),
 		tr("brand.tagline"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Palette.SLATE_TEAL
+		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
 		_type("body"),
 		Vector2(brand_x, brand_y + 68),
 		tr("brand.blurb"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Palette.INK_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Index-card plate behind the button column (right side) — paper-slot settle.
-	# Card geometry matches CardColumn via field_index_card_rect / _sync_field_index_layout.
+	# Index-card plate behind the button column — shared geometry with CardColumn.
+	# field_index_card_rect / _sync_field_index_layout own enclosure; do not invent a second card.
 	var slot: float = clampf(_card_slot_t / 0.16, 0.0, 1.0)
 	var y_off: float = (1.0 - slot) * 6.0
 	var card: Rect2 = field_index_card_rect(vp, y_off)
-	var shadow := Palette.PAPER_SHADOW
-	shadow.a *= slot
-	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), shadow, true)
-	# paper_deep backer lift, then bone face.
-	var deep := Palette.PAPER_DEEP
-	deep.a = slot
-	draw_rect(Rect2(card.position + Vector2(2, 2), card.size), deep, true)
-	var bone := Palette.PAPER_BONE
-	bone.a = slot
-	draw_rect(card, bone, true)
-	draw_rect(card, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot), false, 1.5)
-	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * slot), false, 1.0)
-	# Binder holes — diegetic Field Index chrome (QW-2).
-	var hole_step: float = maxf(56.0, (card.size.y - 52.0) / 5.0)
-	for i in range(5):
-		var hy: float = card.position.y + 28.0 + float(i) * hole_step
-		if hy > card.end.y - 24.0:
-			break
-		draw_circle(Vector2(card.position.x + 12.0, hy), 3.5, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot))
-		draw_circle(Vector2(card.position.x + 12.0, hy), 1.8, bone)
-	# Card header double rule.
-	draw_line(card.position + Vector2(22, 34), card.position + Vector2(card.size.x - 16, 34), Palette.INK_SOFT, 1.0)
-	draw_line(card.position + Vector2(22, 38), card.position + Vector2(card.size.x - 16, 38), Palette.INK_SOFT, 1.0)
+
+	# Surveyor's seal — rubber-stamp quality; never overlap the Field Index plate.
+	var seal_r: float = 26.0 if page.size.y < 700.0 else 32.0
+	var seal_c := Vector2(brand_x + rule_len + seal_r + 28.0, brand_y + 8.0)
+	if seal_c.x + seal_r + 12.0 > card.position.x:
+		seal_c = Vector2(brand_x + 72.0, brand_y + 102.0)
+	ArtKit.draw_seal_stamp(
+		self,
+		seal_c,
+		seal_r,
+		{
+			"rot_deg": -4.0,
+			"color": Palette.SLATE_TEAL,
+			"alpha": 0.78,
+			"seed": 42,
+			"caption": "FIELD",
+			"font": _type("display"),
+			"font_size": maxi(10, folio_px),
+		}
+	)
+	ArtKit.draw_index_card(self, card, {
+		"alpha": slot,
+		"shadow_off": Vector2(5, 7),
+		"grain_seed": 11,
+		"grain_a": 0.0 if TechArt.v3_enabled() else 0.045,
+		"binder_holes": 5,
+		"header_rules": true,
+		"deep_backer": true,
+		"skip_grain": TechArt.v3_enabled(),
+	})
 	draw_string(
 		_type("mono"),
 		card.position + Vector2(26, 26),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
 		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot)
 	)
 
@@ -587,7 +626,7 @@ func _draw() -> void:
 		_type("mono"),
 		Vector2(page.position.x + 16, page.end.y - 14),
 		_footer_controls_hint(),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.INK_SOFT
 	)
 
 

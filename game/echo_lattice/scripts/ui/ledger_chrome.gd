@@ -5,8 +5,54 @@ class_name LedgerChrome
 ## Nodes may remain Godot Controls under the hood; look must never read as stock UI.
 ##
 
+## ART_DIRECTION_V3 §3.2 — title-page type scale (px @ ~1080p reference).
+## Brand is the hero signal; meta/seed never compete with brand size.
+const TYPE_BRAND := 72
+const TYPE_TAGLINE := 20
+const TYPE_BLURB := 15
+const TYPE_INDEX_PRIMARY := 18
+const TYPE_INDEX := 16
+const TYPE_META := 12
+const TYPE_FOLIO := 11
+const TYPE_SEED := 12
+const TYPE_CARD_HEADER := 12
+const BRAND_RULE_W := 3.0
+const BRAND_RULE_LEN := 440.0
 
-static func style_index_button(btn: Button, primary: bool = false) -> void:
+
+static func title_type_scale(page_h: float = 720.0) -> Dictionary:
+	## Compact (Deck / short page) vs full title-card scale.
+	var compact: bool = page_h < 700.0
+	if compact:
+		return {
+			"brand": 56,
+			"tagline": 18,
+			"blurb": 14,
+			"index_primary": 17,
+			"index": 15,
+			"meta": 11,
+			"folio": 10,
+			"seed": 11,
+			"card_header": 11,
+			"rule_w": 2.0,
+			"rule_len": 340.0,
+		}
+	return {
+		"brand": TYPE_BRAND,
+		"tagline": TYPE_TAGLINE,
+		"blurb": TYPE_BLURB,
+		"index_primary": TYPE_INDEX_PRIMARY,
+		"index": TYPE_INDEX,
+		"meta": TYPE_META,
+		"folio": TYPE_FOLIO,
+		"seed": TYPE_SEED,
+		"card_header": TYPE_CARD_HEADER,
+		"rule_w": BRAND_RULE_W,
+		"rule_len": BRAND_RULE_LEN,
+	}
+
+
+static func style_index_button(btn: Button, primary: bool = false, font_size: int = -1) -> void:
 	if btn == null:
 		return
 	var empty := StyleBoxEmpty.new()
@@ -26,6 +72,21 @@ static func style_index_button(btn: Button, primary: bool = false) -> void:
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
+	var px: int = font_size
+	if px < 0:
+		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
+	var lt = _ledger_type()
+	if lt != null and lt.has_method("apply_to_control"):
+		lt.apply_to_control(btn, "display", px)
+	else:
+		btn.add_theme_font_size_override("font_size", px)
+
+
+static func _ledger_type() -> Node:
+	var loop := Engine.get_main_loop()
+	if loop == null or not (loop is SceneTree):
+		return null
+	return (loop as SceneTree).root.get_node_or_null("/root/LedgerType")
 
 
 static func paper_plate_style(deep: bool = false) -> StyleBoxFlat:
