@@ -10,11 +10,15 @@ const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
 const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
 const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
 const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
+const SUBTITLE_SCENE: PackedScene = preload("res://scenes/ui/subtitle_overlay.tscn")
 
 @onready var stage: Node = $Stage
 
+var _subtitle_overlay: CanvasLayer = null
+
 
 func _ready() -> void:
+	_ensure_subtitle_overlay()
 	var all_args: PackedStringArray = OS.get_cmdline_user_args()
 	for a in OS.get_cmdline_args():
 		all_args.append(a)
@@ -38,6 +42,13 @@ func _ready() -> void:
 		get_tree().quit(0)
 		return
 	show_menu()
+
+
+func _ensure_subtitle_overlay() -> void:
+	if _subtitle_overlay != null and is_instance_valid(_subtitle_overlay):
+		return
+	_subtitle_overlay = SUBTITLE_SCENE.instantiate()
+	add_child(_subtitle_overlay)
 
 
 func _capture_screenshot(kind: String, out_dir: String) -> void:
@@ -304,6 +315,44 @@ func _run_self_test() -> bool:
 	if int(GameState.best_moves.get(0, -1)) != 42:
 		printerr("best_moves lost through save/load: %s" % str(GameState.best_moves))
 		ok = false
+
+	# Accessibility end-to-end (colorblind / flash / remap / subtitles / UI scale).
+	if not has_node("/root/AccessibilityService") or not has_node("/root/SettingsStore") or not has_node("/root/ActionRemap"):
+		printerr("a11y autoloads missing"); ok = false
+	else:
+		var a11y: Node = get_node("/root/AccessibilityService")
+		var store: Node = get_node("/root/SettingsStore")
+		var remap: Node = get_node("/root/ActionRemap")
+		store.reset_section("accessibility")
+		a11y.set_colorblind_mode(FossilPalette.Mode.PROTANOPIA)
+		if a11y.colorblind_mode() != FossilPalette.Mode.PROTANOPIA:
+			printerr("colorblind mode did not stick"); ok = false
+		var echo_c: Color = a11y.role_color(FossilPalette.FossilRole.ECHO_WALL)
+		if echo_c.is_equal_approx(Palette.RUST_FOSSIL):
+			printerr("protanopia echo wall should diverge from default rust"); ok = false
+		a11y.set_reduce_flash(true)
+		var gated: Dictionary = FlashGate.gate(Color.WHITE, 1.0, 0.1, a11y)
+		if gated.is_empty() or float(gated.get("intensity", 1.0)) > 0.26:
+			printerr("reduce_flash did not cap intensity: %s" % str(gated)); ok = false
+		a11y.set_ui_scale(1.25)
+		if abs(a11y.ui_scale() - 1.25) > 0.001:
+			printerr("ui_scale did not stick"); ok = false
+		a11y.set_subtitles_enabled(true)
+		_ensure_subtitle_overlay()
+		if _subtitle_overlay == null or not _subtitle_overlay.has_method("show_line"):
+			printerr("subtitle overlay missing"); ok = false
+		else:
+			_subtitle_overlay.show_line("rewrite_begin", 0.05)
+		remap.reset_to_defaults()
+		if not InputMap.has_action("ghost_assist"):
+			printerr("ghost_assist action missing after remap"); ok = false
+		var labels: PackedStringArray = remap.get_binding_labels("undo")
+		if labels.is_empty():
+			printerr("undo binding labels empty"); ok = false
+		a11y.set_reduce_flash(false)
+		a11y.set_ui_scale(1.0)
+		a11y.set_colorblind_mode(FossilPalette.Mode.DEFAULT)
+		print("  a11y colorblind/flash/remap/subtitles/ui_scale OK")
 
 	# Chamber scene runtime — instantiate and drive one move on chamber 0.
 	var chamber_scene: PackedScene = load("res://scenes/chamber.tscn")

@@ -6,17 +6,23 @@ extends Control
 signal chamber_won(chamber_id: int, moves: int)
 signal menu_requested()
 
+const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
+
 @onready var chamber_node: Node2D = %Chamber
 @onready var title_label: Label = %ChamberTitle
 @onready var caption_label: Label = %Caption
 @onready var moves_label: Label = %MovesLabel
 @onready var habit_label: Label = %HabitLabel
 @onready var restart_button: Button = %RestartButton
+@onready var settings_button: Button = %SettingsButton
 @onready var menu_button: Button = %MenuButton
+
+var _settings_overlay: Control = null
 
 
 func _ready() -> void:
 	restart_button.pressed.connect(func(): chamber_node.reset_chamber())
+	settings_button.pressed.connect(_open_settings)
 	menu_button.pressed.connect(func(): emit_signal("menu_requested"))
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
@@ -26,6 +32,13 @@ func _ready() -> void:
 	_on_moves_changed(0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(str(data.get("caption", "")))
+
+
+func _open_settings() -> void:
+	if _settings_overlay == null:
+		_settings_overlay = SETTINGS_SCENE.instantiate()
+		add_child(_settings_overlay)
+	_settings_overlay.open_menu()
 
 
 func _style_ledger_chrome() -> void:

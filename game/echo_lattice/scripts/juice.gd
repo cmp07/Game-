@@ -44,11 +44,17 @@ func _process(_delta: float) -> void:
 
 
 func bump(amount: float) -> void:
-	trauma = clampf(trauma + amount, 0.0, 1.0)
+	var intensity: float = _shake_intensity()
+	if intensity <= 0.001:
+		return
+	trauma = clampf(trauma + amount * intensity, 0.0, 1.0)
 
 
 func shake_offset(max_px: float = 10.0, max_rot_deg: float = 2.0) -> Dictionary:
-	var s: float = trauma * trauma
+	var intensity: float = _shake_intensity()
+	if intensity <= 0.001 or trauma <= 0.0:
+		return {"dx": 0.0, "dy": 0.0, "rot": 0.0}
+	var s: float = trauma * trauma * intensity
 	var f: float = shake_t * 42.0
 	var dx: float = max_px * s * _noise(shake_seed + 1.0, f)
 	var dy: float = max_px * s * _noise(shake_seed + 2.0, f)
@@ -72,17 +78,30 @@ func hitstop(duration: float = 0.09, floor_scale: float = 0.06) -> void:
 
 
 func flash(duration: float = 0.22, peak: float = 0.45, color: Color = Color("#D6432B")) -> void:
-	flash_duration = maxf(duration, 0.001)
+	var gated: Dictionary = FlashGate.gate(color, peak, duration)
+	if gated.is_empty():
+		flash_left = 0.0
+		flash_duration = 0.0
+		flash_peak = 0.0
+		return
+	flash_duration = maxf(float(gated.get("duration", duration)), 0.001)
 	flash_left = flash_duration
-	flash_peak = peak
-	flash_color = color
+	flash_peak = float(gated.get("intensity", peak))
+	flash_color = gated.get("color", color)
 
 
 func rewrite_punch(segment_count: int = 1) -> void:
 	var shake_amt: float = minf(0.55, 0.20 + 0.03 * float(segment_count))
 	bump(shake_amt)
-	hitstop(0.09, 0.06)
-	flash(0.28, 0.55, Color("#D6432B"))
+	if not _reduce_motion():
+		hitstop(0.09, 0.06)
+	var rewrite_flash: Dictionary = FlashGate.request_rewrite_flash()
+	if not rewrite_flash.is_empty():
+		flash(
+			float(rewrite_flash.get("duration", 0.28)),
+			float(rewrite_flash.get("intensity", 0.55)),
+			rewrite_flash.get("color", Color("#D6432B"))
+		)
 
 
 func spawn_burst(world_pos: Vector2, color: Color, count: int = 8) -> void:
@@ -130,6 +149,20 @@ func _update_particles(real_dt: float) -> void:
 			particles.remove_at(i)
 		else:
 			i += 1
+
+
+func _shake_intensity() -> float:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("screen_shake_intensity"):
+		return float(a11y.call("screen_shake_intensity"))
+	return 1.0
+
+
+func _reduce_motion() -> bool:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("reduce_motion"):
+		return bool(a11y.call("reduce_motion"))
+	return false
 
 
 static func _noise(seed_v: float, t: float) -> float:

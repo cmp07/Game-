@@ -63,11 +63,23 @@ var tex_player: Texture2D
 var tex_chalk: Texture2D
 var tex_rust: Array = []
 
+var _ghost_assist: GhostPathAssist
+var _assist_path: Array = []
+var _hold_repeat_t: float = 0.0
+const HOLD_REPEAT_DELAY: float = 0.22
+const HOLD_REPEAT_RATE: float = 0.09
+
 
 func _ready() -> void:
 	_load_art()
 	set_process(true)
 	set_process_input(true)
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	_ghost_assist = GhostPathAssist.new(a11y)
+	if a11y != null and a11y.has_signal("colorblind_changed"):
+		a11y.colorblind_changed.connect(queue_redraw)
+	if a11y != null and a11y.has_signal("fossil_style_changed"):
+		a11y.fossil_style_changed.connect(queue_redraw)
 	load_chamber(GameState.current_chamber)
 
 
@@ -95,6 +107,7 @@ func _process(delta: float) -> void:
 		if pending_echo_timer >= pending_echo_settle_time:
 			_flush_pending_echoes()
 	_refresh_telegraph()
+	_process_hold_to_walk(delta)
 	queue_redraw()
 
 
@@ -140,9 +153,13 @@ func load_chamber(id: int) -> void:
 	telegraph_cells.clear()
 	rewrite_warn_armed = false
 	has_won = false
+	_assist_path.clear()
+	if _ghost_assist != null:
+		_ghost_assist.begin_chamber(str(id))
 	if has_node("/root/AudioDirector"):
 		AudioDirector.set_chamber(id)
 		AudioDirector.on_pa_line("pa.ghost.floor")
+	_subtitle_line("pa.ghost.floor")
 	emit_signal("moves_changed", move_count)
 	emit_signal("caption_changed", str(chamber.get("caption", "")))
 	queue_redraw()
@@ -166,18 +183,26 @@ func freeze_rewrite_at(t_norm: float) -> void:
 func _input(event: InputEvent) -> void:
 	if has_won:
 		return
+	if event.is_action_pressed("ghost_assist"):
+		_try_ghost_assist()
+		return
 	if event.is_action_pressed("move_up"):
 		_try_move(Vector2i(0, -1))
+		_hold_repeat_t = -HOLD_REPEAT_DELAY
 	elif event.is_action_pressed("move_down"):
 		_try_move(Vector2i(0, 1))
+		_hold_repeat_t = -HOLD_REPEAT_DELAY
 	elif event.is_action_pressed("move_left"):
 		_try_move(Vector2i(-1, 0))
+		_hold_repeat_t = -HOLD_REPEAT_DELAY
 	elif event.is_action_pressed("move_right"):
 		_try_move(Vector2i(1, 0))
+		_hold_repeat_t = -HOLD_REPEAT_DELAY
 	elif event.is_action_pressed("restart"):
 		reset_chamber()
 	elif event.is_action_pressed("undo"):
 		_undo()
+		_subtitle_line("undo")
 
 
 func _try_move(dir: Vector2i) -> void:
@@ -280,18 +305,32 @@ func _trigger_rewrite() -> void:
 			pending_echoes.append(p)
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
+	if _reduce_motion():
+		# Skip slam animation — commit fossils immediately for photosensitivity / vestibular comfort.
+		pending_echo_settle_time = 0.05
 	rewrite_freeze = false
 	telegraph_cells.clear()
 	moves_since_checkpoint.clear()
 	if has_node("/root/Juice"):
 		Juice.rewrite_punch(pending_echoes.size())
 		var offset: Vector2 = _grid_offset()
+		var burst_color: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
 		for p in pending_echoes:
 			var wp: Vector2 = offset + Vector2(p.x + 0.5, p.y + 0.5) * CELL_SIZE
-			Juice.spawn_burst(wp, Palette.RUST_FOSSIL, 6)
+			Juice.spawn_burst(wp, burst_color, 6 if not _reduce_motion() else 2)
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_rewrite(transform_name)
 		AudioDirector.on_pa_line("pa.checkpoint.armed")
+	_subtitle_line("checkpoint")
+	match transform_name:
+		"mirror_v", "mirror_h", "mirror_v_then_h":
+			_subtitle_line("rewrite_mirror")
+		"rotate_180":
+			_subtitle_line("rewrite_rotate")
+		"thicken":
+			_subtitle_line("rewrite_thicken")
+		_:
+			_subtitle_line("rewrite_begin")
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
@@ -436,9 +475,10 @@ func _on_win() -> void:
 	GameState.record_chamber_win(cid, move_count, bfs_par)
 	if has_node("/root/Juice"):
 		Juice.bump(0.25)
-		Juice.flash(0.35, 0.4, Palette.SLATE_TEAL_SOFT)
+		Juice.flash(0.35, 0.4, _role_color(FossilPalette.FossilRole.CHECKPOINT))
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_chamber_won(true)
+	_subtitle_line("win")
 	var t := get_tree().create_timer(0.4)
 	t.timeout.connect(func():
 		emit_signal("chamber_won", cid, move_count)
@@ -513,6 +553,7 @@ func _draw() -> void:
 
 	# Ghost trail — dashed chalk diagram line (art bible §5).
 	_draw_ghost_trail(offset)
+	_draw_assist_path(offset)
 
 	# Cadmium telegraph ticks — foreshadow the next rewrite landing.
 	if telegraph_cells.size() > 0 and pending_echoes.is_empty():
@@ -521,7 +562,7 @@ func _draw() -> void:
 		var pulse: float = 0.45 + 0.55 * abs(sin(goal_pulse_t * 6.0))
 		for p in telegraph_cells:
 			var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
-			var c := Palette.CADMIUM_WARN
+			var c := _role_color(FossilPalette.FossilRole.WARN)
 			c.a = 0.55 * warn * pulse
 			var tick := 4.0
 			draw_line(r.position, r.position + Vector2(tick, 0), c, 1.5)
@@ -566,12 +607,15 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 			_blit(tex_wall_fresh, rect, Palette.INK_BLACK)
 			draw_rect(rect, Palette.INK_SOFT, false, 1.0)
 		Tile.ECHO_WALL:
-			draw_rect(rect, Palette.RUST_FOSSIL, true)
-			_blit(tex_wall_fossil, rect, Palette.RUST_FOSSIL)
+			var echo_c: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
+			draw_rect(rect, echo_c, true)
+			_blit(tex_wall_fossil, rect, echo_c)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
 				draw_texture_rect(tex_rust[rust_i], rect.grow(-2.0), false)
-			draw_rect(rect.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
+			var edge: Color = echo_c.darkened(0.25)
+			draw_rect(rect.grow(-1.0), edge, false, 1.5)
+			_draw_role_pattern(rect, FossilPalette.FossilRole.ECHO_WALL, echo_c)
 		Tile.FLOOR, Tile.CHECKPOINT, Tile.CHECKPOINT_USED, Tile.GOAL:
 			var base_floor: Color = Palette.PAPER_BONE if (p.x + p.y) % 2 == 0 else Palette.PAPER_DEEP.lerp(Palette.PAPER_BONE, 0.55)
 			if is_walked:
@@ -580,13 +624,16 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 			else:
 				draw_rect(rect, base_floor, true)
 				_blit(tex_floor_fresh, rect, base_floor)
-			# Habit colonization — rust flecks on over-walked floors (never on unwalked).
+			# Habit colonization — flecks on over-walked floors (never on unwalked).
 			var tc: int = int(traverse_count.get(p, 0))
-			if tc >= 3 and tex_rust.size() > 0:
-				var ri: int = (p.x + p.y) % tex_rust.size()
-				if tex_rust[ri] != null:
-					var rc: Color = Color(1, 1, 1, clampf(0.25 + 0.12 * float(tc - 2), 0.25, 0.7))
-					draw_texture_rect(tex_rust[ri], rect.grow(-6.0), false, rc)
+			if tc >= 3:
+				var over_c: Color = _role_color(FossilPalette.FossilRole.OVERUSE)
+				over_c.a = clampf(0.25 + 0.12 * float(tc - 2), 0.25, 0.7)
+				if tex_rust.size() > 0:
+					var ri: int = (p.x + p.y) % tex_rust.size()
+					if tex_rust[ri] != null:
+						draw_texture_rect(tex_rust[ri], rect.grow(-6.0), false, over_c)
+				_draw_role_pattern(rect.grow(-6.0), FossilPalette.FossilRole.OVERUSE, over_c)
 		_:
 			draw_rect(rect, Palette.PAPER_BONE, true)
 
@@ -598,14 +645,15 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 
 	match t:
 		Tile.CHECKPOINT:
-			# Printed stamp — slate teal, no aura.
+			# Printed stamp — slate teal (or colorblind-safe), no aura.
+			var cp_c: Color = _role_color(FossilPalette.FossilRole.CHECKPOINT)
 			var stamp := rect.grow(-7.0)
-			draw_rect(stamp, Palette.SLATE_TEAL, false, 2.0)
-			draw_rect(stamp.grow(-3.0), Palette.SLATE_TEAL, false, 1.0)
+			draw_rect(stamp, cp_c, false, 2.0)
+			draw_rect(stamp.grow(-3.0), cp_c, false, 1.0)
 			# Tiny § mark via crossed bars.
 			var c: Vector2 = rect.get_center()
-			draw_line(c + Vector2(-4, 0), c + Vector2(4, 0), Palette.SLATE_TEAL, 1.5, true)
-			draw_line(c + Vector2(0, -4), c + Vector2(0, 4), Palette.SLATE_TEAL, 1.5, true)
+			draw_line(c + Vector2(-4, 0), c + Vector2(4, 0), cp_c, 1.5, true)
+			draw_line(c + Vector2(0, -4), c + Vector2(0, 4), cp_c, 1.5, true)
 		Tile.CHECKPOINT_USED:
 			var c2: Vector2 = rect.get_center()
 			draw_circle(c2, 3.0, Palette.INK_SOFT)
@@ -628,18 +676,29 @@ func _blit(tex: Texture2D, rect: Rect2, fallback: Color) -> void:
 func _draw_ghost_trail(offset: Vector2) -> void:
 	if moves_since_checkpoint.is_empty():
 		return
+	var fresh: Color = _role_color(FossilPalette.FossilRole.FRESH)
+	var warm: Color = _role_color(FossilPalette.FossilRole.WARM)
 	# Chalk footprints on each buffer tile.
 	for i in range(moves_since_checkpoint.size()):
 		var p: Vector2i = moves_since_checkpoint[i]
 		var rect := Rect2(offset + Vector2(p.x * CELL_SIZE + 6, p.y * CELL_SIZE + 6), Vector2(CELL_SIZE - 12, CELL_SIZE - 12))
+		var t: float = float(i + 1) / float(moves_since_checkpoint.size())
+		var chalk_c: Color = warm.lerp(fresh, t)
+		chalk_c.a = 0.35 + 0.45 * t
 		if tex_chalk != null:
-			var a: float = 0.35 + 0.45 * (float(i + 1) / float(moves_since_checkpoint.size()))
-			draw_texture_rect(tex_chalk, rect, false, Color(1, 1, 1, a))
+			draw_texture_rect(tex_chalk, rect, false, chalk_c)
 		else:
-			draw_rect(rect.grow(-4.0), Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.55), true)
+			draw_rect(rect.grow(-4.0), chalk_c, true)
+		if t > 0.66:
+			_draw_role_pattern(rect, FossilPalette.FossilRole.FRESH, chalk_c)
+		elif t > 0.33:
+			_draw_role_pattern(rect, FossilPalette.FossilRole.WARM, chalk_c)
+		else:
+			_draw_role_pattern(rect, FossilPalette.FossilRole.COLD, chalk_c)
 	# Dashed chalk connector.
 	if moves_since_checkpoint.size() >= 2:
-		var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.65)
+		var chalk := fresh
+		chalk.a = 0.65
 		for i in range(moves_since_checkpoint.size() - 1):
 			var a: Vector2i = moves_since_checkpoint[i]
 			var b: Vector2i = moves_since_checkpoint[i + 1]
@@ -657,16 +716,17 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 	# 0.50–0.78: slot into place with overshoot
 	# 0.78–1.00: rust bleed
 
-	if t_norm < REWRITE_HEARTBEAT / REWRITE_DURATION:
-		# Single heartbeat — paper margin flash only.
+	if t_norm < REWRITE_HEARTBEAT / REWRITE_DURATION and not _reduce_flash():
+		# Single heartbeat — paper margin flash only (skipped when reduce-flash).
 		var flash_a: float = 1.0 - (t_norm / (REWRITE_HEARTBEAT / REWRITE_DURATION))
-		var warn := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.55 * flash_a)
+		var warn_base: Color = _role_color(FossilPalette.FossilRole.WARN)
+		var warn := Color(warn_base.r, warn_base.g, warn_base.b, 0.55 * flash_a)
 		draw_rect(Rect2(0, 0, vp_size.x, 10), warn, true)
 		draw_rect(Rect2(0, vp_size.y - 10, vp_size.x, 10), warn, true)
 		draw_rect(Rect2(0, 0, 10, vp_size.y), warn, true)
 		draw_rect(Rect2(vp_size.x - 10, 0, 10, vp_size.y), warn, true)
 		# Thin rule around the page.
-		var page_warn := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.85 * flash_a)
+		var page_warn := Color(warn_base.r, warn_base.g, warn_base.b, 0.85 * flash_a)
 		draw_rect(page.grow(2.0), page_warn, false, 3.0)
 
 	var n: int = pending_echoes.size()
@@ -685,7 +745,8 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 			var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.85 * crease_a)
 			draw_line(base.position + Vector2(2, 2), base.end - Vector2(2, 2), ink, 1.5, true)
 			draw_line(base.position + Vector2(CELL_SIZE - 2, 2), base.position + Vector2(2, CELL_SIZE - 2), ink, 1.5, true)
-			var warn_edge := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.35 * crease_a)
+			var warn_base2: Color = _role_color(FossilPalette.FossilRole.WARN)
+			var warn_edge := Color(warn_base2.r, warn_base2.g, warn_base2.b, 0.35 * crease_a)
 			draw_rect(base, warn_edge, false, 1.0)
 		elif local_t < 0.50:
 			# Lift — cast shadow, no rim light.
@@ -702,18 +763,21 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 			var slot: float = (local_t - 0.50) / 0.28
 			var bounce: float = sin(slot * PI) * (1.0 - slot) * 3.0
 			var slotted := Rect2(base.position - Vector2(0, bounce), base.size)
-			draw_rect(slotted, Palette.RUST_FOSSIL, true)
-			_blit(tex_wall_fossil, slotted, Palette.RUST_FOSSIL)
-			draw_rect(slotted.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
+			var echo_c2: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
+			draw_rect(slotted, echo_c2, true)
+			_blit(tex_wall_fossil, slotted, echo_c2)
+			draw_rect(slotted.grow(-1.0), echo_c2.darkened(0.25), false, 1.5)
 		else:
 			# Rust bleed from the joins.
 			var bleed: float = (local_t - 0.78) / 0.22
-			draw_rect(base, Palette.RUST_FOSSIL, true)
-			_blit(tex_wall_fossil, base, Palette.RUST_FOSSIL)
+			var echo_c3: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
+			draw_rect(base, echo_c3, true)
+			_blit(tex_wall_fossil, base, echo_c3)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
 				draw_texture_rect(tex_rust[rust_i], base.grow(-2.0 + 2.0 * (1.0 - bleed)), false, Color(1, 1, 1, 0.4 + 0.6 * bleed))
-			draw_rect(base.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
+			draw_rect(base.grow(-1.0), echo_c3.darkened(0.25), false, 1.5)
+			_draw_role_pattern(base, FossilPalette.FossilRole.ECHO_WALL, echo_c3)
 
 	# Quiet title plate during slam — "IT LEARNED YOU"
 	if t_norm > 0.12 and t_norm < 0.85:
@@ -750,3 +814,172 @@ func _draw_player(offset: Vector2) -> void:
 		])
 		draw_colored_polygon(pts, Palette.INK_BLACK)
 		draw_circle(center + Vector2(0, 2), 2.5, Palette.COPPER_KEY)
+
+
+# ---------------- accessibility helpers ----------------
+
+func _role_color(role: FossilPalette.FossilRole) -> Color:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("role_color"):
+		return a11y.role_color(role)
+	return FossilPalette.color_for(FossilPalette.Mode.DEFAULT, role)
+
+
+func _use_patterns() -> bool:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("fossil_use_patterns"):
+		return bool(a11y.fossil_use_patterns())
+	return true
+
+
+func _reduce_flash() -> bool:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("reduce_flash"):
+		return bool(a11y.reduce_flash())
+	return false
+
+
+func _reduce_motion() -> bool:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("reduce_motion"):
+		return bool(a11y.reduce_motion())
+	return false
+
+
+func _hold_to_walk_enabled() -> bool:
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("hold_to_walk"):
+		return bool(a11y.hold_to_walk())
+	return false
+
+
+func _subtitle_line(id: String) -> void:
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return
+	var overlay := tree.root.find_child("SubtitleOverlay", true, false)
+	if overlay != null and overlay.has_method("show_line"):
+		overlay.call("show_line", id)
+
+
+func _process_hold_to_walk(delta: float) -> void:
+	if has_won or not _hold_to_walk_enabled():
+		return
+	var dir := Vector2i.ZERO
+	if Input.is_action_pressed("move_up"):
+		dir = Vector2i(0, -1)
+	elif Input.is_action_pressed("move_down"):
+		dir = Vector2i(0, 1)
+	elif Input.is_action_pressed("move_left"):
+		dir = Vector2i(-1, 0)
+	elif Input.is_action_pressed("move_right"):
+		dir = Vector2i(1, 0)
+	else:
+		_hold_repeat_t = 0.0
+		return
+	_hold_repeat_t += delta
+	if _hold_repeat_t >= HOLD_REPEAT_RATE:
+		_hold_repeat_t = 0.0
+		_try_move(dir)
+
+
+func _try_ghost_assist() -> void:
+	if _ghost_assist == null:
+		return
+	var path: Array = _compute_assist_path()
+	if _ghost_assist.try_reveal(path):
+		_assist_path = _ghost_assist.active_ghost_path()
+		_subtitle_line("ghost_assist")
+		queue_redraw()
+
+
+func _compute_assist_path() -> Array:
+	## BFS from player to goal on the live grid (ignores rewrite foresight).
+	var w: int = GRID_W
+	var h: int = GRID_H
+	var start: Vector2i = player_pos
+	var goal: Vector2i = goal_pos
+	var came_from := {}
+	came_from[start] = start
+	var q: Array = [start]
+	var found := false
+	while q.size() > 0:
+		var cur: Vector2i = q.pop_front()
+		if cur == goal:
+			found = true
+			break
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = cur + d
+			if n.x < 0 or n.x >= w or n.y < 0 or n.y >= h:
+				continue
+			if came_from.has(n):
+				continue
+			var cell: int = grid[n.y][n.x]
+			if cell == Tile.WALL or cell == Tile.ECHO_WALL:
+				continue
+			came_from[n] = cur
+			q.append(n)
+	if not found:
+		return []
+	var rev: Array = []
+	var cur2: Vector2i = goal
+	while cur2 != start:
+		rev.append(cur2)
+		cur2 = came_from[cur2]
+	rev.append(start)
+	rev.reverse()
+	return rev
+
+
+func _draw_assist_path(offset: Vector2) -> void:
+	if _assist_path.is_empty():
+		return
+	var ghost_c: Color = _role_color(FossilPalette.FossilRole.GHOST)
+	ghost_c.a = 0.75
+	for i in range(_assist_path.size()):
+		var p: Vector2i = _assist_path[i]
+		var rect := Rect2(offset + Vector2(p.x * CELL_SIZE + 8, p.y * CELL_SIZE + 8), Vector2(CELL_SIZE - 16, CELL_SIZE - 16))
+		draw_rect(rect, ghost_c, false, 2.0)
+		_draw_role_pattern(rect, FossilPalette.FossilRole.GHOST, ghost_c)
+	if _assist_path.size() >= 2:
+		for i in range(_assist_path.size() - 1):
+			var a: Vector2i = _assist_path[i]
+			var b: Vector2i = _assist_path[i + 1]
+			var pa: Vector2 = offset + Vector2(a.x * CELL_SIZE + CELL_SIZE * 0.5, a.y * CELL_SIZE + CELL_SIZE * 0.5)
+			var pb: Vector2 = offset + Vector2(b.x * CELL_SIZE + CELL_SIZE * 0.5, b.y * CELL_SIZE + CELL_SIZE * 0.5)
+			ArtKit.draw_dashed_line(self, pa, pb, ghost_c, 2.0, 5.0, 3.0)
+
+
+func _draw_role_pattern(rect: Rect2, role: FossilPalette.FossilRole, color: Color) -> void:
+	if not _use_patterns():
+		return
+	var pattern: FossilPalette.Pattern = FossilPalette.pattern_for(role, true)
+	var ink := color
+	ink.a = minf(color.a + 0.15, 0.85)
+	match pattern:
+		FossilPalette.Pattern.STRIPES:
+			var y: float = rect.position.y + 3.0
+			while y < rect.end.y - 2.0:
+				draw_line(Vector2(rect.position.x + 2.0, y), Vector2(rect.end.x - 2.0, y), ink, 1.0)
+				y += 4.0
+		FossilPalette.Pattern.DOTS:
+			for i in range(3):
+				for j in range(3):
+					var c := Vector2(
+						rect.position.x + 6.0 + float(i) * 8.0,
+						rect.position.y + 6.0 + float(j) * 8.0
+					)
+					if rect.has_point(c):
+						draw_circle(c, 1.4, ink)
+		FossilPalette.Pattern.CROSSHATCH:
+			draw_line(rect.position + Vector2(3, 3), rect.end - Vector2(3, 3), ink, 1.2, true)
+			draw_line(Vector2(rect.end.x - 3, rect.position.y + 3), Vector2(rect.position.x + 3, rect.end.y - 3), ink, 1.2, true)
+		FossilPalette.Pattern.DASHES:
+			ArtKit.draw_dashed_line(
+				self,
+				rect.position + Vector2(4, rect.size.y * 0.5),
+				rect.position + Vector2(rect.size.x - 4, rect.size.y * 0.5),
+				ink, 1.5, 3.0, 2.0
+			)
+		_:
+			pass
