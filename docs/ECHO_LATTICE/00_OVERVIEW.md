@@ -5,6 +5,7 @@
 
 | Doc | Purpose |
 |---|---|
+| [`../VISION/QUALITY_BAR.md`](../VISION/QUALITY_BAR.md) | **Craft ceiling** — polish / presentation / moment standards from authorship-adjacent Steam comps (no genre mash) |
 | [`01_GDD.md`](01_GDD.md) | Full game design (when present on branch) |
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |

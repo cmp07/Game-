@@ -86,6 +86,7 @@ Resume Partner / Coming Soon later from [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](.
 |---|---|
 | Steam pack freeze / resume | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
 | Release index | [`README.md`](README.md) |
+| Vision / craft quality bar | [`../VISION/QUALITY_BAR.md`](../VISION/QUALITY_BAR.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
 | Windows (+ Demo) export | [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) |
