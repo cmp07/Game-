@@ -1,0 +1,14 @@
+{
+  "note": "MVP stub fragment families — authored data for later loom pipeline.",
+  "families": [
+    { "id": "span", "label": "Span", "role": "soft / tensile length" },
+    { "id": "anchor", "label": "Anchor", "role": "stiff ground peg" },
+    { "id": "channel", "label": "Channel", "role": "binder / flow trough" },
+    { "id": "charge", "label": "Charge", "role": "stored push (kiln accent)" }
+  ],
+  "combine_rule": {
+    "inputs": 2,
+    "output": "thread",
+    "thread_type": "Brace"
+  }
+}
