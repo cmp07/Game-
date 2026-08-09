@@ -15,7 +15,7 @@ Looking Glass mid-slam — trail folding into walls; habit still sealed until Mi
 
 ![Main menu](02_brand_main_menu.png)
 
-Open Field Ledger folio: verso brand + large survey seal stamped on a habit-silhouette maze; recto Field Index (survey / Daily / Endless / Museum / Colophon). Spine kills the dead center void. No chamber BUFFER / Move chrome.
+Open Field Ledger folio: verso brand + letterpress survey seal plate on a habit-silhouette maze; recto premium Field Index (selection-only rules, quiet stock). Spine kills the dead center void. No chamber BUFFER / Move chrome.
 
 ## 03 — Chamber start
 

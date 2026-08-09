@@ -161,11 +161,11 @@ func folio_leaves(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 
 ## Chrome insets around CardColumn inside the Field Index plate.
 ## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
-const _INDEX_PAD_L: float = 48.0
-const _INDEX_PAD_R: float = 32.0
-const _INDEX_PAD_T: float = 72.0
-# Extra bottom pad for ink-craft underlines drawn below Control rects.
-const _INDEX_PAD_B: float = 48.0
+const _INDEX_PAD_L: float = 52.0
+const _INDEX_PAD_R: float = 36.0
+const _INDEX_PAD_T: float = 78.0
+# Extra bottom pad for selection baseline drawn below Control rects.
+const _INDEX_PAD_B: float = 52.0
 
 
 ## Recto Field Index plate — fills the right folio leaf; never a postage stamp.
@@ -755,11 +755,13 @@ func _draw() -> void:
 
 	# Habit silhouette plate fills the verso under the brand — one visual plane, no mid-leaf void.
 	var sil_top: float = brand_y + 104.0
+	# Keep clear air above the leaf foot — silhouette plate edge must sit above
+	# the punch-card ribbon QA band (y≈990–1040 @ 1080p).
 	var sil := Rect2(
 		left.position.x + 28.0,
 		sil_top,
 		maxf(200.0, left.size.x - 56.0),
-		maxf(140.0, left.end.y - sil_top - 24.0)
+		maxf(140.0, left.end.y - sil_top - 72.0)
 	)
 	if sil.size.y >= 100.0:
 		draw_string(
@@ -774,36 +776,22 @@ func _draw() -> void:
 			"cell": 20.0 if left.size.y >= 700.0 else 13.0,
 		})
 
-	# Large surveyor seal — upper-left of the specimen so the habit maze stays visible around it.
-	var seal_r: float = 168.0 if left.size.y >= 700.0 else 78.0
-	seal_r = minf(seal_r, minf(sil.size.x, sil.size.y) * 0.28)
+	# Letterpress survey seal — rectangular plate (menu-seal-v2), never a dashed circle.
+	var seal_r: float = 118.0 if left.size.y >= 700.0 else 58.0
+	seal_r = minf(seal_r, minf(sil.size.x, sil.size.y) * 0.34)
 	var seal_c := Vector2(
-		sil.position.x + seal_r + 36.0,
-		sil.position.y + seal_r + 40.0
-	)
-	draw_circle(
-		seal_c + Vector2(5, 6),
-		seal_r + 14.0,
-		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.28)
-	)
-	# Soft bone disc so the stamp reads over local maze ink without erasing the specimen.
-	draw_circle(
-		seal_c,
-		seal_r + 6.0,
-		Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.82)
+		sil.position.x + seal_r + 28.0,
+		sil.position.y + seal_r + 32.0
 	)
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -6.0,
+		"rot_deg": -4.0,
 		"color": Palette.SLATE_TEAL,
 		"alpha": 0.94,
 		"seed": 42,
-		"ring_w": 4.6,
-		"caption": "FIELD",
-		"font": _type("action"),
-		"font_size": maxi(20, folio_px + 10),
 		"hero": true,
+		"maze": true,
+		"rust_accent": true,
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.52)
 	draw_string(
 		_type("micro"),
 		Vector2(sil.position.x + 10.0, sil.end.y - 14.0),
@@ -825,24 +813,28 @@ func _draw() -> void:
 
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(8, 11),
+		"shadow_off": Vector2(10, 13),
 		"binder_holes": 7,
 		"grain_seed": 11,
-		"grain_a": 0.055,
-		"fiber_a": 0.06,
+		"grain_a": 0.05,
+		"fiber_a": 0.035,
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
-		"thickness": 3.5,
+		"thickness": 4.5,
 		"oxide_accents": true,
 		"skip_grain": false,
+		# Quiet stock under actions — dense 4px ruled fiber reads as underline spam.
+		"ruled_stock": false,
 	})
+	# Field Index title — display face, not mono micro chrome.
+	var index_title_px: int = maxi(header_px + 4, int(scale.get("tagline", 18)) - 4)
 	draw_string(
-		_type("display"),
+		_type("tagline"),
 		card.position + Vector2(32, 30),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
-		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot_a)
+		HORIZONTAL_ALIGNMENT_LEFT, -1, index_title_px,
+		Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, slot_a)
 	)
 	draw_string(
 		_type("micro"),
@@ -858,21 +850,14 @@ func _draw() -> void:
 
 
 func _draw_seal_lattice(center: Vector2, half: float) -> void:
-	## Ink lattice fragment inside the surveyor seal — process-visible glyph.
-	var cell: float = maxf(6.0, half / 2.6)
-	var grid_origin: Vector2 = center - Vector2(cell * 2.5, cell * 2.0)
-	var walls: Array = [
-		Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(4, 0), Vector2i(5, 0),
-		Vector2i(0, 1), Vector2i(5, 1), Vector2i(0, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(5, 2),
-		Vector2i(0, 3), Vector2i(5, 3), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(5, 4),
-	]
-	var fossil: Array = [Vector2i(3, 0), Vector2i(3, 1), Vector2i(4, 1), Vector2i(4, 2)]
-	for w in walls:
-		var r := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
-		ArtKit.draw_letterpress_wall(self, r, false, 15)
-	for w in fossil:
-		var r2 := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
-		ArtKit.draw_letterpress_wall(self, r2, true, 15)
+	## Habit-maze silhouette helper — ArtKit owns the plate; kept for craft tests / reuse.
+	ArtKit.draw_habit_maze_mark(self, center, half, {
+		"color": Palette.SLATE_TEAL,
+		"alpha": 0.9,
+		"seed": 49,
+		"rust_accent": true,
+		"hero": false,
+	})
 
 
 func _draw_button_underlines(_card: Rect2) -> void:
