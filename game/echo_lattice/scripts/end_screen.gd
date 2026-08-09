@@ -1,23 +1,55 @@
 extends Control
 ##
-## End-of-slice / end-of-daily screen.
+## End-of-slice / end-of-daily / demo-complete screen.
+## Demo builds surface a single wishlist CTA (no late-act spoilers).
 ##
 
 signal restart_pressed()
 signal menu_pressed()
+signal wishlist_pressed()
 
 @onready var stats_label: Label = %Stats
 @onready var restart_button: Button = %RestartButton
 @onready var menu_button: Button = %MenuButton
+@onready var title_label: Label = $VBox/Title
+@onready var tagline_label: Label = $VBox/Tagline
+@onready var footer_label: Label = $Footer
+
+var _wishlist_button: Button = null
 
 
 func _ready() -> void:
 	restart_button.pressed.connect(func(): emit_signal("restart_pressed"))
 	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
+	if DemoBuild.is_demo():
+		_configure_demo_end()
 	menu_button.grab_focus()
 	stats_label.text = _summary()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_wing_clear()
+
+
+func _configure_demo_end() -> void:
+	title_label.text = "DEMO COMPLETE"
+	tagline_label.text = "You met Mirror Birth. The full lattice waits."
+	footer_label.text = "Echo Lattice Demo · Act I · Wishlist the full game"
+	restart_button.text = "Replay Act I"
+	_wishlist_button = Button.new()
+	_wishlist_button.name = "WishlistButton"
+	_wishlist_button.unique_name_in_owner = true
+	_wishlist_button.custom_minimum_size = Vector2(360, 48)
+	_wishlist_button.text = "Wishlist on Steam"
+	_wishlist_button.flat = true
+	_wishlist_button.add_theme_font_size_override("font_size", 22)
+	_wishlist_button.add_theme_color_override("font_color", Color(0.545, 0.227, 0.122, 1))
+	var vbox: Node = restart_button.get_parent()
+	vbox.add_child(_wishlist_button)
+	vbox.move_child(_wishlist_button, restart_button.get_index())
+	_wishlist_button.pressed.connect(func():
+		emit_signal("wishlist_pressed")
+		DemoBuild.open_wishlist()
+	)
+	_wishlist_button.grab_focus()
 
 
 func _summary() -> String:
@@ -34,7 +66,9 @@ func _summary() -> String:
 	var dom: String = GameState.dominant_habit()
 	var hp: Dictionary = GameState.habit_profile
 	var header: String = "Wing complete."
-	if GameState.run_mode == "daily":
+	if DemoBuild.is_demo():
+		header = "Act I complete — Mirror Birth remembered."
+	elif GameState.run_mode == "daily":
 		header = "Daily %s complete." % GameState.daily_label
 	return "%s\nEscaped %d / %d chambers.\nStars this wing: %d★\nTotal best moves: %d\nHabit signature: %s\n(u:%d  d:%d  l:%d  r:%d)" % [
 		header, beat, ids.size(), stars, total_best, dom,

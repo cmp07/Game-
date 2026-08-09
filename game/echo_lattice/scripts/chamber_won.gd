@@ -32,7 +32,9 @@ func configure(chamber_id: int, moves: int) -> void:
 	var star_str: String = _stars_glyph(stars)
 	var is_last: bool = GameState.run_progress_index() + 1 >= GameState.chambers_in_run()
 	var next_text: String = "→ Next Chamber" if not is_last else "→ Finish Wing"
-	if GameState.run_mode == "daily":
+	if DemoBuild.is_demo():
+		next_text = "→ Next Chamber" if not is_last else "→ Finish Demo"
+	elif GameState.run_mode == "daily":
 		next_text = "→ Next Daily" if not is_last else "→ Daily Complete"
 	next_button.text = next_text
 	var mode_line: String = ""
