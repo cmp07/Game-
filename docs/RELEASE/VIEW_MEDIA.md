@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `4e710614a2feb5c5d7aec77628801105f7db1424` (menu-design-craft / #152 print-shop craft on restore-rich; brand menu slate = craft recapture)  
+**Tip at index authoring:** `16b8c6707a8c61c313ab5416c92f8e2da2b0f04b` (menu-design-craft / #152 print-shop craft on restore-rich; brand menu slate = craft recapture)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu design craft:** print-shop materials elevation (`menu-design-craft` / #152) — ArtKit desk vignette / letterpress / hero seal; LedgerChrome type + ink-craft selection; craft `02_brand_main_menu.png`.  
 **Menu restore:** rich Field Ledger title shell (`menu-restore-rich` / #151) — hero brand + substantial Field Index; enclosure fix kept; chamber HUD removed from title. Builds on menu-1000x (#149).  
