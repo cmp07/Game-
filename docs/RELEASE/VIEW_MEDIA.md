@@ -1,8 +1,9 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `2d9c8e1f3bf46969e2c05f2bde08394258fa4301`  
-**Links below** use branch `cursor/echo-lattice-rc1` (blob + raw). After this index merges into RC1, the same paths remain valid.
+**Tip at index authoring:** *(set to RC1 tip after G1 media merge — see git)*  
+**G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) merged into RC1 with the G1 code wave.  
+**Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
 > **No finished MP4 trailer is in the repo yet.** Planned drops (`echo_lattice_30s.mp4`, optional 15s vertical / store loop) belong under [`presskit/trailers/`](presskit/trailers/) — see that README. Until encode lands, watch the **slam GIF**, **poster**, **frame packs**, and read the **beat sheet**.
 
@@ -48,7 +49,7 @@ Docs only (no image): [`README.md`](screenshots/README.md), [`TOUR.md`](screensh
 
 ## Capsules (`docs/RELEASE/capsules/`)
 
-Field Ledger Steam capsule finals. Specs: [`capsules/README.md`](capsules/README.md).
+Field Ledger Steam capsule finals (**G1 refresh** — IBM Plex Condensed + materials). Specs: [`capsules/README.md`](capsules/README.md).
 
 | Asset | Blob | Raw | Preview |
 |---|---|---|---|

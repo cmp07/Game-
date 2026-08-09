@@ -56,31 +56,31 @@
 | **W1A.4** | `cursor/execute-g1` (was `cursor/v3-shell-boot-*`) | Custom boot splash (`paper_bone` / ink stamp); quiet cold boot | No Godot robot / grey flash | [x] landed |
 
 
-**Sibling merges into `cursor/execute-g1`:** `g1-habit-feel` · `g1-prototype-tells` · `g1-audio-lift` · `g1-tech-art` · `media-g1-capsules` · `g1-ui-shell` · `g1-ghost-self` · `g1-chambers-22a5`. Deferred (overlap): `g1-fonts-materials` (TypeKit vs LedgerType — ours already vendors Plex).
+**Merged into `cursor/echo-lattice-rc1` (integrator):** `cursor/execute-g1` (umbrella: `g1-habit-feel` · `g1-prototype-tells` · `g1-audio-lift` · `g1-tech-art` · `media-g1-capsules` · `g1-ui-shell` · `g1-ghost-self` · `g1-chambers-22a5`) + `g1-fonts-materials` (ArtKit letterpress helpers; LedgerType kept over TypeKit) + `media-g1-screenshots`. Trailer encode branch not present yet.
 
-**Also on `cursor/execute-g1` (G1 MVP):** diegetic Clear Stamp / Wing Colophon plates ([`UI_DIEGETIC_V3`](UI_DIEGETIC_V3.md) §4.5–4.6); remix/Daily/Endless habit-answer plain speech ([`HABIT_SYSTEMS_V3`](HABIT_SYSTEMS_V3.md) READ aloud); screenshot path seeds habit answer for media agents.
+**Also on RC1 (G1 MVP):** diegetic Clear Stamp / Wing Colophon plates ([`UI_DIEGETIC_V3`](UI_DIEGETIC_V3.md) §4.5–4.6); remix/Daily/Endless habit-answer plain speech ([`HABIT_SYSTEMS_V3`](HABIT_SYSTEMS_V3.md) READ aloud); G1 screenshot/capsule refresh for media.
 
 **Docs:** [`FEELS_PROTOTYPE.md`](FEELS_PROTOTYPE.md) · [`PRODUCTION_CRAFT.md`](PRODUCTION_CRAFT.md)
 
 ### Wave 1B — Feel juice V3 (punctuation)
 
-| PR wave | Branch pattern | Scope | Acceptance |
-|---|---|---|---|
-| **W1B.1** | `cursor/v3-step-weight-*` | Distinct success vs blocked footstep; chalk stamp vs ink bump | Eyes-closed success/block identifiable |
-| **W1B.2** | `cursor/v3-telegraph-*` | Buffer foreshadow layers; style cells vs path echoes differentiated | Pause mid-chamber → predict fossil zone |
-| **W1B.3** | `cursor/v3-slam-defaults-*` | Paper-fold slam defaults; shake/bloom opt-in Impact; hitstop wall-clock VFX | Slam reads as document crease |
-| **W1B.4** | `cursor/v3-fail-clarity-*` | Softlock / blocked / bad-rewrite readable in ≤3 frames + footnote hook (F15) | Fail explains itself |
+| PR wave | Branch pattern | Scope | Acceptance | Status |
+|---|---|---|---|---|
+| **W1B.1** | `cursor/v3-step-weight-*` | Distinct success vs blocked footstep; chalk stamp vs ink bump | Eyes-closed success/block identifiable | [ ] open |
+| **W1B.2** | `cursor/g1-habit-feel` (partial) | Buffer foreshadow layers; style cells vs path echoes differentiated | Pause mid-chamber → predict fossil zone | [~] split telegraph landed |
+| **W1B.3** | `cursor/g1-audio-lift` + `g1-tech-art` (partial) | Paper-fold slam defaults; shake/bloom opt-in Impact; hitstop wall-clock VFX | Slam reads as document crease | [~] multi-stage slam + grain/bleed flag |
+| **W1B.4** | `cursor/v3-fail-clarity-*` | Softlock / blocked / bad-rewrite readable in ≤3 frames + footnote hook (F15) | Fail explains itself | [ ] open |
 
 **Docs:** [`FEEL_JUICE_V3.md`](FEEL_JUICE_V3.md)
 
 ### Wave 1C — Habit bite (thesis oxygen)
 
-| PR wave | Branch pattern | Scope | Acceptance |
-|---|---|---|---|
-| **W1C.1** | `cursor/v3-habit-counter-*` | Remix/Daily/Endless: 1–3 soft counter cells + win names archetype (F03/F16) | Blind Act II: “it punished my looping” |
-| **W1C.2** | `cursor/v3-annotations-*` | Margin footnotes after rewrite / softlock / identity (F02/F08) | Ledger voice, not quest log |
-| **W1C.3** | `cursor/v3-birth-ceremony-*` | Mirror Birth + Looking Glass setpiece contract (hold, PA, coach line) | First authorship lands ≤3:30 premium path |
-| **W1C.4** | `cursor/v3-claim-hygiene-*` | Soften FAQ/ROADMAP race & streak claims until Phase 4 | Claims ≤ code ([`SYSTEMS_TRUTH`](SYSTEMS_TRUTH.md)) |
+| PR wave | Branch pattern | Scope | Acceptance | Status |
+|---|---|---|---|---|
+| **W1C.1** | `cursor/g1-habit-feel` | Remix/Daily/Endless: soft counter + win names archetype (F03/F16) | Blind Act II: “it punished my looping” | [x] clear-stamp speech |
+| **W1C.2** | `cursor/v3-annotations-*` | Margin footnotes after rewrite / softlock / identity (F02/F08) | Ledger voice, not quest log | [ ] open |
+| **W1C.3** | `cursor/g1-habit-feel` | Mirror Birth + Looking Glass setpiece contract (hold, PA, coach line) | First authorship lands ≤3:30 premium path | [x] Birth ceremony MVP |
+| **W1C.4** | `cursor/g1-ghost-self` + FAQ | Soften FAQ/ROADMAP race & streak claims until code | Claims ≤ code ([`SYSTEMS_TRUTH`](SYSTEMS_TRUTH.md)) | [~] race MVP live; streaks still soft |
 
 **Docs:** [`HABIT_SYSTEMS_V3.md`](HABIT_SYSTEMS_V3.md) · [`FIRST_TEN_MINUTES.md`](FIRST_TEN_MINUTES.md) · backlog Pack A
 
@@ -95,7 +95,7 @@
 
 **Phase 1 exit gate (G1):** Game-feel score **≥ 55 / 100** on re-score rubric in [`MASTER_1000X.md`](MASTER_1000X.md) §3 (same axes). Prototype P0 tells 1–5 closed. Habit answer legible on at least one remix clear.
 
-**G1 progress (2026-08-09, `cursor/execute-g1`):** P0 tells **3–5 closed in code** (type · END OF SLICE · ASCII stars) + boot splash (shell). Habit answer legible on remix/Daily/Endless clear stamps + Birth ceremony / split telegraph (`g1-habit-feel`). W1D.1 Pause Index + Colophon landed. Audio lift + TECH ART grain merge soften P0 audio/art debt (not authored earprint/tiles yet). Waves **1B** + W1C.1–2 / W1D.2 still open for full ≥55 re-score.
+**G1 progress (2026-08-09, RC1 tip after integrator):** Feel estimate **56 / 100** ([`MASTER_1000X`](MASTER_1000X.md) §3). P0 surface tells **3–5 closed** (type · END OF SLICE · ASCII stars) + boot splash / Pause Index / Colophon. Habit answer legible on remix/Daily/Endless clears + Birth ceremony (`g1-habit-feel`). Audio lift + TECH ART grain soften P0 #1–2 (authored earprint/tiles remain **G3**). Media: capsules + screenshots refreshed; **no MP4** yet. Residual polish: Wave **1B.1/1B.4**, W1C.2 annotations, W1D.2.
 
 ---
 
@@ -191,10 +191,10 @@ Suggested agent naming: `cursor/v3-*` (Phase 1), `cursor/depth-*` (Phases 2–4)
 
 ## 8. Depth gates checklist (Steam stays frozen until)
 
-- [~] **G1** V3 vertical — W1A P0 surface closed + habit answer on remix clear; feel re-score still pending Waves 1B–1D (audio/tiles P0 remain Phase 3)  
+- [x] **G1** V3 vertical — feel estimate **56/100**; W1A P0 surface + habit answer + shell MVP on RC1 (audio/tiles authorship → G3; 1B polish residual)  
 - [ ] **G2** Content — clone-free denser-4 path; honest Hard; identity stamps  
 - [ ] **G3** Audio/art — hero-path authored earprint + MVP tiles/type  
-- [ ] **G4** Meta — Museum race; claim hygiene; feel ≥70  
+- [ ] **G4** Meta — Museum race shipped MVP early (`g1-ghost-self`); streak hygiene + feel ≥70 still open  
 - [ ] **G5** Steam resume — human AppID + uploads (after G1–G4)
 
 Until G1–G4 are checked, agents opening Steam Partner / Coming Soon work should stop and point here.

@@ -66,23 +66,23 @@ Two different scores; do not confuse them.
 
 | Score | Value | Measures |
 |---|---:|---|
-| **Ship-readiness (Steam pack)** | **78 / 100** | In-repo Partner pack, offline bar, Gate A media — [`ULTRA_AUDIT_RC1`](../AUDIT/ULTRA_AUDIT_RC1.md) |
-| **Game-feel vs finished-indie target** | **41 / 100** | Sensory authorship + thesis bite + shell craft vs Witness/Baba/Cocoon *craft* ceiling ([`QUALITY_BAR.md`](QUALITY_BAR.md)) |
+| **Ship-readiness (Steam pack)** | **78 / 100** | In-repo Partner pack, offline bar, Gate A + G1 media refresh — [`ULTRA_AUDIT_RC1`](../AUDIT/ULTRA_AUDIT_RC1.md) |
+| **Game-feel vs finished-indie target** | **56 / 100** | Post-G1 RC1 estimate (same axes) — shell/type/habit bite up; authored audio/tiles still Phase 3 ([`QUALITY_BAR.md`](QUALITY_BAR.md)) |
 
-### Game-feel breakdown (0–100 per axis → weighted 41)
+### Game-feel breakdown (0–100 per axis → weighted **56**)
 
 | Axis | W | Score | Why |
 |---|---:|---:|---|
-| Core verb / Mirror Birth recognition | 20 | **72** | Path→walls + origami slam are real and demoable |
-| Reactive habit “it answered you” | 15 | **34** | Lever/bias wired but shallow; forced transform still owns the story ([`SYSTEMS_TRUTH`](SYSTEMS_TRUTH.md)) |
-| Rewrite juice / telegraph / fail clarity | 12 | **52** | Slam ceremony exists; document defaults incomplete ([`FEEL_JUICE_V3`](FEEL_JUICE_V3.md)) |
-| Production audio earprint | 12 | **14** | Buses real; streams are procedural beepware ([`AUDIO_V3`](AUDIO_V3.md), [`FEELS_PROTOTYPE`](FEELS_PROTOTYPE.md) P0) |
-| Production art / type / tiles | 12 | **22** | Palette language real; tileset/type still generator + Godot fallback |
-| Shell craft (boot / title / end / pause) | 10 | **28** | Menu scaffold OK; “END OF SLICE,” ASCII stars, default splash ([`PRODUCTION_CRAFT`](PRODUCTION_CRAFT.md)) |
-| First-ten-minutes premium path | 10 | **48** | Teach path gated; premium silence/earprint/ceremony not landed ([`FIRST_TEN_MINUTES`](FIRST_TEN_MINUTES.md)) |
-| Meta retention cohesion | 9 | **38** | Daily strong; Museum thin (no race); modes feel add-on ([`META_LOOPS_V3`](META_LOOPS_V3.md)) |
+| Core verb / Mirror Birth recognition | 20 | **74** | Path→walls + origami slam + Birth ceremony / Looking Glass hold |
+| Reactive habit “it answered you” | 15 | **58** | Split telegraph + hand line + remix/Daily/Endless clear-stamp speech (`g1-habit-feel`) |
+| Rewrite juice / telegraph / fail clarity | 12 | **58** | Multi-stage slam + grain/bleed opt-in; Wave 1B step/fail polish still open |
+| Production audio earprint | 12 | **32** | Lifted procedural phrases/stems (not material library) — filenames still generated ([`AUDIO_V3`](AUDIO_V3.md)) |
+| Production art / type / tiles | 12 | **42** | IBM Plex via `LedgerType` + paper grain shader; tileset still generator |
+| Shell craft (boot / title / end / pause) | 10 | **62** | Boot splash, Pause Index, Colophon, Clear Stamp, ink ★, no “slice” copy |
+| First-ten-minutes premium path | 10 | **58** | Birth ceremony + diegetic shell; W1D.2 quiet-span polish still open |
+| Meta retention cohesion | 9 | **48** | Ghost of Past Self race MVP; Museum/modes still thin vs Habit Ledger loop |
 
-**Interpretation:** Upper-70s ship pack + low-40s feel = **pause Steam, deepen game**. Marketing a Coming Soon page before feel gates pass burns the first impression the pack was built to convert.
+**Interpretation:** Pack still ~78 ship-ready; feel crossed the **G1 ≥55** bar on estimate. Steam stays paused through G2–G4 — Coming Soon before authored earprint/tiles + denser content still burns first impression.
 
 **Target (100):** Blind cold player describes habit→walls; Act II player feels style counter; demo Mirror Birth lands under 3:30 with authored audio/type; Museum race chalk ships; no player-facing “slice” language; store stills match play.
 
@@ -203,6 +203,7 @@ If anyone proposes inventing AppIDs or mashing genres to “unblock,” reject.
 | Date | Note |
 |---|---|
 | 2026-08-09 | Initial MASTER_1000X — poll/merge vision siblings + BACKUP freeze; game-feel **41/100**; Steam paused for depth |
+| 2026-08-09 | G1 wave merged to RC1 (`execute-g1` + `g1-*` + media capsules/screenshots); game-feel re-score estimate **56/100** |
 
 ---
 
