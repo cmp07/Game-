@@ -76,6 +76,8 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_letterpress_rule",
             "draw_oxide_flecks",
             "draw_ledger_page",
+            "draw_open_folio",
+            "draw_habit_silhouette",
             "draw_index_card",
             "draw_seal_stamp",
             "draw_binder_clip",
@@ -88,6 +90,8 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("binder_holes", art)
         self.assertIn("contact wash", art.lower())
         self.assertIn('"thickness"', art)
+        self.assertIn("Open two-leaf Field Ledger", art)
+        self.assertIn("never an empty dashed box", art)
 
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
@@ -100,7 +104,8 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("TYPE_TAGLINE", chrome)
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)
-        self.assertIn("ArtKit.draw_ledger_page", menu)
+        self.assertIn("ArtKit.draw_open_folio", menu)
+        self.assertIn("ArtKit.draw_habit_silhouette", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
         self.assertIn('"hero": true', menu)
@@ -109,6 +114,9 @@ class TestFontsMaterials(unittest.TestCase):
         # Field Index enclosure must stay on shared card geometry helpers.
         self.assertIn("field_index_card_rect(vp, y_off)", menu)
         self.assertIn("func verify_field_index_layout", menu)
+        self.assertIn("func folio_leaves", menu)
+        # Large seal — composition art (menu-premium-v1).
+        self.assertIn("168.0", menu)
 
 
 if __name__ == "__main__":

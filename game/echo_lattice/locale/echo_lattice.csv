@@ -19,6 +19,8 @@ menu.quit,Close ledger,合上账本
 menu.colophon,Colophon,版权页
 menu.folio_mark,FIELD LEDGER · WING I,现场账本 · 第一翼
 menu.seal_caption,SURVEY SEAL · LATTICE FRAGMENT,勘测印记 · 晶格残片
+menu.habit_silhouette,HABIT SILHOUETTE · THIRTY MOVES,习惯剪影 · 三十步
+menu.recto_mark,FIELD INDEX · RECTO,现场索引 · 右页
 menu.card_foot,Ink on paper  ·  last thirty moves rewrite the page,墨于纸上  ·  最近三十步改写此页
 menu.subtitle_fresh,Wing I — %s chambers on file.,第一翼 — 已归档 %s 间室。
 menu.subtitle_progress,Survey open  ·  chamber %s of %s  ·  %s★,勘测进行中  ·  第 %s / %s 间  ·  %s★
