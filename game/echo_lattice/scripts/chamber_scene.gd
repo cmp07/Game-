@@ -8,6 +8,7 @@ signal chamber_won(chamber_id: int, moves: int)
 signal menu_requested()
 
 const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
+const PAUSE_SCENE: PackedScene = preload("res://scenes/ui/pause_index.tscn")
 const PUNCHCARD_CELLS: int = 30
 
 @onready var chamber_node: Node2D = %Chamber
@@ -27,6 +28,7 @@ const PUNCHCARD_CELLS: int = 30
 
 var _glyph_device: int = -1
 var _settings_overlay: Control = null
+var _pause_index: Control = null
 var _punch_rects: Array = []  # Array[TextureRect]
 var _tex_empty: Texture2D
 var _tex_filled: Texture2D
@@ -39,7 +41,8 @@ func _ready() -> void:
 	menu_button.text = tr("hud.menu")
 	restart_button.pressed.connect(func(): chamber_node.reset_chamber())
 	settings_button.pressed.connect(_open_settings)
-	menu_button.pressed.connect(func(): emit_signal("menu_requested"))
+	# HUD "menu" opens Pause Index — abandon lives on the card (not instant title dump).
+	menu_button.pressed.connect(_open_pause_index)
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
@@ -128,10 +131,38 @@ func _refresh_glyph_labels() -> void:
 
 
 func _open_settings() -> void:
+	if _pause_index != null and _pause_index.has_method("is_open") and _pause_index.is_open():
+		return
 	if _settings_overlay == null:
 		_settings_overlay = SETTINGS_SCENE.instantiate()
 		add_child(_settings_overlay)
 	_settings_overlay.open_menu()
+
+
+func _ensure_pause_index() -> void:
+	if _pause_index != null and is_instance_valid(_pause_index):
+		return
+	_pause_index = PAUSE_SCENE.instantiate()
+	add_child(_pause_index)
+	if _pause_index.has_signal("resume_pressed"):
+		_pause_index.resume_pressed.connect(func(): pass)
+	if _pause_index.has_signal("restart_pressed"):
+		_pause_index.restart_pressed.connect(func():
+			if chamber_node:
+				chamber_node.reset_chamber()
+		)
+	if _pause_index.has_signal("abandon_pressed"):
+		_pause_index.abandon_pressed.connect(func(): emit_signal("menu_requested"))
+
+
+func _open_pause_index() -> void:
+	# Flush any mid-slam fossils before pausing so Continue cannot softlock.
+	if chamber_node != null and chamber_node.has_method("is_rewrite_locking"):
+		if chamber_node.is_rewrite_locking() and chamber_node.has_method("_flush_pending_echoes"):
+			chamber_node._flush_pending_echoes()
+	_ensure_pause_index()
+	if _pause_index.has_method("open_pause"):
+		_pause_index.open_pause()
 
 
 func _style_ledger_chrome() -> void:
@@ -283,11 +314,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.is_echo():
 		return
 	if event.is_action_pressed("pause_menu"):
-		# Flush any mid-slam fossils before leaving so Continue cannot softlock.
-		if chamber_node != null and chamber_node.has_method("is_rewrite_locking"):
-			if chamber_node.is_rewrite_locking() and chamber_node.has_method("_flush_pending_echoes"):
-				chamber_node._flush_pending_echoes()
-		emit_signal("menu_requested")
+		if _settings_overlay != null and _settings_overlay.visible:
+			return
+		if _pause_index != null and _pause_index.has_method("is_open") and _pause_index.is_open():
+			return
+		_open_pause_index()
+		get_viewport().set_input_as_handled()
 
 
 func _refresh_habit_label() -> void:

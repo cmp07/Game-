@@ -299,6 +299,39 @@ def ui_seed_header() -> Image.Image:
     return img
 
 
+def ui_boot_splash() -> Image.Image:
+    """Rubber stamp on blank stock — Godot boot_splash image (centered on paper_bone)."""
+    w, h = 480, 280
+    img = paper_noise(max(w, h), SW["paper_bone"], jitter=6).resize((w, h)).convert("RGBA")
+    d = ImageDraw.Draw(img)
+    for x in range(0, w, 8):
+        d.line([(x, 0), (x, h)], fill=hxa(SW["ink_soft"], 28))
+    for y in range(0, h, 8):
+        d.line([(0, y), (w, y)], fill=hxa(SW["ink_soft"], 28))
+    pad = 36
+    d.rectangle([pad, pad, w - pad, h - pad], outline=hxa(SW["ink_soft"], 255), width=2)
+    d.rectangle([pad + 4, pad + 4, w - pad - 4, h - pad - 4], outline=hxa(SW["ink_soft"], 140), width=1)
+    for i in range(3):
+        cy = pad + 40 + i * ((h - 2 * pad - 80) // 2)
+        d.ellipse([pad + 14, cy - 5, pad + 24, cy + 5], fill=hxa(SW["ink_soft"], 255))
+        d.ellipse([pad + 16, cy - 3, pad + 22, cy + 3], fill=hxa(SW["paper_bone"], 255))
+    cx0, cy0 = pad + 48, h // 2 + 28
+    for i in range(12):
+        x0 = cx0 + i * 18
+        d.rectangle([x0, cy0, x0 + 12, cy0 + 18], outline=hxa(SW["ink_soft"], 220), width=1)
+        if i < 7:
+            fill = SW["rust_fossil"] if i == 6 else SW["ink_black"]
+            d.rectangle([x0 + 2, cy0 + 2, x0 + 10, cy0 + 16], fill=hxa(fill, 255))
+    d.rectangle([pad + 48, h // 2 - 36, pad + 48 + 220, h // 2 - 33], fill=hxa(SW["rust_fossil"], 255))
+    for x, y, bw, bh in ((48, -70, 200, 10), (48, -54, 160, 8), (48, -40, 120, 6)):
+        d.rectangle(
+            [pad + x, h // 2 + y, pad + x + bw, h // 2 + y + bh],
+            fill=hxa(SW["ink_black"], 255),
+        )
+    d.rectangle([pad + 48, h // 2 - 18, pad + 48 + 140, h // 2 - 14], fill=hxa(SW["slate_teal"], 255))
+    return img.convert("RGB")
+
+
 def palette_strip() -> Image.Image:
     order = [
         "paper_bone", "paper_deep", "ink_black", "ink_soft",
@@ -361,6 +394,7 @@ def main() -> None:
     save(ui_punchcard_cell("rust"),   "ui/punchcard_cell_rust.png")
     save(ui_punchcard_cell("warn"),   "ui/punchcard_cell_warn.png")
     save(ui_seed_header(),        "ui/seed_header_256x24.png")
+    save(ui_boot_splash(),        "ui/boot_splash.png")
     save(palette_strip(),         "palette/palette_strip.png")
     save(keyart_capsule_thumb(),  "keyart/capsule_header_460x215_thumb.png")
 

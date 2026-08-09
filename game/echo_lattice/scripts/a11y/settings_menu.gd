@@ -50,16 +50,19 @@ func _ready() -> void:
 
 func open_menu() -> void:
 	visible = true
-	# Localized chrome title key (settings panel header may be static in tscn).
+	# Instrument Folio — diegetic leaf title (not OS "Settings").
 	var _title_tr := tr("settings.title")
 	if _status:
-		_status.text = _title_tr
+		_status.text = tr("settings.folio_mark")
 	var title_lbl: Label = get_node_or_null("Panel/Margin/VBox/Title")
 	if title_lbl:
 		title_lbl.text = _title_tr
 		title_lbl.add_theme_color_override("font_color", Palette.INK_BLACK)
+		title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_ensure_folio_header()
 	_load_from_services()
 	_refresh_binding_labels()
+	_style_folio_controls()
 	if _language_option:
 		_language_option.grab_focus()
 	elif _colorblind_option:
@@ -67,23 +70,78 @@ func open_menu() -> void:
 
 
 func _style_as_index_card() -> void:
-	## Field Ledger plate — paper over paper, not charcoal glass (QW-3).
+	## Instrument Folio plate — paper over paper, not charcoal glass (QW-3 + shell polish).
 	var dim: ColorRect = get_node_or_null("Dim")
 	if dim:
-		dim.color = Color(Palette.PAPER_MARGIN.r, Palette.PAPER_MARGIN.g, Palette.PAPER_MARGIN.b, 0.92)
+		dim.color = LedgerChrome.paper_wash_color(0.94)
 	var panel: PanelContainer = get_node_or_null("Panel")
 	if panel == null:
 		return
-	var plate := StyleBoxFlat.new()
-	plate.bg_color = Palette.PAPER_BONE
-	plate.border_color = Palette.INK_SOFT
-	plate.set_border_width_all(2)
-	plate.shadow_size = 0
-	plate.corner_radius_top_left = 0
-	plate.corner_radius_top_right = 0
-	plate.corner_radius_bottom_left = 0
-	plate.corner_radius_bottom_right = 0
+	# paper_deep lift behind bone face via nested style.
+	var plate := LedgerChrome.paper_plate_style(false)
+	plate.border_width_left = 2
+	plate.border_width_right = 2
+	plate.border_width_top = 2
+	plate.border_width_bottom = 2
 	panel.add_theme_stylebox_override("panel", plate)
+	_ensure_folio_header()
+	_style_folio_controls()
+	# Close → File away (ledger language).
+	var close_btn: Button = get_node_or_null("Panel/Margin/VBox/Buttons/CloseButton")
+	if close_btn:
+		close_btn.text = tr("settings.close")
+		LedgerChrome.style_index_button(close_btn, true)
+
+
+func _ensure_folio_header() -> void:
+	var vbox: VBoxContainer = get_node_or_null("Panel/Margin/VBox")
+	if vbox == null:
+		return
+	var folio: Label = vbox.get_node_or_null("FolioMark")
+	if folio == null:
+		folio = Label.new()
+		folio.name = "FolioMark"
+		vbox.add_child(folio)
+		vbox.move_child(folio, 0)
+	folio.text = tr("settings.folio_mark")
+	LedgerChrome.style_ink_label(folio, Palette.SLATE_TEAL, 12)
+	# Section headers read as stamped leaf titles.
+	for path in [
+		"Panel/Margin/VBox/Scroll/Content/LanguageHeader",
+		"Panel/Margin/VBox/Scroll/Content/AudioHeader",
+		"Panel/Margin/VBox/Scroll/Content/A11yHeader",
+		"Panel/Margin/VBox/Scroll/Content/InputHeader",
+		"Panel/Margin/VBox/Scroll/Content/SupportHeader",
+	]:
+		var hdr: Label = get_node_or_null(path)
+		if hdr:
+			hdr.add_theme_color_override("font_color", Palette.RUST_FOSSIL)
+			hdr.add_theme_font_size_override("font_size", 15)
+
+
+func _style_folio_controls() -> void:
+	LedgerChrome.style_folio_option(_language_option)
+	LedgerChrome.style_folio_option(_colorblind_option)
+	LedgerChrome.style_folio_option(_subtitle_size)
+	for slider in [_master_vol, _sfx_vol, _music_vol, _pa_vol, _shake_slider, _ui_scale_slider]:
+		LedgerChrome.style_folio_slider(slider)
+	for check in [
+		_pattern_check, _reduce_flash_check, _shake_check, _subtitles_check,
+		_subtitle_bg_check, _ghost_assist_check, _reduce_motion_check, _hold_walk_check,
+	]:
+		LedgerChrome.style_folio_check(check)
+	for path in [
+		"Panel/Margin/VBox/Buttons/ResetA11yButton",
+		"Panel/Margin/VBox/Buttons/ResetInputButton",
+		"Panel/Margin/VBox/Scroll/Content/ExportCrashPackButton",
+	]:
+		var btn: Button = get_node_or_null(path)
+		if btn:
+			LedgerChrome.style_index_button(btn, false)
+	var close_btn: Button = get_node_or_null("Panel/Margin/VBox/Buttons/CloseButton")
+	if close_btn:
+		close_btn.text = tr("settings.close")
+		LedgerChrome.style_index_button(close_btn, true)
 
 
 func close_menu() -> void:
