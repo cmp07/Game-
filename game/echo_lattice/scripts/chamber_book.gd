@@ -89,6 +89,13 @@ func _to_playable(rec: Dictionary) -> Dictionary:
 	play["act_index"] = act_idx
 	play["act_name"] = str(rec.get("act", ""))
 	play["role"] = str(rec.get("role", play.get("role", "")))
+	var hvo = rec.get("hard_variant_of", null)
+	if hvo != null and str(hvo) != "":
+		play["hard_variant_of"] = str(hvo)
+	elif typeof(rec.get("raw", null)) == TYPE_DICTIONARY:
+		var raw_hvo = rec["raw"].get("hard_variant_of", null)
+		if raw_hvo != null and str(raw_hvo) != "":
+			play["hard_variant_of"] = str(raw_hvo)
 	# Prefer rewrite/identity soft_hard_bias when authored; else leave loader default (-1).
 	for key in ["rewrite", "identity"]:
 		var block = rec.get(key, null)
@@ -187,6 +194,56 @@ func daily_eligible_indices() -> Array:
 		seen[idx] = true
 		out.append(idx)
 	out.sort()
+	return out
+
+
+func hard_variant_indices() -> Array:
+	## All authored hard-variant chamber ids in book order (full game only).
+	if not _loaded:
+		reload()
+	var out: Array = []
+	for play in _playable:
+		if str(play.get("role", "")) != "hard":
+			continue
+		var idx: int = int(play.get("id", -1))
+		if idx >= 0:
+			out.append(idx)
+	return out
+
+
+func unlocked_hard_variant_indices(completed: Dictionary) -> Array:
+	## Hard variants whose parent slug (or content id stem) is in lifetime clears.
+	if DemoBuild.is_demo():
+		return []
+	if not _loaded:
+		reload()
+	var cleared_slugs: Dictionary = {}
+	for play in _campaign:
+		var cid: int = int(play.get("id", -1))
+		if cid < 0:
+			continue
+		if not (completed.has(cid) or completed.has(str(cid))):
+			continue
+		var slug: String = str(play.get("slug", ""))
+		if slug != "":
+			cleared_slugs[slug] = true
+		var content_id: String = str(play.get("content_id", ""))
+		if content_id != "":
+			cleared_slugs[content_id] = true
+			# "02_mirror_birth" → also match hard_variant_of "mirror_birth".
+			var parts: PackedStringArray = content_id.split("_", false, 1)
+			if parts.size() == 2:
+				cleared_slugs[parts[1]] = true
+	var out: Array = []
+	for play in _playable:
+		if str(play.get("role", "")) != "hard":
+			continue
+		var parent: String = str(play.get("hard_variant_of", ""))
+		if parent == "" or not cleared_slugs.has(parent):
+			continue
+		var idx: int = int(play.get("id", -1))
+		if idx >= 0:
+			out.append(idx)
 	return out
 
 

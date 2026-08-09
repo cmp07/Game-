@@ -17,10 +17,10 @@ Severity: **P0** ship-blocker / broken progression · **P1** major mode or fairn
 | CORE-02 | P0 | Wing-complete Continue parks on last chamber (SL-6 regress) | **Fixed** on this branch |
 | CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | **Mitigated** on `cursor/fix-daily-calendar` |
 | CORE-04 | P1 | Endless mode advertised, not implemented | **Fixed** on `cursor/fix-endless` (thin vertical) |
-| CORE-05 | P1 | Soft/hard adaptation + RewriteEngine unwired from playable loop | Open |
-| CORE-06 | P1 | Habit archetypes / score bias never affect rewrites | Open |
-| CORE-07 | P2 | Stars always rated as mode `"standard"` (ignores daily/reader/cold) | Open |
-| CORE-08 | P2 | Hitstop (`Engine.time_scale`) stretches rewrite input lock | Open |
+| CORE-05 | P1 | Soft/hard adaptation + RewriteEngine unwired from playable loop | **Mitigated** on `cursor/fix-habit-wire` + `cursor/fix-remaining-p1` (mode id) |
+| CORE-06 | P1 | Habit archetypes / score bias never affect rewrites | **Mitigated** on `cursor/fix-habit-wire` |
+| CORE-07 | P2 | Stars always rated as mode `"standard"` (ignores daily/reader/cold) | **Partial** — endless/hard via `active_balance_mode()`; reader/cold UI still unshipped |
+| CORE-08 | P2 | Hitstop (`Engine.time_scale`) stretches rewrite input lock | **Fixed** on `cursor/fix-remaining-p1` (wall-clock settle) |
 | CORE-09 | P2 | Undo across checkpoint clears *all* echoes (vs balance “no undo across CP”) | Open |
 | CORE-10 | P2 | `_recover_softlock` can strip puzzle-critical fossils | Open |
 | CORE-11 | P3 | Screenshot helpers set `queue_pos = chamber_id` | Open |
@@ -78,7 +78,7 @@ When the skip loop exhausted the queue, `continue_run()` **parked** `queue_pos` 
 
 ---
 
-## P1 — Open (document only)
+## P1 — Closed / mitigated
 
 ### CORE-03 — Daily mode does not use authored daily pipeline (mitigated)
 
@@ -103,65 +103,37 @@ When the skip loop exhausted the queue, `continue_run()` **parked** `queue_pos` 
 
 ---
 
-### CORE-05 — Soft/hard adaptation unwired
+### CORE-05 — Soft/hard adaptation unwired (mitigated)
 
-**Repro**
+**Mitigation**
 
-1. `BalanceTuning.soft_hard_bias` / `hard_ops_allowed` / `enabled_ops` / `rewrite_cap` load from `config/balance_v2.json`.
-2. Playable `chamber.gd` rewrite path only applies authored `transform` to `moves_since_checkpoint` — never reads those dials.
-3. Chamber JSON `identity.soft_hard_bias` is loaded into records but dropped by `ChamberLoader.to_playable`.
-
-**Root cause**
-
-Balance v2 / RewriteEngine design was never connected to the elevated path-transform loop. Soft vs hard ops exist only as config + unit tests.
-
-**Recommended fix**
-
-Either (a) implement a minimal RewriteEngine that filters/candidates ops with `enabled_ops` + `soft_hard_bias`, or (b) mark balance soft/hard as design-only until wired and stop claiming runtime adaptation in balance docs for RC1.
+`HabitRewriteLever` gates hard counters with `BalanceTuning.soft_hard_bias` / `hard_ops_allowed` / `enabled_ops`. Chamber JSON `soft_hard_bias` plumbs via `ChamberLoader` / `ChamberBook`. `cursor/fix-remaining-p1` wires `GameState.active_balance_mode()` into the habit rewrite path so Endless uses its mode floor (daily/hard share `standard`; reader/cold UI still unshipped).
 
 ---
 
-### CORE-06 — Habit rewrite does not use archetypes
+### CORE-06 — Habit rewrite does not use archetypes (mitigated)
 
-**Repro**
+**Mitigation**
 
-1. Move enough to bias `habit_profile` / `move_ring`.
-2. Trigger checkpoints — fossils follow geometric transforms of the move buffer only.
-3. `HabitArchetype` + `RewriteScoreBias` have no callers from `chamber.gd` / `main.gd`. There is no `HabitSignature` / `RewriteEngine` script in tree.
-
-**Root cause**
-
-Classifier helpers are orphaned relative to the playable rewrite. Habit HUD/audio read direction counts; fossils do not.
-
-**Recommended fix**
-
-Build a `HabitSignature` from `move_ring` + path cells; pass through `RewriteScoreBias.apply` when selecting fossil candidates (or bias which transform / magnitude). Until then, treat “habit rewrite” as path echo only.
+`chamber.gd` → `HabitRewriteLever.select_echo_cells` → `HabitSignature` / `HabitArchetype` / `RewriteScoreBias.apply` adds archetype-biased fossil cells on top of the authored transform path. Contract: `tests/test_habit_rewrite_wire.py`.
 
 ---
 
-## P2 — Open
+## P2 — Open / partial
 
-### CORE-07 — Star rating ignores active mode
+### CORE-07 — Star rating ignores active mode (partial)
 
-**Repro / cause**
+**Mitigation**
 
-`GameState.record_chamber_win` / `last_stars` call `StarRater.rate(..., "standard")` even when `run_mode == "daily"`. Balance modes `reader` / `cold` slack never apply.
-
-**Fix**
-
-Pass `run_mode` (and map daily → configured mode id) into `StarRater`.
+`record_chamber_win` / `last_stars` use `active_balance_mode()` (endless → `endless`, else `standard`). Daily/hard intentionally share standard slack. Reader/cold remain design-only until a mode UI ships.
 
 ---
 
-### CORE-08 — Juice hitstop extends rewrite input lock
+### CORE-08 — Juice hitstop extends rewrite input lock (fixed)
 
-**Repro / cause**
+**Fix (landed on `cursor/fix-remaining-p1`)**
 
-`Juice.rewrite_punch` → `hitstop` sets `Engine.time_scale` ~0.06. Chamber `_process` advances `pending_echo_timer` with **scaled** `delta`, while Juice restores timescale on wall-clock. Slam duration and movement lock stretch beyond `REWRITE_DURATION` (0.90s). Restart still works; undo/move stay blocked longer than the art beat.
-
-**Fix**
-
-Advance rewrite settle on wall-clock (mirror Juice), or skip hitstop while rewrite-locking, or drive slam with `Engine.get_process_delta_time()` unscaled via `Time.get_ticks_msec()`.
+Rewrite settle advances on wall-clock (`Time.get_ticks_msec()`), so Juice hitstop cannot stretch the movement lock past `REWRITE_DURATION`.
 
 ---
 
@@ -212,6 +184,9 @@ Keep recovery; add CI assert that auto-solver playthroughs never emit recovery; 
 | Campaign | `acts.json` order via `ChamberBook` | OK |
 | CORE-03 | P1 | Daily ignores `DailyCalendar` / `DailySeeds` / `daily_eligible` | **Mitigated** on `cursor/fix-daily-calendar` |
 | CORE-04 | P1 | Endless mode advertised, not implemented | **Fixed** on `cursor/fix-endless` (thin vertical) |
+| CORE-05 | P1 | Soft/hard adaptation unwired | **Mitigated** on habit-wire + remaining-p1 |
+| CORE-06 | P1 | Habit archetypes unused | **Mitigated** on `cursor/fix-habit-wire` |
+| CORE-08 | P2 | Hitstop stretches rewrite lock | **Fixed** on `cursor/fix-remaining-p1` |
 
 ---
 

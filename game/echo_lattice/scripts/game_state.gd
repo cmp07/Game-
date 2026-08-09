@@ -106,6 +106,29 @@ func start_endless_run() -> void:
 	SaveManager.save_to_disk()
 
 
+func start_hard_run() -> void:
+	## Optional hard-variant wing unlocked after clearing each parent chamber.
+	run_mode = "hard"
+	_clear_daily_meta()
+	endless_seed = 0
+	endless_depth = 0
+	endless_label = ""
+	run_queue = ChamberBook.unlocked_hard_variant_indices(completed)
+	queue_pos = 0
+	current_chamber = int(run_queue[0]) if run_queue.size() > 0 else 0
+	run_cleared.clear()
+	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
+	move_ring.clear()
+	run_started = run_queue.size() > 0
+	SaveManager.save_to_disk()
+
+
+func can_start_hard_run() -> bool:
+	if DemoBuild.is_demo():
+		return false
+	return ChamberBook.unlocked_hard_variant_indices(completed).size() > 0
+
+
 func continue_run() -> void:
 	run_started = true
 	if run_queue.is_empty():
@@ -187,7 +210,7 @@ func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1, stamp: D
 		best_moves[chamber_id] = moves
 	var act_id: int = ChamberBook.act_for_chamber(chamber_id)
 	var par: int = bfs_par if bfs_par > 0 else moves
-	var star_mode: String = "endless" if run_mode == "endless" else "standard"
+	var star_mode: String = active_balance_mode()
 	var stars: int = StarRater.rate(moves, par, act_id, star_mode)
 	var data: Dictionary = ChamberBook.get_chamber(chamber_id)
 	if not stamp.is_empty() and IdentityStamp.affects_stars(data):
@@ -285,8 +308,7 @@ static func _is_opposite(a: String, b: String) -> bool:
 
 func last_stars(chamber_id: int, moves: int, bfs_par: int) -> int:
 	var act_id: int = ChamberBook.act_for_chamber(chamber_id)
-	var star_mode: String = "endless" if run_mode == "endless" else "standard"
-	return StarRater.rate(moves, bfs_par, act_id, star_mode)
+	return StarRater.rate(moves, bfs_par, act_id, active_balance_mode())
 
 
 func advance_chamber() -> bool:

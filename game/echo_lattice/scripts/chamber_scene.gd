@@ -159,6 +159,8 @@ func _refresh_title() -> void:
 	elif GameState.run_mode == "endless":
 		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
 		mode_tag = tr("hud.endless_tag") % [GameState.endless_label, pct]
+	elif GameState.run_mode == "hard":
+		mode_tag = tr("hud.hard_tag")
 	if GameState.run_mode == "endless":
 		title_label.text = "%s — %s%s" % [
 			tr("hud.endless_depth") % (GameState.endless_depth + 1),

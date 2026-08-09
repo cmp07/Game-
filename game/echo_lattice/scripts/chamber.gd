@@ -42,6 +42,8 @@ var checkpoints_triggered: Dictionary = {}
 var pending_echoes: Array = []
 var pending_echo_timer: float = 0.0
 var pending_echo_settle_time: float = REWRITE_DURATION
+## Wall-clock origin for rewrite settle (avoids Engine.time_scale stretch).
+var _rewrite_settle_start_msec: int = -1
 var rewrite_freeze: bool = false  ## hold mid-slam for screenshot capture
 var telegraph_cells: Array = []
 var rewrite_warn_armed: bool = false
@@ -142,7 +144,13 @@ func _process(delta: float) -> void:
 	lantern_t = fmod(lantern_t + delta * 1.7, TAU)
 	var need_redraw := false
 	if pending_echoes.size() > 0 and not rewrite_freeze:
-		pending_echo_timer += delta
+		# Wall-clock settle so Juice hitstop (Engine.time_scale) cannot stretch
+		# the rewrite input lock past REWRITE_DURATION (CORE-08).
+		var now_msec: int = Time.get_ticks_msec()
+		if _rewrite_settle_start_msec < 0:
+			_rewrite_settle_start_msec = now_msec
+		var wall_sec: float = float(now_msec - _rewrite_settle_start_msec) / 1000.0
+		pending_echo_timer = wall_sec
 		if pending_echo_timer >= pending_echo_settle_time:
 			_flush_pending_echoes()
 		need_redraw = true
@@ -216,6 +224,7 @@ func load_chamber(id: int) -> void:
 	checkpoints_triggered.clear()
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	_rewrite_settle_start_msec = -1
 	rewrite_freeze = false
 	telegraph_cells.clear()
 	habit_telegraph_cells.clear()
@@ -443,6 +452,7 @@ func _flush_pending_echoes() -> void:
 			placed.append(p)
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
+	_rewrite_settle_start_msec = -1
 	rewrite_freeze = false
 	_telegraph_dirty = true
 	_invalidate_checkpoint_dist()
@@ -499,6 +509,7 @@ func _trigger_rewrite() -> void:
 			seen[hp] = true
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
+	_rewrite_settle_start_msec = Time.get_ticks_msec()
 	if _reduce_motion():
 		# Skip slam animation — commit fossils immediately for photosensitivity / vestibular comfort.
 		pending_echo_settle_time = 0.05
@@ -563,8 +574,11 @@ func _select_habit_rewrite_cells(already: Dictionary) -> Dictionary:
 				blocked[Vector2i(x, y)] = true
 	var act_id: int = int(chamber.get("act", ChamberBook.act_for_chamber(int(chamber.get("id", 0)))))
 	var chamber_index: int = int(chamber.get("act_index", int(chamber.get("id", 0)) % 7))
-	# Daily shares standard mode budgets for RC1; reader/cold UI not shipped.
+	# Daily/hard share standard budgets; Endless uses its mode soft_hard floor.
+	# Reader/cold UI still not shipped.
 	var mode_id: String = "standard"
+	if has_node("/root/GameState") and GameState.has_method("active_balance_mode"):
+		mode_id = GameState.active_balance_mode()
 	var chamber_bias: float = float(chamber.get("soft_hard_bias", -1.0))
 	var dirs: Array = []
 	if has_node("/root/GameState"):

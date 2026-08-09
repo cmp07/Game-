@@ -179,4 +179,5 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"rewrite_cap": rewrite_cap,
 		"soft_hard_bias": soft_hard,
 		"act_index": int(rec.get("act_index", 0)),
+		"hard_variant_of": str(rec.get("hard_variant_of", "")) if rec.get("hard_variant_of", null) != null else "",
 	}

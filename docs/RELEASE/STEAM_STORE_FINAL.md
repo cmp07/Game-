@@ -81,7 +81,7 @@ Echo Lattice is deterministic. Same seed, same thirty moves, same maze. Two play
 [*] Stars (1–3★) against par; bests remembered.
 [*] Daily Challenge — a shared UTC seed, five chambers, everyone on the same day.
 [*] Field Ledger look: paper, ink, rust fossils. Clean, diagrammatic, readable.
-[*] Keyboard-first; controller path as it lands. English UI for v1.
+[*] Keyboard + full controller path (Deck/Xbox glyphs). English UI for v1; zh_Hans strings + CJK font fetch.
 [/list]
 
 [b]What Echo Lattice is not[/b]
@@ -205,7 +205,7 @@ Godot 4.3 2D puzzle — light GPU load. Numbers are honest floors, not marketing
 | Graphics | Metal-capable | Metal-capable |
 | Storage | 500 MB | 1 GB |
 
-**Controller:** keyboard/mouse required for v1 copy until gamepad glyphs land; then add Full controller support.
+**Controller:** Full controller support (Xbox / Steam Deck face prompts + remappable keyboard). Keyboard/mouse remains fully supported; store Controllers tag OK once Partner page is live.
 
 ---
 

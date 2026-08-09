@@ -333,6 +333,7 @@ class HabitRewriteWireTests(unittest.TestCase):
         src = (SCRIPTS / "chamber.gd").read_text(encoding="utf-8")
         self.assertIn("HabitRewriteLever.select_echo_cells", src)
         self.assertIn("_select_habit_rewrite_cells", src)
+        self.assertIn("active_balance_mode", src)
         lever = (SCRIPTS / "habit_rewrite_lever.gd").read_text(encoding="utf-8")
         self.assertIn("RewriteScoreBias.apply", lever)
         self.assertIn("HabitArchetype.classify", lever)

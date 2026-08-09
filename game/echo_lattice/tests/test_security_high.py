@@ -39,6 +39,7 @@ SAVE_MAX_CHAMBER_INDEX = 1023
 SAVE_MAX_STRING_LEN = 256
 SAVE_ALLOWED_KEYS = {
     "version",
+    "updated_at",
     "build_flavor",
     "current_chamber",
     "best_moves",
@@ -51,9 +52,20 @@ SAVE_ALLOWED_KEYS = {
     "queue_pos",
     "daily_seed",
     "daily_label",
+    "daily_friend_code",
+    "daily_chamber_id",
+    "daily_source",
+    "daily_variation",
     "daily_best_stars",
+    "endless_seed",
+    "endless_depth",
+    "endless_best_depth",
+    "endless_label",
     "run_started",
+    "habit_identity_unlocked",
+    "identity_stamps",
 }
+SAVE_RUN_MODES = {"standard", "daily", "endless", "hard"}
 
 
 def validate_save_text(text: str) -> dict:
@@ -90,10 +102,17 @@ def validate_save_dict(data: dict) -> dict:
         mode = str(data.get("run_mode", ""))
         if len(mode) > SAVE_MAX_STRING_LEN:
             return {"ok": False, "reason": "run_mode_too_long"}
-        if mode and mode not in ("standard", "daily"):
+        if mode and mode not in SAVE_RUN_MODES:
             return {"ok": False, "reason": "run_mode_invalid"}
-    if "daily_label" in data and len(str(data.get("daily_label", ""))) > SAVE_MAX_STRING_LEN:
-        return {"ok": False, "reason": "daily_label_too_long"}
+    for str_field in (
+        "daily_label",
+        "daily_friend_code",
+        "daily_chamber_id",
+        "daily_source",
+        "endless_label",
+    ):
+        if str_field in data and len(str(data.get(str_field, ""))) > SAVE_MAX_STRING_LEN:
+            return {"ok": False, "reason": f"{str_field}_too_long"}
     if "current_chamber" in data:
         cc = int(data["current_chamber"])
         if cc < 0 or cc > SAVE_MAX_CHAMBER_INDEX:
@@ -232,6 +251,42 @@ class TestSec02CloudSaveSchema(unittest.TestCase):
             }
         )
         self.assertTrue(ok["ok"], ok)
+
+    def test_python_validator_accepts_rc1_full_save_shape(self) -> None:
+        """SaveManager.save_to_disk payload must pass Cloud validate (SEC-02 drift)."""
+        ok = validate_save_dict(
+            {
+                "version": 2,
+                "updated_at": 1723000000.0,
+                "build_flavor": "full",
+                "current_chamber": 35,
+                "best_moves": {"2": 40},
+                "best_stars": {"2": 3},
+                "completed": {"2": True},
+                "run_cleared": {"35": True},
+                "habit_profile": {"up": 1, "down": 0, "left": 0, "right": 2},
+                "run_mode": "endless",
+                "run_queue": [0, 1, 2, 3, 4],
+                "queue_pos": 1,
+                "daily_seed": 0,
+                "daily_label": "",
+                "daily_friend_code": "",
+                "daily_chamber_id": "",
+                "daily_source": "",
+                "daily_variation": {},
+                "daily_best_stars": {},
+                "endless_seed": 424242,
+                "endless_depth": 3,
+                "endless_best_depth": 8,
+                "endless_label": "E-ABCDE",
+                "run_started": True,
+                "habit_identity_unlocked": True,
+                "identity_stamps": {},
+            }
+        )
+        self.assertTrue(ok["ok"], ok)
+        hard = validate_save_dict({"version": 2, "run_mode": "hard", "run_queue": [35]})
+        self.assertTrue(hard["ok"], hard)
 
     def test_python_validator_rejects_hostile_shapes(self) -> None:
         cases = [

@@ -31,6 +31,8 @@ REQUIRED_UI_KEYS = {
     "menu.start_new",
     "menu.daily",
     "menu.endless",
+    "menu.hard",
+    "menu.hard_count",
     "menu.quit",
     "menu.subtitle_fresh",
     "menu.subtitle_progress",

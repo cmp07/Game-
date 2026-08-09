@@ -17,6 +17,7 @@ const SAVE_MAX_CHAMBER_INDEX: int = 1023
 const SAVE_MAX_STRING_LEN: int = 256
 const SAVE_ALLOWED_KEYS: Array[String] = [
 	"version",
+	"updated_at",
 	"build_flavor",
 	"current_chamber",
 	"best_moves",
@@ -29,8 +30,24 @@ const SAVE_ALLOWED_KEYS: Array[String] = [
 	"queue_pos",
 	"daily_seed",
 	"daily_label",
+	"daily_friend_code",
+	"daily_chamber_id",
+	"daily_source",
+	"daily_variation",
 	"daily_best_stars",
+	"endless_seed",
+	"endless_depth",
+	"endless_best_depth",
+	"endless_label",
 	"run_started",
+	"habit_identity_unlocked",
+	"identity_stamps",
+]
+const SAVE_RUN_MODES: Array[String] = [
+	"standard",
+	"daily",
+	"endless",
+	"hard",
 ]
 
 
@@ -200,13 +217,42 @@ static func validate_save_dict(data: Dictionary) -> Dictionary:
 		var mode := str(data.get("run_mode", ""))
 		if mode.length() > SAVE_MAX_STRING_LEN:
 			return {"ok": false, "reason": "run_mode_too_long"}
-		if mode != "" and mode != "standard" and mode != "daily":
+		if mode != "" and mode not in SAVE_RUN_MODES:
 			return {"ok": false, "reason": "run_mode_invalid"}
-	if data.has("daily_label") and str(data.get("daily_label", "")).length() > SAVE_MAX_STRING_LEN:
-		return {"ok": false, "reason": "daily_label_too_long"}
-	for int_field in ["current_chamber", "queue_pos", "daily_seed"]:
+	for str_field in [
+		"daily_label",
+		"daily_friend_code",
+		"daily_chamber_id",
+		"daily_source",
+		"endless_label",
+	]:
+		if data.has(str_field) and str(data.get(str_field, "")).length() > SAVE_MAX_STRING_LEN:
+			return {"ok": false, "reason": "%s_too_long" % str_field}
+	for int_field in [
+		"current_chamber",
+		"queue_pos",
+		"daily_seed",
+		"endless_seed",
+		"endless_depth",
+		"endless_best_depth",
+	]:
 		if data.has(int_field) and typeof(data[int_field]) not in [TYPE_INT, TYPE_FLOAT]:
 			return {"ok": false, "reason": "%s_not_number" % int_field}
+	if data.has("updated_at") and typeof(data["updated_at"]) not in [TYPE_INT, TYPE_FLOAT]:
+		return {"ok": false, "reason": "updated_at_not_number"}
+	if data.has("daily_variation") and typeof(data["daily_variation"]) != TYPE_DICTIONARY:
+		return {"ok": false, "reason": "daily_variation_not_object"}
+	if data.has("daily_variation") and (data["daily_variation"] as Dictionary).size() > 32:
+		return {"ok": false, "reason": "daily_variation_too_many_keys"}
+	if data.has("habit_identity_unlocked") and typeof(data["habit_identity_unlocked"]) not in [
+		TYPE_BOOL, TYPE_INT, TYPE_FLOAT
+	]:
+		return {"ok": false, "reason": "habit_identity_unlocked_not_bool"}
+	if data.has("identity_stamps"):
+		if typeof(data["identity_stamps"]) != TYPE_DICTIONARY:
+			return {"ok": false, "reason": "identity_stamps_not_object"}
+		if (data["identity_stamps"] as Dictionary).size() > SAVE_MAX_MAP_ENTRIES:
+			return {"ok": false, "reason": "identity_stamps_too_many_keys"}
 	if data.has("current_chamber"):
 		var cc: int = int(data.get("current_chamber", 0))
 		if cc < 0 or cc > SAVE_MAX_CHAMBER_INDEX:

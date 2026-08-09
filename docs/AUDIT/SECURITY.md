@@ -19,8 +19,8 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | Severity | Count |
 |---|---|
 | Critical | 0 |
-| High | 3 |
-| Medium | 7 |
+| High | 0 (3 fixed on `cursor/fix-sec-high`) |
+| Medium | 7 → **5 open** (+ SEC-04 fixed, SEC-08 partial on `cursor/fix-remaining-p1`) |
 | Low | 6 |
 
 ---
@@ -91,6 +91,7 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | | |
 |---|---|
 | **Severity** | Medium |
+| **Status** | **FIXED** (`cursor/fix-remaining-p1`) — `LocalTelemetry.sanitize_path` allowlists `user://telemetry/**` only. |
 | **Area** | Path traversal / untrusted config |
 | **Evidence** | `scripts/local_telemetry.gd` → `from_balance()`; `config/balance_v2.json` → `telemetry.path` |
 
@@ -163,6 +164,7 @@ No committed secrets, network telemetry upload client, or dynamic script evaluat
 | | |
 |---|---|
 | **Severity** | Medium |
+| **Status** | **PARTIAL** (`cursor/fix-remaining-p1`) — `_scrub_pii` drops known PII keys when `include_pii` is false; full per-event allowlist still open. |
 | **Area** | Telemetry / privacy |
 | **Evidence** | `balance_v2.json`; `local_telemetry.gd` merges `default_context` + `payload` unchecked |
 

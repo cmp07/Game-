@@ -10,6 +10,8 @@ menu.continue,Continue,继续
 menu.start_new,Start New Run,开始新周目
 menu.daily,Daily Challenge,每日挑战
 menu.endless,Endless,无尽
+menu.hard,Hard Variants,高难变体
+menu.hard_count,Hard Variants (%s),高难变体（%s）
 menu.settings,Settings,设置
 menu.wishlist,Wishlist on Steam,Steam 愿望单
 menu.quit,Quit,退出
@@ -18,7 +20,7 @@ menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
 menu.daily_endless_meta,Daily %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
-menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15
 menu.demo_daily_meta_code,Next Fest demo  ·  Daily %s  ·  %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引
 menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
@@ -34,7 +36,8 @@ hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
 hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
 hud.endless_depth,Depth %s,深度 %s
-hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %shud.chamber_fallback,Chamber,间室
+hud.hard_tag, · Hard+, · 高难+
+hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %s
 habit.up,up,上
 habit.down,down,下
 habit.left,left,左

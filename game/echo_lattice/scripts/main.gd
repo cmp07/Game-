@@ -1054,6 +1054,8 @@ func show_menu() -> void:
 		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
 	if m.has_signal("endless_pressed"):
 		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
+	if m.has_signal("hard_pressed"):
+		m.connect("hard_pressed", Callable(self, "_on_menu_hard"))
 	if has_node("/root/SteamService"):
 		SteamService.set_menu_presence()
 
@@ -1121,6 +1123,13 @@ func _on_menu_daily() -> void:
 
 func _on_menu_endless() -> void:
 	GameState.start_endless_run()
+	show_chamber()
+
+
+func _on_menu_hard() -> void:
+	if not GameState.can_start_hard_run():
+		return
+	GameState.start_hard_run()
 	show_chamber()
 
 

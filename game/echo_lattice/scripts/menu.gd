@@ -8,6 +8,7 @@ signal start_new_pressed()
 signal continue_pressed()
 signal daily_pressed()
 signal endless_pressed()
+signal hard_pressed()
 signal settings_pressed()
 signal quit_pressed()
 signal wishlist_pressed()
@@ -18,6 +19,7 @@ const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn"
 @onready var start_button: Button = %StartButton
 @onready var daily_button: Button = %DailyButton
 @onready var endless_button: Button = %EndlessButton
+@onready var hard_button: Button = %HardButton
 @onready var settings_button: Button = %SettingsButton
 @onready var quit_button: Button = %QuitButton
 @onready var subtitle: Label = %Subtitle
@@ -52,6 +54,11 @@ func _ready() -> void:
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
 	if endless_button:
 		endless_button.pressed.connect(func(): emit_signal("endless_pressed"))
+	if hard_button:
+		hard_button.pressed.connect(func():
+			if GameState.can_start_hard_run():
+				emit_signal("hard_pressed")
+		)
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
 	if DemoBuild.wishlist_cta_enabled():
@@ -69,6 +76,8 @@ func _ready() -> void:
 	_style_as_index_button(daily_button, false)
 	if endless_button:
 		_style_as_index_button(endless_button, false)
+	if hard_button:
+		_style_as_index_button(hard_button, false)
 	_style_as_index_button(settings_button, false)
 	_style_as_index_button(quit_button, false)
 	if _wishlist_button != null:
@@ -85,6 +94,8 @@ func _localize_chrome() -> void:
 	daily_button.text = tr("menu.daily")
 	if endless_button:
 		endless_button.text = tr("menu.endless")
+	if hard_button:
+		hard_button.text = tr("menu.hard")
 	if settings_button:
 		settings_button.text = tr("menu.settings")
 	quit_button.text = tr("menu.quit")
@@ -109,6 +120,7 @@ func _refresh_progress_copy() -> void:
 		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
 		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
+	_refresh_hard_button()
 	var entry: Dictionary = GameState.today_daily_entry()
 	var today: String = str(entry.get("date", GameState._today_label()))
 	var friend_code: String = str(entry.get("friend_code", ""))
@@ -124,6 +136,20 @@ func _refresh_progress_copy() -> void:
 		meta_label.text = tr("menu.daily_endless_meta_code") % [today, friend_code, dbest, ebest]
 	else:
 		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
+
+
+func _refresh_hard_button() -> void:
+	if hard_button == null:
+		return
+	var unlocked: Array = ChamberBook.unlocked_hard_variant_indices(GameState.completed)
+	var show: bool = unlocked.size() > 0 and not DemoBuild.is_demo()
+	hard_button.visible = show
+	hard_button.disabled = not show
+	if show:
+		hard_button.text = tr("menu.hard_count") % unlocked.size()
+	else:
+		hard_button.text = tr("menu.hard")
+	_ensure_gamepad_focus_chain()
 
 
 func _open_settings() -> void:
@@ -180,6 +206,8 @@ func _ensure_gamepad_focus_chain() -> void:
 	var order: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		order.append(endless_button)
+	if hard_button and hard_button.visible and not hard_button.disabled:
+		order.append(hard_button)
 	order.append(settings_button)
 	order.append(quit_button)
 	if _wishlist_button != null:
@@ -187,7 +215,7 @@ func _ensure_gamepad_focus_chain() -> void:
 
 	var live: Array = []
 	for btn in order:
-		if btn != null and not btn.disabled:
+		if btn != null and not btn.disabled and btn.visible:
 			live.append(btn)
 	for i in range(live.size()):
 		var cur: Control = live[i]
