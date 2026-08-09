@@ -378,31 +378,31 @@ class TestDiegeticShellMvp(unittest.TestCase):
 
         brand = sum(
             1
-            for y in range(220, 360, 2)
-            for x in range(80, 640, 2)
+            for y in range(60, 220, 2)
+            for x in range(50, 720, 2)
             if lum(x, y) < 160
         )
         self.assertGreater(brand, 280, msg="brand lockup missing on left")
-        # Rich composition: Field Index owns the right ~45% (not a postage stamp at x≥1450).
+        # Hard reset: Field Index owns the right ~42% (card 40–48% of viewport).
         left = None
-        for x in range(980, 1300):
-            if lum(x, 200) < 90:
+        for x in range(1000, 1280):
+            if lum(x, 220) < 90:
                 left = x
                 break
         self.assertIsNotNone(left, msg="Field Index left edge missing in right column")
-        self.assertLess(left, 1200, msg="Field Index too narrow / pushed to corner")
+        self.assertLess(left, 1180, msg="Field Index too narrow / pushed to corner")
         # Ink hairline on the plate — strict threshold so ledger fiber/grid
         # (lum ~190–210) does not inflate the card height.
         edge = [
             y
-            for y in range(60, 1040)
+            for y in range(40, 1050)
             if any(lum(left + dx, y) < 130 for dx in range(0, 3))
         ]
         self.assertGreater(len(edge), 280, msg="Field Index left rule missing")
         # Longest contiguous ink run = physical card edge.
         runs: list[tuple[int, int]] = []
         run_a: int | None = None
-        for y in range(60, 1040):
+        for y in range(40, 1050):
             dark = any(lum(left + dx, y) < 130 for dx in range(0, 3))
             if dark and run_a is None:
                 run_a = y
@@ -410,10 +410,10 @@ class TestDiegeticShellMvp(unittest.TestCase):
                 runs.append((run_a, y - 1))
                 run_a = None
         if run_a is not None:
-            runs.append((run_a, 1039))
+            runs.append((run_a, 1049))
         self.assertTrue(runs, msg="Field Index card edge run missing")
         top, bottom = max(runs, key=lambda r: r[1] - r[0])
-        self.assertGreater(bottom - top, 520, msg="Field Index plate too short")
+        self.assertGreater(bottom - top, 780, msg="Field Index plate too short")
         text_bottom = max(
             y
             for y in range(top, bottom + 20, 2)

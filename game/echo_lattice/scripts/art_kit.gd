@@ -169,29 +169,26 @@ func draw_desk_margin(canvas: CanvasItem, vp: Vector2, grain_seed: int = 11, gra
 func draw_desk_vignette(canvas: CanvasItem, vp: Vector2, strength: float = 0.11) -> void:
 	## Soft corner falloff into the blotter — reads as desk lamp, not UI dim.
 	## ART_DIRECTION_V3 §4.1: ±4% value drift; never crush to black.
+	## Bottom stay nearly clean — no black bar / torn-foot junk under the title folio.
 	if vp.x < 1.0 or vp.y < 1.0 or strength < 0.001:
 		return
-	var a: float = clampf(strength, 0.0, 0.16)
+	var a: float = clampf(strength, 0.0, 0.12)
 	var ink := Palette.INK_BLACK
-	# Layered inset bands approximate a radial vignette without shaders/bloom.
+	# Side/top only — skip a bottom slab so the folio foot stays paper-bone.
 	var bands: Array = [
-		[0.00, a * 0.40],
-		[0.04, a * 0.22],
-		[0.08, a * 0.10],
+		[0.00, a * 0.28],
+		[0.05, a * 0.14],
 	]
 	for band in bands:
 		var inset: float = float(band[0])
 		var ba: float = float(band[1])
 		var m: float = minf(vp.x, vp.y)
 		var ix: float = m * inset
-		# Bias vignette to side/top; keep bottom thin so title footer stays bone.
 		var iy_top: float = m * inset
-		var iy_bot: float = m * inset * 0.45
 		var c := Color(ink.r, ink.g, ink.b, ba)
 		canvas.draw_rect(Rect2(0.0, 0.0, vp.x, iy_top), c, true)
-		canvas.draw_rect(Rect2(0.0, vp.y - iy_bot, vp.x, iy_bot), c, true)
-		canvas.draw_rect(Rect2(0.0, iy_top, ix, vp.y - iy_top - iy_bot), c, true)
-		canvas.draw_rect(Rect2(vp.x - ix, iy_top, ix, vp.y - iy_top - iy_bot), c, true)
+		canvas.draw_rect(Rect2(0.0, iy_top, ix, vp.y - iy_top), c, true)
+		canvas.draw_rect(Rect2(vp.x - ix, iy_top, ix, vp.y - iy_top), c, true)
 
 
 func draw_fiber_streaks(
@@ -275,7 +272,8 @@ func draw_ledger_page(
 	opts: Dictionary = {}
 ) -> void:
 	## Shared page substrate for chamber + menu (V3 page anatomy, CPU path).
-	## opts: shadow_off, grain_seed, grain_a, major_cell, rule_w, spine, double_rule, alpha, skip_grain
+	## opts: shadow_off, grain_seed, grain_a, major_cell, rule_w, spine, double_rule,
+	##       alpha, skip_grain, sharp_edge (title folio: continuous ink, never torn deckle)
 	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(5, 7))
 	var grain_seed: int = int(opts.get("grain_seed", 42))
 	var grain_a: float = float(opts.get("grain_a", 0.08))
@@ -285,6 +283,7 @@ func draw_ledger_page(
 	var double_rule: bool = bool(opts.get("double_rule", true))
 	var alpha: float = float(opts.get("alpha", 1.0))
 	var skip_grain: bool = bool(opts.get("skip_grain", false))
+	var sharp_edge: bool = bool(opts.get("sharp_edge", false))
 
 	var shadow := Palette.PAPER_SHADOW
 	shadow.a *= alpha
@@ -308,50 +307,62 @@ func draw_ledger_page(
 		draw_fiber_streaks(canvas, page, grain_seed + 5, 0.028 * alpha, 36)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, page, grain_seed, grain_a * alpha)
-	# Letterpress outer rule — tremor sells print crush, not a UI stroke.
 	var rule_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
-	draw_letterpress_rule(
-		canvas, page.position, page.position + Vector2(page.size.x, 0.0), rule_c, rule_w, grain_seed
-	)
-	draw_letterpress_rule(
-		canvas,
-		page.position + Vector2(page.size.x, 0.0),
-		page.end,
-		rule_c,
-		rule_w,
-		grain_seed + 1
-	)
-	draw_letterpress_rule(
-		canvas,
-		page.end,
-		page.position + Vector2(0.0, page.size.y),
-		rule_c,
-		rule_w,
-		grain_seed + 2
-	)
-	draw_letterpress_rule(
-		canvas,
-		page.position + Vector2(0.0, page.size.y),
-		page.position,
-		rule_c,
-		rule_w,
-		grain_seed + 3
-	)
-	if double_rule:
-		var inner_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5 * alpha)
-		var inner: Rect2 = page.grow(-3.0)
+	if sharp_edge:
+		# Continuous plate edge — title folio must not read as torn / deckled paper.
+		canvas.draw_rect(page, rule_c, false, rule_w)
+		if double_rule:
+			var inner_sharp: Rect2 = page.grow(-3.0)
+			canvas.draw_rect(
+				inner_sharp,
+				Color(rule_c.r, rule_c.g, rule_c.b, 0.5 * alpha),
+				false,
+				1.0
+			)
+	else:
+		# Letterpress outer rule — tremor sells print crush on chamber pages.
 		draw_letterpress_rule(
-			canvas, inner.position, inner.position + Vector2(inner.size.x, 0.0), inner_c, 1.0, grain_seed + 7
+			canvas, page.position, page.position + Vector2(page.size.x, 0.0), rule_c, rule_w, grain_seed
 		)
 		draw_letterpress_rule(
-			canvas, inner.position + Vector2(inner.size.x, 0.0), inner.end, inner_c, 1.0, grain_seed + 8
+			canvas,
+			page.position + Vector2(page.size.x, 0.0),
+			page.end,
+			rule_c,
+			rule_w,
+			grain_seed + 1
 		)
 		draw_letterpress_rule(
-			canvas, inner.end, inner.position + Vector2(0.0, inner.size.y), inner_c, 1.0, grain_seed + 9
+			canvas,
+			page.end,
+			page.position + Vector2(0.0, page.size.y),
+			rule_c,
+			rule_w,
+			grain_seed + 2
 		)
 		draw_letterpress_rule(
-			canvas, inner.position + Vector2(0.0, inner.size.y), inner.position, inner_c, 1.0, grain_seed + 10
+			canvas,
+			page.position + Vector2(0.0, page.size.y),
+			page.position,
+			rule_c,
+			rule_w,
+			grain_seed + 3
 		)
+		if double_rule:
+			var inner_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5 * alpha)
+			var inner: Rect2 = page.grow(-3.0)
+			draw_letterpress_rule(
+				canvas, inner.position, inner.position + Vector2(inner.size.x, 0.0), inner_c, 1.0, grain_seed + 7
+			)
+			draw_letterpress_rule(
+				canvas, inner.position + Vector2(inner.size.x, 0.0), inner.end, inner_c, 1.0, grain_seed + 8
+			)
+			draw_letterpress_rule(
+				canvas, inner.end, inner.position + Vector2(0.0, inner.size.y), inner_c, 1.0, grain_seed + 9
+			)
+			draw_letterpress_rule(
+				canvas, inner.position + Vector2(0.0, inner.size.y), inner.position, inner_c, 1.0, grain_seed + 10
+			)
 
 
 func draw_open_folio(
@@ -361,28 +372,45 @@ func draw_open_folio(
 ) -> Dictionary:
 	## Open two-leaf Field Ledger — verso + recto with a bound spine gutter.
 	## Returns {outer, left, right, spine}. Fills the frame; no dead center void.
+	## Prefer verso_frac/recto_frac (title hard-spec ~0.52 / ~0.42); else 50/50 + gutter.
 	if outer.size.x < 8.0 or outer.size.y < 8.0:
 		return {"outer": outer, "left": outer, "right": outer, "spine": Rect2()}
 	var grain_seed: int = int(opts.get("grain_seed", 19))
 	var grain_a: float = float(opts.get("grain_a", 0.055))
 	var major_cell: int = int(opts.get("major_cell", 32))
-	var gutter: float = float(opts.get("gutter", 0.0))
-	if gutter < 1.0:
-		gutter = 30.0 if outer.size.x >= 1100.0 else 18.0
-	var mid_x: float = outer.position.x + outer.size.x * 0.5
-	var left := Rect2(
-		outer.position.x,
-		outer.position.y,
-		maxf(80.0, mid_x - gutter * 0.5 - outer.position.x),
-		outer.size.y
-	)
-	var right := Rect2(
-		mid_x + gutter * 0.5,
-		outer.position.y,
-		maxf(80.0, outer.end.x - (mid_x + gutter * 0.5)),
-		outer.size.y
-	)
-	var spine := Rect2(left.end.x, outer.position.y, gutter, outer.size.y)
+	var sharp_edge: bool = bool(opts.get("sharp_edge", true))
+	var verso_frac: float = float(opts.get("verso_frac", 0.0))
+	var recto_frac: float = float(opts.get("recto_frac", 0.0))
+	var left: Rect2
+	var right: Rect2
+	var spine: Rect2
+	if verso_frac > 0.05 and recto_frac > 0.05:
+		var left_w: float = outer.size.x * verso_frac
+		var right_w: float = outer.size.x * recto_frac
+		var gutter: float = float(opts.get("gutter", 0.0))
+		if gutter < 1.0:
+			gutter = maxf(12.0, outer.size.x - left_w - right_w)
+		left = Rect2(outer.position.x, outer.position.y, left_w, outer.size.y)
+		right = Rect2(outer.end.x - right_w, outer.position.y, right_w, outer.size.y)
+		spine = Rect2(left.end.x, outer.position.y, gutter, outer.size.y)
+	else:
+		var gutter: float = float(opts.get("gutter", 0.0))
+		if gutter < 1.0:
+			gutter = 30.0 if outer.size.x >= 1100.0 else 18.0
+		var mid_x: float = outer.position.x + outer.size.x * 0.5
+		left = Rect2(
+			outer.position.x,
+			outer.position.y,
+			maxf(80.0, mid_x - gutter * 0.5 - outer.position.x),
+			outer.size.y
+		)
+		right = Rect2(
+			mid_x + gutter * 0.5,
+			outer.position.y,
+			maxf(80.0, outer.end.x - (mid_x + gutter * 0.5)),
+			outer.size.y
+		)
+		spine = Rect2(left.end.x, outer.position.y, gutter, outer.size.y)
 
 	# Soft desk contact under the whole open book.
 	var wash := Palette.PAPER_SHADOW
@@ -415,20 +443,22 @@ func draw_open_folio(
 		"grain_seed": grain_seed,
 		"grain_a": grain_a,
 		"major_cell": major_cell,
-		"rule_w": 2.2,
+		"rule_w": 2.0,
 		"double_rule": true,
 		"spine": false,
 		"skip_grain": false,
+		"sharp_edge": sharp_edge,
 	})
 	draw_ledger_page(canvas, right, {
 		"shadow_off": Vector2(7, 9),
 		"grain_seed": grain_seed + 3,
 		"grain_a": grain_a,
 		"major_cell": major_cell,
-		"rule_w": 2.2,
+		"rule_w": 2.0,
 		"double_rule": true,
 		"spine": false,
 		"skip_grain": false,
+		"sharp_edge": sharp_edge,
 	})
 	return {"outer": outer, "left": left, "right": right, "spine": spine}
 
@@ -727,9 +757,11 @@ func draw_binder_clip(canvas: CanvasItem, tip: Vector2, alpha: float = 1.0) -> v
 
 
 func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, opts: Dictionary = {}) -> void:
-	## Print-craft survey seal (ART_DIRECTION_V3 §2.2 / MENU_10_OF_10).
+	## Print-craft survey seal (ART_DIRECTION_V3 §2.2 / MENU hard-reset).
 	## Imperfect rubber ink on a rectangular plate — habit-maze silhouette, not a UI ring.
 	## No giant dashed circles; no watermark caption inside the plate. Never glow.
+	## ERADICATED: dashed concentric circle rings · FIELD watermark inside the die.
+	## Geometry is ALWAYS a rectangular letterpress plate (never TAU ring segments).
 	var rot_deg: float = float(opts.get("rot_deg", -3.5))
 	var ink: Color = opts.get("color", Palette.SLATE_TEAL)
 	var alpha: float = float(opts.get("alpha", 0.82))
@@ -739,7 +771,10 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 	var hero: bool = bool(opts.get("hero", false))
 	var maze: bool = bool(opts.get("maze", true))
 	var rust_accent: bool = bool(opts.get("rust_accent", true))
-	var caption: String = str(opts.get("caption", ""))
+	var caption: String = str(opts.get("caption", "")).strip_edges()
+	# Ban the old circle-seal watermark — never print FIELD (or synonyms) in the die.
+	if caption.to_upper() == "FIELD" or caption.to_upper() == "FIELD LEDGER":
+		caption = ""
 	var font: Font = opts.get("font", null)
 	var font_size: int = int(opts.get("font_size", 11))
 	if radius < 4.0 or alpha < 0.01:
@@ -764,16 +799,19 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 		rot,
 		shadow
 	)
-	# Faint ink wash on the plate face (uneven pressure, never solid fill).
+	# Faint rectangular ink wash on the plate face — sparse blotches, never a ring.
 	if hero:
-		for k in range(4):
-			var blot_c := Color(ink.r, ink.g, ink.b, alpha * rng.randf_range(0.04, 0.10))
-			var blot_p := center + Vector2(
-				rng.randf_range(-hw * 0.55, hw * 0.55),
-				rng.randf_range(-hh * 0.55, hh * 0.55)
-			).rotated(rot)
-			canvas.draw_circle(blot_p, radius * rng.randf_range(0.06, 0.14), blot_c)
-	# Double plate border — outer heavy, inner hairline — with ink breaks.
+		for k in range(3):
+			var blot_c := Color(ink.r, ink.g, ink.b, alpha * rng.randf_range(0.03, 0.08))
+			var blot_rect := Rect2(
+				Vector2(
+					rng.randf_range(-hw * 0.45, hw * 0.15),
+					rng.randf_range(-hh * 0.45, hh * 0.15)
+				),
+				Vector2(rng.randf_range(hw * 0.2, hw * 0.45), rng.randf_range(hh * 0.12, hh * 0.28))
+			)
+			_draw_rotated_rect(canvas, center, blot_rect, rot, blot_c, true)
+	# Double plate border — outer heavy, inner hairline — continuous rectangular die.
 	_draw_seal_plate_frame(canvas, center, hw, hh, rot, ink, alpha, 2.8 if hero else 2.1, rng)
 	_draw_seal_plate_frame(
 		canvas,
@@ -813,7 +851,7 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 			"rust_accent": rust_accent,
 			"hero": hero,
 		})
-	# Optional caption sits under the plate — never a watermark inside the seal.
+	# Optional caption sits UNDER the plate only — never a watermark inside the seal.
 	if caption != "" and font != null:
 		var tw: float = font.get_string_size(caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 		var cap_off := Vector2(rng.randf_range(-1.0, 1.0), rng.randf_range(-0.4, 0.6))

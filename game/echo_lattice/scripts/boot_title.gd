@@ -104,6 +104,7 @@ func _draw() -> void:
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, tag
 	)
+	# Rectangular letterpress plate only — never dashed concentric rings / FIELD watermark.
 	ArtKit.draw_seal_stamp(
 		self,
 		Vector2(page.end.x - 56.0, page.position.y + 56.0),
@@ -115,6 +116,9 @@ func _draw() -> void:
 			"seed": 19,
 			"maze": true,
 			"rust_accent": true,
+			"plate_w": 52.0,
+			"plate_h": 52.0,
+			"caption": "",
 		}
 	)
 	var wing := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.95 * fade)

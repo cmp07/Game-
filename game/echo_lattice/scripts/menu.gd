@@ -1,9 +1,11 @@
 extends Control
 ##
-## Main menu — filled open-folio Field Ledger title (composition-art + menu-premium-v1).
+## Main menu — HARD composition reset (boutique Field Ledger title).
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio: verso (brand + large seal + habit silhouette) | spine | recto (Field Index).
+## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + letterpress plate + silhouette)
+## | spine | recto ~42% (Field Index, all actions). Explicit anchors — never hope.
 ## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
+## Rectangular letterpress seal only — NO dashed concentric circles / FIELD watermark.
 ##
 
 signal start_new_pressed()
@@ -129,47 +131,62 @@ func _notification(what: int) -> void:
 		queue_redraw()
 
 
-## Outer folio frame used by draw + Control layout (keeps Field Index diegetic).
+## HARD COMPOSITION SPEC — fail CI if these anchors drift (see test_menu_composition_density).
+## Brand column LEFT ~52%; Field Index RIGHT ~42%; spine trough takes the remainder (~6%).
+## Brand leaf ~51–52%; Field Index leaf ~43–44% so the card itself lands in 40–48% of viewport.
+const VERSO_FRAC: float = 0.515
+const RECTO_FRAC: float = 0.435
+const BRAND_MIN_PX: int = 72
+const PAGE_MARGIN_X: float = 20.0
+const PAGE_MARGIN_Y: float = 14.0
+## Max empty (no ink/ui layout mass) fraction of the inner page at 1920×1080.
+const MAX_EMPTY_FRAC: float = 0.35
+
+## Chrome insets around CardColumn inside the Field Index plate.
+## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
+## Left pad is content-hugging (no binder-hole gutter on boutique title card).
+const _INDEX_PAD_L: float = 36.0
+const _INDEX_PAD_R: float = 28.0
+const _INDEX_PAD_T: float = 64.0
+# Extra bottom pad for selection baseline drawn below Control rects.
+const _INDEX_PAD_B: float = 36.0
+
+
+## Outer folio frame — paper page fills the viewport (tight desk margin, no dead void).
 func _ledger_page_rect(vp: Vector2) -> Rect2:
-	return Rect2(32.0, 22.0, vp.x - 64.0, vp.y - 44.0)
+	return Rect2(
+		PAGE_MARGIN_X,
+		PAGE_MARGIN_Y,
+		maxf(80.0, vp.x - PAGE_MARGIN_X * 2.0),
+		maxf(80.0, vp.y - PAGE_MARGIN_Y * 2.0)
+	)
 
 
-## Open-folio leaves — verso (brand) | spine | recto (Field Index).
+## Open-folio leaves — verso (brand) ~52% | spine | recto (Field Index) ~42%.
 func folio_leaves(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	if vp.x < 2.0:
 		vp = size
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 	var outer: Rect2 = _ledger_page_rect(vp)
-	var gutter: float = 30.0 if outer.size.x >= 1100.0 else 18.0
-	var mid_x: float = outer.position.x + outer.size.x * 0.5
-	var left := Rect2(
-		outer.position.x,
-		outer.position.y,
-		maxf(80.0, mid_x - gutter * 0.5 - outer.position.x),
-		outer.size.y
-	)
+	var left_w: float = outer.size.x * VERSO_FRAC
+	var right_w: float = outer.size.x * RECTO_FRAC
+	var gutter: float = maxf(14.0, outer.size.x - left_w - right_w)
+	# Keep fractions exact when float noise accumulates.
+	if gutter + left_w + right_w > outer.size.x:
+		gutter = maxf(12.0, outer.size.x - left_w - right_w)
+	var left := Rect2(outer.position.x, outer.position.y, left_w, outer.size.y)
 	var right := Rect2(
-		mid_x + gutter * 0.5,
+		outer.end.x - right_w,
 		outer.position.y,
-		maxf(80.0, outer.end.x - (mid_x + gutter * 0.5)),
+		right_w,
 		outer.size.y
 	)
 	var spine := Rect2(left.end.x, outer.position.y, gutter, outer.size.y)
 	return {"outer": outer, "left": left, "right": right, "spine": spine}
 
 
-## Chrome insets around CardColumn inside the Field Index plate.
-## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
-## Left pad is content-hugging (no binder-hole gutter on boutique title card).
-const _INDEX_PAD_L: float = 40.0
-const _INDEX_PAD_R: float = 32.0
-const _INDEX_PAD_T: float = 72.0
-# Extra bottom pad for selection baseline drawn below Control rects.
-const _INDEX_PAD_B: float = 48.0
-
-
-## Recto Field Index plate — fills the right folio leaf; never a postage stamp.
+## Recto Field Index plate — ~40–48% of viewport width, full readable height.
 func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Rect2:
 	if vp.x < 2.0:
 		vp = size
@@ -178,10 +195,10 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	var leaves: Dictionary = folio_leaves(vp)
 	var right: Rect2 = leaves["right"]
 	var left: Rect2 = leaves["left"]
-	# Card hugs the recto leaf — fills the right page, clears the spine.
-	var side_pad: float = 22.0 if right.size.x < 420.0 else 36.0
-	var top_pad: float = 28.0 if right.size.y < 700.0 else 40.0
-	var bottom_pad: float = 22.0 if right.size.y < 700.0 else 28.0
+	# Card fills the recto leaf — boutique index, not a postage stamp in a cream void.
+	var side_pad: float = 12.0 if right.size.x < 420.0 else 16.0
+	var top_pad: float = 16.0 if right.size.y < 700.0 else 20.0
+	var bottom_pad: float = 14.0 if right.size.y < 700.0 else 18.0
 	var card_x: float = right.position.x + side_pad
 	var card_w: float = maxf(240.0, right.size.x - side_pad * 2.0)
 	# Never spill into the verso brand leaf.
@@ -190,21 +207,12 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 		card_w = maxf(220.0, right.end.x - side_pad - card_x)
 	var top: float = right.position.y + top_pad + y_off
 	var bottom_limit: float = right.end.y - bottom_pad
-	var card_h: float = clampf(right.size.y * 0.90, 360.0, bottom_limit - top)
-	var col: Control = get_node_or_null("CardColumn") as Control
-	if col != null and col.get_child_count() > 0:
-		var content_h: float = col.size.y
-		if content_h < 8.0:
-			content_h = col.get_combined_minimum_size().y
-		var needed: float = content_h + _INDEX_PAD_T + _INDEX_PAD_B
-		var presence: float = clampf(right.size.y * 0.88, 360.0, bottom_limit - top)
-		card_h = clampf(maxf(needed, presence), 320.0, bottom_limit - top)
-	else:
-		card_h = minf(card_h, bottom_limit - top)
-	return Rect2(card_x, top, card_w, maxf(300.0, card_h))
+	# Full readable height — occupy the leaf, not content-min postage.
+	var card_h: float = maxf(300.0, bottom_limit - top)
+	return Rect2(card_x, top, card_w, card_h)
 
 
-## Inner content inset: binder holes left, FIELD INDEX header top.
+## Inner content inset: FIELD INDEX header top; actions pack the plate.
 func field_index_content_rect(card: Rect2) -> Rect2:
 	return Rect2(
 		card.position.x + _INDEX_PAD_L,
@@ -212,6 +220,76 @@ func field_index_content_rect(card: Rect2) -> Rect2:
 		maxf(200.0, card.size.x - _INDEX_PAD_L - _INDEX_PAD_R),
 		maxf(200.0, card.size.y - _INDEX_PAD_T - _INDEX_PAD_B)
 	)
+
+
+## Explicit layout rects for draw + CI density (test_menu_composition_density).
+## Returns ink/ui masses so measured empty region can stay under MAX_EMPTY_FRAC.
+func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
+	if vp.x < 2.0:
+		vp = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	var leaves: Dictionary = folio_leaves(vp)
+	var left: Rect2 = leaves["left"]
+	var right: Rect2 = leaves["right"]
+	var outer: Rect2 = leaves["outer"]
+	var scale: Dictionary = LedgerChrome.title_type_scale(outer.size.y)
+	var brand_px: int = maxi(BRAND_MIN_PX, int(scale.get("brand", LedgerChrome.TYPE_BRAND)))
+	var brand_x: float = left.position.x + 36.0
+	var brand_y: float = left.position.y + left.size.y * 0.118
+	var brand_w: float = minf(float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN)), left.size.x - 72.0)
+	# Brand lockup mass (title + rust rule + tagline + serif blurb).
+	var brand_block := Rect2(
+		brand_x,
+		brand_y - float(brand_px),
+		brand_w,
+		float(brand_px) + 96.0
+	)
+	# Letterpress seal plate sits under the brand — rectangular die, never a circle.
+	var seal_half: float = 110.0 if left.size.y >= 700.0 else 54.0
+	seal_half = minf(seal_half, left.size.x * 0.22)
+	var seal_top: float = brand_block.end.y + 10.0
+	var seal_plate := Rect2(
+		brand_x + 4.0,
+		seal_top,
+		seal_half * 2.0,
+		seal_half * 2.0
+	)
+	# Habit silhouette fills the remaining verso — one visual plane, no mid-leaf void.
+	var sil_top: float = seal_plate.end.y + 18.0
+	var sil := Rect2(
+		left.position.x + 24.0,
+		sil_top,
+		maxf(200.0, left.size.x - 48.0),
+		maxf(120.0, left.end.y - sil_top - 28.0)
+	)
+	var card: Rect2 = field_index_card_rect(vp, 0.0)
+	var occupied: float = (
+		brand_block.get_area()
+		+ seal_plate.get_area()
+		+ sil.get_area()
+		+ card.get_area()
+		+ float(leaves["spine"].get_area()) * 0.35
+	)
+	var page_a: float = maxf(1.0, outer.get_area())
+	var empty_frac: float = clampf(1.0 - occupied / page_a, 0.0, 1.0)
+	return {
+		"outer": outer,
+		"left": left,
+		"right": right,
+		"spine": leaves["spine"],
+		"brand_block": brand_block,
+		"seal_plate": seal_plate,
+		"silhouette": sil,
+		"field_index": card,
+		"brand_px": brand_px,
+		"brand_x": brand_x,
+		"brand_y": brand_y,
+		"empty_frac": empty_frac,
+		"verso_frac": left.size.x / maxf(1.0, outer.size.x),
+		"recto_frac": right.size.x / maxf(1.0, outer.size.x),
+		"index_width_frac": card.size.x / maxf(1.0, vp.x),
+	}
 
 
 func _slot_y_off() -> float:
@@ -412,6 +490,28 @@ func verify_field_index_layout() -> bool:
 				card.position.x, left_leaf.end.x
 			]
 		)
+		ok = false
+	# Hard composition anchors @ full HD (and scaled viewports).
+	var layout: Dictionary = composition_layout(vp)
+	var brand_px: int = int(layout.get("brand_px", 0))
+	if brand_px < BRAND_MIN_PX:
+		printerr("Composition: brand_px=%d < %d" % [brand_px, BRAND_MIN_PX])
+		ok = false
+	var verso: float = float(layout.get("verso_frac", 0.0))
+	var recto: float = float(layout.get("recto_frac", 0.0))
+	if verso < 0.48 or verso > 0.56:
+		printerr("Composition: verso_frac=%.3f outside 0.48–0.56" % verso)
+		ok = false
+	if recto < 0.38 or recto > 0.48:
+		printerr("Composition: recto_frac=%.3f outside 0.38–0.48" % recto)
+		ok = false
+	var idx_w: float = float(layout.get("index_width_frac", 0.0))
+	if idx_w < 0.38 or idx_w > 0.50:
+		printerr("Composition: index_width_frac=%.3f outside 0.38–0.50" % idx_w)
+		ok = false
+	var empty: float = float(layout.get("empty_frac", 1.0))
+	if empty > MAX_EMPTY_FRAC:
+		printerr("Composition: empty_frac=%.3f > %.2f" % [empty, MAX_EMPTY_FRAC])
 		ok = false
 	return ok
 
@@ -669,101 +769,120 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
-	# Lightbox desk + open folio — two filled leaves, spine kills the dead center void.
-	ArtKit.draw_desk_margin(self, vp, 3, 0.07 if not TechArt.v3_enabled() else 0.035)
-	var outer: Rect2 = _ledger_page_rect(vp)
-	var leaves: Dictionary = ArtKit.draw_open_folio(self, outer, {
+	# Lightbox desk + open folio — sharp page edges (no torn / deckled foot junk).
+	ArtKit.draw_desk_margin(self, vp, 3, 0.05 if not TechArt.v3_enabled() else 0.028)
+	var layout: Dictionary = composition_layout(vp)
+	var outer: Rect2 = layout["outer"]
+	var left: Rect2 = layout["left"]
+	var right: Rect2 = layout["right"]
+	var spine: Rect2 = layout["spine"]
+	ArtKit.draw_open_folio(self, outer, {
 		"grain_seed": 19,
-		"grain_a": 0.055 if not TechArt.v3_enabled() else 0.03,
+		"grain_a": 0.05 if not TechArt.v3_enabled() else 0.028,
 		"major_cell": 32,
-		"gutter": 30.0 if outer.size.x >= 1100.0 else 18.0,
+		"verso_frac": VERSO_FRAC,
+		"recto_frac": RECTO_FRAC,
+		"gutter": spine.size.x,
+		"sharp_edge": true,
 	})
-	var left: Rect2 = leaves["left"]
-	var right: Rect2 = leaves["right"]
 
 	var scale: Dictionary = LedgerChrome.title_type_scale(outer.size.y)
 	var folio_px: int = int(scale.get("folio", LedgerChrome.TYPE_FOLIO))
 	var seed_px: int = int(scale.get("seed", LedgerChrome.TYPE_SEED))
-	var brand_px: int = int(scale.get("brand", LedgerChrome.TYPE_BRAND))
+	# ECHO LATTICE is the largest type on the title — never secondary to the tagline.
+	var brand_px: int = int(layout["brand_px"])
 	var tag_px: int = int(scale.get("tagline", LedgerChrome.TYPE_TAGLINE))
+	tag_px = mini(tag_px, maxi(14, int(float(brand_px) * 0.30)))
 	var blurb_px: int = int(scale.get("blurb", LedgerChrome.TYPE_BLURB))
 	var rule_w: float = float(scale.get("rule_w", LedgerChrome.BRAND_RULE_W))
-	var rule_len: float = float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN))
 	var header_px: int = int(scale.get("card_header", LedgerChrome.TYPE_CARD_HEADER))
 
-	# Verso folio mark + seed strip — diegetic ledger, not chamber HUD.
+	var brand_x: float = float(layout["brand_x"])
+	var brand_y: float = float(layout["brand_y"])
+	var brand_block: Rect2 = layout["brand_block"]
+	var seal_plate: Rect2 = layout["seal_plate"]
+	var sil: Rect2 = layout["silhouette"]
+
+	# Quiet verso folio mark — never competes with brand.
 	draw_string(
 		_type("micro"),
-		left.position + Vector2(28, 28),
+		left.position + Vector2(28, 22),
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
-	ArtKit.draw_letterpress_rule(
-		self,
-		left.position + Vector2(28, 36),
-		Vector2(left.end.x - 24.0, left.position.y + 36.0),
-		Palette.INK_SOFT,
-		1.5,
-		19
+	draw_line(
+		left.position + Vector2(28, 28),
+		Vector2(left.end.x - 24.0, left.position.y + 28.0),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
+		1.0
 	)
 	var seed_tex: Texture2D = ArtKit.tex("res://art/ui/seed_header_256x24.png")
 	if seed_tex != null:
-		draw_texture_rect(seed_tex, Rect2(left.position + Vector2(28, 46), Vector2(240, 22)), false)
+		draw_texture_rect(seed_tex, Rect2(left.position + Vector2(28, 34), Vector2(220, 18)), false)
 	draw_string(
 		_type("meta"),
-		left.position + Vector2(28, 86),
+		left.position + Vector2(28, 68),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
-	# Brand lockup — hero of the verso leaf.
-	var brand_x: float = left.position.x + 40.0
-	var brand_y: float = left.position.y + left.size.y * 0.16
+	# Brand lockup — ECHO LATTICE owns the plane (Condensed Bold ≥ BRAND_MIN_PX).
 	draw_string(
 		_type("brand"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
-	var brand_rule_len: float = minf(rule_len, left.end.x - brand_x - 36.0)
-	ArtKit.draw_letterpress_rule(
-		self,
-		Vector2(brand_x, brand_y + 14.0),
-		Vector2(brand_x + brand_rule_len, brand_y + 14.0),
+	var brand_rule_len: float = brand_block.size.x
+	draw_rect(
+		Rect2(brand_x, brand_y + 12.0, brand_rule_len, rule_w),
 		Palette.RUST_FOSSIL,
-		rule_w,
-		42
+		true
 	)
 	ArtKit.draw_oxide_flecks(
 		self,
-		Rect2(brand_x, brand_y + 10.0, brand_rule_len * 0.55, 12.0),
+		Rect2(brand_x, brand_y + 8.0, brand_rule_len * 0.45, 10.0),
 		43,
-		6,
-		0.55
+		5,
+		0.45
 	)
+	# Tagline secondary — rust, never larger than ~30% of brand.
 	draw_string(
 		_type("tagline"),
-		Vector2(brand_x, brand_y + 50),
+		Vector2(brand_x, brand_y + 48.0),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.RUST_FOSSIL
 	)
 	draw_string(
 		_type("deck"),
-		Vector2(brand_x, brand_y + 80),
+		Vector2(brand_x, brand_y + 78.0),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Habit silhouette plate fills the verso under the brand — one visual plane, no mid-leaf void.
-	var sil_top: float = brand_y + 104.0
-	# Keep clear air above the leaf foot — silhouette plate edge must sit above
-	# the punch-card ribbon QA band (y≈990–1040 @ 1080p).
-	var sil := Rect2(
-		left.position.x + 28.0,
-		sil_top,
-		maxf(200.0, left.size.x - 56.0),
-		maxf(140.0, left.end.y - sil_top - 72.0)
+	# Letterpress survey seal — rectangular plate under brand. NO circles / FIELD caption.
+	var seal_r: float = seal_plate.size.x * 0.5
+	var seal_c: Vector2 = seal_plate.get_center()
+	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
+		"rot_deg": -3.5,
+		"color": Palette.SLATE_TEAL,
+		"alpha": 0.94,
+		"seed": 42,
+		"hero": true,
+		"maze": true,
+		"rust_accent": true,
+		"plate_w": seal_plate.size.x,
+		"plate_h": seal_plate.size.y,
+		"caption": "",
+	})
+	draw_string(
+		_type("micro"),
+		Vector2(seal_plate.position.x, seal_plate.end.y + 14.0),
+		tr("menu.seal_caption"),
+		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
 	)
+
+	# Habit silhouette fills the remaining verso — ink mass kills the cream void.
 	if sil.size.y >= 100.0:
 		draw_string(
 			_type("micro"),
@@ -774,52 +893,28 @@ func _draw() -> void:
 		ArtKit.draw_habit_silhouette(self, sil, {
 			"seed": 61,
 			"progress": _demo_progress,
-			"cell": 20.0 if left.size.y >= 700.0 else 13.0,
+			"cell": 18.0 if left.size.y >= 700.0 else 12.0,
 		})
 
-	# Letterpress survey seal — rectangular plate (menu-seal-v2), never a dashed circle.
-	var seal_r: float = 118.0 if left.size.y >= 700.0 else 58.0
-	seal_r = minf(seal_r, minf(sil.size.x, sil.size.y) * 0.34)
-	var seal_c := Vector2(
-		sil.position.x + seal_r + 28.0,
-		sil.position.y + seal_r + 32.0
-	)
-	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -4.0,
-		"color": Palette.SLATE_TEAL,
-		"alpha": 0.94,
-		"seed": 42,
-		"hero": true,
-		"maze": true,
-		"rust_accent": true,
-	})
-	draw_string(
-		_type("micro"),
-		Vector2(sil.position.x + 10.0, sil.end.y - 14.0),
-		tr("menu.seal_caption"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
-	)
-
-	# Recto Field Index — fills the right leaf as one tactile object.
+	# Recto Field Index — fills ~42% width, full readable height.
 	var y_off: float = _slot_y_off()
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
-	# Quiet recto header so the right leaf also reads as a document, not a widget.
 	draw_string(
 		_type("micro"),
-		right.position + Vector2(28, 28),
+		right.position + Vector2(22, 18),
 		tr("menu.recto_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
 
-	# Boutique Field Index (#159) — sharp paper, soft shadow, clip (no hollow bullet holes).
+	# Boutique Field Index — sharp paper, soft shadow, clip (no hollow bullet holes).
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(8, 10),
+		"shadow_off": Vector2(7, 9),
 		"binder_holes": 0,
 		"grain_seed": 11,
-		"grain_a": 0.045,
-		"fiber_a": 0.035,
+		"grain_a": 0.04,
+		"fiber_a": 0.03,
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
@@ -829,18 +924,17 @@ func _draw() -> void:
 		"ruled_stock": false,
 		"sharp_edge": true,
 	})
-	# Field Index title — display face, not mono micro chrome.
-	var index_title_px: int = maxi(header_px + 4, int(scale.get("tagline", 18)) - 4)
+	var index_title_px: int = maxi(header_px + 6, int(scale.get("tagline", 18)) - 2)
 	draw_string(
 		_type("tagline"),
-		card.position + Vector2(28, 30),
+		card.position + Vector2(28, 28),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, index_title_px,
 		Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, slot_a)
 	)
 	draw_string(
 		_type("micro"),
-		Vector2(card.position.x + 28.0, card.end.y - 18.0),
+		Vector2(card.position.x + 28.0, card.end.y - 16.0),
 		tr("menu.card_foot"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)

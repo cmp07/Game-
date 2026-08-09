@@ -1,32 +1,28 @@
-# Menu 10/10 — Title Shell Acceptance
+# Menu 10/10 — Title Shell Acceptance (HARD RESET)
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
-**Branch:** `cursor/menu-10-of-10-afcb` → merge to `cursor/echo-lattice-rc1` (not `main`)  
-**Reconciles:** `cursor/menu-seal-v2` (#157) · `cursor/menu-field-index-10` (#159) · #153 type · #154 no-HUD · #155 premium · #156 composition-art  
-**Coordinates with:** [`MENU_TYPE_SYSTEM.md`](MENU_TYPE_SYSTEM.md) · [`ART_DIRECTION_V3.md`](ART_DIRECTION_V3.md) · [`UI_DIEGETIC_V3.md`](UI_DIEGETIC_V3.md) · [`QUALITY_BAR.md`](QUALITY_BAR.md)
+**Branch:** `cursor/menu-hard-reset` → merge to `cursor/echo-lattice-rc1` (not `main`)  
+**Supersedes soft passes after #158** — USER rated prior tip **4/10**; this doc is the fail-CI bar.
 
 ---
 
 ## 0. Thesis
 
-One composed Field Ledger folio. Brand + letterpress survey seal own the verso; a premium Field Index card owns the recto. Filled paper atmosphere. Zero chamber HUD. Craft density aimed at Witness / Obra Dinn / Gorogoa presentation discipline — still Field Ledger identity (paper, ink, rust, diegetic chrome).
-
-**Rejected (3/10):** dashed circle seal · Field Index underline / ruled-fiber spam · sparse sketchy stock.
+One composed Field Ledger folio. **ECHO LATTICE** owns the verso as the largest type; a rectangular letterpress survey seal sits under the brand; a full-height Field Index owns the recto. Filled paper atmosphere (Obra Dinn / Gorogoa craft density — still ink/paper/rust Field Ledger). Zero chamber HUD. **No dashed concentric circle seal. No FIELD watermark in the die.**
 
 ---
 
-## 1. Composition (one viewport)
+## 1. Hard composition @ 1920×1080 (fail CI if unmet)
 
 | Zone | Must |
 |---|---|
-| **Desk + open folio** | Full-bleed lightbox desk; verso \| spine \| recto fills the frame (no dead center void) |
-| **Verso / brand** | Hero `ECHO LATTICE` (Bold condensed) + rust rule + tagline + one deck sentence |
-| **Survey seal** | Rectangular letterpress plate with habit-maze mark (`menu-seal-v2`). **No dashed circle rings.** No “FIELD” watermark inside the plate |
-| **Habit specimen** | Authored silhouette / chalk atmosphere under the brand — filled stock, not empty boxes |
-| **Recto / Field Index** | One massy premium card (thickness, clip, binder holes, contact shadow) filling the right leaf |
-| **Chamber HUD** | **Forbidden** — no BUFFER punch-card, Moves, Restart, Undo, or chamber foot chrome |
+| **Brand column LEFT ~52%** | `ECHO LATTICE` ≥ **72px** Condensed Bold; tagline `IT LEARNED YOU` secondary rust; one Serif sentence; **rectangular** letterpress seal plate under brand |
+| **Field Index RIGHT ~42%** | Sharp card, **all 8 actions** visible, Plex Medium actions, selection tick+baseline only; card width **40–48%** of viewport; full readable height |
+| **Empty region** | Measured empty (no ink/ui layout mass) **< 35%** of inner page — `test_menu_composition_density.py` |
+| **Chamber HUD** | **Forbidden** |
+| **Capture** | `02_brand_main_menu.png` MUST show BOTH brand and full Field Index in one frame |
 
-Brand test: remove the Field Index card — the verso still reads *Echo Lattice / Field Ledger*.
+Rejected forever: dashed circle seal · FIELD watermark · ~90% cream void · brand collapsed so tagline reads as hero · torn paper / black bar foot junk · Field Index off-screen.
 
 ---
 
@@ -34,58 +30,44 @@ Brand test: remove the Field Index card — the verso still reads *Echo Lattice 
 
 | Role | Face | Notes |
 |---|---|---|
-| Brand / Tagline | Display Bold | Brand owns the plane |
+| Brand | Display Bold Condensed ≥72 | Owns the plane — never secondary to tagline |
+| Tagline | Display | Rust; ≤ ~30% of brand size |
 | Deck | Body serif | One supporting sentence |
 | Actions | Display **Medium** | **Never mono** |
-| Meta | Mono ≤ 13 px; else body | Quiet card header lines |
-| Micro | Mono | Folio / seed / foot / seal caption |
+| Meta / Micro | Mono ≤ 13 px | Quiet chrome only |
 
-**Selection grammar:** focused row = margin tick + text-width rust baseline only. Hover = slate baseline. Idle / disabled = **no rule**. No full-width underline spam. No cadmium on chrome.
-
----
-
-## 3. Field Index boutique card (#159)
-
-- Shared geometry: `field_index_card_rect` / `field_index_content_rect` / `CardColumn` sync (Deck + 1080p + 1440).
-- Stock: `ruled_stock: false` + `sharp_edge: true` — single clean plate edge; sparse fiber only.
-- Presence: thickness ~4, binder **clip** (no hollow row-bullet holes), soft shadow, quiet header band.
-- Selection: solid ink square tick + continuous rust text-width baseline (never jagged / dashed).
-- Title on the plate uses display/tagline weight — not mono micro chrome competing with brand.
-- Generous leading (`row_sep` / row heights from `LedgerChrome.title_type_scale`).
+**Selection grammar:** focused row = margin tick + text-width rust baseline only.
 
 ---
 
-## 4. Craft density bar (comps as polish, not genre)
+## 3. Seal (eradicate circle paths)
 
-Pass if a still of the title shell feels closer to:
-
-- **Witness** — quiet grammar, nothing ornamental without purpose  
-- **Obra Dinn** — ledger / document certainty; type + plate as the interface  
-- **Gorogoa** — composition *is* the object (open folio as one authored frame)
-
-Fail if it reads as: spreadsheet UI, dashed preview widget, sparse Godot demo menu, or glow-on-void fantasy.
+- `ArtKit.draw_seal_stamp` draws a **rectangular letterpress plate** + habit-maze mark only.
+- Ban: `TAU` ring segments, `inner_ring`, `ring_w`, caption `"FIELD"` / `"FIELD LEDGER"`.
+- Caption (if any) sits **under** the plate — never a watermark inside the die.
+- Applies to menu + boot + any ArtKit caller.
 
 ---
 
-## 5. Acceptance checklist
+## 4. Acceptance checklist
 
-- [x] No dashed / skipped-segment **circle** seal on title or boot
-- [x] Seal is rectangular letterpress plate + habit-maze mark
-- [x] Idle Field Index rows have **no** underlines; no dense ruled fiber under actions
-- [x] Actions never use mono; meta mono only ≤ 13 px
-- [x] Open folio fills 1920×1080; Field Index plate frames all actions (`verify_field_index_layout`)
-- [x] Title stage mounts Menu only — abandon→title never leaves chamber HUD
-- [x] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
-- [x] Cloud-safe gates: `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
+- [ ] No dashed / skipped-segment **circle** seal on title or boot
+- [ ] Seal is rectangular letterpress plate + habit-maze mark
+- [ ] `ECHO LATTICE` is the largest type; tagline secondary rust
+- [ ] Field Index ~40–48% width, full height, all actions visible
+- [ ] Layout empty_frac < 0.35 (`composition_layout` + density test)
+- [ ] Sharp folio edges — no torn deckle / black bar foot junk
+- [ ] Zero chamber HUD on title stage
+- [ ] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
+- [ ] Gates: `test_menu_composition_density` · `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
 
 ---
 
-## 6. Media
+## 5. Media
 
 | Asset | Role |
 |---|---|
 | [`../RELEASE/screenshots/02_brand_main_menu.png`](../RELEASE/screenshots/02_brand_main_menu.png) | Partner brand slate |
-| Trailer `06_title_cta/01_main_menu.png` | Keep in sync when composition moves |
 
-Raw (after RC1 merge):  
-`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu.png`
+Raw (after branch push):  
+`https://github.com/cmp07/Game-/raw/cursor/menu-hard-reset/docs/RELEASE/screenshots/02_brand_main_menu.png`
