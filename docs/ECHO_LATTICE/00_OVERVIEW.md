@@ -9,6 +9,9 @@
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |
 | [`13_VERTICAL_SLICE_README.md`](13_VERTICAL_SLICE_README.md) | How to run the playable Godot project |
+| [`06_AUDIO_BIBLE.md`](06_AUDIO_BIBLE.md) | Audio architecture (buses, events, silence policy) |
+| [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) | **1.0 audio identity** — slam as musical event, habit as motif, silence as tool |
+| [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md) | Authored-mix cue sheet for 1.0 |
 | [`../RELEASE/`](../RELEASE/) | Post-launch ops — hotfix runbook, crash logs, 90-day daily calendar, DLC fence, FAQ |
 | [`../RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | Next Fest demo — Act I + Mirror Birth + wishlist CTA |
 
