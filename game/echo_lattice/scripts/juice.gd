@@ -142,6 +142,7 @@ func rewrite_punch(segment_count: int = 1) -> void:
 	if not _reduce_motion():
 		hitstop(0.09, 0.06)
 	# Players who explicitly enable shake get a tiny optional settle, not a punch.
+	# Field Ledger: no full-screen rewrite flash (margin heartbeat lives in chamber).
 	var intensity: float = _shake_intensity()
 	if intensity > 0.001:
 		var shake_amt: float = minf(0.14, 0.03 + 0.008 * float(segment_count))

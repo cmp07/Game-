@@ -92,6 +92,77 @@ locale.language,Language,语言
 locale.en,English,English
 locale.zh_Hans,简体中文,简体中文
 locale.system,System,跟随系统
+settings.title,Settings — Accessibility,设置 — 无障碍
+settings.a11y_header,Accessibility,无障碍
+settings.colorblind,Colorblind mode,色盲模式
+settings.patterns,Pattern cues (not color-only),图案提示（非仅靠颜色）
+settings.reduce_flash,Reduce flash (soften rewrite strobes),减弱闪光（柔化改写闪烁）
+settings.screen_shake,Screen shake,屏幕震动
+settings.shake_intensity,Shake intensity,震动强度
+settings.subtitles,Subtitles (PA / rewrite lines),字幕（广播 / 改写提示）
+settings.subtitle_size,Subtitle size,字幕大小
+settings.subtitle_background,Subtitle background,字幕背景
+settings.ui_scale,UI scale,界面缩放
+settings.ghost_assist,Assist: show ghost path once per chamber,辅助：每间室显示一次幽灵路径
+settings.reduce_motion,Reduce motion,减少动态
+settings.hold_to_walk,Hold to walk,按住行走
+settings.input_header,Input (click to rebind keyboard; gamepad preserved),输入（点击重绑键盘；手柄保留）
+settings.reset_a11y,Reset accessibility,重置无障碍
+settings.reset_input,Reset input,重置输入
+settings.close,Close,关闭
+settings.size_small,Small,小
+settings.size_medium,Medium,中
+settings.size_large,Large,大
+settings.status_press_key,Press key… (Esc cancel),按下按键…（Esc 取消）
+settings.status_rebinding,Rebinding %s,正在重绑 %s
+settings.status_bindings_saved,Bindings saved.,绑定已保存。
+settings.status_colorblind,Colorblind mode: %s,色盲模式：%s
+settings.status_a11y_reset,Accessibility reset to defaults.,无障碍已恢复默认。
+settings.status_input_reset,Input bindings reset.,输入绑定已重置。
+colorblind.default,Default (Field Ledger),默认（现场账本）
+colorblind.protanopia,Protanopia (red-weak),红色弱视（红色弱）
+colorblind.deuteranopia,Deuteranopia (green-weak),绿色弱视（绿色弱）
+colorblind.tritanopia,Tritanopia (blue-weak),蓝色弱视（蓝色弱）
+colorblind.high_contrast,High contrast,高对比度
+colorblind.mono_pattern,Mono + patterns,单色 + 图案
+input.move_up,Move Up,向上移动
+input.move_down,Move Down,向下移动
+input.move_left,Move Left,向左移动
+input.move_right,Move Right,向右移动
+input.undo,Undo,撤销
+input.restart,Restart,重开
+input.pause_menu,Pause / Menu,暂停 / 菜单
+input.confirm,Confirm,确认
+input.ghost_assist,Show Ghost Path (assist),显示幽灵路径（辅助）
+subtitle.rewrite_begin,The lattice rewrites from your path.,晶格根据你的路径改写。
+subtitle.rewrite_mirror,Your trail folds into walls.,你的足迹折成墙壁。
+subtitle.rewrite_rotate,The corridor turns with your habits.,走廊随你的习惯转动。
+subtitle.rewrite_thicken,Habits solidify where you stepped.,习惯在你踏过处硬化。
+subtitle.checkpoint,Checkpoint — buffer sealed.,检查点 — 缓冲已封存。
+subtitle.habit_warn_loop,Looping path — the lattice will thicken here.,环绕路径 — 晶格将在此增厚。
+subtitle.habit_warn_dash,Straight-line habit detected.,检测到直线习惯。
+subtitle.ghost_assist,Ghost path revealed once.,幽灵路径已显示一次。
+subtitle.undo,Step withdrawn.,已撤回一步。
+subtitle.win,Chamber clear.,间室清除。
+subtitle.pa.ghost.floor,Floor chalk noted.,已记录地面粉笔。
+subtitle.pa.checkpoint.armed,Rewrite armed.,改写已就绪。
+subtitle.pa.rewrite.fired,Rewrite committed.,改写已提交。
+subtitle.pa.boot.lattice_online,Lattice online.,晶格在线。
+subtitle.pa.wing.clear,Wing clear.,本翼清除。
+subtitle.tutorial_buffer,Your last moves leave fossils behind you.,你最近的步伐会留下化石。
+menu.subtitle_demo,Demo — Act I · Mirror Birth. Ink on paper.,试玩 — 第一幕 · 镜生。纸上墨迹。
+menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Menu  %s,移动  %s…     重开  %s     撤销  %s     菜单  %s
+hud.restart_fmt,Restart (%s),重开 (%s)
+hud.menu_fmt,Menu (%s),菜单 (%s)
+glyphs.move_pad,D-Pad / Stick,方向键 / 摇杆
+glyphs.move_wasd,WASD / Arrows,WASD / 方向键
+glyphs.controls_gamepad,Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start / B     Confirm  A     Assist  B,移动  方向键/摇杆     撤销  X     重开  Y     菜单  Start / B     确认  A     辅助  B
+glyphs.controls_keyboard,Move  %s     Undo  %s     Restart  %s     Menu  %s     Confirm  %s     Assist  %s,移动  %s     撤销  %s     重开  %s     菜单  %s     确认  %s     辅助  %s
+end.demo_title,DEMO COMPLETE,试玩完成
+end.demo_tagline,You met Mirror Birth. The full lattice waits.,你遇见了镜生。完整晶格在等待。
+end.demo_footer,Echo Lattice Demo · Act I · Wishlist the full game,回声晶格试玩 · 第一幕 · 将完整版加入愿望单
+end.demo_footer_no_wishlist,Echo Lattice Demo · Act I,回声晶格试玩 · 第一幕
+end.demo_replay,Replay Act I,重玩第一幕
 act.induction,Induction,诱导
 act.reflection,Reflection,反射
 act.pressure,Pressure,压力

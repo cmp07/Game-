@@ -42,28 +42,6 @@ func _ready() -> void:
 	var has: bool = GameState.can_continue()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.40)
-	var stars: int = GameState.total_stars_earned()
-	if has:
-		subtitle.text = tr("menu.subtitle_progress") % [
-			GameState.run_progress_index() + 1,
-			GameState.chambers_in_run(),
-			stars,
-		]
-	elif DemoBuild.is_demo():
-		subtitle.text = "Demo — Act I · Mirror Birth. Ink on paper."
-	elif GameState.is_run_complete():
-		subtitle.text = tr("menu.subtitle_wing_complete") % stars
-	else:
-		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
-	var today: String = GameState._today_label()
-	var dseed: int = GameState._today_seed()
-	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
-	var ebest: int = int(GameState.endless_best_depth)
-	if DemoBuild.is_demo():
-		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
-		meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
-	else:
-		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
@@ -81,6 +59,10 @@ func _ready() -> void:
 
 	_build_demo_path()
 	set_process(true)
+	var remap := get_node_or_null("/root/ActionRemap")
+	if remap != null and remap.has_signal("bindings_changed"):
+		if not remap.bindings_changed.is_connected(queue_redraw):
+			remap.bindings_changed.connect(queue_redraw)
 	# Restyle buttons as underlined type (art bible §6).
 	_style_as_index_button(start_button, true)
 	_style_as_index_button(continue_button, false)
@@ -108,7 +90,34 @@ func _localize_chrome() -> void:
 	quit_button.text = tr("menu.quit")
 	if _wishlist_button != null:
 		_wishlist_button.text = tr("menu.wishlist")
+	_refresh_progress_copy()
 	queue_redraw()
+
+
+func _refresh_progress_copy() -> void:
+	var has: bool = GameState.can_continue()
+	var stars: int = GameState.total_stars_earned()
+	if has:
+		subtitle.text = tr("menu.subtitle_progress") % [
+			GameState.run_progress_index() + 1,
+			GameState.chambers_in_run(),
+			stars,
+		]
+	elif DemoBuild.is_demo():
+		subtitle.text = tr("menu.subtitle_demo")
+	elif GameState.is_run_complete():
+		subtitle.text = tr("menu.subtitle_wing_complete") % stars
+	else:
+		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
+	var today: String = GameState._today_label()
+	var dseed: int = GameState._today_seed()
+	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
+	var ebest: int = int(GameState.endless_best_depth)
+	if DemoBuild.is_demo():
+		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
+		meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
+	else:
+		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
 
 
 func _open_settings() -> void:
@@ -338,7 +347,8 @@ func _draw_ambient_lattice(page: Rect2) -> void:
 
 
 func _footer_controls_hint() -> String:
-	if has_node("/root/InputGlyphs") and InputGlyphs.last_device >= 0:
+	# last_device is KEYBOARD=0 at boot — only use glyph path for gamepad / Deck.
+	if has_node("/root/InputGlyphs") and InputGlyphs.using_gamepad():
 		return InputGlyphs.controls_line()
 	return _controls_hint()
 
@@ -351,7 +361,7 @@ func _controls_hint() -> String:
 	var restart: String = ", ".join(remap.get_binding_labels("restart"))
 	var undo: String = ", ".join(remap.get_binding_labels("undo"))
 	var pause: String = ", ".join(remap.get_binding_labels("pause_menu"))
-	return "Move  %s…     Restart  %s     Undo  %s     Menu  %s" % [up, restart, undo, pause]
+	return tr("menu.controls_hint_remap") % [up, restart, undo, pause]
 
 
 func _draw_button_underlines(_card: Rect2) -> void:

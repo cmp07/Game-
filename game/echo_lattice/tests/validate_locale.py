@@ -34,8 +34,10 @@ REQUIRED_UI_KEYS = {
     "menu.quit",
     "menu.subtitle_fresh",
     "menu.subtitle_progress",
+    "menu.subtitle_demo",
     "menu.daily_meta",
     "menu.daily_endless_meta",
+    "menu.controls_hint_remap",
     "hud.moves",
     "hud.habit",
     "hud.habit_unwritten",
@@ -46,6 +48,8 @@ REQUIRED_UI_KEYS = {
     "hud.menu",
     "hud.endless_tag",
     "hud.endless_depth",
+    "hud.restart_fmt",
+    "hud.menu_fmt",
     "habit.up",
     "habit.down",
     "habit.left",
@@ -68,6 +72,65 @@ REQUIRED_UI_KEYS = {
     "end.header_endless",
     "end.header_wing",
     "end.header_daily",
+    "end.demo_title",
+    "end.demo_tagline",
+    "end.demo_footer",
+    "end.demo_replay",
+    "locale.language",
+    "locale.en",
+    "locale.zh_Hans",
+    "locale.system",
+    "settings.title",
+    "settings.subtitle_background",
+    "settings.status_press_key",
+    "colorblind.default",
+    "colorblind.protanopia",
+    "input.undo",
+    "input.ghost_assist",
+    "subtitle.rewrite_begin",
+    "subtitle.pa.checkpoint.armed",
+    "glyphs.controls_gamepad",
+    "glyphs.controls_keyboard",
+}
+
+# SubtitleOverlay.STUB_LINES ids — each must have subtitle.<id> in the CSV.
+SUBTITLE_STUB_IDS = {
+    "rewrite_begin",
+    "rewrite_mirror",
+    "rewrite_rotate",
+    "rewrite_thicken",
+    "checkpoint",
+    "habit_warn_loop",
+    "habit_warn_dash",
+    "ghost_assist",
+    "undo",
+    "win",
+    "pa.ghost.floor",
+    "pa.checkpoint.armed",
+    "pa.rewrite.fired",
+    "pa.boot.lattice_online",
+    "pa.wing.clear",
+    "tutorial_buffer",
+}
+
+# Hard-coded English that must not remain in player-facing scripts.
+FORBIDDEN_LITERALS = {
+    "scripts/a11y/settings_menu.gd": (
+        "Press key… (Esc cancel)",
+        "Bindings saved.",
+        "Accessibility reset to defaults.",
+    ),
+    "scripts/end_screen.gd": (
+        "DEMO COMPLETE",
+        "Wishlist on Steam",
+        "Replay Act I",
+    ),
+    "scripts/menu.gd": (
+        "Demo — Act I · Mirror Birth. Ink on paper.",
+    ),
+    "scripts/input_glyphs.gd": (
+        "Move  WASD / Arrows     Undo  Z",
+    ),
 }
 
 PLACEHOLDER_RE = re.compile(r"%(?![%s])|%s|%%")
@@ -134,6 +197,28 @@ def main() -> int:
     missing_ui = sorted(REQUIRED_UI_KEYS - set(rows))
     if missing_ui:
         errors.append(f"missing UI keys: {', '.join(missing_ui)}")
+
+    for stub_id in sorted(SUBTITLE_STUB_IDS):
+        key = f"subtitle.{stub_id}"
+        if key not in rows:
+            errors.append(f"missing subtitle stub key: {key}")
+
+    for rel, needles in FORBIDDEN_LITERALS.items():
+        src = ROOT / rel
+        if not src.is_file():
+            errors.append(f"missing script for literal scan: {rel}")
+            continue
+        body = src.read_text(encoding="utf-8")
+        for needle in needles:
+            if needle in body:
+                errors.append(f"{rel}: hard-coded EN still present: {needle!r}")
+
+    settings_tscn = ROOT / "scenes" / "ui" / "settings_menu.tscn"
+    if settings_tscn.is_file():
+        tscn = settings_tscn.read_text(encoding="utf-8")
+        for needle in ("LanguageOption", "SubtitleBackgroundCheck", "_on_language_selected"):
+            if needle not in tscn:
+                errors.append(f"settings_menu.tscn missing {needle}")
 
     chamber_ids = []
     for path in sorted(CHAMBERS_DIR.glob("*.json")):

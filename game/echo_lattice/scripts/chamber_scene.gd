@@ -59,6 +59,10 @@ func _ready() -> void:
 	_on_caption_changed(_localized_caption(data))
 	set_process(true)
 	_glyph_device = InputGlyphs.last_device if has_node("/root/InputGlyphs") else -1
+	var remap := get_node_or_null("/root/ActionRemap")
+	if remap != null and remap.has_signal("bindings_changed"):
+		if not remap.bindings_changed.is_connected(_refresh_glyph_labels):
+			remap.bindings_changed.connect(_refresh_glyph_labels)
 
 
 func _on_locale_changed(_locale: String) -> void:

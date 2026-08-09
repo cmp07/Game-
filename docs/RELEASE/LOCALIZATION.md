@@ -70,7 +70,7 @@ user://locale.cfg
 code="zh_Hans"
 ```
 
-Call `LocaleManager.apply_locale("zh_Hans")` from a future settings row (`locale.language` keys already exist in the catalog).
+Settings → **Language** OptionButton calls `LocaleManager.apply_locale(...)` (`system` / `en` / `zh_Hans`) using the `locale.*` catalog keys.
 
 ---
 
@@ -88,7 +88,11 @@ Catalog columns: `keys,en,zh_Hans`.
 | `end.*` | End-of-wing / end-of-daily screen |
 | `act.*` | Act names (Induction / Reflection / Pressure / Mastery) |
 | `chamber.<id>.title` / `.caption` | All 39 content chambers |
-| `locale.*` | Language picker labels (settings stub) |
+| `locale.*` | Language picker labels (Settings row) |
+| `settings.*` / `colorblind.*` / `input.*` | Settings chrome, palette names, remap row titles |
+| `subtitle.*` | PA / rewrite / assist subtitle stubs |
+| `glyphs.*` / `hud.*_fmt` / `menu.controls_hint_remap` | Controller / remap-aware prompt chrome |
+| `end.demo_*` / `menu.subtitle_demo` | Next Fest demo copy |
 | `project.description` | Store/engine description string |
 
 Placeholders use GDScript `%` formatting (`%s`, literal `%%` for a percent sign).
@@ -100,7 +104,7 @@ Placeholders use GDScript `%` formatting (`%s`, literal `%%` for a percent sign)
 - Debug / `printerr` strings
 - Audio event ids, transform op names, content ids / slugs
 - Seed hex strip digits (labels translate; hex stays latin)
-- PA chime lines (audio-only; no VO script yet)
+- Raw audio event ids (on-screen PA/rewrite stubs are keyed under `subtitle.*`)
 
 ---
 
@@ -135,10 +139,11 @@ Full vendor steps live in [`game/echo_lattice/fonts/README.md`](../../game/echo_
 |---|---|
 | Face | **Noto Sans SC Regular** (OFL) as primary UI/display fallback |
 | Path | `game/echo_lattice/fonts/cjk/NotoSansSC-Regular.otf` |
+| Fetch | `python3 tools/fonts/fetch_noto_sans_sc.py` (OFL zip from noto-cjk Sans 2.004) |
 | Wiring | `LocaleManager` sets `ThemeDB.fallback_font` when locale is CJK |
-| Credits | OFL notice in ship credits / compliance pack |
+| Credits | `fonts/cjk/OFL.txt` + compliance pack Noto Sans SC line |
 | Layout QA | Menu brand + captions at 960×560 and 1280×720; no type below 14 px body |
-| Git | `*.otf` / `*.ttf` under `fonts/cjk/` are gitignored until size/legal clear |
+| Git | Binaries gitignored; optional Git LFS via root `.gitattributes` (see `fonts/cjk/README.md`) |
 
 Without the vendor file, `zh_Hans` still selects and translates strings, but Han glyphs may tofu — CI warns via `LocaleManager` `push_warning`.
 
@@ -178,7 +183,6 @@ China RMB pricing notes live with the platforms pack (`docs/RELEASE/PLATFORMS.md
 | Item | Why deferred |
 |---|---|
 | `ja` / `zh_Hant` / `ko` catalogs | Font + native pass cost; architecture already alias-ready |
-| In-game language dropdown | Keys exist; settings screen not in slice |
 | Steamworks store localization | Marketing track, not runtime CSV |
 | Editor auto-translate on `.tscn` text | Scripts set `tr()` in `_ready` so placeholders stay readable in the editor |
 | PO / Weblate pipeline | CSV is enough for two locales; graduate if locale count > 4 |
@@ -188,3 +192,4 @@ China RMB pricing notes live with the platforms pack (`docs/RELEASE/PLATFORMS.md
 ## 10. Change log
 
 - **v0.1** — Extract UI + 39 chamber strings; `LocaleManager` + `en`/`zh_Hans` CSV; CJK font plan; this doc.
+- **v0.2** — Settings / subtitles / glyphs / demo keyed; in-game language picker; Noto Sans SC fetch script + OFL + LFS note.

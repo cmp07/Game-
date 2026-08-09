@@ -20,7 +20,7 @@ Use this file when completing Steamworks **Content Survey**, age-rating fields, 
 | Online features (v1) | **None** — no multiplayer, chat, UGC upload, or live services |
 | Generative AI (player-facing) | **None** — deterministic authored chambers + offline rewrite rules |
 | Telemetry | **Local JSONL only** under `user://telemetry/` — no network upload |
-| Language | English UI/copy; no profanity |
+| Language | English + Simplified Chinese (`zh_Hans`) UI/copy; no profanity |
 | Substances / sexual content / gambling | **None** |
 
 ---
@@ -199,6 +199,7 @@ Art bible stack ([`05_ART_BIBLE.md`](../ECHO_LATTICE/05_ART_BIBLE.md) § Typogra
 > Fonts: Inter / Inter Tight © The Inter Project Authors (SIL OFL 1.1).  
 > IBM Plex® © IBM Corp. (SIL OFL 1.1) — when embedded.  
 > Noto Serif © Google Inc. (SIL OFL 1.1) — when embedded.  
+> Noto Sans SC © Adobe / Google (SIL OFL 1.1) — when embedded for `zh_Hans` (`fonts/cjk/OFL.txt`).  
 > PT Serif © ParaType (SIL OFL 1.1) — when embedded.
 
 Bundle `OFL.txt` beside each embedded `.ttf`/`.otf` in the repo (e.g. `game/echo_lattice/art/fonts/`) before locking the store build.
