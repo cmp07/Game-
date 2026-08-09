@@ -1,0 +1,51 @@
+{
+  "format": 2,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/04_CONTENT_BIBLE.md",
+  "transforms": [
+    {
+      "id": "none",
+      "label": "Silent",
+      "act_introduced": "induction",
+      "description": "No rewrite. Teaches movement and goal literacy."
+    },
+    {
+      "id": "mirror_v",
+      "label": "Vertical Mirror",
+      "act_introduced": "induction",
+      "description": "Walked cells mirror across the vertical axis into echo walls."
+    },
+    {
+      "id": "mirror_h",
+      "label": "Horizontal Mirror",
+      "act_introduced": "induction",
+      "description": "Walked cells mirror across the horizontal axis into echo walls."
+    },
+    {
+      "id": "rotate_180",
+      "label": "Half-Turn",
+      "act_introduced": "induction",
+      "description": "Walked cells rotate 180° around chamber centre."
+    },
+    {
+      "id": "thicken",
+      "label": "Thicken",
+      "act_introduced": "induction",
+      "description": "Walked cells solidify in place — no re-tread."
+    },
+    {
+      "id": "mirror_v_then_h",
+      "label": "Double Mirror",
+      "act_introduced": "reflection",
+      "description": "Emits both vertical and horizontal mirrors of the walked path."
+    }
+  ],
+  "glyphs": {
+    "#": "wall",
+    ".": "floor",
+    "P": "player_start",
+    "G": "goal",
+    "C": "checkpoint",
+    " ": "floor_pad"
+  }
+}

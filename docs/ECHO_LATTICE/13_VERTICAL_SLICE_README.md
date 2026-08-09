@@ -130,17 +130,21 @@ godot --headless --path . -- --selftest
 # expected: "result: OK" and exit code 0
 ```
 
-Sample output:
+Content v2 expands the campaign to **35 playable chambers across 4 Acts** (+ 4 hard variants) loaded from `content/chambers/*.json`. Python validation (no Godot required):
+
+```bash
+python3 game/echo_lattice/tests/validate_chambers.py
+# expected: "result: OK"
+```
+
+Self-test sample (Godot):
 
 ```
 == Echo Lattice self-test ==
-chambers: 10, grid: 24x14
-  chamber 0 'I. First Step' transform=none size=24x14 cps=0
+chambers: 35 campaign / 39 authored, grid: 24x14
+acts: 4
   ...
-  chamber 9 'X. Signature' transform=mirror_v size=24x14 cps=2
-  playthrough chamber 0 OK
-  ...
-  playthrough chamber 9 OK
+  playthrough chamber 0..34 OK
 result: OK
 ```
 
@@ -155,6 +159,12 @@ game/echo_lattice/
 ├── project.godot                # Autoloads, input map, Forward+/GLES3 setup
 ├── icon.svg                     # Boot / window icon (lattice mark)
 ├── export_presets.cfg           # Windows Desktop + Linux/X11 presets
+├── content/
+│   ├── chambers/*.json          # 39 authored chambers (source of truth)
+│   ├── acts.json                # 4 Acts — Induction→Mastery
+│   ├── daily/seeds.json         # Daily-ready seed catalog
+│   ├── grammar/                 # Variation + rewrite vocabulary
+│   └── schema/chamber.schema.json
 ├── scenes/
 │   ├── main.tscn                # Router — swaps stage children
 │   ├── menu.tscn                # Title + Start/Continue/Quit
@@ -164,12 +174,10 @@ game/echo_lattice/
 └── scripts/
     ├── main.gd                  # Router + `-- --selftest` + `-- --screenshot`
     ├── menu.gd                  # Menu buttons; emits signals up
-    ├── chamber.gd               # Grid, player, rewrites, safety-net BFS,
-    │                              full self-drawn renderer (no tile art)
-    ├── chamber_scene.gd         # HUD wrapper around Chamber
-    ├── chamber_won.gd           # Win-screen data binding
-    ├── end_screen.gd            # End-screen data binding
-    ├── chamber_book.gd          # Autoload — 10 authored ASCII chambers
+    ├── chamber.gd               # Grid, player, rewrites, safety-net BFS
+    ├── chamber_loader.gd        # JSON → normalized chamber records
+    ├── chamber_book.gd          # Autoload façade over JSON content
+    ├── daily_seeds.gd           # Date → seed/chamber/variation
     ├── game_state.gd            # Autoload — run state, habit profile, move ring
     └── save_manager.gd          # Autoload — JSON persistence
 ```
@@ -213,14 +221,14 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 
 | Area | 1.0 target | Vertical slice status |
 |---|---|---|
-| Chamber count | 12 handmade in MVP, more via editor | **10 handmade chambers** — first two silent, then mirror/rotate/thicken/combined |
+| Chamber count | 12 handmade in MVP, more via editor | **35 campaign + 4 hard** across Induction / Reflection / Pressure / Mastery (content v2) |
 | Transform deck | Meta unlock ("mirror, rotate, thicken, invert" as reward drops) | All transforms exist but are **hard-coded per chamber**; no unlock UI, no `invert` |
 | Ghost path replay | Ghost of your previous solve visible in-scene | Ghost trail exists **only since the last checkpoint** — no cross-run ghost yet |
 | Undo | Present in MVP | ✅ Undo works (stack, reverts across rewrites) |
 | Audio | Footstep material pitch-shift + rewrite sting (identity beat) | **No audio yet** — silent build |
 | Accessibility | Colorblind lattice palette, hold-to-walk, controller glyphs | Grid tile parity + one accent color (already colorblind-safe); **no controller glyphs**, **no hold-to-walk repeat** |
 | Habit profile UI | Full readout (dash-heavy / loopy / hesitant), biases transform packs | **HUD readout only** (`Habit: right-leaning 64%`) — profile does **not** yet bias content |
-| Save format | Cloud sync + daily seed history | Local JSON only, no daily seed |
+| Save format | Cloud sync + daily seed history | Local JSON save; **daily seed catalog shipped** (`content/daily/seeds.json`) — menu wiring still pending |
 | Steam integration | Achievements, Cloud, Workshop, leaderboards for ghost races | **None** — slice is store-agnostic |
 | Level editor / Workshop | Post-MVP goal | **Not present** |
 | Localisation | Selected via Steam locale | **English only** |
@@ -233,7 +241,7 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 
 ## Extending the slice
 
-**Add a new chamber:** append a dict to `ChamberBook.CHAMBERS` in `scripts/chamber_book.gd`. Each map must be a `GRID_H`-tall array of exactly `GRID_W`-wide ASCII strings, with one `P`, one `G`, and one or more `C` tiles if the transform is not `"none"`. The self-test will reject anything malformed.
+**Add a new chamber:** edit `tests/author_chambers_v2.py` (or drop a JSON file under `content/chambers/`) following `docs/ECHO_LATTICE/04_CONTENT_BIBLE.md`. Each map is 14×24 ASCII with one `P`, one `G`, and one or more `C` if the transform is not `"none"`. Run `python3 game/echo_lattice/tests/validate_chambers.py`.
 
 **Add a new transform:** implement it in `Chamber._apply_transform` in `scripts/chamber.gd`. Return an `Array[Vector2i]` of candidate cells. The safety net will handle solvability filtering automatically.
 

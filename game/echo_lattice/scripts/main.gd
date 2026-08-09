@@ -115,7 +115,21 @@ func _run_self_test() -> bool:
 	var ok := true
 	var grid_w: int = int(ChamberBook.GRID_W)
 	var grid_h: int = int(ChamberBook.GRID_H)
-	print("chambers: %d, grid: %dx%d" % [ChamberBook.chamber_count(), grid_w, grid_h])
+	print("chambers: %d campaign / %d authored, grid: %dx%d" % [
+		ChamberBook.chamber_count(), ChamberBook.total_authored_count(), grid_w, grid_h
+	])
+	var acts: Array = ChamberBook.acts_summary()
+	if acts.is_empty():
+		printerr("acts.json failed to load"); ok = false
+	else:
+		print("acts: %d" % acts.size())
+		for a in acts:
+			print("  act '%s' campaign=%d hard=%d bosses=%d" % [
+				str(a.get("title", "")),
+				a.get("chambers", []).size(),
+				a.get("hard_variants", []).size(),
+				a.get("bosses", []).size(),
+			])
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
 		var rows: Array = data.get("map", [])
@@ -160,8 +174,8 @@ func _run_self_test() -> bool:
 	GameState.best_stars.clear()
 	GameState.completed.clear()
 	GameState.start_new_run()
-	if ChamberBook.chamber_count() < 20:
-		printerr("v2 expects >= 20 chambers, got %d" % ChamberBook.chamber_count()); ok = false
+	if ChamberBook.chamber_count() < 35:
+		printerr("v2 complete expects >= 35 campaign chambers, got %d" % ChamberBook.chamber_count()); ok = false
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(0, 1))

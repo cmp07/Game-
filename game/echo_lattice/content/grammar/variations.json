@@ -1,0 +1,24 @@
+{
+  "format": 2,
+  "game": "echo_lattice",
+  "doc": "docs/ECHO_LATTICE/04_CONTENT_BIBLE.md",
+  "note": "Runtime variation grammar for daily / hard modes. Authored chambers stay pristine; variants are generated.",
+  "alphabet": {
+    "rotate": [0, 90, 180, 270],
+    "reflect": ["none", "horizontal", "vertical"],
+    "palette": ["default", "cool", "warm", "mono"],
+    "hard": [false, true]
+  },
+  "composition": {
+    "order": ["rotate", "reflect", "palette", "hard"],
+    "notes": "Apply left-to-right. rotate/reflect transform lattice.cells coordinates; palette is cosmetic; hard applies variations.hard_mode tempo/par deltas."
+  },
+  "gates": {
+    "per_chamber": "chamber.variations.allow_rotate / allow_reflect / allow_palette_swap",
+    "boss_default": "bosses disallow rotate so identity portraits keep orientation"
+  },
+  "daily": {
+    "catalog": "content/daily/seeds.json",
+    "hash": "fnv1a32(YYYY-MM-DD) % len(seeds)"
+  }
+}

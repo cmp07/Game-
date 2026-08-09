@@ -1,0 +1,98 @@
+{
+  "id": "03_break_the_loop",
+  "index": 3,
+  "slug": "break_the_loop",
+  "title": "Break the Loop",
+  "caption": "A loop prints a dense mirror. Walk cleaner.",
+  "act": "induction",
+  "act_index": 0,
+  "act_title": "Induction",
+  "teaches": "mirror_v",
+  "transform": "mirror_v",
+  "difficulty": 1,
+  "role": "remix",
+  "seed": 11004,
+  "daily_eligible": true,
+  "par_moves": 48,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P.....................#",
+      "#.##########.#########.#",
+      "#..........#.#.........#",
+      "#.########.#.#.#######.#",
+      "#.#......#.#.#.#.....#.#",
+      "#.#.####.#.C.#.#.###.#.#",
+      "#.#.#....#...#.#...#.#.#",
+      "#.#.#.##########.#.#.#.#",
+      "#.#.#............#.#.#.#",
+      "#.#.##############.#.#.#",
+      "#.#................#.#.#",
+      "#.##################.#G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P.....................#",
+    "#.##########.#########.#",
+    "#..........#.#.........#",
+    "#.########.#.#.#######.#",
+    "#.#......#.#.#.#.....#.#",
+    "#.#.####.#.C.#.#.###.#.#",
+    "#.#.#....#...#.#...#.#.#",
+    "#.#.#.##########.#.#.#.#",
+    "#.#.#............#.#.#.#",
+    "#.#.##############.#.#.#",
+    "#.#................#.#.#",
+    "#.##################.#G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        6
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": "A loop prints a dense mirror. Walk cleaner."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 1,
+    "forced_op": "mirror_v",
+    "soft_hard_bias": 0.25,
+    "require_shorter_or_equal": false
+  },
+  "hints": [
+    "Undo (Z) if you wall yourself in."
+  ],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -4,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "induction",
+    "mirror_v",
+    "mirror_v",
+    "remix"
+  ]
+}

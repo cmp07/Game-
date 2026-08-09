@@ -1,6 +1,7 @@
 extends Control
 ##
 ## Main menu — Start, Continue, Daily Challenge, Quit.
+## (Art v2 Steam-hit restyle lands in the next merge; keep elevated loop API.)
 ##
 
 signal start_new_pressed()
@@ -28,7 +29,7 @@ func _ready() -> void:
 			stars,
 		]
 	else:
-		subtitle.text = "v2 elevated slice — %d chambers · stars + daily" % ChamberBook.chamber_count()
+		subtitle.text = "Four Acts — %d chambers · stars + daily" % ChamberBook.chamber_count()
 	var today: String = GameState._today_label()
 	var dseed: int = GameState._today_seed()
 	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))

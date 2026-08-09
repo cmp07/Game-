@@ -1,0 +1,107 @@
+{
+  "id": "24_compound_fracture",
+  "index": 24,
+  "slug": "compound_fracture",
+  "title": "Compound Fracture",
+  "caption": "Both mirrors, twice. Cracks propagate.",
+  "act": "pressure",
+  "act_index": 2,
+  "act_title": "Pressure",
+  "teaches": "mirror_v_then_h",
+  "transform": "mirror_v_then_h",
+  "difficulty": 4,
+  "role": "remix",
+  "seed": 13007,
+  "daily_eligible": true,
+  "par_moves": 78,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P....#..........#.....#",
+      "#.###.#.########.#.###.#",
+      "#.....#....C.....#.....#",
+      "#.#####.########.#####.#",
+      "#......................#",
+      "#.#####.########.#####.#",
+      "#.....#..........#.....#",
+      "#.###.#.########.#.###.#",
+      "#.....#....C.....#.....#",
+      "#.#####.########.#####.#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P....#..........#.....#",
+    "#.###.#.########.#.###.#",
+    "#.....#....C.....#.....#",
+    "#.#####.########.#####.#",
+    "#......................#",
+    "#.#####.########.#####.#",
+    "#.....#..........#.....#",
+    "#.###.#.########.#.###.#",
+    "#.....#....C.....#.....#",
+    "#.#####.########.#####.#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        3
+      ],
+      "unique": true,
+      "operator": "mirror_v_then_h",
+      "banner": "Both mirrors, twice. Cracks propagate."
+    },
+    {
+      "id": "M2",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        9
+      ],
+      "unique": true,
+      "operator": "mirror_v_then_h",
+      "banner": ""
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 3,
+    "forced_op": "mirror_v_then_h",
+    "soft_hard_bias": 0.65,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "pressure",
+    "mirror_v_then_h",
+    "mirror_v_then_h",
+    "remix"
+  ]
+}
