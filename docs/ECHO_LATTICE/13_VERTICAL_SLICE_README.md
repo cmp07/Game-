@@ -87,10 +87,13 @@ Movement is grid-locked and step-based; every keypress is one tile. The undo sta
 
 ## Building
 
-The project ships with two working export presets (`game/echo_lattice/export_presets.cfg`):
+The project ships with three export presets (`game/echo_lattice/export_presets.cfg`):
 
 - `Windows Desktop` → `builds/windows/EchoLattice.exe` (x86_64, PCK not embedded)
-- `Linux/X11` → `builds/linux/EchoLattice.x86_64` (x86_64, PCK not embedded)
+- `Linux/X11` → `builds/linux/EchoLattice.x86_64` (x86_64, PCK not embedded) — Steam Linux / Deck path
+- `macOS` → `builds/macos/EchoLattice.zip` (universal; **unsigned stub** — notarize before public mac builds)
+
+Store matrix and CI sketch: [`docs/RELEASE/PLATFORMS.md`](../RELEASE/PLATFORMS.md) · [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md).
 
 To build headlessly (no editor UI required):
 
@@ -98,6 +101,7 @@ To build headlessly (no editor UI required):
 cd game/echo_lattice
 godot --headless --export-release "Windows Desktop" builds/windows/EchoLattice.exe
 godot --headless --export-release "Linux/X11"       builds/linux/EchoLattice.x86_64
+godot --headless --export-release "macOS"           builds/macos/EchoLattice.zip
 ```
 
 You need the matching Godot 4.3 export templates installed. Install them via the editor (`Editor > Manage Export Templates > Download and Install`) or, if you are automating a CI job, drop the extracted `templates/` folder into:
@@ -109,14 +113,9 @@ The templates archive is `Godot_v4.3-stable_export_templates.tpz` from the [Godo
 
 We deliberately set `application/modify_resources=false` in the Windows preset so the export does **not** require `rcedit.exe` on the build machine. If you want the produced `.exe` to embed the Windows resource metadata (icon, product name), install rcedit and flip that option back on.
 
-### macOS export (not automated in this slice)
+### macOS signing
 
-We did not author a macOS preset because signing/notarisation requires developer credentials that are out of scope for a vertical slice. To add one manually:
-
-1. Editor → Project → Export → Add… → macOS.
-2. Set `binary_format/architecture = "universal"`.
-3. Ship the `.zip` (Godot writes a .app inside).
-4. Sign / notarise before distributing.
+The committed `macOS` preset leaves codesign and notarization **disabled** so CI can export without Apple credentials. Before distributing to players: enable signing/notarization (or set `GODOT_MACOS_*` env vars — see [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md)).
 
 ---
 
@@ -158,7 +157,7 @@ This has been run against both the editor-driven project and the exported Linux 
 game/echo_lattice/
 ├── project.godot                # Autoloads, input map, Forward+/GLES3 setup
 ├── icon.svg                     # Boot / window icon (lattice mark)
-├── export_presets.cfg           # Windows Desktop + Linux/X11 presets
+├── export_presets.cfg           # Windows + Linux/X11 + macOS (unsigned stub) presets
 ├── content/
 │   ├── chambers/*.json          # 39 authored chambers (source of truth)
 │   ├── acts.json                # 4 Acts — Induction→Mastery

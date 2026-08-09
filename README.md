@@ -16,6 +16,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
+- `docs/RELEASE/` — multi-platform store strategy + CI build sketch
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
