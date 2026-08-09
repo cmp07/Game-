@@ -74,10 +74,17 @@ Python contract suite: **22/22** green after media merge (incl. deck bindings).
 
 ---
 
+## Steam pack freeze
+
+**Steam pack frozen (2026-08-09); next focus = game depth.**  
+Durable refs: branch + tag `backup/echo-lattice-rc1-steam-pack` @ `5f0d463`.  
+Resume Partner / Coming Soon later from [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) — do **not** delete `steam/`, Gate A media, or RELEASE/AUDIT packs.
+
 ## Doc map
 
 | Area | Entry |
 |---|---|
+| Steam pack freeze / resume | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
 | Release index | [`README.md`](README.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
