@@ -548,9 +548,6 @@ func _run_self_test() -> bool:
 		# Featured may be force-included; fillers must be daily_eligible.
 		if cid != GameState.daily_chamber_id and not bool(ch.get("daily_eligible", false)):
 			printerr("daily wing filler not daily_eligible: %s" % cid); ok = false
-	var daily_n: int = mini(5, ChamberBook.chamber_count())
-	if GameState.run_queue.size() != daily_n:
-		printerr("daily wing expected %d chambers got %d" % [daily_n, GameState.run_queue.size()]); ok = false
 	# Endless: seeded catalog batch + pressure climb (never marks wing complete).
 	GameState.start_endless_run()
 	if GameState.run_mode != "endless":

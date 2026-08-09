@@ -35,10 +35,18 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | Doc | Purpose |
 |---|---|
 | [`LAUNCH_PLAYBOOK.md`](LAUNCH_PLAYBOOK.md) | T−8 weeks → launch day → week-2 patches |
+| [`trailer/`](trailer/) | **Gate A** 30s rewrite-slam beat sheet, frame packs, VO/text cards, SRT |
 | [`presskit/`](presskit/) | Factsheet, folder layout, GIF sequences, capsule/logo slots |
 | [`SOCIAL_CLIP_SCRIPTS.md`](SOCIAL_CLIP_SCRIPTS.md) | 15s / 30s scripts keyed to the rewrite slam |
 | [`INFLUENCER_OUTREACH.md`](INFLUENCER_OUTREACH.md) | Outreach CRM + email skeleton |
 | [`WISHLIST_MILESTONES.md`](WISHLIST_MILESTONES.md) | Wishlist tiers + creative unlocks |
+
+Regenerate Gate A trailer frame packs + text cards:
+
+```bash
+./game/echo_lattice/tools/capture_gate_a_trailer.sh
+python3 tools/release/generate_trailer_text_cards.py
+```
 
 Regenerate GIF frame packs:
 
