@@ -71,10 +71,15 @@ def test_code_stubs() -> None:
         "report_softlock",
         "export_crash_pack",
         "maybe_upload_latest",
+        "mark_clean_shutdown",
     ]:
         check(f"hook has {fn}", f"func {fn}" in hook)
     check("upload no-op without client", "upload_client_not_bundled" in hook)
     check("redacts profile.name", "profile.name intentionally omitted" in hook or "profile.name" in hook)
+    project = (ROOT / "game/echo_lattice/project.godot").read_text(encoding="utf-8")
+    check("CrashLogHook autoloaded", 'CrashLogHook="*res://scripts/ops/crash_log_hook.gd"' in project)
+    settings_tscn = (ROOT / "game/echo_lattice/scenes/ui/settings_menu.tscn").read_text(encoding="utf-8")
+    check("settings export crash pack", "_on_export_crash_pack" in settings_tscn)
     cal = CAL_GD.read_text(encoding="utf-8")
     check("calendar fallback source", "catalog_hash" in cal)
     check("calendar path", "calendar_90.json" in cal)

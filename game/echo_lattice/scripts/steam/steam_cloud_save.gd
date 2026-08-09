@@ -2,7 +2,8 @@ class_name SteamCloudSave
 extends RefCounted
 ##
 ## Optional Steam Cloud bridge for user://save.json.
-## Local disk remains authoritative; cloud is best-effort sync.
+## Local disk remains authoritative when timestamps are equal/unknown.
+## Prefer cloud only when remote schema `updated_at` is strictly newer.
 ##
 
 const LOCAL_SAVE: String = "user://save.json"
@@ -11,7 +12,7 @@ signal pulled(ok: bool)
 signal pushed(ok: bool)
 
 
-func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
+func pull_if_newer(backend: SteamBackend, remote_path: String, force: bool = false) -> bool:
 	if backend == null or not backend.cloud_enabled_for_account():
 		pulled.emit(false)
 		return false
@@ -26,8 +27,7 @@ func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
 	if remote_text.strip_edges() == "":
 		pulled.emit(false)
 		return false
-	# Prefer cloud when local missing; otherwise last-write-wins by mtime approx.
-	if FileAccess.file_exists(LOCAL_SAVE):
+	if FileAccess.file_exists(LOCAL_SAVE) and not force:
 		var local := FileAccess.open(LOCAL_SAVE, FileAccess.READ)
 		if local != null:
 			var local_text := local.get_as_text()
@@ -35,12 +35,14 @@ func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
 			if local_text == remote_text:
 				pulled.emit(true)
 				return true
-			# Keep local if both exist and differ — Steam Cloud path config +
-			# Partner conflict policy can refine this later. Still allow force
-			# via empty local.
 			if local_text.strip_edges() != "":
-				pulled.emit(false)
-				return false
+				var local_ts := _updated_at_from_json(local_text)
+				var remote_ts := _updated_at_from_json(remote_text)
+				# Strictly newer remote wins. Equal/missing timestamps ⇒ prefer local
+				# (safe default while Cloud is optional / unmarketed).
+				if remote_ts <= 0.0 or remote_ts <= local_ts:
+					pulled.emit(false)
+					return false
 	var out := FileAccess.open(LOCAL_SAVE, FileAccess.WRITE)
 	if out == null:
 		pulled.emit(false)
@@ -49,6 +51,10 @@ func pull_if_newer(backend: SteamBackend, remote_path: String) -> bool:
 	out.close()
 	pulled.emit(true)
 	return true
+
+
+func force_pull(backend: SteamBackend, remote_path: String) -> bool:
+	return pull_if_newer(backend, remote_path, true)
 
 
 func push_local(backend: SteamBackend, remote_path: String) -> bool:
@@ -67,3 +73,13 @@ func push_local(backend: SteamBackend, remote_path: String) -> bool:
 	var ok: bool = backend.cloud_write_file(remote_path, text.to_utf8_buffer())
 	pushed.emit(ok)
 	return ok
+
+
+func _updated_at_from_json(text: String) -> float:
+	var parsed: Variant = JSON.parse_string(text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return 0.0
+	var data: Dictionary = parsed
+	if data.has("updated_at"):
+		return float(data.get("updated_at", 0.0))
+	return 0.0

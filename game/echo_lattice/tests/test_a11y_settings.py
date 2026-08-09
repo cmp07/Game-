@@ -59,6 +59,12 @@ class TestDefaultsCompleteness(unittest.TestCase):
             self.assertIn(action, bindings)
             self.assertGreaterEqual(len(bindings[action]), 1)
 
+    def test_locale_and_audio_defaults(self) -> None:
+        self.assertEqual(self.data["locale"]["code"], "system")
+        audio = self.data["audio"]
+        for key in ("master_volume", "sfx_volume", "music_volume", "pa_volume"):
+            self.assertIn(key, audio)
+
 
 class TestSourceSurface(unittest.TestCase):
     REQUIRED = [
@@ -97,9 +103,32 @@ class TestSourceSurface(unittest.TestCase):
 
     def test_project_autoloads_a11y(self) -> None:
         proj = (ROOT / "project.godot").read_text()
-        for name in ("SettingsStore", "AccessibilityService", "ActionRemap"):
+        for name in ("SettingsStore", "AccessibilityService", "ActionRemap", "CrashLogHook"):
             self.assertIn(name, proj)
         self.assertIn("ghost_assist", proj)
+        # SettingsStore must precede LocaleManager so locale.code is available at boot.
+        self.assertLess(proj.index("SettingsStore="), proj.index("LocaleManager="))
+
+    def test_settings_store_atomic_write(self) -> None:
+        src = (ROOT / "scripts" / "a11y" / "settings_store.gd").read_text()
+        for needle in (
+            "SETTINGS_TMP",
+            "SETTINGS_BAK",
+            "rename_absolute",
+            "echo_lattice_settings.json.tmp",
+        ):
+            self.assertIn(needle, src)
+
+    def test_audio_manager_applies_settings(self) -> None:
+        src = (ROOT / "scripts" / "audio" / "audio_manager.gd").read_text()
+        self.assertIn("func apply_settings_volumes", src)
+        self.assertIn('set_bus_linear("Master"', src)
+        self.assertIn("master_volume", src)
+
+    def test_locale_uses_settings_store(self) -> None:
+        src = (ROOT / "scripts" / "locale" / "locale_manager.gd").read_text()
+        self.assertIn('get_value("locale", "code"', src)
+        self.assertIn("LEGACY_SETTINGS_PATH", src)
 
     def test_juice_routes_flash_gate(self) -> None:
         juice = (ROOT / "scripts" / "juice.gd").read_text()
@@ -145,6 +174,12 @@ class TestSourceSurface(unittest.TestCase):
     def test_settings_menu_wires_signals(self) -> None:
         tscn = (ROOT / "scenes" / "ui" / "settings_menu.tscn").read_text()
         for method in (
+            "_on_language_selected",
+            "_on_master_vol_changed",
+            "_on_sfx_vol_changed",
+            "_on_music_vol_changed",
+            "_on_pa_vol_changed",
+            "_on_export_crash_pack",
             "_on_colorblind_selected",
             "_on_reduce_flash_toggled",
             "_on_shake_toggled",

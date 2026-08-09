@@ -471,13 +471,16 @@ func _bfs_goal_open(extra_blocked: Dictionary) -> bool:
 func _recover_softlock(placed: Array) -> void:
 	## Balance v2 fallback: strip just-placed echoes until the goal is open again.
 	push_warning("Echo Lattice: softlock assert failed after rewrite; recovering.")
-	var tel := LocalTelemetry.from_balance()
-	tel.emit_softlock_assert_failed({
+	var detail := {
 		"chamber_id": int(chamber.get("id", -1)),
 		"placed": placed.size(),
 		"player": {"x": player_pos.x, "y": player_pos.y},
 		"goal": {"x": goal_pos.x, "y": goal_pos.y},
-	})
+	}
+	var tel := LocalTelemetry.from_balance()
+	tel.emit_softlock_assert_failed(detail)
+	if has_node("/root/CrashLogHook") and CrashLogHook.has_method("report_softlock"):
+		CrashLogHook.report_softlock(detail)
 	# Remove newest-first so earlier safety-net picks stay preferred.
 	var i: int = placed.size() - 1
 	while i >= 0 and not _goal_reachable_now():

@@ -1,8 +1,13 @@
 extends Control
-## Echo Lattice settings — accessibility + remappable input + UI scale.
+## Echo Lattice settings — language, audio, accessibility, remaps, support.
 
 signal closed()
 
+@onready var _language_option: OptionButton = %LanguageOption
+@onready var _master_vol: HSlider = %MasterVolSlider
+@onready var _sfx_vol: HSlider = %SfxVolSlider
+@onready var _music_vol: HSlider = %MusicVolSlider
+@onready var _pa_vol: HSlider = %PaVolSlider
 @onready var _colorblind_option: OptionButton = %ColorblindOption
 @onready var _pattern_check: CheckButton = %FossilPatternsCheck
 @onready var _reduce_flash_check: CheckButton = %ReduceFlashCheck
@@ -16,18 +21,22 @@ signal closed()
 @onready var _reduce_motion_check: CheckButton = %ReduceMotionCheck
 @onready var _hold_walk_check: CheckButton = %HoldToWalkCheck
 @onready var _bindings_list: VBoxContainer = %BindingsList
+@onready var _build_id_label: Label = %BuildIdLabel
 @onready var _status: Label = %StatusLabel
 
 var _a11y: Node
 var _remap: Node
 var _store: Node
+var _locale: Node
 var _rebind_buttons: Dictionary = {}
+var _loading: bool = false
 
 
 func _ready() -> void:
 	_a11y = get_node_or_null("/root/AccessibilityService")
 	_remap = get_node_or_null("/root/ActionRemap")
 	_store = get_node_or_null("/root/SettingsStore")
+	_locale = get_node_or_null("/root/LocaleManager")
 	_populate_static_options()
 	_load_from_services()
 	_build_binding_rows()
@@ -41,7 +50,9 @@ func open_menu() -> void:
 	visible = true
 	_load_from_services()
 	_refresh_binding_labels()
-	if _colorblind_option:
+	if _language_option:
+		_language_option.grab_focus()
+	elif _colorblind_option:
 		_colorblind_option.grab_focus()
 
 
@@ -51,6 +62,13 @@ func close_menu() -> void:
 
 
 func _populate_static_options() -> void:
+	_language_option.clear()
+	_language_option.add_item(tr("locale.system"))
+	_language_option.set_item_metadata(0, "system")
+	_language_option.add_item(tr("locale.en"))
+	_language_option.set_item_metadata(1, "en")
+	_language_option.add_item(tr("locale.zh_Hans"))
+	_language_option.set_item_metadata(2, "zh_Hans")
 	_colorblind_option.clear()
 	for id in FossilPalette.all_mode_ids():
 		var mode := FossilPalette.mode_from_string(id)
@@ -63,7 +81,20 @@ func _populate_static_options() -> void:
 
 
 func _load_from_services() -> void:
+	_loading = true
+	var locale_code := str(_store_get("locale", "code", "system"))
+	_select_option_by_meta(_language_option, locale_code)
+	_master_vol.value = float(_store_get("audio", "master_volume", 1.0))
+	_sfx_vol.value = float(_store_get("audio", "sfx_volume", 1.0))
+	_music_vol.value = float(_store_get("audio", "music_volume", 0.8))
+	_pa_vol.value = float(_store_get("audio", "pa_volume", 1.0))
+	var hook := get_node_or_null("/root/CrashLogHook")
+	var build := str(ProjectSettings.get_setting("application/config/version", "dev"))
+	if hook != null and "build_id" in hook:
+		build = str(hook.build_id)
+	_build_id_label.text = "Build: %s" % build
 	if _a11y == null:
+		_loading = false
 		return
 	var snap: Dictionary = _a11y.accessibility_snapshot()
 	_select_option_by_meta(_colorblind_option, str(snap.get("colorblind_mode", "default")))
@@ -79,6 +110,7 @@ func _load_from_services() -> void:
 	_reduce_motion_check.button_pressed = bool(snap.get("reduce_motion", false))
 	_hold_walk_check.button_pressed = bool(snap.get("hold_to_walk", false))
 	_shake_slider.editable = _shake_check.button_pressed and not _reduce_motion_check.button_pressed
+	_loading = false
 
 
 func _build_binding_rows() -> void:
@@ -143,6 +175,41 @@ func _on_visibility_changed() -> void:
 		_load_from_services()
 
 
+func _on_language_selected(index: int) -> void:
+	if _loading:
+		return
+	var code := str(_language_option.get_item_metadata(index))
+	if _locale != null and _locale.has_method("apply_locale"):
+		_locale.apply_locale(code, true)
+	else:
+		_store_set("locale", "code", code)
+	_status.text = tr("locale.language") + ": " + _language_option.get_item_text(index)
+
+
+func _on_master_vol_changed(value: float) -> void:
+	if _loading:
+		return
+	_store_set("audio", "master_volume", value)
+
+
+func _on_sfx_vol_changed(value: float) -> void:
+	if _loading:
+		return
+	_store_set("audio", "sfx_volume", value)
+
+
+func _on_music_vol_changed(value: float) -> void:
+	if _loading:
+		return
+	_store_set("audio", "music_volume", value)
+
+
+func _on_pa_vol_changed(value: float) -> void:
+	if _loading:
+		return
+	_store_set("audio", "pa_volume", value)
+
+
 func _on_colorblind_selected(index: int) -> void:
 	var id := str(_colorblind_option.get_item_metadata(index))
 	if _a11y:
@@ -204,6 +271,16 @@ func _on_hold_walk_toggled(pressed: bool) -> void:
 		_a11y.set_hold_to_walk(pressed)
 	else:
 		_store_set("accessibility", "hold_to_walk", pressed)
+
+
+func _on_export_crash_pack() -> void:
+	var hook := get_node_or_null("/root/CrashLogHook")
+	if hook == null or not hook.has_method("export_crash_pack"):
+		_status.text = "Crash log hook unavailable."
+		return
+	var dest := ProjectSettings.globalize_path("user://")
+	var path: String = hook.export_crash_pack(dest, false)
+	_status.text = "Crash pack: %s" % path
 
 
 func _on_reset_accessibility() -> void:

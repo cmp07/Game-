@@ -1,8 +1,9 @@
 # Echo Lattice — Crash / Log Hook Design
 
-**Status:** Design + local implementation stub  
+**Status:** Local autoload wired for RC1 (`CrashLogHook` in `project.godot`)  
 **Code:** `game/echo_lattice/scripts/ops/crash_log_hook.gd`  
-**Related:** `scripts/local_telemetry.gd` (balance JSONL; unchanged contract)
+**Related:** `scripts/local_telemetry.gd` (balance JSONL; unchanged contract)  
+**UI:** Settings → Support → Export crash pack
 
 Two layers: **local always-on diagnostics** (privacy-safe, no network) and an **optional** opt-in upload path for post-launch triage. 1.0 ships local only; upload stays behind an explicit setting and is off by default.
 

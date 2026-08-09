@@ -5,7 +5,7 @@ class_name CrashLogHookImpl
 ## Optional upload is intentionally a no-op unless upload_url is set AND
 ## settings.crash_upload_opt_in is true (network client not bundled in 1.0).
 ##
-## Prefer autoload as CrashLogHook via project.godot.crash_log.fragment.
+## Autoload name: CrashLogHook (see project.godot).
 ##
 
 const SCHEMA_VERSION: int = 1
@@ -24,13 +24,35 @@ var context: Dictionary = {}
 var _session_lines: PackedStringArray = PackedStringArray()
 var _upload_attempts_today: int = 0
 var _upload_day: String = ""
+var _configured: bool = false
+
+
+func _ready() -> void:
+	var ver := str(ProjectSettings.get_setting("application/config/version", "dev"))
+	configure(ver, "")
+	var store := get_node_or_null("/root/SettingsStore")
+	if store != null and store.has_method("get_value"):
+		set_opt_in_upload(bool(store.get_value("support", "crash_upload_opt_in", false)))
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+		mark_clean_shutdown()
 
 
 func configure(p_build_id: String, p_upload_url: String = "") -> void:
 	build_id = p_build_id
 	upload_url = p_upload_url
 	_ensure_log_dir()
-	breadcrumb("boot", {"upload_configured": upload_url != ""})
+	var unclean := _last_session_was_unclean()
+	if not _configured:
+		breadcrumb("boot", {
+			"upload_configured": upload_url != "",
+			"prior_session_unclean": unclean,
+		})
+		_configured = true
+	# Mark boot as open until clean shutdown is written.
+	_write_last_session(false)
 
 
 func set_context(ctx: Dictionary) -> void:
@@ -72,17 +94,31 @@ func report_softlock(detail: Dictionary = {}) -> void:
 
 
 func mark_clean_shutdown() -> void:
+	_write_last_session(true)
+	breadcrumb("shutdown", {"clean": true})
+
+
+func _write_last_session(clean: bool) -> void:
 	_ensure_log_dir()
 	var payload := {
 		"schema_version": SCHEMA_VERSION,
 		"build_id": build_id,
 		"t_unix_ms": Time.get_unix_time_from_system() * 1000.0,
-		"clean": true,
+		"clean": clean,
 	}
 	var f := FileAccess.open(LAST_SESSION_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(payload))
 		f.close()
+
+
+func _last_session_was_unclean() -> bool:
+	if not FileAccess.file_exists(LAST_SESSION_PATH):
+		return false
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(LAST_SESSION_PATH))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return true
+	return not bool((parsed as Dictionary).get("clean", false))
 
 
 func export_crash_pack(dest_dir: String, include_balance_tail: bool = false) -> String:
