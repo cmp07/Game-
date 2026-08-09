@@ -1,21 +1,16 @@
 extends Node
 ##
-## Chamber book — authored chamber layouts for the Echo Lattice vertical slice.
+## Chamber book — authored chamber layouts for Echo Lattice v2.
+## 20 handmade chambers across SEED → GROWTH → PRISM acts.
 ##
-## Each chamber is a fixed-size ASCII grid (GRID_W x GRID_H).
 ##   '#' wall (immovable)
 ##   '.' floor
-##   'P' player start (counts as floor)
-##   'G' goal tile (counts as floor while stepping onto it)
-##   'C' checkpoint (walkable; triggers a lattice rewrite the first time entered)
-##   'K' key gate — becomes passable after the last checkpoint fires (unused in this slice, reserved)
+##   'P' player start
+##   'G' goal
+##   'C' checkpoint (rewrite trigger)
 ##
-## Transform names line up with the design bible:
-##   "none"      — no rewrite (tutorial chambers)
-##   "mirror_v"  — mirror walked path across the vertical axis
-##   "mirror_h"  — mirror walked path across the horizontal axis
-##   "rotate_180"— rotate walked path 180° around chamber centre
-##   "thicken"   — walked-path cells convert to walls in place (habits solidify)
+## Transforms: none, mirror_v, mirror_h, rotate_180, thicken,
+##             mirror_v_then_h, invert
 ##
 
 const GRID_W: int = 24
@@ -27,6 +22,7 @@ const CHAMBERS: Array = [
 		"title": "I. First Step",
 		"caption": "Walk. Nothing here learns you yet.",
 		"transform": "none",
+		"act": 0,
 		"map": [
 			"########################",
 			"#......................#",
@@ -49,6 +45,7 @@ const CHAMBERS: Array = [
 		"title": "II. A Corner",
 		"caption": "Turn once. The lattice is still asleep.",
 		"transform": "none",
+		"act": 0,
 		"map": [
 			"########################",
 			"#P.....................#",
@@ -71,6 +68,7 @@ const CHAMBERS: Array = [
 		"title": "III. It Learned You",
 		"caption": "Cross the checkpoint. The mirror of your path becomes wall.",
 		"transform": "mirror_v",
+		"act": 0,
 		"map": [
 			"########################",
 			"#P.....................#",
@@ -93,6 +91,7 @@ const CHAMBERS: Array = [
 		"title": "IV. Mirrors",
 		"caption": "Two checkpoints, two rewrites. Vary your route or wall yourself in.",
 		"transform": "mirror_v",
+		"act": 0,
 		"map": [
 			"########################",
 			"#P........#............#",
@@ -115,6 +114,7 @@ const CHAMBERS: Array = [
 		"title": "V. Ceiling",
 		"caption": "The mirror is horizontal now — every dash imprints the roof.",
 		"transform": "mirror_h",
+		"act": 0,
 		"map": [
 			"########################",
 			"#P.....................#",
@@ -137,6 +137,7 @@ const CHAMBERS: Array = [
 		"title": "VI. Loop",
 		"caption": "Loops leave dense mirrors. Straight lines leave clean ones.",
 		"transform": "mirror_v",
+		"act": 1,
 		"map": [
 			"########################",
 			"#P.....................#",
@@ -159,6 +160,7 @@ const CHAMBERS: Array = [
 		"title": "VII. Turn",
 		"caption": "Rotation. Your path prints on the far side of the chamber.",
 		"transform": "rotate_180",
+		"act": 1,
 		"map": [
 			"########################",
 			"#P....................##",
@@ -181,6 +183,7 @@ const CHAMBERS: Array = [
 		"title": "VIII. Thicken",
 		"caption": "The habit solidifies where you stepped. You cannot re-tread.",
 		"transform": "thicken",
+		"act": 1,
 		"map": [
 			"########################",
 			"#P.....................#",
@@ -203,6 +206,7 @@ const CHAMBERS: Array = [
 		"title": "IX. Two Selves",
 		"caption": "A vertical mirror and a horizontal mirror in one chamber.",
 		"transform": "mirror_v_then_h",
+		"act": 1,
 		"map": [
 			"########################",
 			"#P.......C.............#",
@@ -223,8 +227,9 @@ const CHAMBERS: Array = [
 	{
 		"id": 9,
 		"title": "X. Signature",
-		"caption": "The last room. It rewrites twice. Sign it carefully.",
+		"caption": "It rewrites twice. Sign it carefully.",
 		"transform": "mirror_v",
+		"act": 1,
 		"map": [
 			"########################",
 			"#P..........#..........#",
@@ -242,6 +247,237 @@ const CHAMBERS: Array = [
 			"########################",
 		],
 	},
+	# ---- v2 expansion (XI–XX) ----
+	{
+		"id": 10,
+		"title": "XI. Narrow Gate",
+		"caption": "A single corridor learns you. Keep the echo on the far side.",
+		"transform": "mirror_v",
+		"act": 1,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"######################.#",
+			"#......................#",
+			"#.######################",
+			"#......................#",
+			"#..........C...........#",
+			"#......................#",
+			"######################.#",
+			"#......................#",
+			"#.######################",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 11,
+		"title": "XII. Underside",
+		"caption": "Horizontal imprint. Stay low; the ceiling will answer.",
+		"transform": "mirror_h",
+		"act": 1,
+		"map": [
+			"########################",
+			"#P....#....#....#....G.#",
+			"#.....#....#....#......#",
+			"#.....#....#....#......#",
+			"#.....#....#....#......#",
+			"#.....#....C....#......#",
+			"#.....#.........#......#",
+			"#.....#.........#......#",
+			"#.....#.........#......#",
+			"#.....#.........#......#",
+			"#.....#.........#......#",
+			"#.....#.........#......#",
+			"#......................#",
+			"########################",
+		],
+	},
+	{
+		"id": 12,
+		"title": "XIII. Pivot",
+		"caption": "One rotation. Leave a clean stamp on the opposite corner.",
+		"transform": "rotate_180",
+		"act": 1,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"#.##################...#",
+			"#.................##...#",
+			"#.##################...#",
+			"#......................#",
+			"#.........C............#",
+			"#......................#",
+			"#...##################.#",
+			"#...##.................#",
+			"#...##################.#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 13,
+		"title": "XIV. Fossil Lane",
+		"caption": "Thicken again. Burn a disposable path, keep a clean exit.",
+		"transform": "thicken",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.#.................#G#",
+			"#..#.#.#.#.#.#.#.#.#.#.#",
+			"#..#.................#.#",
+			"#..#################.#.#",
+			"#....................#.#",
+			"#........C...........#.#",
+			"#....................#.#",
+			"#..#################.#.#",
+			"#..#.................#.#",
+			"#..#.#.#.#.#.#.#.#.#.#.#",
+			"#..#...................#",
+			"#......................#",
+			"########################",
+		],
+	},
+	{
+		"id": 14,
+		"title": "XV. Twin Axes",
+		"caption": "Both mirrors fire. Short paths survive; wanderers seal doors.",
+		"transform": "mirror_v_then_h",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.####.####.####.####..#",
+			"#..........C...........#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.####.####.####.####..#",
+			"#..........C...........#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 15,
+		"title": "XVI. Invert",
+		"caption": "The lattice flips open and closed. Walk the negative space.",
+		"transform": "invert",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"#.#.#.#.#.#.#.#.#.#.#..#",
+			"#......................#",
+			"#.#.#.#.#.#.#.#.#.#.#..#",
+			"#..........C...........#",
+			"#.#.#.#.#.#.#.#.#.#.#..#",
+			"#......................#",
+			"#.#.#.#.#.#.#.#.#.#.#..#",
+			"#......................#",
+			"#.#.#.#.#.#.#.#.#.#.#..#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 16,
+		"title": "XVII. Double Bind",
+		"caption": "Two vertical rewrites. The second path must respect the first echo.",
+		"transform": "mirror_v",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.......#.............#",
+			"#........#.............#",
+			"#....C...#.............#",
+			"#........#....####.....#",
+			"#........#.............#",
+			"#........######........#",
+			"#......................#",
+			"#........######........#",
+			"#.............#....C...#",
+			"#....####.....#........#",
+			"#.............#........#",
+			"#.............#.......G#",
+			"########################",
+		],
+	},
+	{
+		"id": 17,
+		"title": "XVIII. Crossbeam",
+		"caption": "Horizontal memory across a ribbed hall.",
+		"transform": "mirror_h",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"#.##.##.##.##.##.##.##.#",
+			"#......................#",
+			"#.##.##.##.##.##.##.##.#",
+			"#......................#",
+			"#.##.##.##.C.##.##.##.#",
+			"#......................#",
+			"#.##.##.##.##.##.##.##.#",
+			"#......................#",
+			"#.##.##.##.##.##.##.##.#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 18,
+		"title": "XIX. Spiral Debt",
+		"caption": "Rotation plus a spiral. Debt prints opposite; pay it cleanly.",
+		"transform": "rotate_180",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P.....................#",
+			"#.####################.#",
+			"#.#..................#.#",
+			"#.#.################.#.#",
+			"#.#.#..............#.#.#",
+			"#.#.#.####C#####...#.#.#",
+			"#.#.#..............#.#.#",
+			"#.#.################.#.#",
+			"#.#..................#.#",
+			"#.####################.#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
+	{
+		"id": 19,
+		"title": "XX. Closing Argument",
+		"caption": "Final wing. Two mirrors. Your signature is the exit.",
+		"transform": "mirror_v_then_h",
+		"act": 2,
+		"map": [
+			"########################",
+			"#P........C............#",
+			"#.####.############.##.#",
+			"#......................#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.####.####.####.####..#",
+			"#..........C...........#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.####.####.####.####..#",
+			"#......................#",
+			"#.....................G#",
+			"########################",
+		],
+	},
 ]
 
 
@@ -253,3 +489,30 @@ func get_chamber(idx: int) -> Dictionary:
 
 func chamber_count() -> int:
 	return CHAMBERS.size()
+
+
+func act_for_chamber(idx: int) -> int:
+	var data: Dictionary = get_chamber(idx)
+	if data.is_empty():
+		return 0
+	return int(data.get("act", 0))
+
+
+## Daily wing: five chamber indices derived from YYYYMMDD seed.
+func daily_chamber_indices(seed_int: int, count: int = 5) -> Array:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_int
+	var pool: Array = []
+	for i in range(chamber_count()):
+		pool.append(i)
+	# Fisher–Yates
+	for i in range(pool.size() - 1, 0, -1):
+		var j: int = rng.randi_range(0, i)
+		var tmp = pool[i]
+		pool[i] = pool[j]
+		pool[j] = tmp
+	var out: Array = []
+	for i in range(mini(count, pool.size())):
+		out.append(pool[i])
+	out.sort()
+	return out

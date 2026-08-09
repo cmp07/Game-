@@ -114,12 +114,12 @@ func update_habit_audio(
 	rewrite_count_norm: float,
 	rewrite_proximity: float,
 ) -> void:
-	var music := _adaptive_music()
+	var music = _adaptive_music()
 	if music == null:
 		return
-	var solidify := music.compute_solidify_from_metrics(
+	var solidify: float = float(music.compute_solidify_from_metrics(
 		dominant_bias, repetition_score, fossil_density, rewrite_count_norm
-	)
+	))
 	music.set_habit_solidify(solidify)
 	music.set_rewrite_tension(rewrite_proximity)
 

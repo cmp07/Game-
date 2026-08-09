@@ -18,7 +18,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.047, 0.047, 0.067, 1)
+color = Color(0.078, 0.071, 0.063, 1)
 
 [node name="Chamber" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -43,19 +43,19 @@ theme_override_constants/separation = 24
 unique_name_in_owner = true
 text = "Chamber"
 theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.91, 0.91, 0.94, 1)
+theme_override_colors/font_color = Color(0.961, 0.937, 0.867, 1)
 
 [node name="MovesLabel" type="Label" parent="TopBar/TopMargin/TopRow"]
 unique_name_in_owner = true
 text = "Moves: 0"
 theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
 
 [node name="HabitLabel" type="Label" parent="TopBar/TopMargin/TopRow"]
 unique_name_in_owner = true
 text = "Habit: unwritten"
 theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(1, 0.36, 0.24, 1)
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
 
 [node name="Spacer" type="Control" parent="TopBar/TopMargin/TopRow"]
 size_flags_horizontal = 3
@@ -90,4 +90,4 @@ unique_name_in_owner = true
 horizontal_alignment = 1
 text = ""
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.66, 0.66, 0.75, 1)
+theme_override_colors/font_color = Color(0.29, 0.42, 0.467, 1)

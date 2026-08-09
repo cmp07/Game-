@@ -5,11 +5,12 @@ extends RefCounted
 ## Pure data accessor — no scene-tree dependency.
 
 const SCHEMA_VERSION := 2
-const DEFAULT_PATHS: PackedStringArray = PackedStringArray([
+# PackedStringArray(...) is not a const expression in Godot 4.3 — use a plain Array.
+const DEFAULT_PATHS: Array = [
 	"res://config/balance_v2.json",
 	"res://echo_lattice/config/balance_v2.json",
 	"res://game/echo_lattice/config/balance_v2.json",
-])
+]
 
 var data: Dictionary = {}
 var path_loaded: String = ""
@@ -29,10 +30,11 @@ static func load_from_path(path: String) -> BalanceTuning:
 	return bal
 
 
-func load_from_paths(paths: PackedStringArray) -> int:
+func load_from_paths(paths: Array) -> int:
 	for p in paths:
-		if FileAccess.file_exists(p):
-			return load_file(p)
+		var path := str(p)
+		if FileAccess.file_exists(path):
+			return load_file(path)
 	push_error("BalanceTuning: no balance_v2.json found in %s" % str(paths))
 	return ERR_FILE_NOT_FOUND
 

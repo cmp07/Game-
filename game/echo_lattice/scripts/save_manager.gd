@@ -1,8 +1,6 @@
 extends Node
 ##
 ## SaveManager — flat JSON persistence in user://save.json.
-## Kept small on purpose: current chamber, per-chamber best move counts,
-## completed set, and habit profile.
 ##
 
 const SAVE_PATH: String = "user://save.json"
@@ -10,11 +8,18 @@ const SAVE_PATH: String = "user://save.json"
 
 func save_to_disk() -> void:
 	var data := {
-		"version": 1,
+		"version": 2,
 		"current_chamber": GameState.current_chamber,
 		"best_moves": GameState.best_moves,
+		"best_stars": GameState.best_stars,
 		"completed": GameState.completed,
 		"habit_profile": GameState.habit_profile,
+		"run_mode": GameState.run_mode,
+		"run_queue": GameState.run_queue,
+		"queue_pos": GameState.queue_pos,
+		"daily_seed": GameState.daily_seed,
+		"daily_label": GameState.daily_label,
+		"daily_best_stars": GameState.daily_best_stars,
 	}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file == null:
@@ -39,6 +44,9 @@ func load_from_disk() -> void:
 	var best = parsed.get("best_moves", {})
 	if typeof(best) == TYPE_DICTIONARY:
 		GameState.best_moves = _stringify_int_keys(best)
+	var stars = parsed.get("best_stars", {})
+	if typeof(stars) == TYPE_DICTIONARY:
+		GameState.best_stars = _stringify_int_keys(stars)
 	var done = parsed.get("completed", {})
 	if typeof(done) == TYPE_DICTIONARY:
 		GameState.completed = _stringify_int_keys(done)
@@ -46,6 +54,16 @@ func load_from_disk() -> void:
 	if typeof(habit) == TYPE_DICTIONARY:
 		for k in ["up", "down", "left", "right"]:
 			GameState.habit_profile[k] = int(habit.get(k, 0))
+	GameState.run_mode = str(parsed.get("run_mode", "standard"))
+	GameState.queue_pos = int(parsed.get("queue_pos", 0))
+	GameState.daily_seed = int(parsed.get("daily_seed", 0))
+	GameState.daily_label = str(parsed.get("daily_label", ""))
+	var rq = parsed.get("run_queue", [])
+	if typeof(rq) == TYPE_ARRAY:
+		GameState.run_queue = rq.duplicate()
+	var dbest = parsed.get("daily_best_stars", {})
+	if typeof(dbest) == TYPE_DICTIONARY:
+		GameState.daily_best_stars = dbest.duplicate()
 
 
 func wipe() -> void:
@@ -54,7 +72,6 @@ func wipe() -> void:
 
 
 static func _stringify_int_keys(d: Dictionary) -> Dictionary:
-	# JSON round-trip converts int keys to strings; normalise back to int.
 	var out := {}
 	for k in d.keys():
 		var ik: int

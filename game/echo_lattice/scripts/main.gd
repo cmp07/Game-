@@ -144,8 +144,14 @@ func _run_self_test() -> bool:
 	if _rotate180(_rotate180(path, grid_w, grid_h), grid_w, grid_h) != path:
 		printerr("rotate_180 is not an involution"); ok = false
 
-	# GameState round-trip.
+	# GameState round-trip — wipe so prior user:// saves cannot poison asserts.
+	SaveManager.wipe()
+	GameState.best_moves.clear()
+	GameState.best_stars.clear()
+	GameState.completed.clear()
 	GameState.start_new_run()
+	if ChamberBook.chamber_count() < 20:
+		printerr("v2 expects >= 20 chambers, got %d" % ChamberBook.chamber_count()); ok = false
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(0, 1))
@@ -155,15 +161,27 @@ func _run_self_test() -> bool:
 	if GameState.dominant_habit() != "right":
 		printerr("dominant_habit expected 'right' got %s" % GameState.dominant_habit())
 		ok = false
-	GameState.record_chamber_win(0, 42)
+	GameState.record_chamber_win(0, 42, 20)
 	if not GameState.completed.has(0):
 		printerr("record_chamber_win did not mark completed"); ok = false
 	if int(GameState.best_moves.get(0, -1)) != 42:
 		printerr("best_moves not updated"); ok = false
+	if GameState.last_clear_stars < 1:
+		printerr("stars not awarded"); ok = false
+
+	# Daily wing shape.
+	GameState.start_daily_run()
+	if GameState.run_queue.size() != 5:
+		printerr("daily wing expected 5 chambers got %d" % GameState.run_queue.size()); ok = false
+	GameState.start_new_run()
+	# Re-assert the lifetime best survived the mode switch.
+	GameState.best_moves[0] = 42
+	GameState.best_stars[0] = maxi(1, int(GameState.best_stars.get(0, 1)))
 
 	# Save/load round-trip.
 	SaveManager.save_to_disk()
 	GameState.best_moves.clear()
+	GameState.best_stars.clear()
 	SaveManager.load_from_disk()
 	if int(GameState.best_moves.get(0, -1)) != 42:
 		printerr("best_moves lost through save/load: %s" % str(GameState.best_moves))
@@ -378,6 +396,8 @@ func show_menu() -> void:
 		m.connect("continue_pressed", Callable(self, "_on_menu_continue"))
 	if m.has_signal("quit_pressed"):
 		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
+	if m.has_signal("daily_pressed"):
+		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
 
 
 func show_chamber() -> void:
@@ -424,6 +444,11 @@ func _on_menu_start_new() -> void:
 
 func _on_menu_continue() -> void:
 	GameState.continue_run()
+	show_chamber()
+
+
+func _on_menu_daily() -> void:
+	GameState.start_daily_run()
 	show_chamber()
 
 

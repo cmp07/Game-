@@ -15,14 +15,24 @@ config/description="A labyrinth that rebuilds from your last thirty moves. Escap
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
-config/version="0.1.0"
+config/version="0.2.0"
 boot_splash/show_image=false
+
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
 
 [autoload]
 
 GameState="*res://scripts/game_state.gd"
 ChamberBook="*res://scripts/chamber_book.gd"
 SaveManager="*res://scripts/save_manager.gd"
+Juice="*res://scripts/juice.gd"
+AudioManager="*res://scripts/audio/audio_manager.gd"
+AdaptiveMusic="*res://scripts/audio/adaptive_music.gd"
+SilenceDirector="*res://scripts/audio/silence_director.gd"
+PaAnnouncer="*res://scripts/audio/pa_announcer.gd"
+AudioDirector="*res://scripts/audio/audio_director.gd"
 
 [display]
 
@@ -86,4 +96,4 @@ confirm={
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/canvas_textures/default_texture_filter=0
-environment/defaults/default_clear_color=Color(0.0470588, 0.0470588, 0.0666667, 1)
+environment/defaults/default_clear_color=Color(0.0784314, 0.0705882, 0.0627451, 1)

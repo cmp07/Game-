@@ -1,8 +1,6 @@
 extends Control
 ##
-## Chamber scene root — hosts the Chamber (Node2D) plus the HUD/legend on top.
-## The scene forwards chamber_won upward, offers restart & menu buttons, and
-## captures the pause_menu action.
+## Chamber scene root — Chamber + HUD.
 ##
 
 signal chamber_won(chamber_id: int, moves: int)
@@ -25,8 +23,6 @@ func _ready() -> void:
 	chamber_node.caption_changed.connect(_on_caption_changed)
 	_refresh_title()
 	_on_moves_changed(0)
-	# Chamber._ready fires before we wire up (children ready first), so pull the
-	# current caption once at scene start.
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(str(data.get("caption", "")))
 
@@ -34,10 +30,14 @@ func _ready() -> void:
 func _refresh_title() -> void:
 	var idx: int = GameState.current_chamber
 	var data: Dictionary = ChamberBook.get_chamber(idx)
-	title_label.text = "Chamber %d / %d — %s" % [
-		idx + 1,
-		ChamberBook.chamber_count(),
+	var mode_tag: String = ""
+	if GameState.run_mode == "daily":
+		mode_tag = " · Daily %s" % GameState.daily_label
+	title_label.text = "%d / %d — %s%s" % [
+		GameState.run_progress_index() + 1,
+		GameState.chambers_in_run(),
 		str(data.get("title", "")),
+		mode_tag,
 	]
 
 
