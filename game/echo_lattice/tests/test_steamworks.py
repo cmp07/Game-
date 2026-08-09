@@ -51,6 +51,7 @@ class SteamworksTests(unittest.TestCase):
         self.assertEqual(self.features.get("schema_version"), 1)
         self.assertFalse(self.features.get("steam_enabled"))
         self.assertFalse(self.features.get("cloud_save_enabled"))
+        self.assertFalse(self.features.get("allow_spacewar_dev", True))
         self.assertTrue(self.features.get("achievements_enabled"))
         self.assertTrue(self.features.get("rich_presence_enabled"))
         self.assertTrue(self.features.get("overlay_pause_enabled"))

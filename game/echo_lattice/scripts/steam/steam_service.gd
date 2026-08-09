@@ -33,7 +33,16 @@ func _ready() -> void:
 	if backend != null:
 		backend.overlay_toggled.connect(_on_overlay_toggled)
 		var app_id: int = _resolve_app_id()
-		backend.init_steam(app_id)
+		# SEC-01: fail closed — never init Steam without a real (or explicitly
+		# allowed Spacewar) AppID. Stub still records a no-op init at 0 for offline.
+		if app_id > 0:
+			backend.init_steam(app_id)
+		elif bool(features.get("steam_enabled", false)):
+			push_warning(
+				"SteamService: steam_enabled but no valid AppID; Steam stays disabled."
+			)
+		else:
+			backend.init_steam(0)
 	if bool(features.get("cloud_save_enabled", false)):
 		cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
 	set_menu_presence()
@@ -185,6 +194,7 @@ func _load_features() -> void:
 		"prefer_godotsteam_when_present": true,
 		"app_id_placeholder": "YOUR_APP_ID",
 		"spacewar_dev_app_id": 480,
+		"allow_spacewar_dev": false,
 		"cloud_remote_path": "save.json",
 		"presence": {
 			"menu": "At the Field Ledger",
@@ -226,14 +236,47 @@ func _resolve_app_id() -> int:
 			var raw := f.get_as_text().strip_edges()
 			f.close()
 			if raw.is_valid_int():
-				return int(raw)
+				var from_file: int = int(raw)
+				if _is_allowed_app_id(from_file):
+					return from_file
+				push_warning(
+					"SteamService: rejecting steam_appid.txt AppID %d (Spacewar/invalid without allow_spacewar_dev)."
+					% from_file
+				)
 	var placeholder := str(features.get("app_id_placeholder", "YOUR_APP_ID"))
 	if placeholder.is_valid_int():
-		return int(placeholder)
-	# Dev-only Spacewar when explicitly enabling Steam without a real AppID.
-	if bool(features.get("steam_enabled", false)):
+		var from_cfg: int = int(placeholder)
+		if _is_allowed_app_id(from_cfg):
+			return from_cfg
+		push_warning(
+			"SteamService: rejecting configured AppID %d (Spacewar/invalid without allow_spacewar_dev)."
+			% from_cfg
+		)
+	# SEC-01: never silently fall back to Spacewar 480. Only when the dedicated
+	# flag is on and we are in editor/debug.
+	if _spacewar_dev_allowed():
 		return int(features.get("spacewar_dev_app_id", 480))
+	if bool(features.get("steam_enabled", false)):
+		push_warning(
+			"SteamService: no real AppID configured; refusing Spacewar fallback (fail-closed)."
+		)
 	return 0
+
+
+func _is_allowed_app_id(app_id: int) -> bool:
+	if app_id <= 0:
+		return false
+	if app_id == int(features.get("spacewar_dev_app_id", 480)):
+		return _spacewar_dev_allowed()
+	return true
+
+
+func _spacewar_dev_allowed() -> bool:
+	if not bool(features.get("allow_spacewar_dev", false)):
+		return false
+	# Shipping/release exports must never resolve Spacewar even if the flag
+	# were accidentally left true in a mis-copied config.
+	return OS.has_feature("editor") or OS.is_debug_build()
 
 
 func _notification(what: int) -> void:

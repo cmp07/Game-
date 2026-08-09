@@ -9,6 +9,7 @@
 	"prefer_godotsteam_when_present": true,
 	"app_id_placeholder": "YOUR_APP_ID",
 	"spacewar_dev_app_id": 480,
+	"allow_spacewar_dev": false,
 	"cloud_remote_path": "save.json",
 	"presence": {
 		"menu": "At the Field Ledger",

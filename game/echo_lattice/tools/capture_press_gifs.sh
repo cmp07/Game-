@@ -13,9 +13,10 @@ HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd -- "$HERE/.." && pwd)"
 REPO_ROOT="$(cd -- "$PROJECT_DIR/../.." && pwd)"
 OUT_ROOT="$REPO_ROOT/docs/RELEASE/presskit/images/gif_sequences"
-STAGING="$(mktemp -d)"
-
-mkdir -p "$OUT_ROOT"
+# SEC-03: --out must stay under the Godot project root (not /tmp).
+STAGING="$PROJECT_DIR/.capture_staging"
+rm -rf "$STAGING"
+mkdir -p "$STAGING" "$OUT_ROOT"
 rm -rf "$HOME/.local/share/godot/app_userdata/Echo Lattice" || true
 
 run_capture() {
