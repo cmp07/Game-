@@ -40,7 +40,8 @@ Sibling docs arrived in parallel. When they disagree, win order is:
 4. Craft [`09`](09_VISUAL.md)–[`11`](11_PROGRESSION.md) — feel / ear / unlock voice  
 5. Biz/tech [`12`](12_MULTIPLAYER.md)–[`15`](15_MARKET.md) — fences  
 6. [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`18_RISKS.md`](18_RISKS.md) · [`19_NAMES.md`](19_NAMES.md)  
-7. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–3**
+7. Feel clock [`23_WEAVE_VERB.md`](23_WEAVE_VERB.md) — second-by-second weave sensations (wins ties on *how it feels*, not scope)  
+8. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–3**
 
 ### Resolved conflict — what Weaver *is*
 
@@ -142,6 +143,7 @@ Brace · Feed · Oppose · Echo
 | Visual | Workshop page / textile loom; Tension seat is the signature still | [`09_VISUAL.md`](09_VISUAL.md) |
 | Audio | Slack / taut / snap / seat as audible sentences; workshop hush | [`10_AUDIO.md`](10_AUDIO.md) |
 | First thirty | Material → line → Structure → world answer → one CTA | [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) |
+| Weave verb (feel clock) | Weight → scrape → breath → wood → dust → feet — timed, not vibes | [`23_WEAVE_VERB.md`](23_WEAVE_VERB.md) |
 
 **Motion budget (≥3):** Fragment settle with weight · Thread tension climb · Structure seat (dust/joints).
 

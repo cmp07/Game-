@@ -55,9 +55,10 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 | Implement six-beat loop on **one** field | No hub meta, no gallery yet |
 | Fragment ×4 + Thread ×2 + Structure ×1 | Prefer Span/Anchor + Brace/Feed |
 | Collapse readability | Culprit highlight + undo tension |
+| Feel clock | Hit [`23_WEAVE_VERB.md`](23_WEAVE_VERB.md) seat phrase + mute trailer gates |
 | Python/GDScript contracts | Determinism + softlock smoke |
 
-**Exit:** Internal clip of Tension seat that passes still test.
+**Exit:** Internal clip of Tension seat that passes still test + weave-verb hum/mute tests.
 
 ### W2 — Vertical slice (first thirty)
 
