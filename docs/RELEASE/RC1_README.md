@@ -45,13 +45,30 @@ All requested `cursor/release-*` packs present at integration time are merged ab
 | Demo clamp, focus/pad, locale refresh + tests | [#88](https://github.com/cmp07/Game-/pull/88) `audit-adversarial` | Yes |
 | Full audit corpus under [`docs/AUDIT/`](../AUDIT/) | [#75](https://github.com/cmp07/Game-/pull/75)–[#81](https://github.com/cmp07/Game-/pull/81), [#83](https://github.com/cmp07/Game-/pull/83)–[#86](https://github.com/cmp07/Game-/pull/86), [#89](https://github.com/cmp07/Game-/pull/89) | Yes |
 
-Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **68/100**; Gate A capsules finals landed — still blocked on AppID / trailer / Partner paste).
+Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **76/100**; Gate A/upgrade wave landed — still blocked on AppID / trailer / Partner paste).
 
 ### Security High code landed (2026-08-09)
 
 SEC-01 / SEC-02 / SEC-03 from [`../AUDIT/SECURITY.md`](../AUDIT/SECURITY.md) — fail-closed AppID (no Spacewar fallback), Cloud pull schema validation before `save.json` write, and constrained `--screenshot --out` paths. Note: [`../AUDIT/SECURITY_HIGH_FIXES.md`](../AUDIT/SECURITY_HIGH_FIXES.md). Tests: `python3 game/echo_lattice/tests/test_security_high.py`.
 
 GodotSteam optional path: [`GODOTSTEAM.md`](GODOTSTEAM.md) — clear install docs, fail-closed without SDK, depot `STEAM_*` env render, no Spacewar in release. Tests: `python3 game/echo_lattice/tests/test_godotsteam_gate.py`.
+
+### Gate A / upgrade / remaining-P1 wave (2026-08-09)
+
+| Branch | Landed |
+|---|---|
+| `cursor/gate-a-partner-legal` | Yes — [`legal/`](legal/) Partner paste pack |
+| `cursor/gate-a-store-copy` | Yes — [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) |
+| `cursor/gate-a-capsules` | Yes — Field Ledger finals under [`capsules/`](capsules/) |
+| `cursor/gate-a-godotsteam` | Yes — fail-closed optional SDK + env VDF render |
+| `cursor/gate-a-win-export` | Yes — [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) + CI stamps |
+| `cursor/upgrade-museum` | Yes — thin Museum of Selves |
+| `cursor/upgrade-onboarding` | Yes — 0–3 min Mirror Birth teach path |
+| `cursor/fix-remaining-p1` | Yes — Cloud schema / Hard+ / telemetry |
+
+**Still human / Partner:** real AppID + DepotIDs, legal names, capsule/screenshot/trailer upload, survey+AI paste, live privacy HTTPS URL. Trailer branch not yet on remote at integration time.
+
+Python contract suite: **23/23** green on the landed tip.
 
 ---
 
