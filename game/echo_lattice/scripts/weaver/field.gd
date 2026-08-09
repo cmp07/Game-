@@ -196,6 +196,10 @@ func _run_field_selftest() -> void:
 		printerr("weaver-selftest: combine failed")
 		get_tree().quit(1)
 		return
+	for i in 6:
+		await get_tree().process_frame
+	if Loom.pending_screenshot:
+		await _capture_screenshot("02_thread_ready.png")
 	if not debug_force_weave_at_anchor():
 		printerr("weaver-selftest: weave failed")
 		get_tree().quit(1)
@@ -207,7 +211,7 @@ func _run_field_selftest() -> void:
 		get_tree().quit(1)
 		return
 	if Loom.pending_screenshot:
-		await _capture_screenshot("02_structure_standing.png")
+		await _capture_screenshot("03_structure_standing.png")
 	var emitted := Loom.emit_from_structure(global_position)
 	if emitted == "":
 		printerr("weaver-selftest: emit failed")
