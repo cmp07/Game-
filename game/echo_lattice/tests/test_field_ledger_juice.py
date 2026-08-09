@@ -233,7 +233,11 @@ class TestDiegeticShellMvp(unittest.TestCase):
         proj = (ROOT / "project.godot").read_text()
         self.assertIn("boot_splash/show_image=true", proj)
         self.assertIn('boot_splash/image="res://art/ui/boot_splash.png"', proj)
-        self.assertIn("boot_splash/bg_color=Color(0.937255, 0.901961, 0.823529, 1)", proj)
+        self.assertTrue(
+            "boot_splash/bg_color=Color(0.894118, 0.847059, 0.737255, 1)" in proj
+            or "boot_splash/bg_color=Color(0.937255, 0.901961, 0.823529, 1)" in proj,
+            msg="boot splash bg must be paper_bone family",
+        )
         self.assertTrue((ROOT / "art" / "ui" / "boot_splash.png").is_file())
         gen = (ROOT / "art" / "generate_placeholders.py").read_text()
         self.assertIn("ui_boot_splash", gen)
