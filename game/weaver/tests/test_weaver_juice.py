@@ -15,7 +15,7 @@ PALETTE_GD = ROOT / "scripts" / "juice" / "weaver_palette.gd"
 DEMO_GD = ROOT / "scripts" / "field" / "demo_field.gd"
 PALETTE_JSON = ROOT / "content" / "palette.json"
 PROJECT = ROOT / "project.godot"
-JUICE_DOC = REPO / "docs" / "WEAVER" / "20_JUICE.md"
+JUICE_DOC = REPO / "docs" / "WEAVER" / "35_JUICE.md"
 
 # Saturated purples / violets — must never appear as juice colors.
 BANNED_HEX = {

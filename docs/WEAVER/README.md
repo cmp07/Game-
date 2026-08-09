@@ -96,6 +96,7 @@
 | [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) | Prototype first-five beat script |
 | [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | EL → archive migrate **plan** (no move yet) |
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
+| [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 
 ---
 
@@ -135,6 +136,8 @@
 | `cursor/weaver-migrate-plan` | [#186](https://github.com/cmp07/Game-/pull/186) |
 | `cursor/weaver-adversarial` | [#190](https://github.com/cmp07/Game-/pull/190) |
 | `cursor/weaver-godot-scaffold` | [#189](https://github.com/cmp07/Game-/pull/189) |
+| `cursor/weaver-prototype-loop` | [#192](https://github.com/cmp07/Game-/pull/192) |
+| `cursor/weaver-juice` | [#191](https://github.com/cmp07/Game-/pull/191) |
 | `cursor/weaver-master-v2` | This synthesis |
 
 ---

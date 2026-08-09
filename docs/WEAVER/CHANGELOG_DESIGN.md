@@ -45,6 +45,14 @@
 - This changelog
 - [`README.md`](README.md) → full `01`–`34` index
 
+### Prototype code (same day, merged into v2)
+
+| Branch | PR | Landing |
+|---|---|---|
+| `cursor/weaver-godot-scaffold` | #189 | Initial `game/weaver/` stub |
+| `cursor/weaver-prototype-loop` | #192 | gather→combine→weave loop, recipes, screenshots, tests |
+| `cursor/weaver-juice` | #191 | Juice verbs + demo field; doc renumbered **`20_JUICE` → `35_JUICE`** so elevations keep `20` |
+
 ### Explicit non-changes
 
 - Did **not** delete or `git mv` `game/echo_lattice/`

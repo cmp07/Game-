@@ -1,7 +1,7 @@
 extends Node
 ##
 ## WeaverJuice — diegetic feel for The Weaver W1 spike.
-## Three intentional motions (docs/WEAVER/20_JUICE.md):
+## Three intentional motions (docs/WEAVER/35_JUICE.md):
 ##   1. fragment_suck  — chalk/fiber wisps pull a Fragment into hand
 ##   2. combine_flash  — local paper-press flash at the bind seam
 ##   3. weave_pulse    — taut Thread body pulses kiln copper (not neon ring)

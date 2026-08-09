@@ -1,6 +1,6 @@
-# The Weaver — 20 · Juice (feel)
+# The Weaver — 35 · Juice (feel)
 
-**Doc:** `docs/WEAVER/20_JUICE.md`  
+**Doc:** `docs/WEAVER/35_JUICE.md`  
 **Status:** Feel authority for W1 spike (CLOUD ONLY) · **Branch:** `cursor/weaver-juice`  
 **Code:** `game/weaver/scripts/juice/weaver_juice.gd` · demo `game/weaver/scenes/demo_field.tscn`  
 **Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`ROADMAP.md`](ROADMAP.md)

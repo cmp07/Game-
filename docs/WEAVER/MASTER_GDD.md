@@ -184,7 +184,7 @@ Elevations that sharpen these: [`20_ELEVATIONS_V2.md`](20_ELEVATIONS_V2.md). Dis
 |---|---|---|---|
 | **Docs seal v2** | MASTER v2 + `20`–`34` + CHANGELOG | Full design corpus | **This PR** |
 | **Scaffold** | `game/weaver/` imports; placeholder recover→bind→tension | Stub scenes + loom state | **Landed** ([`game/weaver/README.md`](../../game/weaver/README.md)) |
-| **W1 Spike** | First-five clear; Tension seat still-test | Anchor+Span+Brace | Open — juice/loop agents may deepen |
+| **W1 Spike** | First-five clear; Tension seat still-test | Anchor+Span+Brace + juice verbs | **In progress** — loop + juice merged (`main.tscn` · `demo_field.tscn` · [`35_JUICE.md`](35_JUICE.md)) |
 | **Vertical slice** | First-thirty spine complete | 1 Yard, ≤6 Fragment families, ≤8 Structures, 8–12 jobs | Not started |
 | **Demo** | Wishlistable clip loop | Slice + polish + CTA | Blocked on slice |
 | **MVP 1.0** | ~3–5 h Yard jobs + light sandbox | ≤12 Fragments, ≤20 Structures, 40–60 jobs | Blocked on demo gates |
@@ -254,9 +254,13 @@ Freeze / pivot / identity / migrate: [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTIT
 | `cursor/weaver-migrate-plan` | #186 | `33_MIGRATE_FROM_LATTICE.md` |
 | `cursor/weaver-adversarial` | #190 | `34_ADVERSARIAL.md` |
 | `cursor/weaver-godot-scaffold` | #189 | `game/weaver/` Godot MVP stub |
+| `cursor/weaver-prototype-loop` | #192 | gather→combine→weave loop + screenshots + tests |
+| `cursor/weaver-juice` | #191 | juice spike + `35_JUICE.md` *(renumbered from colliding `20_JUICE`)* |
 
-**Coverage:** `PIVOT` + `PRODUCT_IDENTITY` + `01`–`34` + MASTER v2 + ROADMAP + CHANGELOG_DESIGN + `game/weaver/` scaffold — **complete v2 set.**  
+**Coverage:** `PIVOT` + `PRODUCT_IDENTITY` + `01`–`34` + `35_JUICE` + MASTER v2 + ROADMAP + CHANGELOG_DESIGN + `game/weaver/` scaffold/loop/juice — **complete v2 set.**  
 `game/echo_lattice/` **unchanged / kept.**
+
+**Numbering note:** Juice landed as `20_JUICE.md` on its branch; synthesis renumbered to [`35_JUICE.md`](35_JUICE.md) so [`20_ELEVATIONS_V2.md`](20_ELEVATIONS_V2.md) keeps the elevations slot.
 
 ---
 
@@ -267,7 +271,7 @@ Freeze / pivot / identity / migrate: [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTIT
 | `01_CONCEPT` still frames Weaver as EL fantasy / “no second SKU” | **H** | Needs elevation rewrite (keep temperature) |
 | `15_MARKET` / root GAME_PLAN still path→older research lanes | **M** | Align store sentence to Yard craft; update catalog Game 1 separately |
 | `14_TECH` module sketch still names chambers / daily / endless EL-style | **M** | Retarget to fields / jobs / gallery against live `game/weaver/` |
-| Scaffold ≠ feel-proof spike | **H** | Placeholder loop landed; need juice + real Tension readability ([`32_FIRST_FIVE.md`](32_FIRST_FIVE.md)) |
+| Scaffold / juice ≠ first-five cold clear | **H** | Loop + juice landed; still need cold timing + Tension still-test ([`32_FIRST_FIVE.md`](32_FIRST_FIVE.md)) |
 | Sim fence unset (2D vs constrained 3D) | **H** | Stub is 2D placeholder — pick fence before art ramp |
 | Legal name check | **M** | Human before Partner ([`31_NAME_LOCK.md`](31_NAME_LOCK.md)) |
 | Archive path string (`archive/` vs `game/_archive/`) | **L** | Resolve in migrate execute PR; keep both trees until then |

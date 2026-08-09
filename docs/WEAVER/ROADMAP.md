@@ -12,7 +12,7 @@
 |---|---|---|---|
 | **W0 Docs seal** | Master GDD v2 + `01`–`34` on integration line | This ROADMAP + MASTER v2 merged to RC1 | **In PR** (`cursor/weaver-master-v2`) |
 | **W0.5 Scaffold** | `game/weaver/` Godot stub beside EL | Import + F5; placeholder recover→bind→tension | **Landed** |
-| **W1 Spike** | Feel-proof Tension seat | [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) clear; still-test clip | Open |
+| **W1 Spike** | Feel-proof Tension seat | [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) clear; still-test clip | **In progress** (loop #192 + juice #191 merged) |
 | **W2 Vertical slice** | First-thirty spine | MVP §8 exit criteria 1–4 green | Not started |
 | **W3 Demo pack** | Wishlistable build | Trailer still + demo CTA; no meta dump | Blocked |
 | **W4 MVP 1.0 content** | 3–5 h Yard jobs | Caps in [`17_MVP.md`](17_MVP.md) §4 | Blocked |
@@ -28,13 +28,14 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 |---|---|---|
 | Path | `game/weaver/` | Beside `game/echo_lattice/` — **both kept** |
 | Engine | Godot **4.3** GDScript stub | [`game/weaver/project.godot`](../../game/weaver/project.godot) |
-| Loop | Placeholder: void gap → collect Fragments → **C** Brace Thread → **Space** seat Structure | See [`game/weaver/README.md`](../../game/weaver/README.md) |
+| Default scene | `scenes/main.tscn` (prototype loop) | Juice demo: `scenes/demo_field.tscn` |
+| Loop | Void → recover Fragments → combine Brace Thread → seat Structure | [`game/weaver/README.md`](../../game/weaver/README.md) · screenshots under `docs/WEAVER/screenshots/` |
+| Juice | Recover suck · Bind flash · Tension pulse | [`35_JUICE.md`](35_JUICE.md) · `scripts/juice/` |
 | Sim fence | **2D placeholder** (not final G1 pick) | Pick 2D *or* constrained 3D before art ramp |
-| Juice / readability | Minimal procedural polygons | Follow-on juice/loop agents may deepen without deleting EL |
-| Contracts | Not yet parity with EL Python suite | Add determinism + softlock smoke in W1 |
+| Contracts | Python smokes for juice + loop | Expand determinism / softlock suite in W1 |
 | Echo Lattice | Untouched | Migrate plan only — [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) |
 
-**Scaffold ≠ spike.** W1 still owns cold first-five timing and Tension still-test.
+**Scaffold + juice ≠ cold spike pass.** W1 still owns first-five timing and mute still-test.
 
 ---
 
@@ -63,6 +64,7 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 - [x] Merge into `cursor/weaver-master-v2`  
 - [x] Write `MASTER_GDD.md` **v2** · this ROADMAP · `CHANGELOG_DESIGN.md` · index README  
 - [x] Merge `game/weaver/` Godot MVP stub  
+- [x] Merge prototype loop (#192) + juice spike (#191 → `35_JUICE.md`)  
 - [ ] Land PR into `cursor/echo-lattice-rc1`  
 - [ ] Follow-up: elevate `01_CONCEPT` + align `15_MARKET` / `14_TECH` stubs (see MASTER §11)
 

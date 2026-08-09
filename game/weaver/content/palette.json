@@ -16,7 +16,7 @@
     "shed_lamp":       { "hex": "#E8D2A8", "role": "single practical light wash" }
   },
   "banlist": {
-    "notes": "Hard ban — see docs/WEAVER/09_VISUAL.md §1 and docs/WEAVER/20_JUICE.md.",
+    "notes": "Hard ban — see docs/WEAVER/09_VISUAL.md §1 and docs/WEAVER/35_JUICE.md.",
     "colors": [
       "#7F00FF", "#B026FF", "#8A2BE2", "#9B59B6",
       "any mystical saturated purple / violet bloom",
