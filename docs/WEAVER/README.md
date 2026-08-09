@@ -92,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-first-five` | [#175](https://github.com/cmp07/Game-/pull/175) |
 
 ---
 
