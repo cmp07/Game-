@@ -1,8 +1,8 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `3e23d9262e26ed8f37a8af3b2f16d3e1a87a3e58`  
-**G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.
+**Tip at index authoring:** `cf326fc206209c572952772b9366fece74c35fb7`  
+**G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
