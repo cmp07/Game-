@@ -202,7 +202,7 @@ Treat “Mirror Birth” as both the chamber and the *class* of first-author mom
 - Endless = absent.
 - Authored `seeds.json` / `calendar_90.json` / variations grammar = **content without a player door**.
 
-Until daily uses the catalog (and variations), friend codes and “same day / same lattice” marketing are false.
+Daily now uses the catalog/calendar path; friend codes identify the shared featured chamber (+ geometry variation). Palette axis remains cosmetic-only.
 
 ---
 
