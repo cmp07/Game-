@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Echo Lattice AUDIO v2 event catalog + asset presence."""
+"""Validate Echo Lattice AUDIO v3 event catalog + asset presence."""
 
 from __future__ import annotations
 
@@ -20,8 +20,8 @@ def res_to_path(res: str) -> Path:
 def main() -> int:
     data = json.loads(CATALOG.read_text())
     errors: list[str] = []
-    if int(data.get("version", 0)) < 2:
-        errors.append("catalog version must be >= 2")
+    if int(data.get("version", 0)) < 3:
+        errors.append("catalog version must be >= 3")
 
     buses = set(data.get("buses", []))
     for required in ("Master", "SFX", "Music", "UI", "PA"):
@@ -34,6 +34,7 @@ def main() -> int:
         "sfx.rewrite",
         "win.chamber",
         "win.queue_next",
+        "fail.reset",
         "pa.attention",
         "music.layer.L0",
         "music.layer.L1",
@@ -70,14 +71,14 @@ def main() -> int:
         errors.append("silence_policy.early_chambers_max_intensity missing")
 
     if errors:
-        print("AUDIO v2 validation FAILED:")
+        print("AUDIO v3 validation FAILED:")
         for e in errors:
             print(f"  - {e}")
         return 1
 
     print(
-        f"AUDIO v2 OK: {len(events)} events, "
-        f"{len(data.get('operators', []))} operator stingers, "
+        f"AUDIO v3 OK: {len(events)} events, "
+        f"{len(data.get('operators', []))} operator slam phrases, "
         f"silence policy present."
     )
     return 0

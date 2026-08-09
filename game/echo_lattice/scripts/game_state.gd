@@ -30,6 +30,8 @@ var daily_best_stars: Dictionary = {}  # date_str (or legacy seed_str) -> total 
 var last_clear_stars: int = 0
 var last_clear_bfs_par: int = 0
 var last_identity_stamp: Dictionary = {}
+## Last habit-reactive answer (archetype + counter op) for clear-stamp copy.
+var last_habit_answer: Dictionary = {}
 ## Best portrait stamp per chamber index (ledger gallery).
 var identity_stamps: Dictionary = {}
 ## Habit identity HUD unlocks after a Mirror Birth (or Looking Glass) moment.
@@ -38,6 +40,8 @@ var habit_identity_unlocked: bool = false
 var museum: Dictionary = {"selves": [], "cap": MuseumOfSelves.DEFAULT_CAP}
 ## Most recent archived self (post-clear stamp / replay vignette).
 var last_museum_self: Dictionary = {}
+## Optional Museum chalk race — overlays a prior Self's path (visual only).
+var ghost_race_self_id: String = ""
 ## One-shot teach flags (checkpoint literacy, post-rewrite coach, undo hint).
 var tutorial_flags: Dictionary = {}
 
@@ -63,6 +67,7 @@ func _ready() -> void:
 
 func start_new_run() -> void:
 	run_mode = "standard"
+	ghost_race_self_id = ""
 	_clear_daily_meta()
 	endless_seed = 0
 	endless_depth = 0
@@ -75,12 +80,14 @@ func start_new_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
 
 func start_daily_run() -> void:
 	run_mode = "daily"
+	ghost_race_self_id = ""
 	var entry: Dictionary = DailyCalendar.today_utc()
 	_apply_daily_entry(entry)
 	endless_seed = 0
@@ -92,12 +99,14 @@ func start_daily_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
 
 func start_endless_run() -> void:
 	run_mode = "endless"
+	ghost_race_self_id = ""
 	_clear_daily_meta()
 	endless_seed = _new_endless_seed()
 	endless_label = "E-%s" % _endless_seed_label(endless_seed)
@@ -108,6 +117,7 @@ func start_endless_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
@@ -115,6 +125,7 @@ func start_endless_run() -> void:
 func start_hard_run() -> void:
 	## Optional hard-variant wing unlocked after clearing each parent chamber.
 	run_mode = "hard"
+	ghost_race_self_id = ""
 	_clear_daily_meta()
 	endless_seed = 0
 	endless_depth = 0
@@ -125,6 +136,7 @@ func start_hard_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = run_queue.size() > 0
 	SaveManager.save_to_disk()
 
@@ -133,6 +145,60 @@ func can_start_hard_run() -> bool:
 	if DemoBuild.is_demo():
 		return false
 	return ChamberBook.unlocked_hard_variant_indices(completed).size() > 0
+
+
+func start_ghost_race(self_id: String) -> bool:
+	## Single-chamber optional overlay race against archived chalk handwriting.
+	## Never required; chalk never blocks tiles; no ladder / PvP / combat.
+	var row: Dictionary = get_museum_self(self_id)
+	if not MuseumOfSelves.can_race(row):
+		return false
+	var content_id: String = str(row.get("chamber_id", ""))
+	var idx: int = ChamberBook.index_for_content_id(content_id)
+	if idx < 0:
+		return false
+	run_mode = "ghost"
+	ghost_race_self_id = self_id
+	_clear_daily_meta()
+	endless_seed = 0
+	endless_depth = 0
+	endless_label = ""
+	run_queue = [idx]
+	queue_pos = 0
+	current_chamber = idx
+	run_cleared.clear()
+	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
+	move_ring.clear()
+	run_started = true
+	SaveManager.save_to_disk()
+	return true
+
+
+func clear_ghost_race() -> void:
+	## Leave ghost overlay mode (menu / back to Museum after race).
+	ghost_race_self_id = ""
+	if run_mode == "ghost":
+		run_mode = "standard"
+		run_started = false
+		run_queue.clear()
+		queue_pos = 0
+
+
+func is_ghost_race() -> bool:
+	return run_mode == "ghost" and ghost_race_self_id != ""
+
+
+func raced_museum_self() -> Dictionary:
+	if ghost_race_self_id == "":
+		return {}
+	return get_museum_self(ghost_race_self_id)
+
+
+func active_ghost_race_path() -> Array:
+	## Unpacked chalk for chamber draw role GHOST. Empty when not racing.
+	if not is_ghost_race():
+		return []
+	return MuseumOfSelves.race_path_for(raced_museum_self())
 
 
 func continue_run() -> void:
@@ -206,6 +272,19 @@ func record_direction(dir: Vector2i) -> void:
 		window = MOVE_BUFFER_MAX
 	if move_ring.size() > window:
 		move_ring.pop_front()
+
+
+func note_habit_answer(archetype: String, op: String, cell_count: int = 0) -> void:
+	## Called when a checkpoint fires a habit-reactive counter (or clears quietly).
+	last_habit_answer = {
+		"archetype": archetype,
+		"op": op,
+		"cells": cell_count,
+	}
+
+
+func clear_habit_answer() -> void:
+	last_habit_answer = {}
 
 
 func record_chamber_win(
@@ -299,6 +378,7 @@ func get_museum_self(self_id: String) -> Dictionary:
 func clear_museum() -> void:
 	museum = {"selves": [], "cap": MuseumOfSelves.DEFAULT_CAP}
 	last_museum_self = {}
+	ghost_race_self_id = ""
 
 
 func reveal_habit_identity() -> void:

@@ -3,7 +3,7 @@
   "index": 31,
   "slug": "last_buffer",
   "title": "Last Buffer",
-  "caption": "Thicken mastery \u2014 the buffer is almost full.",
+  "caption": "The buffer is almost full. Thicken once.",
   "act": "mastery",
   "act_index": 3,
   "act_title": "Mastery",
@@ -61,7 +61,7 @@
       ],
       "unique": true,
       "operator": "thicken",
-      "banner": "Thicken mastery \u2014 the buffer is almost full."
+      "banner": "The buffer is almost full. Thicken once."
     }
   ],
   "resonance": {

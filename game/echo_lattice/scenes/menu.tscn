@@ -18,9 +18,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -340.0
-offset_top = -190.0
+offset_top = -220.0
 offset_right = -80.0
-offset_bottom = 290.0
+offset_bottom = 320.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_constants/separation = 8
@@ -88,7 +88,15 @@ alignment = 0
 [node name="SettingsButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 34)
-text = "Settings / Accessibility"
+text = "Instruments"
+flat = true
+theme_override_font_sizes/font_size = 18
+alignment = 0
+
+[node name="ColophonButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 34)
+text = "Colophon"
 flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0
@@ -96,7 +104,7 @@ alignment = 0
 [node name="QuitButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 34)
-text = "Quit"
+text = "Close ledger"
 flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0

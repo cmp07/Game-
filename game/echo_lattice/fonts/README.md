@@ -1,14 +1,24 @@
 # Fonts — Echo Lattice
 
-## Latin stack (art bible)
+## Latin stack (art bible / W1A.3)
 
-| Role | Preferred | MVP fallback |
+| Role | Face | File |
 |---|---|---|
-| Display | Akkurat / Inter Tight / IBM Plex Sans Condensed | Godot default (Inter-like) |
-| Body | IBM Plex Serif / PT Serif | Godot default |
-| Mono (seed / buffer) | IBM Plex Mono | Godot default |
+| Display | IBM Plex Sans Condensed SemiBold (Regular fallback) | `latin/IBMPlexSansCondensed-SemiBold.ttf` |
+| Body | IBM Plex Serif Regular | `latin/IBMPlexSerif-Regular.ttf` |
+| Mono (seed / buffer / folio) | IBM Plex Mono Regular | `latin/IBMPlexMono-Regular.ttf` |
 
-Ship final OFL or licensed files under `fonts/latin/` before store submission. See also `docs/RELEASE/COMPLIANCE_FINAL.md` (credits) when that pack lands.
+OFL notice: `latin/OFL.txt` (IBM Plex® © IBM Corp., SIL OFL 1.1).
+
+Runtime wiring: autoload `LedgerType` (`scripts/ledger_type.gd`) loads the stack and sets `ThemeDB.fallback_font` for Latin locales. `LocaleManager` still swaps to Noto Sans SC for `zh_Hans` when vendored.
+
+### Re-fetch / repair
+
+```bash
+python3 tools/fonts/fetch_ibm_plex_latin.py
+```
+
+Latin faces are **committed** (Git LFS via root `.gitattributes`). Do **not** embed Akkurat (commercial).
 
 ## CJK plan (zh-Hans ship)
 
@@ -20,9 +30,9 @@ Han coverage is **required** for Simplified Chinese UI. Do **not** rely on OS fo
 | 2 (alt) | Source Han Sans SC Regular | `cjk/SourceHanSansSC-Regular.otf` | OFL-1.1 |
 | Optional body | Noto Serif SC Regular | `cjk/NotoSerifSC-Regular.otf` | OFL-1.1 |
 
-`LocaleManager` (`scripts/locale/locale_manager.gd`) swaps `ThemeDB.fallback_font` to the first existing candidate when the active locale is `zh_Hans` (or other CJK tags). Labels and `draw_string(..., ThemeDB.fallback_font, ...)` both pick it up.
+`LocaleManager` (`scripts/locale/locale_manager.gd`) swaps `ThemeDB.fallback_font` to the first existing candidate when the active locale is `zh_Hans` (or other CJK tags). Labels and `draw_string(..., ThemeDB.fallback_font, …)` both pick it up.
 
-### Vendor steps (release)
+### Vendor steps (CJK)
 
 1. Run `python3 tools/fonts/fetch_noto_sans_sc.py` (downloads OFL-licensed Regular from [noto-cjk Sans 2.004](https://github.com/notofonts/noto-cjk/releases/tag/Sans2.004)), **or** download manually from [Google Fonts — Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC).
 2. Confirm `game/echo_lattice/fonts/cjk/NotoSansSC-Regular.otf` exists (gitignored by default).
@@ -32,10 +42,9 @@ Han coverage is **required** for Simplified Chinese UI. Do **not** rely on OS fo
 
 ### Git LFS note
 
-Binaries stay **gitignored** to keep the clone small. Root `.gitattributes` already declares LFS filters for `fonts/cjk/*.{otf,ttf,ttc,otc}`. To commit the face: remove the ignore lines, `git lfs install`, add the file. Details in [`cjk/README.md`](cjk/README.md).
+CJK binaries stay **gitignored** to keep the clone small. Root `.gitattributes` already declares LFS filters for `fonts/cjk/*.{otf,ttf,ttc,otc}` and latin faces. Details in [`cjk/README.md`](cjk/README.md).
 
 ### Explicit non-goals for v1
 
 - No JP / KR catalogs yet (font candidates can stay; strings ship later).
-- No per-control Theme resource yet — fallback font swap is enough for the vertical slice HUD.
 - Do not commit multi‑MB variable font collections if a single Regular static face covers UI.

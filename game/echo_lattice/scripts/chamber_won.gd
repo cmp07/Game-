@@ -1,8 +1,8 @@
 extends Control
 ##
-## Chamber-won screen — stars + habit beat between chambers.
+## Clear Stamp — chamber-won ledger leaf between chambers.
+## Stars + habit beat + Museum archive note as a stamped page.
 ## Identity bosses / Mirror Birth moments also print a ledger portrait stamp.
-## Every clear archives a Museum self and plays a short chalk replay vignette.
 ##
 
 signal next_pressed()
@@ -23,9 +23,11 @@ var _stamp_card: Control = null
 var _stamp_label: Label = null
 var _museum_label: Label = null
 var _vignette: Control = null
+var _folio_label: Label = null
 
 
 func _ready() -> void:
+	_ensure_folio_mark()
 	replay_button.text = tr("won.replay")
 	menu_button.text = tr("won.menu")
 	next_button.pressed.connect(func(): emit_signal("next_pressed"))
@@ -34,10 +36,17 @@ func _ready() -> void:
 	next_button.focus_mode = Control.FOCUS_ALL
 	replay_button.focus_mode = Control.FOCUS_ALL
 	menu_button.focus_mode = Control.FOCUS_ALL
+	_style_index_actions()
 	next_button.grab_focus()
+	set_process(true)
 	set_process_unhandled_input(true)
 	_ensure_stamp_widgets()
 	_ensure_museum_widgets()
+	queue_redraw()
+
+
+func _process(_delta: float) -> void:
+	queue_redraw()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -69,6 +78,9 @@ func configure(chamber_id: int, moves: int) -> void:
 	elif GameState.run_mode == "endless":
 		next_text = tr("won.next_endless")
 		is_last = false
+	elif GameState.run_mode == "ghost":
+		next_text = tr("won.back_museum")
+		is_last = true
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
@@ -79,6 +91,9 @@ func configure(chamber_id: int, moves: int) -> void:
 	elif GameState.run_mode == "endless":
 		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
 		mode_line = tr("won.endless_line") % [GameState.endless_label, GameState.endless_depth, pct]
+	elif GameState.run_mode == "ghost":
+		var raced: Dictionary = GameState.raced_museum_self() if GameState.has_method("raced_museum_self") else {}
+		mode_line = tr("won.ghost_line") % str(raced.get("title", tr("museum.title")))
 	var stamp: Dictionary = GameState.last_identity_stamp
 	var stamp_line: String = ""
 	if not stamp.is_empty():
@@ -88,10 +103,52 @@ func configure(chamber_id: int, moves: int) -> void:
 	if not museum_row.is_empty():
 		museum_line = "\n" + _museum_summary(museum_row)
 	stats_label.text = (tr("won.stats") % [
-		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_summary()
+		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_answer_line(data)
 	]) + stamp_line + museum_line
 	_show_stamp(stamp)
 	_show_museum(museum_row)
+	queue_redraw()
+
+
+func _ensure_folio_mark() -> void:
+	if _folio_label != null:
+		return
+	_folio_label = Label.new()
+	_folio_label.name = "FolioMark"
+	_folio_label.text = tr("won.folio_mark")
+	_folio_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_folio_label.add_theme_font_size_override("font_size", 12)
+	_folio_label.add_theme_color_override("font_color", Palette.SLATE_TEAL)
+	_folio_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_folio_label.offset_left = 56.0
+	_folio_label.offset_top = 36.0
+	_folio_label.offset_right = -56.0
+	_folio_label.offset_bottom = 56.0
+	_folio_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_folio_label)
+	move_child(_folio_label, 0)
+
+
+func _style_index_actions() -> void:
+	for btn in [next_button, replay_button, menu_button]:
+		if btn == null:
+			continue
+		btn.flat = true
+		btn.add_theme_color_override("font_color", Palette.INK_BLACK)
+		btn.add_theme_color_override("font_hover_color", Palette.SLATE_TEAL)
+		btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
+		btn.add_theme_color_override("font_pressed_color", Palette.RUST_FOSSIL)
+	next_button.add_theme_color_override("font_color", Palette.RUST_FOSSIL)
+	next_button.add_theme_font_size_override("font_size", 22)
+	if has_node("/root/LedgerType"):
+		LedgerType.apply_to_control(title_label, "display", 44)
+		LedgerType.apply_to_control(subtitle_label, "body", 20)
+		LedgerType.apply_to_control(stats_label, "body", 15)
+		LedgerType.apply_to_control(next_button, "display", 22)
+		LedgerType.apply_to_control(replay_button, "body", 16)
+		LedgerType.apply_to_control(menu_button, "body", 16)
+		if _folio_label:
+			LedgerType.apply_to_control(_folio_label, "mono", 12)
 
 
 func _ensure_stamp_widgets() -> void:
@@ -198,6 +255,33 @@ func _museum_summary(row: Dictionary) -> String:
 	return tr("won.museum_archive") % [str(row.get("title", "")), arch, bias_pct, count]
 
 
+func _habit_answer_line(data: Dictionary) -> String:
+	## Remix / Daily / Endless: plain-speech habit answer over HUD jargon.
+	if not GameState.is_habit_identity_visible():
+		return tr("hud.habit_sealed")
+	var answer: Dictionary = GameState.last_habit_answer
+	var role: String = str(data.get("role", ""))
+	var wants_answer: bool = role in ["remix", "hard", "daily_showcase"] or GameState.run_mode in ["daily", "endless"]
+	if wants_answer and not answer.is_empty():
+		var arch: String = str(answer.get("archetype", "balanced"))
+		var read_key := "habit.read.%s" % arch
+		var read_line: String = tr(read_key)
+		if read_line == read_key:
+			read_line = arch
+		var op: String = str(answer.get("op", ""))
+		var counter_line: String = ""
+		if op != "":
+			var op_key := "habit.op.%s" % op
+			var op_label: String = tr(op_key)
+			if op_label == op_key:
+				op_label = op.replace("_", " ")
+			counter_line = tr("habit.answer.counter") % op_label
+		else:
+			counter_line = tr("won.habit_quiet")
+		return tr("won.habit_answer") % [read_line, counter_line]
+	return _habit_summary()
+
+
 func _habit_summary() -> String:
 	if not GameState.is_habit_identity_visible():
 		return tr("hud.habit_sealed")
@@ -222,7 +306,61 @@ func _habit_hand_label(hand_id: String) -> String:
 
 
 func _stars_glyph(n: int) -> String:
-	var out := ""
-	for i in range(3):
-		out += "*" if i < n else "-"
-	return tr("won.stars_glyph") % [out, n]
+	## Ink stamp marks — never ASCII * / - scaffolding.
+	var clamped: int = clampi(n, 0, 3)
+	var out: String = ""
+	if has_node("/root/LedgerType"):
+		out = LedgerType.stars_ink(clamped)
+	else:
+		for i in range(3):
+			out += "★" if i < clamped else "☆"
+	return tr("won.stars_glyph") % [out, clamped]
+
+
+func _draw() -> void:
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+
+	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
+	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 5, 0.05)
+
+	var page := Rect2(48, 28, vp.x - 96, vp.y - 56)
+	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
+	draw_rect(page, Palette.PAPER_BONE, true)
+	ArtKit.draw_ledger_grid(self, page, 24)
+	ArtKit.draw_paper_grain(self, page, 17, 0.06)
+	draw_rect(page, Palette.INK_SOFT, false, 2.0)
+	draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45), false, 1.0)
+
+	# Binder holes — Clear Stamp leaf chrome.
+	for i in range(5):
+		var hy: float = page.position.y + 40.0 + float(i) * ((page.size.y - 80.0) / 4.0)
+		draw_circle(Vector2(page.position.x + 16.0, hy), 4.0, Palette.INK_SOFT)
+		draw_circle(Vector2(page.position.x + 16.0, hy), 2.2, Palette.PAPER_BONE)
+
+	# Folio header double rule under FIELD LEDGER · CLEAR STAMP.
+	var rule_y: float = page.position.y + 44.0
+	draw_line(Vector2(page.position.x + 36.0, rule_y), Vector2(page.end.x - 24.0, rule_y), Palette.INK_SOFT, 1.0)
+	draw_line(Vector2(page.position.x + 36.0, rule_y + 4.0), Vector2(page.end.x - 24.0, rule_y + 4.0), Palette.INK_SOFT, 1.0)
+
+	# Rust seal tick — ceremony punctuation, not a badge overlay.
+	draw_rect(Rect2(page.end.x - 40.0, page.position.y + 18.0, 18.0, 3.0), Palette.RUST_FOSSIL, true)
+
+	_draw_button_underlines()
+
+
+func _draw_button_underlines() -> void:
+	for btn in [next_button, replay_button, menu_button]:
+		if btn == null or not is_instance_valid(btn):
+			continue
+		var r: Rect2 = btn.get_global_rect()
+		var local_pos: Vector2 = r.position - global_position
+		var focused: bool = btn.has_focus()
+		var hovered: bool = btn.is_hovered()
+		if focused:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0), Palette.RUST_FOSSIL, true)
+		elif hovered and not btn.disabled:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 200.0), 2.0), Palette.SLATE_TEAL, true)
+		elif not btn.disabled:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 160.0), 1.0), Palette.INK_SOFT, true)

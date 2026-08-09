@@ -6,16 +6,18 @@ boot.wing_line,FIELD LEDGER · WING I,现场账本 · 第一翼
 menu.field_index,FIELD INDEX,现场索引
 menu.buffer,BUFFER,缓冲
 menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
-menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc,移动  WASD / 方向键     重开  R     撤销  Z     菜单  Esc
+menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Pause  Esc,移动  WASD / 方向键     重开  R     撤销  Z     暂停  Esc
 menu.continue,Continue,继续
-menu.start_new,Start New Run,开始新周目
-menu.daily,Daily Challenge,每日挑战
-menu.endless,Endless,无尽
-menu.hard,Hard Variants,高难变体
-menu.hard_count,Hard Variants (%s),高难变体（%s）
-menu.settings,Settings,设置
+menu.start_new,Open new survey,开启新勘测
+menu.daily,Daily sheet,每日页
+menu.endless,Endless corridor,无尽廊道
+menu.hard,Hard binding,高难装订
+menu.hard_count,Hard binding (%s),高难装订（%s）
+menu.settings,Instruments,仪器
 menu.wishlist,Wishlist on Steam,Steam 愿望单
-menu.quit,Quit,退出
+menu.quit,Close ledger,合上账本
+menu.colophon,Colophon,版权页
+menu.folio_mark,FIELD LEDGER · WING I,现场账本 · 第一翼
 menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间室。纸上墨迹。
 menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
@@ -33,11 +35,13 @@ hud.habit_leaning,%s-leaning,%s倾向
 hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
 hud.seed,SEED  %s,种子  %s
 hud.restart,Restart (R),重开 (R)
-hud.menu,Menu (Esc),菜单 (Esc)
+hud.menu,Pause (Esc),暂停 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
 hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
 hud.endless_depth,Depth %s,深度 %s
 hud.hard_tag, · Hard+, · 高难+
+hud.ghost_tag, · Race · %s, · 竞速 · %s
+hud.ghost_tag_plain, · Race chalk, · 粉笔竞速
 hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %s
 habit.up,up,上
 habit.down,down,下
@@ -50,19 +54,23 @@ won.finish_demo,→ Finish Demo,→ 完成试玩
 won.next_daily,→ Next Daily,→ 下一每日
 won.daily_complete,→ Daily Complete,→ 每日完成
 won.next_endless,→ Keep Climbing,→ 继续攀升
+won.back_museum,→ Back to Museum,→ 返回博物馆
+won.ghost_line,"
+Race chalk · %s","
+粉笔竞速 · %s"
 won.replay,Replay this chamber,重玩本间室
-won.menu,Menu,菜单
+won.menu,Field Index,田野索引
 won.stats,"%s
 Moves: %s  (best %s)
-Best stars: %s★
+Best stamp: %s★
 Par path: %s%s
 
-Habit: %s","%s
+Hand: %s","%s
 步数：%s  （最佳 %s）
-最佳星级：%s★
+最佳印记：%s★
 标准路径：%s%s
 
-习惯：%s"
+笔迹：%s"
 won.daily_line,"
 Daily %s","
 每日 %s"
@@ -71,33 +79,24 @@ Endless %s  ·  depth %s  ·  rewrite pressure %s%%","
 无尽 %s  ·  深度 %s  ·  改写压 %s%%"
 won.daily_line_code,"
 Daily %s · %s","
-每日 %s · %swon.stars_glyph",%s (%s/3),%s (%s/3)
-end.title,END OF SLICE,切片终章
+每日 %s · %s"
+end.title,LEDGER CLOSED,账本合上
 end.tagline,The lattice remembers you.,晶格记得你。
-end.new_run,New Run,新周目
-end.menu,Menu,菜单
-end.footer,Vertical slice · Echo Lattice · VISUAL v2 · ink on paper,可玩切片 · 回声晶格 · VISUAL v2 · 纸上墨迹
-end.header_wing,Wing complete.,本翼完成。
+end.new_run,New survey,新调查
+end.menu,Field Index,田野索引
+end.footer,Field Ledger · Echo Lattice · ink on paper,现场账本 · 回声晶格 · 纸上墨迹
+end.header_wing,Wing filed.,本翼已归档。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
 end.header_endless,Endless %s — depth %s.,无尽 %s — 深度 %s。
-end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。end.summary,"%s
-Escaped %s / %s chambers.
-Stars this wing: %s★
-Total best moves: %s
-Habit signature: %s
-(u:%s  d:%s  l:%s  r:%s)","%s
-逃脱 %s / %s 间室。
-本翼星级：%s★
-最佳步数合计：%s
-习惯签名：%s
-(上:%s  下:%s  左:%s  右:%s)"
+end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。
 project.description,A labyrinth that rebuilds from your last thirty moves. Escape by rewriting your own habits.,一座根据你最近三十步重建的迷宫。改写自己的习惯以逃脱。
 locale.language,Language,语言
 locale.en,English,English
 locale.zh_Hans,简体中文,简体中文
 locale.system,System,跟随系统
-settings.title,Settings — Accessibility,设置 — 无障碍
+settings.title,Instruments,仪器
+settings.folio_mark,FIELD LEDGER · INSTRUMENTS,现场账本 · 仪器
 settings.a11y_header,Accessibility,无障碍
 settings.colorblind,Colorblind mode,色盲模式
 settings.patterns,Pattern cues (not color-only),图案提示（非仅靠颜色）
@@ -114,7 +113,7 @@ settings.hold_to_walk,Hold to walk,按住行走
 settings.input_header,Input (click to rebind keyboard; gamepad preserved),输入（点击重绑键盘；手柄保留）
 settings.reset_a11y,Reset accessibility,重置无障碍
 settings.reset_input,Reset input,重置输入
-settings.close,Close,关闭
+settings.close,File away,归档
 settings.size_small,Small,小
 settings.size_medium,Medium,中
 settings.size_large,Large,大
@@ -150,18 +149,31 @@ subtitle.ghost_assist,Ghost path revealed once.,幽灵路径已显示一次。
 subtitle.undo,Step withdrawn.,已撤回一步。
 subtitle.win,Chamber clear.,间室清除。
 subtitle.pa.ghost.floor,Floor chalk noted.,已记录地面粉笔。
+subtitle.pa.ghost.race,Past-self chalk on the page — optional race.,纸上的往昔粉笔——可选竞速。
 subtitle.pa.checkpoint.armed,Checkpoint — buffer armed.,检查点 — 缓冲已就绪。
 subtitle.pa.rewrite.fired,Rewrite committed.,改写已提交。
 subtitle.pa.rewrite.matched,It matches you.,它与你吻合。
+subtitle.pa.rewrite.second_birth,Both axes remember you.,双轴记住了你。
+subtitle.habit.op.deflector,Corridor sealed.,走廊已封死。
+subtitle.habit.op.fossilize,Loop calcified.,回环已钙化。
+subtitle.habit.op.thicken,Walk thickened underfoot.,足迹在脚下增厚。
+subtitle.habit.op.grow,Far margin darkens.,远缘变暗。
+subtitle.habit.op.carve,A hairline door opens.,一线门缝打开。
+subtitle.habit.op.widen,The corridor breathes.,走廊松了一口气。
+subtitle.habit.answer.hand,Answered your %s.,回应了你的%s。
+ceremony.mirror_birth.plate,IT MATCHES YOU,与你吻合
+ceremony.looking_glass.plate,BOTH AXES REMEMBER,双轴铭记
+ceremony.mirror_birth.label,Orange walls = your mirror.,橙墙即你的镜像。
+ceremony.looking_glass.label,Both folds keep your ink.,两折都留住你的墨。
 subtitle.pa.undo.hint,Undo clears a step.,撤销可清除一步。
 subtitle.pa.boot.lattice_online,Lattice online.,晶格在线。
 subtitle.pa.wing.clear,Wing clear.,本翼清除。
 subtitle.tutorial_buffer,Your last moves leave fossils behind you.,你最近的步伐会留下化石。
 hud.undo_hint,%s · UNDO,%s · 撤销
 menu.subtitle_demo,Demo — Act I · Mirror Birth. Ink on paper.,试玩 — 第一幕 · 镜生。纸上墨迹。
-menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Menu  %s,移动  %s…     重开  %s     撤销  %s     菜单  %s
+menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Pause  %s,移动  %s…     重开  %s     撤销  %s     暂停  %s
 hud.restart_fmt,Restart (%s),重开 (%s)
-hud.menu_fmt,Menu (%s),菜单 (%s)
+hud.menu_fmt,Pause (%s),暂停 (%s)
 glyphs.move_pad,D-Pad / Stick,方向键 / 摇杆
 glyphs.move_wasd,WASD / Arrows,WASD / 方向键
 glyphs.controls_gamepad,Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start / B     Confirm  A     Assist  B,移动  方向键/摇杆     撤销  X     重开  Y     菜单  Start / B     确认  A     辅助  B
@@ -202,7 +214,7 @@ chamber.11_opposite_room.caption,Turn the chamber inside-out with one rotation.,
 chamber.12_looking_glass.title,Looking Glass,窥镜
 chamber.12_looking_glass.caption,Vertical and horizontal mirrors fire together.,垂直与水平镜同时触发。
 chamber.13_gallery_walk.title,Gallery Walk,长廊漫步
-chamber.13_gallery_walk.caption,A long hall of pillars. Reflect carefully.,柱廊长厅。小心反射。
+chamber.13_gallery_walk.caption,A colonnade of pillars. Reflect carefully.,柱廊成列。小心反射。
 chamber.14_horizon_fold.title,Horizon Fold,地平折叠
 chamber.14_horizon_fold.caption,Two horizontal folds. The middle remembers both.,两次水平折叠。中间记住两者。
 chamber.15_spin_gallery.title,Spin Gallery,旋廊
@@ -212,7 +224,7 @@ chamber.16_false_twin.caption,Symmetry lies. Choose which half becomes wall.,对
 chamber.17_identity_reflection.title,Portrait,肖像
 chamber.17_identity_reflection.caption,Boss. Both axes. Your path becomes a face.,首领。双轴。你的路径成一张脸。
 chamber.18_cement_trail.title,Cement Trail,水泥足迹
-chamber.18_cement_trail.caption,"Thicken under pressure. One path, no return.",压力下增厚。一条路，不回头。
+chamber.18_cement_trail.caption,One path thickens. Do not return.,一条路增厚。勿回头。
 chamber.19_no_retread.title,No Retread,不重踏
 chamber.19_no_retread.caption,"A braid of corridors. Solidify once, commit.",走廊辫结。凝固一次，就承诺。
 chamber.20_squeeze_mirror.title,Squeeze Mirror,挤压镜
@@ -220,7 +232,7 @@ chamber.20_squeeze_mirror.caption,Tight lanes. A messy path seals everything.,�
 chamber.21_stacked_echo.title,Stacked Echo,叠回声
 chamber.21_stacked_echo.caption,Three checkpoints. Each rewrite tightens the net.,三个检查点。每次改写收紧网。
 chamber.22_spin_trap.title,Spin Trap,旋阱
-chamber.22_spin_trap.caption,Rotation under load. Opposite corner seals exits.,负载下旋转。对角封住出口。
+chamber.22_spin_trap.caption,Opposite corner seals the exits you need.,对角封住你需要的出口。
 chamber.23_ceiling_press.title,Ceiling Press,顶压
 chamber.23_ceiling_press.caption,Horizontal mirror in a low room. Keep the floor.,低室中的水平镜。守住地板。
 chamber.24_compound_fracture.title,Compound Fracture,复合裂
@@ -238,7 +250,7 @@ chamber.29_two_axes.caption,"Compose both mirrors with a short, sharp stroke.",�
 chamber.30_habit_orchestra.title,Habit Orchestra,习惯管弦
 chamber.30_habit_orchestra.caption,Three vertical mirrors. Conduct three phrases.,三面垂直镜。指挥三段乐句。
 chamber.31_last_buffer.title,Last Buffer,末段缓冲
-chamber.31_last_buffer.caption,Thicken mastery — the buffer is almost full.,增厚精通——缓冲几乎满了。
+chamber.31_last_buffer.caption,The buffer is almost full. Thicken once.,缓冲几乎满了。增厚一次。
 chamber.32_signature_stack.title,Signature Stack,签名叠层
 chamber.32_signature_stack.caption,"Both axes, twice. Stack two portraits.",双轴，两次。叠两幅肖像。
 chamber.33_nameplate.title,Nameplate,铭牌
@@ -246,25 +258,23 @@ chamber.33_nameplate.caption,Boss. Final identity — sign the lattice.,首领�
 chamber.34_open_lattice.title,Open Lattice,开放晶格
 chamber.34_open_lattice.caption,Epilogue. Same seed a friend can share.,尾声。朋友可分享的同一种子。
 chamber.35_mirror_birth_hard.title,Mirror Birth+,镜生+
-chamber.35_mirror_birth_hard.caption,"Hard. Less floor. Same lesson, less forgiveness.",困难。更少地板。同样课题，更少宽恕。
+chamber.35_mirror_birth_hard.caption,"Hard. Same birth, less floor to wander.",困难。同样的诞生，更少闲逛的地板。
 chamber.36_looking_glass_hard.title,Looking Glass+,窥镜+
 chamber.36_looking_glass_hard.caption,Hard. Dual-axis with thinner corridors.,困难。双轴，更窄走廊。
 chamber.37_cement_trail_hard.title,Cement Trail+,水泥足迹+
 chamber.37_cement_trail_hard.caption,Hard. Thicken with fewer detours.,困难。更少绕路的增厚。
 chamber.38_nameplate_hard.title,Nameplate+,铭牌+
-chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
+chamber.38_nameplate_hard.caption,Hard. Sign the lattice with less floor.,困难。用更少地板签署晶格。
 menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
 end.summary,"%s
-Escaped %s / %s chambers.
-Stars this wing: %s★
-Total best moves: %s
-Habit signature: %s
-(u:%s  d:%s  l:%s  r:%s)","%s
-逃脱 %s / %s 间室。
-本翼星级：%s★
-最佳步数合计：%s
-习惯签名：%s
-(上:%s  下:%s  左:%s  右:%s)"
+Filed %s of %s chambers.
+Stars stamped: %s
+Best route ink: %s moves
+Handwriting: %s","%s
+已归档 %s / %s 间室。
+星印：%s
+最佳路线墨迹：%s 步
+笔迹：%s"
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
 hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
 hud.habit_identity,%s-leaning · %s,%s倾向 · %s
@@ -287,11 +297,53 @@ menu.museum,Museum of Selves,自我博物馆
 menu.museum_meta,%s selves archived,已归档 %s 个自我
 won.museum_archive,Archived · %s · %s · bias %s%% · museum %s,已归档 · %s · %s · 偏向 %s%% · 馆藏 %s
 museum.title,Museum of Selves,自我博物馆
-museum.blurb,Each clear leaves a fossil. Browse who you were — handwriting on paper.,每次通关留下化石。浏览曾经的你——纸上的笔迹。
+museum.blurb,Each clear leaves a fossil. Browse who you were — or race the chalk. Overlay only; never required.,每次通关留下化石。浏览曾经的你——或与粉笔竞速。仅为叠加显示；从不强制。
 museum.empty,No selves archived yet. Clear a chamber.,尚无归档自我。先通过一间室。
 museum.back,Back,返回
 museum.replay,Replay handwriting,重播笔迹
+museum.race,Race this self,与此自我竞速
 museum.detail,"%s
 %s · bias %s%% · %s moves · %s","%s
 %s · 偏向 %s%% · %s 步 · %s"
 museum.vignette_empty,No chalk path on this fossil.,此化石无粉笔路径。
+end.folio_mark,FIELD LEDGER · COLOPHON,现场账本 · 版权栏
+won.folio_mark,FIELD LEDGER · CLEAR STAMP,现场账本 · 清关印记
+won.habit_answer,"Habit answer · %s
+%s","习惯回应 · %s
+%s"
+won.habit_quiet,Habit · still reading the page,习惯 · 仍在读页
+habit.read.right_leaner,You kept one heading.,你总朝一个方向走。
+habit.read.looper,You circled the same hinge.,你在同一枢纽打转。
+habit.read.zigzagger,You never committed a line.,你从未认一条线。
+habit.read.balanced,Mixed ink.,混杂墨迹。
+habit.answer.counter,The lattice answered with %s.,晶格用%s回应了你。
+habit.op.place_deflector,a soft deflector,一枚轻柔偏转
+habit.op.fossilize_hot_cell,a fossil on your hinge,你枢纽上的化石
+habit.op.thicken_walked,thicker walked walls,更厚的足迹墙
+habit.op.grow_wall_far_from_path,a far wall seal,远端封墙
+habit.op.mirror_walked_v,a vertical habit mirror,一枚垂直习惯镜
+habit.op.mirror_walked_h,a horizontal habit mirror,一枚水平习惯镜
+habit.op.widen_hot_corridor,a widened corridor,拓宽走廊
+habit.op.carve_shortcut,a carved shortcut,凿出的捷径
+end.museum,Museum of Selves,自我博物馆
+pause.title,PAUSE · FIELD INDEX,暂停 · 现场索引
+pause.meta,%s  ·  seed  %s,%s  ·  种子  %s
+pause.resume,Resume survey,继续勘测
+pause.restart,Restart chamber,重开间室
+pause.instruments,Instruments,仪器
+pause.abandon,Abandon to Field Index,返回现场索引
+colophon.folio,FIELD LEDGER · COLOPHON,现场账本 · 版权页
+colophon.heading,COLOPHON,版权页
+colophon.blurb,Echo Lattice — a Field Ledger survey,回声晶格 — 一份现场账本勘测
+colophon.design,Design / code / content,设计 / 代码 / 内容
+colophon.design_body,Echo Lattice,回声晶格
+colophon.engine,Engine,引擎
+colophon.engine_body,"Godot Engine — © Juan Linietsky, Ariel Manzur, and contributors (MIT)","Godot 引擎 — © Juan Linietsky、Ariel Manzur 与贡献者（MIT）"
+colophon.fonts,Fonts,字体
+colophon.fonts_body,Vendor display / body / mono slots pending — SIL OFL when embedded,显示 / 正文 / 等宽字库待嵌入 — 嵌入后为 SIL OFL
+colophon.audio,Audio,音频
+colophon.audio_body,Procedural placeholders — Echo Lattice,程序化占位音效 — 回声晶格
+colophon.legal,Legal,法律
+colophon.legal_body,See depot THIRD_PARTY_NOTICES.txt beside the Windows build,见 Windows 构建旁的 THIRD_PARTY_NOTICES.txt
+colophon.build,Build %s,构建 %s
+colophon.file_away,File away,归档

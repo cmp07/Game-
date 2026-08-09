@@ -75,9 +75,8 @@ __pycache__/
 *.py[cod]
 
 # Large CJK font binaries — vendor locally per fonts/README.md; keep OFL + .gitkeep
+# Latin IBM Plex OFL faces are committed under fonts/latin/ (see fonts/README.md).
 game/echo_lattice/fonts/cjk/*.otf
 game/echo_lattice/fonts/cjk/*.ttf
 game/echo_lattice/fonts/cjk/*.ttc
 game/echo_lattice/fonts/cjk/*.otc
-game/echo_lattice/fonts/latin/*.otf
-game/echo_lattice/fonts/latin/*.ttf

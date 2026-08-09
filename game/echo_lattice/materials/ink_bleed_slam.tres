@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://minkbleedv301"]
+
+[ext_resource type="Shader" path="res://shaders/ink_bleed.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://bbleedlutecho01" path="res://art/noise/bleed_edge_lut.png" id="2_lut"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/rust_fossil = Color(0.545, 0.227, 0.122, 1)
+shader_parameter/rust_deep = Color(0.369, 0.141, 0.071, 1)
+shader_parameter/bleed = 0.0
+shader_parameter/join_mask = 1.0
+shader_parameter/max_uv_warp = 0.02
+shader_parameter/edge_lut = ExtResource("2_lut")

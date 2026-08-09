@@ -104,6 +104,8 @@
     "reflection",
     "mirror_v_then_h",
     "mirror_v_then_h",
-    "hard"
-  ]
+    "hard",
+    "spectacle"
+  ],
+  "spectacle": true
 }

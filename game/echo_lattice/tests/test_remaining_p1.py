@@ -101,7 +101,7 @@ class SaveSchemaDriftTests(unittest.TestCase):
         modes = re.search(r"SAVE_RUN_MODES: Array\[String\] = \[([\s\S]*?)\]", save)
         self.assertIsNotNone(modes)
         body = modes.group(1)
-        for mode in ("standard", "daily", "endless", "hard"):
+        for mode in ("standard", "daily", "endless", "hard", "ghost"):
             self.assertIn(f'"{mode}"', body)
 
 

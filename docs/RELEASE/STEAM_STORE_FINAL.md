@@ -15,7 +15,7 @@
 | [`PLATFORMS.md`](PLATFORMS.md) | #63 — store priority, build matrix, regional pricing notes |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | #64 — Content Survey, ratings, privacy, AI survey **No** |
 | [`legal/`](legal/) | Gate A Partner paste pack (survey / AI / privacy page / ratings) |
-| [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
+| [`capsules/`](capsules/) | Capsule briefs + G1 Field Ledger finals (Plex Condensed) |
 | [`screenshots/`](screenshots/) | Steam Partner slate (1920×1080, store order) |
 | [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Lower-res loop-proof tour (not Partner upload) |
 
@@ -217,10 +217,10 @@ Godot 4.3 2D puzzle — light GPU load. Numbers are honest floors, not marketing
 
 ---
 
-## 7. Capsule assets (Gate A finals)
+## 7. Capsule assets (G1 Field Ledger finals)
 
 Briefs + **Field Ledger finals** (exact Steam pixel sizes, no `PLACEHOLDER` stamp): **[`capsules/README.md`](capsules/README.md)**.  
-Generator: `game/echo_lattice/tools/generate_steam_capsules.py` (palette locked to `echo_lattice.palette.json` — ink / paper / rust; no purple).
+Generator: `game/echo_lattice/tools/generate_steam_capsules.py` (palette locked to `echo_lattice.palette.json`; IBM Plex Sans Condensed lockup; print-shop materials — ink / paper / rust; no purple).
 
 | Slot | File | Size | Status |
 |---|---|---|---|
@@ -357,7 +357,7 @@ Partner doc: [Steam Next Fest: October 2026](https://partner.steamgames.com/doc/
 - [ ] Short description (primary) pasted into Partner  
 - [ ] Long description pasted into Partner  
 - [ ] Tags + categories set in Partner  
-- [ ] Capsules uploaded (Gate A finals in `capsules/` — Partner upload pending)  
+- [ ] Capsules uploaded (G1 Field Ledger finals in `capsules/` — Partner upload pending)  
 - [x] Screenshot slate in-repo (`docs/RELEASE/screenshots/` 1920×1080) — Partner upload pending  
 - [~] Trailer editor pack in-repo (`docs/RELEASE/trailer/`) — **final encode + Partner upload pending**  
 - [ ] Sysreqs filled in Partner  
@@ -377,7 +377,7 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 | Path | Role |
 |---|---|
 | [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze ledger + change control |
-| [`capsules/`](capsules/) | Capsule briefs + Gate A Field Ledger finals |
+| [`capsules/`](capsules/) | Capsule briefs + G1 Field Ledger finals (Plex Condensed) |
 | [`screenshots/`](screenshots/) | Steam Partner 1920×1080 slate |
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-store + Deck + regional pricing (#63) |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Survey / ratings / privacy (#64) |
@@ -388,4 +388,4 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 
 ---
 
-*Last updated: 2026-08-09 — Store copy frozen for Gate A; capsule finals under `capsules/`; Partner screenshot slate under `screenshots/`. AppID still placeholder. Store package only; no depot binaries in this PR.*
+*Last updated: 2026-08-09 — Store copy frozen for Gate A; G1 capsule finals (Plex Condensed + print-shop materials) under `capsules/`; Partner screenshot slate under `screenshots/`. AppID still placeholder. Store package only; no depot binaries in this PR.*

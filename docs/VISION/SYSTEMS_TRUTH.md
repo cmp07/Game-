@@ -1,10 +1,10 @@
 # Echo Lattice — Systems Truth
 
 **Purpose:** After the RC1 wires for **habit**, **daily**, **identity**, and **museum**, state what is *lived* vs still *shallow*, and propose congruence upgrades so marketing claims match play.  
-**Lane:** Cloud-only vision / product-truth. No gameplay code in this PR.  
-**Tip audited:** `cursor/echo-lattice-rc1` @ `5f0d463` (2026-08-09)  
-**Authority wires:** `fix-habit-wire` · `fix-daily-calendar` · `form-identity-ledger` · `upgrade-museum` (+ Endless / Hard+ siblings)  
-**Related:** [`../AUDIT/DESIGN_GAMEPLAY.md`](../AUDIT/DESIGN_GAMEPLAY.md) · [`../AUDIT/PRODUCT_UPGRADES.md`](../AUDIT/PRODUCT_UPGRADES.md) · [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) · [`../RELEASE/STORE_COPY_FREEZE.md`](../RELEASE/STORE_COPY_FREEZE.md) · [`../RELEASE/STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md)
+**Lane:** Vision / product-truth (kept in sync when ships land).  
+**Tip audited:** `cursor/g1-ghost-self` on RC1 (F01 Museum race chalk) · prior baseline `5f0d463` (2026-08-09)  
+**Authority wires:** `fix-habit-wire` · `fix-daily-calendar` · `form-identity-ledger` · `upgrade-museum` · `g1-ghost-self` (+ Endless / Hard+ siblings)  
+**Related:** [`../AUDIT/DESIGN_GAMEPLAY.md`](../AUDIT/DESIGN_GAMEPLAY.md) · [`../AUDIT/PRODUCT_UPGRADES.md`](../AUDIT/PRODUCT_UPGRADES.md) · [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) · [`../RELEASE/STORE_COPY_FREEZE.md`](../RELEASE/STORE_COPY_FREEZE.md) · [`../RELEASE/STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md) · [`FEATURE_BACKLOG_1000X.md`](FEATURE_BACKLOG_1000X.md)
 
 ---
 
@@ -15,7 +15,7 @@
 | **Habit → geometry** | Path mirror only; archetype/bias sidecar | **Partial** — forced transform + **0–2 additive** habit cells (`place_deflector` / `fossilize_hot_cell`) via `HabitRewriteLever` + `RewriteScoreBias` | **Yes — shallow.** Style counters exist; they rarely *feel* like the maze “answered your hand.” Pedagogy still owns the verb. |
 | **Daily** | Random 5 / orphaned catalog | **Wired** — UTC `DailyCalendar` → `calendar_90` else catalog hash; friend codes; featured + `daily_eligible` fillers; geometry variation on featured | **Mostly honest.** Palette / hard axes authored but not applied. Wing ≠ “one chamber / day” bible line. |
 | **Identity** | Boss = denser `REACH_GOAL` | **Wired** — portrait stamp (symmetry / negative-space / non-thrash); bosses can lift ★; habit HUD sealed until Mirror Birth / Looking Glass | **Partial.** Stamp is real; bosses still clear on reach-goal. Portrait readability in-chamber is thin. |
-| **Museum** | META v2 specified, absent | **Thin archive** — clear-only selves (cap 48), plaque + chalk replay vignette, browse screen | **Yes — shallow vs claims.** No ghost **race**. FAQ / ROADMAP / long trailer still sell race / streaks the build does not ship. |
+| **Museum** | META v2 specified, absent | **Archive + optional race chalk** — clear-only selves (cap 48), plaque + vignette, **Race this self** overlays slate chalk in a live chamber (`run_mode = ghost`) | **Partial.** Race overlay shipped (F01 / T14); no ladder/combat. Streaks / Short Run / NG+ still absent — do not sell those. |
 
 **North star:** Store tagline *It learned you* is true for **path fossilization**. It is only half-true for **style learning**, **portrait authorship**, and **Museum retention**. Congruence work is mostly *felt depth + claim hygiene*, not greenfield systems.
 
@@ -26,8 +26,9 @@ Path → walls          ████████████████░░  
 Daily shared seed     ███████████████░░░  strong (calendar + code)
 Identity stamp        ████████████░░░░░░  medium (score + card; weak pedagogy)
 Habit style answer    ████████░░░░░░░░░░  thin (additive cells, quiet UX)
-Museum archive        ████████░░░░░░░░░░  thin (browse/replay only)
-Museum race / streaks ██░░░░░░░░░░░░░░░░  claim > code
+Museum archive        ████████░░░░░░░░░░  thin (browse/replay)
+Museum race chalk     ████████████░░░░░░  lived (optional overlay; no ladder)
+Daily streaks         ██░░░░░░░░░░░░░░░░  claim > code
 ```
 
 ---
@@ -42,8 +43,8 @@ Frozen / public-facing claims vs RC1 tip. Depth: **Lived** · **Thin** · **Clai
 | Store long | Daily = shared UTC seed, five chambers, offline calendar | Calendar/catalog + friend code + 5-chamber wing | **Lived** | Matches freeze. Do not sell “one chamber” or live-ops feed. |
 | Store long | Endless = seeded climb, rewrite pressure, best depth | Thin Endless batch + pressure transforms | **Lived (thin)** | Honest if copy stays “thin climb,” not infinite genre. |
 | Store / trailer | Origami slam + chalk trail foreshadow | Telegraph + slam + trail | **Lived** | Keep as hero verb. |
-| Trailer long cut | *Race your handwriting* | Assist ghost ≠ Museum race; Museum vignette is replay-only | **Claim-only** | Drop or fence until race ships. |
-| FAQ D3 / ROADMAP 1.0 | Museum browse + **ghost-race** prior selves | Browse + replay vignette; tests forbid “Race this self” | **Claim-only** | Highest trust risk in support docs. |
+| Trailer long cut | *Race your handwriting* | Optional Museum chalk overlay in a live chamber (`ghost` mode); assist ghost still distinct | **Lived (thin)** | Keep offline / no ladder; do not sell PvP race. |
+| FAQ D3 / ROADMAP 1.0 | Museum browse + **ghost-race** prior selves | Browse + replay + **Race this self** overlay; never required | **Lived (thin)** | Congruent if copy stays chalk-overlay, not combat/ladder. |
 | FAQ B3 / C2 | Daily **streaks** wipe / one recorded attempt | No `daily_streak_*` in `GameState` / save | **Claim-only** | Soften FAQ to “best for today” until streaks land. |
 | Content bible | Bosses leave a legible **portrait** | Stamp metrics + card on clear; clear rule still reach-goal | **Thin** | Portrait is scored after the fact, not taught as a solve. |
 | Content bible / grammar | Daily variation `palette` + `hard` | `DailyVariation` applies **rotate/reflect only** | **Thin** | Axes exist in JSON; cosmetic/hard unused. |
@@ -130,19 +131,19 @@ Frozen / public-facing claims vs RC1 tip. Depth: **Lived** · **Thin** · **Clai
 
 - Clears archive habit snapshot + compacted ghost path + optional stamp plaque; cap 48; deaths never archive.
 - Post-clear caption + chalk vignette; menu → `museum_screen` browse/replay.
-- Explicit non-goals in code/tests: no race ladder, no shop, no MX.
+- **F01 / T14:** optional **Race this self** → `GameState.start_ghost_race` → chamber draws `MuseumOfSelves.unpack_path` with FossilRole `GHOST` (slate chalk). Overlay never blocks clear; no ladder / combat / MX.
+- Explicit non-goals in code/tests: no race ladder, no shop, no MX, no ghost enemies.
 - Contract: `tests/test_museum.py`.
 
 **What remains shallow / claim drift:**
 
 | Gap | Why it matters |
 |---|---|
-| No overlay race in a live chamber | FAQ D3, ROADMAP 1.0 fence, Product U13, trailer “Race your handwriting” oversell. |
 | Archive-every-clear noise | Cap 48 fills with remix clears; identity / birth selves are not curated exhibits. |
-| Replay ≠ handwriting race energy | Vignette is atmosphere; trailer beat needs in-chamber chalk ghost. |
+| Race is chalk overlay, not dual-silhouette energy | Trailer beat can show chalk-on-chalk; do not invent opponent AI. |
 | Streaks / Short Run / NG+ still absent | META retention spine incomplete; do not sell as shipped. |
 
-**Lived test:** Return player browses a titled self and replays chalk. **Pass (thin).** “Race yesterday’s hand”: **fail.**
+**Lived test:** Return player browses a titled self, replays chalk, and optionally races that handwriting in-chamber. **Pass (thin).** “Ghost combat / race ladder”: **must stay fail.**
 
 ---
 
@@ -154,9 +155,9 @@ Principle: **either deepen the feel to match the claim, or shrink the claim to m
 
 | ID | Upgrade | Claim to fix | Acceptance |
 |---|---|---|---|
-| **T0** | FAQ D3 → “browse + replay chalk vignette”; remove ghost-race until shipped | FAQ / Support | FAQ matches `museum_screen.gd` |
-| **T1** | ROADMAP / Product funnel: Museum 1.0 = **archive + replay**; race = named 1.0.1 / free update | ROADMAP, PRODUCT_UPGRADES | No “1.0 ships race” without code |
-| **T2** | Trailer long-cut beat: replace *Race your handwriting* with *Keep your handwriting* / Museum plaque still | `STEAM_STORE_FINAL` §9 long | Or ship race before encode |
+| **T0** | ~~FAQ D3 soften race~~ → **done via T14 ship**; keep FAQ as browse + optional ghost-race chalk (not combat) | FAQ / Support | FAQ matches `museum_screen.gd` Race button |
+| **T1** | ROADMAP / Product funnel: Museum 1.0 = **archive + replay + optional race chalk** | ROADMAP, PRODUCT_UPGRADES | Race claim gated on overlay code (shipped) |
+| **T2** | Trailer long-cut *Race your handwriting* may encode chalk-overlay beat (offline; no ladder) | `STEAM_STORE_FINAL` §9 long | Must not imply PvP / enemy ghosts |
 | **T3** | FAQ C2 / B3: drop daily-streak wipe language; say **best-for-today** + friend code | FAQ | Matches `daily_best_for_today` |
 | **T4** | Content bible Daily line → five-chamber UTC wing (featured + eligible) | `04_CONTENT_BIBLE` | Bible ↔ store freeze |
 | **T5** | Ultra audit residue: mark thin Museum **present**; race still open | `ULTRA_AUDIT_RC1` | Scorecard not “Museum absent” |
@@ -178,7 +179,7 @@ Principle: **either deepen the feel to match the claim, or shrink the claim to m
 
 | ID | Upgrade | Unlocks this claim | Acceptance |
 |---|---|---|---|
-| **T14** | Optional **Race this self** overlay (chalk path in chamber; never required) | Trailer / FAQ race | Product U13 remainder; offline; no ladder |
+| **T14** | ~~Optional **Race this self** overlay~~ **SHIPPED (F01)** — `run_mode=ghost` + chamber GHOST chalk | Trailer / FAQ race | Product U13 remainder; offline; no ladder |
 | **T15** | Soft daily play/clear streaks + milestone achievements | FAQ streaks | Best survives break; no grind |
 | **T16** | Habit soft-choice among legal ops on remix/daily when pedagogy allows | “It learned your style” | Lessons stay forced; solvability net unchanged |
 | **T17** | Expand propose set (one more soft + one hard) with unique stingers | Audio/thesis depth | Dead stinger IDs gone |
@@ -202,13 +203,13 @@ flowchart TD
   A --> D[T11-T13 Daily + Museum curation]
   B --> E[T16-T17 Deeper habit ops]
   C --> F[T19 Portrait layouts]
-  D --> G[T14 Race overlay]
+  D --> G[T14 Race overlay — SHIPPED]
   D --> H[T15 Streaks]
   E --> I[Store can lean harder on style-learning]
-  G --> J[Re-enable race claims in FAQ/trailer]
+  G --> J[Race claims OK if chalk-overlay / no ladder]
 ```
 
-1. **Honesty pass (P0)** before Partner paste / FAQ freeze.  
+1. **Honesty pass (P0)** before Partner paste / FAQ freeze — race claim now code-backed; streaks still fiction.  
 2. **Feel pass (P1)** so existing wires read as authorship, not sidecars.  
 3. **Earn pass (P2)** only for claims you want on the store page long-term.
 
@@ -222,9 +223,9 @@ A build may keep *It learned you* as the lead when **all** are true:
 2. **Style** — after Act II, stranger can say the maze punished a *habit*, not only a mirror (T6–T8).  
 3. **Daily** — same UTC friend code ⇒ same featured geometry; no FAQ streak fiction (T3, T11).  
 4. **Identity** — boss stamp differs by route and is previewed before clear (T9, T19).  
-5. **Museum** — every public sentence matches archive+replay **or** race is ship-gated with T14 before copy returns.
+5. **Museum** — public sentences match archive + replay + **optional chalk race overlay** (no combat/ladder). Streaks remain fenced until T15.
 
-Until then: sell **path authorship + Daily + Endless + thin Museum archive**; treat style-learning, portrait bosses, and race as **aspirational** in internal vision — not support-facing fact.
+Until then: sell **path authorship + Daily + Endless + Museum archive/race chalk**; treat style-learning depth, portrait bosses, and streaks as **aspirational** in internal vision — not support-facing fact.
 
 ---
 
@@ -250,6 +251,7 @@ Until then: sell **path authorship + Daily + Endless + thin Museum archive**; tr
 | Date | Note |
 |---|---|
 | 2026-08-09 | Initial Systems Truth after habit / daily / identity / museum wires on RC1 tip `5f0d463` |
+| 2026-08-09 | F01 / T14 Ghost of Past Self: optional Museum race chalk overlay (`cursor/g1-ghost-self`); race claims congruent; streaks still claim-only |
 
 ---
 

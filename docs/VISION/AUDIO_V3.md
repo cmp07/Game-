@@ -290,3 +290,4 @@ When vision and bible conflict on *identity*, **AUDIO v3 wins**. When they confl
 | **v1** | Buses, generic placeholders |
 | **v2** | Habit-solidify layers, operator stingers, PA, silence policy, structured events |
 | **v3** | Identity lock — slam as musical event, habit as motif (Ledger Cell), silence as tool; 1.0 cue sheet |
+| **v3.1** | Procedural lift in-repo: generator v3 multi-stage slam phrases, Ledger Cell stems, quieter rests, win/fail stingers, catalog v3 + `fail.reset`; authored asset debt tracked in [`../AUDIT/PRODUCTION_AUDIO_DEBT.md`](../AUDIT/PRODUCTION_AUDIO_DEBT.md) |

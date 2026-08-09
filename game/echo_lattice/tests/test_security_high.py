@@ -66,8 +66,9 @@ SAVE_ALLOWED_KEYS = {
     "identity_stamps",
     "museum",
     "tutorial_flags",
+    "ghost_race_self_id",
 }
-SAVE_RUN_MODES = {"standard", "daily", "endless", "hard"}
+SAVE_RUN_MODES = {"standard", "daily", "endless", "hard", "ghost"}
 
 
 def validate_save_text(text: str) -> dict:
@@ -112,6 +113,7 @@ def validate_save_dict(data: dict) -> dict:
         "daily_chamber_id",
         "daily_source",
         "endless_label",
+        "ghost_race_self_id",
     ):
         if str_field in data and len(str(data.get(str_field, ""))) > SAVE_MAX_STRING_LEN:
             return {"ok": False, "reason": f"{str_field}_too_long"}
@@ -314,6 +316,15 @@ class TestSec02CloudSaveSchema(unittest.TestCase):
         self.assertTrue(ok["ok"], ok)
         hard = validate_save_dict({"version": 2, "run_mode": "hard", "run_queue": [35]})
         self.assertTrue(hard["ok"], hard)
+        ghost = validate_save_dict(
+            {
+                "version": 2,
+                "run_mode": "ghost",
+                "run_queue": [0],
+                "ghost_race_self_id": "self_20260809_0001",
+            }
+        )
+        self.assertTrue(ghost["ok"], ghost)
 
     def test_python_validator_rejects_hostile_shapes(self) -> None:
         cases = [

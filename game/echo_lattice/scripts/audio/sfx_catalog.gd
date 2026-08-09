@@ -1,6 +1,6 @@
 extends RefCounted
 class_name SfxCatalog
-## Path constants for Echo Lattice AUDIO v2 placeholders (and later authored audio).
+## Path constants for Echo Lattice AUDIO v3 procedural lift (and later authored audio).
 
 # Locomotion / UI
 const FOOTSTEP := "res://audio/sfx/footstep_placeholder.ogg"
@@ -34,6 +34,9 @@ const WIN_CHAMBER := "res://audio/sfx/win/chamber_resolve.ogg"
 const WIN_QUEUE_NEXT := "res://audio/sfx/win/queue_next.ogg"
 const WIN_FANFARE := "res://audio/sfx/win/fanfare.ogg"
 const WIN_WING := "res://audio/sfx/win/wing_clear.ogg"
+
+# Fail / restart (institutional, not cartoon)
+const FAIL_RESET := "res://audio/sfx/fail/reset.ogg"
 
 # Adaptive music stems
 const MUSIC_BED := "res://audio/music/bed_placeholder.ogg"

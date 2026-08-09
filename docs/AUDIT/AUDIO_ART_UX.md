@@ -28,7 +28,7 @@
 | P3 Fossilization not radiance | **Pass** | Echo walls use rust materials; slam is crease → lift → slot → bleed |
 | P4 One habit accent (rust) | **Pass** | Over-walk colonization + fossil walls; colorblind patterns exist |
 | P5 Cartographer honesty | **Pass (scaffold)** | Chamber HUD now prints seed header + live punch-card ribbon on page margins |
-| Audio as readability | **Wired, not authored** | `AudioDirector` + catalog + silence policy live; streams are DSP placeholders; content transforms alias to operator stingers |
+| Audio as readability | **Wired; procedural v3 lift** | `AudioDirector` + catalog v3 + silence policy; streams are DSP but multi-stage slam phrases + Ledger Cell stems (not pure beep blobs); still not authored 1.0 — [`PRODUCTION_AUDIO_DEBT.md`](PRODUCTION_AUDIO_DEBT.md) |
 | Menu Field Ledger polish | **Strong scaffold** | Brand-first title card, index-card column, underline selection — fonts still Godot fallback |
 | Trailer / store readiness | **Scaffold only** | Capsules size-correct but stamped placeholders; no MP4s; screenshots 1152×672 |
 
@@ -64,16 +64,17 @@ Shipped under `game/echo_lattice/art/` (generator: `generate_placeholders.py`):
 
 ### 2.2 Audio — inventory
 
-All playable streams under `game/echo_lattice/audio/**` are **procedural** outputs of `tools/audio/generate_echo_lattice_placeholders.py` (many filenames still contain `_placeholder`). Catalog + buses are real:
+All playable streams under `game/echo_lattice/audio/**` remain **procedural** outputs of `tools/audio/generate_echo_lattice_placeholders.py` **v3** (many filenames still contain `_placeholder`). Catalog + buses are real. The v3 lift rewrote identity *within* DSP limits — not a substitute for authored assets ([`PRODUCTION_AUDIO_DEBT.md`](PRODUCTION_AUDIO_DEBT.md)):
 
-| Layer | Files | Bible intent | Ship state |
+| Layer | Files | Bible / AUDIO v3 intent | Ship state |
 |---|---|---|---|
-| L0–L3 music | `music/L0_bed` … `L3_rewrite` (+ `bed_placeholder` alias) | Habit solidify stack | Placeholder stems |
-| Footsteps / warn / generic rewrite | `sfx/*_placeholder.ogg` | Dry click + warn telegraph | Placeholder |
-| Per-operator stingers | `sfx/rewrite/*.ogg` (9 ids) | Unique earprints | Placeholder tones; **mostly not selected at runtime** (see §3) |
-| PA | `sfx/pa/*` | Brutalist transit, no VO | Placeholder chimes |
-| Win open-loop | `win/chamber_resolve`, `queue_next`, `fanfare`, `wing_clear` | Resolve + hunger | Placeholder |
-| UI | `ui/ui_click_placeholder.ogg` | Soft ticks | Placeholder |
+| L0–L3 music | `music/L0_bed` … `L3_rewrite` (+ `bed_placeholder` alias) | Ledger Cell motif transforms | Procedural stems (quieter L0; distinct L1–L3 jobs) |
+| Footsteps / warn / generic rewrite | `sfx/*_placeholder.ogg` | Dry click + chalk scrape warn | Procedural |
+| Per-operator slam phrases | `sfx/rewrite/*.ogg` (9 ids) | ~0.90s multi-stage phrase + unique endings | Procedural phrases; aliases select at runtime |
+| PA | `sfx/pa/*` | Brutalist transit + post hush | Procedural chimes + silence tails |
+| Win open-loop | `win/chamber_resolve`, `queue_next`, `fanfare`, `wing_clear` | Cell 1→5 resolve + hunger cut | Procedural |
+| Fail / restart | `sfx/fail/reset.ogg` | Dry institutional recover | Procedural; wired on restart |
+| UI | `ui/ui_click_placeholder.ogg` | Soft ticks | Procedural |
 
 Compliance already forbids marketing these as “final mix” ([`COMPLIANCE_FINAL.md`](../RELEASE/COMPLIANCE_FINAL.md) §4.3).
 

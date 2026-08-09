@@ -24,6 +24,9 @@
   "locale": {
     "code": "system"
   },
+  "graphics": {
+    "tech_art_v3": false
+  },
   "input_bindings": {
     "move_up": ["W", "Up"],
     "move_down": ["S", "Down"],

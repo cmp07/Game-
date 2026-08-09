@@ -1,7 +1,7 @@
 extends Control
 ##
 ## Field Ledger replay vignette — chalk handwriting draws itself from a Museum self.
-## Atmosphere only: paper plate + dashed path. No race, no score overlay.
+## Atmosphere only: paper plate + dashed path. In-chamber race is a separate overlay.
 ##
 
 var _path: Array = []  ## Vector2i
@@ -72,9 +72,12 @@ func _draw() -> void:
 
 	var pad := 12.0
 	var inner := Rect2(pad, pad + 18.0, maxf(8.0, size.x - pad * 2.0), maxf(8.0, size.y - pad * 2.0 - 22.0))
+	var type_font: Font = ThemeDB.fallback_font
+	if has_node("/root/LedgerType"):
+		type_font = LedgerType.font_or_fallback("mono")
 	if _title != "":
 		draw_string(
-			ThemeDB.fallback_font,
+			type_font,
 			Vector2(pad, 16.0),
 			_title,
 			HORIZONTAL_ALIGNMENT_LEFT, int(size.x - pad * 2.0), 12, Palette.SLATE_TEAL
@@ -82,7 +85,7 @@ func _draw() -> void:
 
 	if _path.is_empty():
 		draw_string(
-			ThemeDB.fallback_font,
+			type_font,
 			inner.position + Vector2(0, 20),
 			tr("museum.vignette_empty"),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Palette.INK_SOFT
