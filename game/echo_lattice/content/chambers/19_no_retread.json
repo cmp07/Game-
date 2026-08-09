@@ -1,0 +1,96 @@
+{
+  "id": "19_no_retread",
+  "index": 19,
+  "slug": "no_retread",
+  "title": "No Retread",
+  "caption": "A braid of corridors. Solidify once, commit.",
+  "act": "pressure",
+  "act_index": 2,
+  "act_title": "Pressure",
+  "teaches": "thicken",
+  "transform": "thicken",
+  "difficulty": 3,
+  "role": "remix",
+  "seed": 13002,
+  "daily_eligible": true,
+  "par_moves": 62,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P....#....#....#......#",
+      "#.###.#.##.#.##.#.####.#",
+      "#.....#....#....#......#",
+      "#.####.###.####.###.##.#",
+      "#..........C...........#",
+      "#.##.###.####.###.####.#",
+      "#......#....#....#.....#",
+      "#.####.#.##.#.##.#.###.#",
+      "#......#....#....#.....#",
+      "#.##.###.####.###.####.#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P....#....#....#......#",
+    "#.###.#.##.#.##.#.####.#",
+    "#.....#....#....#......#",
+    "#.####.###.####.###.##.#",
+    "#..........C...........#",
+    "#.##.###.####.###.####.#",
+    "#......#....#....#.....#",
+    "#.####.#.##.#.##.#.###.#",
+    "#......#....#....#.....#",
+    "#.##.###.####.###.####.#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        5
+      ],
+      "unique": true,
+      "operator": "thicken",
+      "banner": "A braid of corridors. Solidify once, commit."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 3,
+    "forced_op": "thicken",
+    "soft_hard_bias": 0.65,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": true,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "pressure",
+    "thicken",
+    "thicken",
+    "remix"
+  ]
+}

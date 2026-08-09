@@ -1,0 +1,144 @@
+{
+  "format": 2,
+  "game": "echo_lattice",
+  "grid": {
+    "w": 24,
+    "h": 14
+  },
+  "campaign_order": [
+    "00_quiet_span",
+    "01_echo_plate",
+    "02_mirror_birth",
+    "03_break_the_loop",
+    "04_ceiling_first",
+    "05_two_glances",
+    "06_far_side",
+    "07_first_thicken",
+    "08_identity_induction",
+    "09_twin_rail",
+    "10_roof_writing",
+    "11_opposite_room",
+    "12_looking_glass",
+    "13_gallery_walk",
+    "14_horizon_fold",
+    "15_spin_gallery",
+    "16_false_twin",
+    "17_identity_reflection",
+    "18_cement_trail",
+    "19_no_retread",
+    "20_squeeze_mirror",
+    "21_stacked_echo",
+    "22_spin_trap",
+    "23_ceiling_press",
+    "24_compound_fracture",
+    "25_panic_lattice",
+    "26_identity_pressure",
+    "27_conductors_cut",
+    "28_invert_ballet",
+    "29_two_axes",
+    "30_habit_orchestra",
+    "31_last_buffer",
+    "32_signature_stack",
+    "33_nameplate",
+    "34_open_lattice"
+  ],
+  "hard_order": [
+    "35_mirror_birth_hard",
+    "36_looking_glass_hard",
+    "37_cement_trail_hard",
+    "38_nameplate_hard"
+  ],
+  "acts": [
+    {
+      "id": "induction",
+      "title": "Induction",
+      "index": 0,
+      "blurb": "Learn the rewrite without a lecture.",
+      "chambers": [
+        "00_quiet_span",
+        "01_echo_plate",
+        "02_mirror_birth",
+        "03_break_the_loop",
+        "04_ceiling_first",
+        "05_two_glances",
+        "06_far_side",
+        "07_first_thicken",
+        "08_identity_induction"
+      ],
+      "hard_variants": [
+        "35_mirror_birth_hard"
+      ],
+      "bosses": [
+        "08_identity_induction"
+      ]
+    },
+    {
+      "id": "reflection",
+      "title": "Reflection",
+      "index": 1,
+      "blurb": "See the lattice become a portrait of your route.",
+      "chambers": [
+        "09_twin_rail",
+        "10_roof_writing",
+        "11_opposite_room",
+        "12_looking_glass",
+        "13_gallery_walk",
+        "14_horizon_fold",
+        "15_spin_gallery",
+        "16_false_twin",
+        "17_identity_reflection"
+      ],
+      "hard_variants": [
+        "36_looking_glass_hard"
+      ],
+      "bosses": [
+        "17_identity_reflection"
+      ]
+    },
+    {
+      "id": "pressure",
+      "title": "Pressure",
+      "index": 2,
+      "blurb": "Habits harden. Escape by changing how you move.",
+      "chambers": [
+        "18_cement_trail",
+        "19_no_retread",
+        "20_squeeze_mirror",
+        "21_stacked_echo",
+        "22_spin_trap",
+        "23_ceiling_press",
+        "24_compound_fracture",
+        "25_panic_lattice",
+        "26_identity_pressure"
+      ],
+      "hard_variants": [
+        "37_cement_trail_hard"
+      ],
+      "bosses": [
+        "26_identity_pressure"
+      ]
+    },
+    {
+      "id": "mastery",
+      "title": "Mastery",
+      "index": 3,
+      "blurb": "Compose transforms. Sign your identity.",
+      "chambers": [
+        "27_conductors_cut",
+        "28_invert_ballet",
+        "29_two_axes",
+        "30_habit_orchestra",
+        "31_last_buffer",
+        "32_signature_stack",
+        "33_nameplate",
+        "34_open_lattice"
+      ],
+      "hard_variants": [
+        "38_nameplate_hard"
+      ],
+      "bosses": [
+        "33_nameplate"
+      ]
+    }
+  ]
+}

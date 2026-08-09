@@ -1,0 +1,118 @@
+{
+  "id": "21_stacked_echo",
+  "index": 21,
+  "slug": "stacked_echo",
+  "title": "Stacked Echo",
+  "caption": "Three checkpoints. Each rewrite tightens the net.",
+  "act": "pressure",
+  "act_index": 2,
+  "act_title": "Pressure",
+  "teaches": "mirror_v",
+  "transform": "mirror_v",
+  "difficulty": 4,
+  "role": "remix",
+  "seed": 13004,
+  "daily_eligible": true,
+  "par_moves": 85,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P.........#...........#",
+      "#.####.###.#.###.#######",
+      "#....C.....#...........#",
+      "#######.###.#.###.####.#",
+      "#..........#...........#",
+      "#.####.###.C.###.#######",
+      "#..........#...........#",
+      "#######.###.#.###.####.#",
+      "#..........#....C......#",
+      "#.####.###.#.###.#######",
+      "#..........#...........#",
+      "#..........#..........G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P.........#...........#",
+    "#.####.###.#.###.#######",
+    "#....C.....#...........#",
+    "#######.###.#.###.####.#",
+    "#..........#...........#",
+    "#.####.###.C.###.#######",
+    "#..........#...........#",
+    "#######.###.#.###.####.#",
+    "#..........#....C......#",
+    "#.####.###.#.###.#######",
+    "#..........#...........#",
+    "#..........#..........G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        5,
+        3
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": "Three checkpoints. Each rewrite tightens the net."
+    },
+    {
+      "id": "M2",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        6
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": ""
+    },
+    {
+      "id": "M3",
+      "kind": "CHECKPOINT",
+      "cell": [
+        16,
+        9
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": ""
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 3,
+    "forced_op": "mirror_v",
+    "soft_hard_bias": 0.65,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "pressure",
+    "mirror_v",
+    "mirror_v",
+    "remix"
+  ]
+}

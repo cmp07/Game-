@@ -1,0 +1,98 @@
+{
+  "id": "35_mirror_birth_hard",
+  "index": 35,
+  "slug": "mirror_birth_hard",
+  "title": "Mirror Birth+",
+  "caption": "Hard. Less floor. Same lesson, less forgiveness.",
+  "act": "induction",
+  "act_index": 0,
+  "act_title": "Induction",
+  "teaches": "mirror_v",
+  "transform": "mirror_v",
+  "difficulty": 3,
+  "role": "hard",
+  "seed": 21003,
+  "daily_eligible": true,
+  "hard_variant_of": "mirror_birth",
+  "par_moves": 50,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P.....................#",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#..........C...........#",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P.....................#",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#..........C...........#",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        5
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": "Hard. Less floor. Same lesson, less forgiveness."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 1,
+    "forced_op": "mirror_v",
+    "soft_hard_bias": 0.25,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0,
+      1
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "induction",
+    "mirror_v",
+    "mirror_v",
+    "hard"
+  ]
+}

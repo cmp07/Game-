@@ -1,0 +1,109 @@
+{
+  "id": "12_looking_glass",
+  "index": 12,
+  "slug": "looking_glass",
+  "title": "Looking Glass",
+  "caption": "Vertical and horizontal mirrors fire together.",
+  "act": "reflection",
+  "act_index": 1,
+  "act_title": "Reflection",
+  "teaches": "mirror_v_then_h",
+  "transform": "mirror_v_then_h",
+  "difficulty": 3,
+  "role": "lesson",
+  "seed": 12004,
+  "daily_eligible": true,
+  "par_moves": 58,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P.......C.............#",
+      "#.####.############.##.#",
+      "#......................#",
+      "#.####.####.####.####..#",
+      "#......................#",
+      "#.####.####.####.####..#",
+      "#..........C...........#",
+      "#.####.####.####.####..#",
+      "#......................#",
+      "#.####.####.####.####..#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P.......C.............#",
+    "#.####.############.##.#",
+    "#......................#",
+    "#.####.####.####.####..#",
+    "#......................#",
+    "#.####.####.####.####..#",
+    "#..........C...........#",
+    "#.####.####.####.####..#",
+    "#......................#",
+    "#.####.####.####.####..#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        9,
+        1
+      ],
+      "unique": true,
+      "operator": "mirror_v_then_h",
+      "banner": "Vertical and horizontal mirrors fire together."
+    },
+    {
+      "id": "M2",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        7
+      ],
+      "unique": true,
+      "operator": "mirror_v_then_h",
+      "banner": ""
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 2,
+    "forced_op": "mirror_v_then_h",
+    "soft_hard_bias": 0.45,
+    "require_shorter_or_equal": false
+  },
+  "hints": [
+    "One checkpoint prints two reflections at once."
+  ],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "reflection",
+    "mirror_v_then_h",
+    "mirror_v_then_h",
+    "lesson"
+  ]
+}

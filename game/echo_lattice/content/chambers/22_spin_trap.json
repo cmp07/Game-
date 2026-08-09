@@ -1,0 +1,96 @@
+{
+  "id": "22_spin_trap",
+  "index": 22,
+  "slug": "spin_trap",
+  "title": "Spin Trap",
+  "caption": "Rotation under load. Opposite corner seals exits.",
+  "act": "pressure",
+  "act_index": 2,
+  "act_title": "Pressure",
+  "teaches": "rotate_180",
+  "transform": "rotate_180",
+  "difficulty": 4,
+  "role": "remix",
+  "seed": 13005,
+  "daily_eligible": true,
+  "par_moves": 72,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P....................##",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#..........C...........#",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#......................#",
+      "#.####################.#",
+      "#......................#",
+      "##....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P....................##",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#..........C...........#",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#......................#",
+    "#.####################.#",
+    "#......................#",
+    "##....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        11,
+        5
+      ],
+      "unique": true,
+      "operator": "rotate_180",
+      "banner": "Rotation under load. Opposite corner seals exits."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 3,
+    "forced_op": "rotate_180",
+    "soft_hard_bias": 0.65,
+    "require_shorter_or_equal": false
+  },
+  "hints": [],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "pressure",
+    "rotate_180",
+    "rotate_180",
+    "remix"
+  ]
+}

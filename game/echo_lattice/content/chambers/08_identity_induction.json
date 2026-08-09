@@ -1,0 +1,111 @@
+{
+  "id": "08_identity_induction",
+  "index": 8,
+  "slug": "identity_induction",
+  "title": "Who Walked",
+  "caption": "Boss. Leave a signature the lattice can read.",
+  "act": "induction",
+  "act_index": 0,
+  "act_title": "Induction",
+  "teaches": "identity",
+  "transform": "mirror_v",
+  "difficulty": 3,
+  "role": "boss",
+  "identity": "induction_signature",
+  "seed": 11009,
+  "daily_eligible": true,
+  "par_moves": 70,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P..........#..........#",
+      "#.####.####.#.####.#### ",
+      "#...........#..........#",
+      "#.####.####.#.####.#### ",
+      "#...........#..........#",
+      "#.####.####.C.####.#### ",
+      "#...........#..........#",
+      "#.####.####.#.####.#### ",
+      "#...........#..........#",
+      "#.####.####.C.####.#### ",
+      "#...........#..........#",
+      "#...........#.........G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P..........#..........#",
+    "#.####.####.#.####.#### ",
+    "#...........#..........#",
+    "#.####.####.#.####.#### ",
+    "#...........#..........#",
+    "#.####.####.C.####.#### ",
+    "#...........#..........#",
+    "#.####.####.#.####.#### ",
+    "#...........#..........#",
+    "#.####.####.C.####.#### ",
+    "#...........#..........#",
+    "#...........#.........G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        12,
+        6
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": "Boss. Leave a signature the lattice can read."
+    },
+    {
+      "id": "M2",
+      "kind": "CHECKPOINT",
+      "cell": [
+        12,
+        10
+      ],
+      "unique": true,
+      "operator": "mirror_v",
+      "banner": ""
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 1,
+    "forced_op": "mirror_v",
+    "soft_hard_bias": 0.25,
+    "require_shorter_or_equal": false
+  },
+  "hints": [
+    "Two mirrors. Make the second path a clean answer to the first.",
+    "Your mirrored route should look intentional \u2014 that is the identity."
+  ],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -8,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "induction",
+    "identity",
+    "mirror_v",
+    "boss"
+  ]
+}

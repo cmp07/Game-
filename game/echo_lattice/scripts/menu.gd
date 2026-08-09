@@ -21,7 +21,7 @@ func _ready() -> void:
 	if has:
 		subtitle.text = "Chamber %d of %d" % [GameState.current_chamber + 1, ChamberBook.chamber_count()]
 	else:
-		subtitle.text = "A vertical slice — %d chambers." % ChamberBook.chamber_count()
+		subtitle.text = "Four Acts — %d chambers." % ChamberBook.chamber_count()
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
