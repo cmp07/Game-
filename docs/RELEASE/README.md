@@ -21,7 +21,7 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | Doc | Purpose |
 |---|---|
 | [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) | Coming Soon / Next Fest store package |
-| [`capsules/`](capsules/) | Capsule art placeholders |
+| [`capsules/`](capsules/) | Capsule art Gate A finals (Field Ledger) |
 | [`STEAMWORKS.md`](STEAMWORKS.md) | Offline stub + achievements + depot notes |
 | [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Achievement catalog |
 | [`STEAM_DECK.md`](STEAM_DECK.md) | Deck Verified prep |

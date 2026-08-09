@@ -45,7 +45,7 @@ All requested `cursor/release-*` packs present at integration time are merged ab
 | Demo clamp, focus/pad, locale refresh + tests | [#88](https://github.com/cmp07/Game-/pull/88) `audit-adversarial` | Yes |
 | Full audit corpus under [`docs/AUDIT/`](../AUDIT/) | [#75](https://github.com/cmp07/Game-/pull/75)–[#81](https://github.com/cmp07/Game-/pull/81), [#83](https://github.com/cmp07/Game-/pull/83)–[#86](https://github.com/cmp07/Game-/pull/86), [#89](https://github.com/cmp07/Game-/pull/89) | Yes |
 
-Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **54/100**; Gate A still blocked on AppID / capsules / trailer).
+Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **68/100**; Gate A capsules finals landed — still blocked on AppID / trailer / Partner paste).
 
 ### Security High code landed (2026-08-09)
 
