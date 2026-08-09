@@ -192,15 +192,15 @@ Verified pixel sizes (IHDR) against Steam slots in `docs/RELEASE/capsules/`:
 
 | Done | Item | Notes |
 |:---:|---|---|
-| [ ] | Committed workflow under `.github/workflows/` | **Absent** — no YAML CI in repo |
-| [ ] | Automated Win + Linux artifacts on tag/release | Sketch only |
+| [x] | Committed workflow under `.github/workflows/` | `.github/workflows/ci.yml` (validate + export) |
+| [x] | Automated Win + Linux artifacts on push/PR | Soft-gated container exports + artifact upload |
 | [ ] | macOS notarization job | Documented; not wired |
 | [ ] | SteamCMD / itch butler publish job | Manual / secrets not configured |
-| [ ] | `export_windows.sh` (referenced by steam README) | Not present |
+| [x] | `export_windows.sh` | `tools/release/export_windows.sh` + `BUILD_WINDOWS.md` |
 | [ ] | Exported binary self-test in CI | Optional note in sketch; unimplemented |
-| [ ] | Demo export artifact channel | Preset exists; no CI job |
+| [x] | Demo export artifact channel | `export-windows-demo` + stamp/checksums |
 
-**Gap summary:** Platform matrix and commands are written; automation that Partner launch ops depends on is not in the tree.
+**Gap summary:** Windows (+ Demo) export path is reproducible locally and in CI (digest-pinned image, version stamp, SHA-256 notes). Partner publish (SteamCMD/AppIDs) and mac notarization remain open.
 
 ---
 

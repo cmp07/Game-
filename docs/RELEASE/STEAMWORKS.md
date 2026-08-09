@@ -166,9 +166,9 @@ steam/echo_lattice/
 
 ### Export → stage → upload (full game)
 
-1. Export Windows + Linux (presets `Windows Desktop` / `Linux/X11`, or CI artifacts from [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
+1. Export Windows via [`tools/release/export_windows.sh`](../../tools/release/export_windows.sh) / [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) (or CI artifacts from [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)); Linux via preset `Linux/X11`.
 2. Copy into `steam/echo_lattice/depot_build/windows/` and `depot_build/linux/`.
-3. **Strip** `steam_appid.txt`, `*.pdb`, `.godot/`, source trees, and any CI secrets.
+3. **Strip** `steam_appid.txt`, `*.pdb`, `.godot/`, source trees, and any CI secrets. Verify `SHA256SUMS.txt` from the artifact.
 4. Replace `YOUR_APP_ID` / `YOUR_DEPOT_ID` / `YOUR_DEPOT_ID_LINUX` in the VDF files.
 5. SteamCMD:
    ```bash

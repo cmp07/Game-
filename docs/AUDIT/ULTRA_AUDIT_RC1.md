@@ -184,7 +184,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - [ ] Final **capsules** + ≥5 non-placeholder screenshots (≥1080p preferred)
 - [ ] **Trailer** (30s) encoded; muted-safe first 5s; AI disclosure **No** submitted
 - [ ] Content Survey draft pasted into Partner; privacy URL live
-- [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **CI workflow landed; confirm green run**
+- [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **`docs/RELEASE/BUILD_WINDOWS.md` + `tools/release/export_windows.sh` + digest-pinned CI stamps/checksums; confirm green export run**
 - [x] Merge **audit P0 save/Continue/demo** fixes into RC1 (**done 2026-08-09**)
 - [ ] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md`); no horror/AI/loot lead
 

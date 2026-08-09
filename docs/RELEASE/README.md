@@ -7,6 +7,7 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | Doc | Purpose |
 |---|---|
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-platform release strategy + macOS/Linux stubs |
+| [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) | Reproducible Windows (+ Demo) export, stamps, checksums |
 | [`CI_BUILDS.md`](CI_BUILDS.md) | CI / export build notes |
 
 ## Compliance

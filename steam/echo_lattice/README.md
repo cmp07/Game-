@@ -31,16 +31,16 @@ steam/echo_lattice/
 
 ## Full game (Windows + Linux)
 
-1. Export Godot presets **Windows Desktop** and **Linux/X11** (or CI artifacts from `.github/workflows/ci.yml`).
+1. Export Windows via [`tools/release/export_windows.sh`](../../tools/release/export_windows.sh) (or CI artifacts from `.github/workflows/ci.yml`). Linux: preset **Linux/X11**. Guide: [`docs/RELEASE/BUILD_WINDOWS.md`](../../docs/RELEASE/BUILD_WINDOWS.md).
 2. Copy into `depot_build/windows/` and `depot_build/linux/`.
-3. Strip `steam_appid.txt` for retail (also listed in each depot `FileExclusion`).
+3. Strip `steam_appid.txt` for retail (also listed in each depot `FileExclusion`). Verify `SHA256SUMS.txt` before upload.
 4. Replace `YOUR_APP_ID` / `YOUR_DEPOT_ID` / `YOUR_DEPOT_ID_LINUX` in the VDF files.
 5. SteamCMD: `run_app_build` with `app_build.vdf`.
 6. Partner launch options: Windows → `EchoLattice.exe`; SteamOS/Deck → `EchoLattice.x86_64`.
 
 ## Demo stub
 
-1. Export preset **Windows Demo** → `builds/windows_demo/EchoLatticeDemo.exe`.
+1. `./tools/release/export_windows.sh --demo` (or CI artifact `echo-lattice-windows-demo-x86_64`) → `builds/windows_demo/EchoLatticeDemo.exe`.
 2. Stage into `depot_build/windows_demo/`.
 3. Replace `YOUR_DEMO_APP_ID` / `YOUR_DEMO_DEPOT_ID` in `app_build_demo.vdf` + `depot_windows_demo.vdf`.
 4. SteamCMD `run_app_build` with `app_build_demo.vdf`.
@@ -48,4 +48,4 @@ steam/echo_lattice/
 
 Full Steamworks readiness guide: [`docs/RELEASE/STEAMWORKS.md`](../../docs/RELEASE/STEAMWORKS.md).  
 Achievement API names: [`docs/RELEASE/ACHIEVEMENTS.json`](../../docs/RELEASE/ACHIEVEMENTS.json).  
-CI sketch (committed): [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+CI workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
