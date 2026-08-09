@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### 20+ — Follow-on locks
+
+| Doc | Topic |
+|---|---|
+| [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) | Combination literacy + hint ecology (no spoiler wiki) |
+
 ---
 
 ## Sibling PR sources (design wave)
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-discovery` | Discovery UX (`22_DISCOVERY_UX`) |
 
 ---
 

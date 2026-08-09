@@ -209,7 +209,7 @@ Merged into `cursor/weaver-master` from remotes (2026-08-09 wave):
 | `cursor/weaver-biz-tech` | #170 | `12`–`15` |
 | `cursor/weaver-mvp-pack` | #167 | `16`–`19` |
 
-**Coverage:** `PIVOT` + `01`–`19` + this MASTER + [`ROADMAP.md`](ROADMAP.md) + index README — **complete set present.**
+**Coverage:** `PIVOT` + `01`–`19` + this MASTER + [`ROADMAP.md`](ROADMAP.md) + index README — **wave-1 set present.** Follow-on: [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) (discovery / hint ecology).
 
 ---
 
@@ -223,6 +223,7 @@ Merged into `cursor/weaver-master` from remotes (2026-08-09 wave):
 | No playable `game/weaver/` yet | **H** | Docs-only wave — schedule throwaway prototype before art ramp ([`18_RISKS.md`](18_RISKS.md) P2) |
 | Sim fence unset (2D vs constrained 3D) | **H** | Pick in week-1 of prototype ([`17_MVP.md`](17_MVP.md) §5) |
 | Legal name check | **M** | Human before Partner ([`19_NAMES.md`](19_NAMES.md)) |
+| Combination / hint pedagogy beyond first-thirty | **M** | Mitigated by [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) — teach combos without spoiler wiki |
 | GAME_PLAN.md still lists older Game-1 research lanes | **L** | Update separately if Weaver becomes catalog Game 1 |
 
 ---
