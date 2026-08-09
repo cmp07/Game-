@@ -69,21 +69,23 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
             msg=f"WING appears too often on title shell (hits={wing_hits})",
         )
 
-    def test_single_specimen_no_dual_seal_captions(self) -> None:
+    def test_single_film_plate_no_dual_seal_captions(self) -> None:
         body = _draw_body()
-        # Prefer one habit specimen with integrated seal — no dual captions.
-        self.assertIn("ArtKit.draw_habit_silhouette", body)
-        self.assertIn("ArtKit.draw_seal_stamp", body)
+        # One gameplay film plate under the brand — no dual seal/maze captions.
+        self.assertIn("ArtKit.draw_ledger_film_plate", body)
+        self.assertNotIn("ArtKit.draw_habit_silhouette", body)
+        self.assertNotIn("ArtKit.draw_seal_stamp", body)
         self.assertNotIn('tr("menu.seal_caption")', body)
         self.assertNotIn('tr("menu.habit_silhouette")', body)
         self.assertIn("SPECIMEN_GAP", MENU)
-        self.assertIn("SEAL_MAZE_GAP", MENU)
+        self.assertIn("PREVIEW_VERSO_FRAC", MENU)
         gap = re.search(r"const SPECIMEN_GAP: float = ([0-9.]+)", MENU)
         self.assertIsNotNone(gap)
         self.assertLessEqual(float(gap.group(1)), 16.0)
-        maze_gap = re.search(r"const SEAL_MAZE_GAP: float = ([0-9.]+)", MENU)
-        self.assertIsNotNone(maze_gap)
-        self.assertLessEqual(float(maze_gap.group(1)), 16.0)
+        preview = re.search(r"const PREVIEW_VERSO_FRAC: float = ([0-9.]+)", MENU)
+        self.assertIsNotNone(preview)
+        self.assertGreaterEqual(float(preview.group(1)), 0.55)
+        self.assertLessEqual(float(preview.group(1)), 0.70)
 
     def test_quiet_meta_is_single_date_line(self) -> None:
         refresh = _refresh_body()

@@ -2,10 +2,10 @@ extends Control
 ##
 ## Main menu — dense Field Ledger craft (boutique title shell).
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + letterpress seal + dense maze)
+## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + gameplay film plate)
 ## | spine | recto ~42% (Field Index, compact action block). Explicit anchors — never hope.
 ## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
-## ONE rectangular letterpress seal ABOVE a dense habit maze — NO circles / dual seals.
+## Left visual anchor = diegetic gameplay preview (not a static empty maze).
 ##
 
 signal start_new_pressed()
@@ -20,6 +20,7 @@ signal wishlist_pressed()
 
 const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
 const COLOPHON_SCENE: PackedScene = preload("res://scenes/ui/credits_colophon.tscn")
+const PREVIEW_SCRIPT: Script = preload("res://scripts/ui/menu_gameplay_preview.gd")
 
 @onready var continue_button: Button = %ContinueButton
 @onready var start_button: Button = %StartButton
@@ -34,8 +35,6 @@ const COLOPHON_SCENE: PackedScene = preload("res://scenes/ui/credits_colophon.ts
 @onready var meta_label: Label = %MetaLabel
 
 var _t: float = 0.0
-var _demo_path: Array = []  ## Vector2i points for ambient chalk walk
-var _demo_progress: float = 0.0
 var _settings_overlay: Control = null
 var _colophon_overlay: Control = null
 var _wishlist_button: Button = null
@@ -43,11 +42,11 @@ var _card_slot_t: float = 0.0
 var _focus_underline_t: float = 1.0
 var _last_focused: Control = null
 var _handoff_from_boot: bool = false
+var _gameplay_preview: Control = null
 
-## Ambient chalk path does not need a full 60 Hz canvas rebuild.
+## Film-plate chrome + focus underline do not need a full 60 Hz canvas rebuild.
 const AMBIENT_REDRAW_HZ: float = 15.0
 var _redraw_accum: float = 0.0
-var _last_demo_step: int = -1
 
 ## Paper-slot settle (UI_DIEGETIC_V3 §7) — card Y+6 → 0 in ≤180 ms.
 const CARD_SLOT_SEC: float = 0.16
@@ -96,7 +95,7 @@ func _ready() -> void:
 		_wishlist_button.queue_free()
 		_wishlist_button = null
 
-	_build_demo_path()
+	_ensure_gameplay_preview()
 	# Cold boot / screenshot / selftest: Field Index must be fully inked in frame 0.
 	# Only boot→menu handoff animates the paper-slot settle (mid-slot → rest).
 	if _handoff_from_boot:
@@ -105,7 +104,9 @@ func _ready() -> void:
 		_card_slot_t = CARD_SLOT_SEC
 	set_process(true)
 	_sync_field_index_layout()
+	_sync_preview_layout()
 	call_deferred("_sync_field_index_layout")
+	call_deferred("_sync_preview_layout")
 	_sync_tech_art_grain()
 	var store := get_node_or_null("/root/SettingsStore")
 	if store != null and store.has_signal("settings_changed"):
@@ -132,7 +133,18 @@ func begin_boot_handoff() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		_sync_field_index_layout()
+		_sync_preview_layout()
 		queue_redraw()
+	elif what == NOTIFICATION_VISIBILITY_CHANGED:
+		if _gameplay_preview != null:
+			if is_visible_in_tree():
+				if _gameplay_preview.has_method("resume_preview"):
+					_gameplay_preview.resume_preview()
+			elif _gameplay_preview.has_method("pause_preview"):
+				_gameplay_preview.pause_preview()
+	elif what == NOTIFICATION_EXIT_TREE:
+		if _gameplay_preview != null and _gameplay_preview.has_method("pause_preview"):
+			_gameplay_preview.pause_preview()
 
 
 ## HARD COMPOSITION SPEC — fail CI if these anchors drift (see test_menu_composition_density).
@@ -147,12 +159,12 @@ const PAGE_MARGIN_Y: float = 14.0
 const MAX_EMPTY_FRAC: float = 0.28
 ## Left-leaf (verso) pixel empty mass must stay under this (PNG CI gate).
 const MAX_VERSO_EMPTY_FRAC: float = 0.22
-## Blurb → seal plate air — dense ledger packing (never a mid-leaf cream band).
+## Blurb → film plate air — dense ledger packing (never a mid-leaf cream band).
 const SPECIMEN_GAP: float = 12.0
-## Seal plate → habit maze air — hard ≤16px.
-const SEAL_MAZE_GAP: float = 12.0
-## Wide letterpress seal plate height on the verso (not a tiny corner die).
-const SEAL_PLATE_H: float = 78.0
+## Gameplay film plate target height as a fraction of verso leaf height.
+const PREVIEW_VERSO_FRAC: float = 0.64
+const PREVIEW_VERSO_FRAC_MIN: float = 0.55
+const PREVIEW_VERSO_FRAC_MAX: float = 0.70
 ## Field Index action pitch @ 1080p — compact block, not stretched leading.
 const INDEX_ROW_H: float = 38.0
 const INDEX_PRIMARY_H: float = 42.0
@@ -240,7 +252,7 @@ func field_index_content_rect(card: Rect2) -> Rect2:
 
 ## Explicit layout rects for draw + CI density (test_menu_composition_density).
 ## Returns ink/ui masses so measured empty region can stay under MAX_EMPTY_FRAC.
-## Verso stack (top→bottom): micro header · brand · tag · blurb · seal plate · dense maze.
+## Verso stack (top→bottom): micro header · brand · tag · blurb · gameplay film plate.
 func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	if vp.x < 2.0:
 		vp = size
@@ -270,31 +282,25 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	)
 	var plate_x: float = brand_x - 4.0
 	var plate_w: float = maxf(200.0, left.end.x - plate_x - 20.0)
-	# ONE wide rectangular letterpress seal at the top of the specimen stack.
-	var seal_top: float = brand_block.end.y + SPECIMEN_GAP
-	var seal_h: float = SEAL_PLATE_H if left.size.y >= 700.0 else 84.0
-	var seal_plate := Rect2(plate_x, seal_top, plate_w, seal_h)
-	# Dense habit maze immediately under the seal — fills remaining verso height.
-	var sil_top: float = seal_plate.end.y + SEAL_MAZE_GAP
-	var sil := Rect2(
-		plate_x,
-		sil_top,
-		plate_w,
-		maxf(200.0, left.end.y - sil_top - 14.0)
-	)
+	# Prominent gameplay film plate under the brand — fills remaining verso (≥55%).
+	# Target band is ~55–70% of leaf height; remainder below brand is absorbed so
+	# the leaf never keeps a cream foot band under the media window.
+	var preview_top: float = brand_block.end.y + SPECIMEN_GAP
+	var avail_h: float = maxf(200.0, left.end.y - preview_top - 14.0)
+	var preview_h: float = avail_h
+	var preview_plate := Rect2(plate_x, preview_top, plate_w, preview_h)
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
 	var occupied: float = (
 		brand_block.get_area()
-		+ seal_plate.get_area()
-		+ sil.get_area()
+		+ preview_plate.get_area()
 		+ card.get_area()
 		+ float(leaves["spine"].get_area()) * 0.35
 	)
 	var page_a: float = maxf(1.0, outer.get_area())
 	var empty_frac: float = clampf(1.0 - occupied / page_a, 0.0, 1.0)
-	# Layout verso empty — brand stack is sparse type; seal+maze must dominate the leaf.
+	# Layout verso empty — brand stack is sparse type; film plate must dominate the leaf.
 	var verso_a: float = maxf(1.0, left.get_area())
-	var verso_occupied: float = brand_block.get_area() + seal_plate.get_area() + sil.get_area()
+	var verso_occupied: float = brand_block.get_area() + preview_plate.get_area()
 	var verso_empty_frac: float = clampf(1.0 - verso_occupied / verso_a, 0.0, 1.0)
 	return {
 		"outer": outer,
@@ -302,8 +308,7 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		"right": right,
 		"spine": leaves["spine"],
 		"brand_block": brand_block,
-		"seal_plate": seal_plate,
-		"silhouette": sil,
+		"preview_plate": preview_plate,
 		"field_index": card,
 		"brand_px": brand_px,
 		"brand_x": brand_x,
@@ -313,6 +318,7 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		"verso_frac": left.size.x / maxf(1.0, outer.size.x),
 		"recto_frac": right.size.x / maxf(1.0, outer.size.x),
 		"index_width_frac": card.size.x / maxf(1.0, vp.x),
+		"preview_verso_frac": preview_plate.size.y / maxf(1.0, left.size.y),
 	}
 
 
@@ -603,12 +609,41 @@ func _sync_tech_art_grain() -> void:
 	if TechArt.v3_enabled():
 		# Menu seed offset differs from chamber page (TECH_ART_V3 §2.3).
 		PaperGrainLayer.attach_to(self, 19, 0.06, Vector2(19, 7), true)
-		# Keep chrome (CardColumn) above the grain pass.
+		# Keep preview under Field Index chrome; grain stays a backdrop pass.
+		if _gameplay_preview != null and is_instance_valid(_gameplay_preview):
+			move_child(_gameplay_preview, 0)
 		var chrome: Node = get_node_or_null("CardColumn")
 		if chrome != null:
 			move_child(chrome, get_child_count() - 1)
 	else:
 		PaperGrainLayer.set_visible_for(self, false)
+
+
+func _ensure_gameplay_preview() -> void:
+	if _gameplay_preview != null and is_instance_valid(_gameplay_preview):
+		return
+	_gameplay_preview = Control.new()
+	_gameplay_preview.set_script(PREVIEW_SCRIPT)
+	_gameplay_preview.name = "GameplayPreview"
+	_gameplay_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_gameplay_preview.focus_mode = Control.FOCUS_NONE
+	add_child(_gameplay_preview)
+	move_child(_gameplay_preview, 0)
+	_sync_preview_layout()
+
+
+func _sync_preview_layout() -> void:
+	if _gameplay_preview == null or not is_instance_valid(_gameplay_preview):
+		return
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	var layout: Dictionary = composition_layout(vp)
+	var plate: Rect2 = layout["preview_plate"]
+	var media: Rect2 = ArtKit.film_plate_media_rect(plate)
+	_gameplay_preview.position = media.position
+	_gameplay_preview.size = media.size
+	_gameplay_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _localize_chrome() -> void:
@@ -697,23 +732,31 @@ func _refresh_hard_button() -> void:
 
 func _open_settings() -> void:
 	emit_signal("settings_pressed")
+	if _gameplay_preview != null and _gameplay_preview.has_method("pause_preview"):
+		_gameplay_preview.pause_preview()
 	if _settings_overlay == null:
 		_settings_overlay = SETTINGS_SCENE.instantiate()
 		add_child(_settings_overlay)
 		_settings_overlay.closed.connect(func():
 			if start_button:
 				start_button.grab_focus()
+			if _gameplay_preview != null and _gameplay_preview.has_method("resume_preview"):
+				_gameplay_preview.resume_preview()
 		)
 	_settings_overlay.open_menu()
 
 
 func _open_colophon() -> void:
+	if _gameplay_preview != null and _gameplay_preview.has_method("pause_preview"):
+		_gameplay_preview.pause_preview()
 	if _colophon_overlay == null:
 		_colophon_overlay = COLOPHON_SCENE.instantiate()
 		add_child(_colophon_overlay)
 		_colophon_overlay.closed.connect(func():
 			if start_button:
 				start_button.grab_focus()
+			if _gameplay_preview != null and _gameplay_preview.has_method("resume_preview"):
+				_gameplay_preview.resume_preview()
 			queue_redraw()
 		)
 	if _colophon_overlay.has_method("open_colophon"):
@@ -777,28 +820,14 @@ func _ensure_gamepad_focus_chain() -> void:
 	LedgerChrome.wire_vertical_focus(focus_order)
 
 
-func _build_demo_path() -> void:
-	## Ambient chalk path that writes itself behind the seal — the game's verb as wallpaper.
-	_demo_path = [
-		Vector2i(2, 10), Vector2i(3, 10), Vector2i(4, 10), Vector2i(5, 10),
-		Vector2i(5, 9), Vector2i(5, 8), Vector2i(6, 8), Vector2i(7, 8),
-		Vector2i(8, 8), Vector2i(8, 7), Vector2i(8, 6), Vector2i(9, 6),
-		Vector2i(10, 6), Vector2i(11, 6), Vector2i(12, 6), Vector2i(12, 7),
-		Vector2i(12, 8), Vector2i(13, 8), Vector2i(14, 8), Vector2i(15, 8),
-		Vector2i(16, 8), Vector2i(17, 8), Vector2i(18, 8), Vector2i(19, 8),
-		Vector2i(20, 8), Vector2i(21, 8), Vector2i(22, 8), Vector2i(22, 9),
-		Vector2i(22, 10), Vector2i(23, 10), Vector2i(24, 10), Vector2i(25, 10),
-	]
-	# Seed a late-path so chalk + fossil stamps fill the brand blotter on open.
-	_demo_progress = 24.0
-
-
 func _process(delta: float) -> void:
 	_t += delta
 	var reduce: bool = _reduce_motion()
 	if reduce:
 		_card_slot_t = CARD_SLOT_SEC
 		_focus_underline_t = FOCUS_UNDERLINE_SEC
+		if _gameplay_preview != null and _gameplay_preview.has_method("pause_preview"):
+			_gameplay_preview.pause_preview()
 	else:
 		if _card_slot_t < CARD_SLOT_SEC:
 			_card_slot_t = minf(_card_slot_t + delta, CARD_SLOT_SEC)
@@ -812,16 +841,12 @@ func _process(delta: float) -> void:
 		if not reduce:
 			_focus_underline_t = 0.0
 		# Audio selection tick owned by LedgerChrome.wire_index_feel / AudioDirector.
-	_demo_progress = fmod(_demo_progress + delta * 3.2, float(_demo_path.size()) + 8.0)
-	var step: int = int(_demo_progress)
 	_redraw_accum += delta
 	if (
-		step != _last_demo_step
-		or _redraw_accum >= 1.0 / AMBIENT_REDRAW_HZ
+		_redraw_accum >= 1.0 / AMBIENT_REDRAW_HZ
 		or _card_slot_t < CARD_SLOT_SEC
 		or _focus_underline_t < FOCUS_UNDERLINE_SEC
 	):
-		_last_demo_step = step
 		_redraw_accum = 0.0
 		queue_redraw()
 
@@ -865,8 +890,7 @@ func _draw() -> void:
 	var brand_x: float = float(layout["brand_x"])
 	var brand_y: float = float(layout["brand_y"])
 	var brand_block: Rect2 = layout["brand_block"]
-	var seal_plate: Rect2 = layout["seal_plate"]
-	var sil: Rect2 = layout["silhouette"]
+	var preview_plate: Rect2 = layout["preview_plate"]
 
 	# ONE quiet micro header line — FIELD LEDGER · WING I · seed. Never competes with brand.
 	var micro_line: String = "%s  ·  %s" % [tr("menu.folio_mark"), tr("menu.seed_strip")]
@@ -930,27 +954,15 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Specimen stack: wide rectangular letterpress seal, then dense habit maze under it.
-	# Never a circle die, never a watermark caption, never a second competing seal.
-	if seal_plate.size.y >= 48.0 and seal_plate.size.x >= 80.0:
-		ArtKit.draw_seal_stamp(self, seal_plate.get_center(), seal_plate.size.y * 0.5, {
-			"rot_deg": -1.2,
-			"color": Palette.SLATE_TEAL,
-			"alpha": 0.94,
-			"seed": 42,
-			"hero": true,
-			"maze": true,
-			"rust_accent": true,
-			"plate_w": seal_plate.size.x,
-			"plate_h": seal_plate.size.y,
-			"caption": "",
-		})
-	if sil.size.y >= 120.0:
-		ArtKit.draw_habit_silhouette(self, sil, {
-			"seed": 61,
-			"progress": _demo_progress,
-			"cell": 12.0 if left.size.y >= 700.0 else 10.0,
-			"dense": true,
+	# Gameplay film plate — diegetic media window; SubViewport / loop sits in the well.
+	# Not a static empty maze, not YouTube chrome, no chamber HUD overlay.
+	if preview_plate.size.y >= 120.0 and preview_plate.size.x >= 80.0:
+		ArtKit.draw_ledger_film_plate(self, preview_plate, {
+			"seed": 71,
+			"alpha": 1.0,
+			"label": tr("menu.seed_strip"),
+			"font": _type("micro"),
+			"font_size": maxi(10, seed_px - 1),
 		})
 
 	# Recto Field Index — fills ~42% width, full readable height.
@@ -996,17 +1008,6 @@ func _draw() -> void:
 	_draw_button_underlines(card)
 
 	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.
-
-
-func _draw_seal_lattice(center: Vector2, half: float) -> void:
-	## Habit-maze silhouette helper — ArtKit owns the plate; kept for craft tests / reuse.
-	ArtKit.draw_habit_maze_mark(self, center, half, {
-		"color": Palette.SLATE_TEAL,
-		"alpha": 0.9,
-		"seed": 49,
-		"rust_accent": true,
-		"hero": false,
-	})
 
 
 func _draw_button_underlines(_card: Rect2) -> void:

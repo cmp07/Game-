@@ -1154,3 +1154,103 @@ func draw_dashed_line(canvas: CanvasItem, a: Vector2, b: Vector2, color: Color, 
 			canvas.draw_line(a + dir * t, a + dir * t2, color, width, true)
 		draw_on = not draw_on
 		t = t2
+
+
+func draw_ledger_film_plate(canvas: CanvasItem, plate: Rect2, opts: Dictionary = {}) -> void:
+	## Diegetic Field Ledger media window — paper stock, registration marks, thin rust rule.
+	## Frames a SubViewport / video / frame-strip preview. Not player chrome / YouTube UI.
+	if plate.size.x < 40.0 or plate.size.y < 40.0:
+		return
+	var seed: int = int(opts.get("seed", 71))
+	var alpha: float = float(opts.get("alpha", 1.0))
+	var label: String = str(opts.get("label", "")).strip_edges()
+	var font: Font = opts.get("font", null)
+	var font_size: int = int(opts.get("font_size", 11))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+
+	# Soft crush shadow — pressed into the verso, not a glow halo.
+	var shadow := Color(
+		Palette.PAPER_SHADOW.r,
+		Palette.PAPER_SHADOW.g,
+		Palette.PAPER_SHADOW.b,
+		0.28 * alpha
+	)
+	canvas.draw_rect(Rect2(plate.position + Vector2(3, 4), plate.size), shadow, true)
+
+	# Matte paper surround (letterpress window surround).
+	var matte := Color(
+		Palette.PAPER_DEEP.r * 0.55 + Palette.PAPER_BONE.r * 0.45,
+		Palette.PAPER_DEEP.g * 0.55 + Palette.PAPER_BONE.g * 0.45,
+		Palette.PAPER_DEEP.b * 0.55 + Palette.PAPER_BONE.b * 0.45,
+		0.98 * alpha
+	)
+	canvas.draw_rect(plate, matte, true)
+	draw_paper_grain(canvas, plate, seed, 0.04)
+	draw_fiber_streaks(canvas, plate, seed + 3, 0.03, 10)
+
+	# Inner media well — slightly deeper stock so the loop reads as inset film.
+	var well: Rect2 = plate.grow_individual(-10.0, -14.0, -10.0, -18.0)
+	if well.size.x < 20.0 or well.size.y < 20.0:
+		well = plate.grow(-8.0)
+	var well_face := Color(
+		Palette.PAPER_DEEP.r,
+		Palette.PAPER_DEEP.g,
+		Palette.PAPER_DEEP.b,
+		0.92 * alpha
+	)
+	canvas.draw_rect(well, well_face, true)
+
+	# Double ink plate border.
+	var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.92 * alpha)
+	canvas.draw_rect(plate, ink, false, 2.2)
+	canvas.draw_rect(plate.grow(-3.0), Color(ink.r, ink.g, ink.b, 0.55 * alpha), false, 1.0)
+
+	# Thin rust registration rule under the top edge (survey media grammar).
+	var rust := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.88 * alpha)
+	canvas.draw_rect(
+		Rect2(plate.position.x + 12.0, plate.position.y + 8.0, plate.size.x - 24.0, 2.0),
+		rust,
+		true
+	)
+	draw_oxide_flecks(
+		canvas,
+		Rect2(plate.position.x + 12.0, plate.position.y + 5.0, plate.size.x * 0.35, 8.0),
+		seed + 9,
+		4,
+		0.4
+	)
+
+	# Corner registration marks — crop ticks outside the media well.
+	var tick: float = 8.0
+	var corners: Array = [
+		plate.position + Vector2(6, 6),
+		Vector2(plate.end.x - 6.0, plate.position.y + 6.0),
+		Vector2(plate.position.x + 6.0, plate.end.y - 6.0),
+		plate.end - Vector2(6, 6),
+	]
+	var tick_c := Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.75 * alpha)
+	for p in corners:
+		var j := Vector2(rng.randf_range(-0.4, 0.4), rng.randf_range(-0.4, 0.4))
+		canvas.draw_line(p + j + Vector2(-tick, 0), p + j + Vector2(tick, 0), tick_c, 1.2, true)
+		canvas.draw_line(p + j + Vector2(0, -tick), p + j + Vector2(0, tick), tick_c, 1.2, true)
+
+	# Optional quiet seed / reel label under the well — never chamber HUD.
+	if label != "" and font != null:
+		canvas.draw_string(
+			font,
+			Vector2(plate.position.x + 14.0, plate.end.y - 6.0),
+			label,
+			HORIZONTAL_ALIGNMENT_LEFT,
+			-1,
+			font_size,
+			Color(Palette.SLATE_TEAL_SOFT.r, Palette.SLATE_TEAL_SOFT.g, Palette.SLATE_TEAL_SOFT.b, 0.78 * alpha)
+		)
+
+
+func film_plate_media_rect(plate: Rect2) -> Rect2:
+	## Inner rect where MenuGameplayPreview should sit (matches draw_ledger_film_plate well).
+	var well: Rect2 = plate.grow_individual(-10.0, -14.0, -10.0, -18.0)
+	if well.size.x < 20.0 or well.size.y < 20.0:
+		return plate.grow(-8.0)
+	return well

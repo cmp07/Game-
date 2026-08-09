@@ -5,14 +5,13 @@ Fails if:
   - Brand column / Field Index anchors drift off the 52/42 hard spec
   - Measured empty (no ink/ui layout mass) ≥ 28% of the inner page
   - LEFT (verso) pixel empty mass ≥ 22%
-  - Circle geometry / FIELD watermark / SURVEY SEAL caption return on the seal
+  - Gameplay film plate missing / too short on the verso
   - Field Index rows stretch with sparse leading
-  - Store slate 02_brand_main_menu.png lacks brand + dense left specimen + Field Index
+  - Store slate 02_brand_main_menu.png lacks brand + film preview + Field Index
 """
 
 from __future__ import annotations
 
-import math
 import re
 import struct
 import unittest
@@ -24,6 +23,7 @@ MENU = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
 ART = (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8")
 BOOT = (ROOT / "scripts" / "boot_title.gd").read_text(encoding="utf-8")
 LOCALE = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
+PREVIEW = (ROOT / "scripts" / "ui" / "menu_gameplay_preview.gd").read_text(encoding="utf-8")
 SHOT = ROOT.parents[1] / "docs" / "RELEASE" / "screenshots" / "02_brand_main_menu.png"
 
 VP_W, VP_H = 1920.0, 1080.0
@@ -49,8 +49,6 @@ def _layout_rects() -> dict:
     mx = _const_float("PAGE_MARGIN_X")
     my = _const_float("PAGE_MARGIN_Y")
     specimen_gap = _const_float("SPECIMEN_GAP")
-    seal_maze_gap = _const_float("SEAL_MAZE_GAP")
-    seal_h = _const_float("SEAL_PLATE_H")
     outer = (mx, my, VP_W - 2 * mx, VP_H - 2 * my)
     left_w = outer[2] * verso
     right_w = outer[2] * recto
@@ -64,15 +62,9 @@ def _layout_rects() -> dict:
     brand_block = (brand_x, brand_top, brand_w, float(brand_px) + 62.0)
     plate_x = brand_x - 4.0
     plate_w = max(200.0, left[0] + left[2] - plate_x - 20.0)
-    seal_top = brand_block[1] + brand_block[3] + specimen_gap
-    seal = (plate_x, seal_top, plate_w, seal_h)
-    sil_top = seal[1] + seal[3] + seal_maze_gap
-    sil = (
-        plate_x,
-        sil_top,
-        plate_w,
-        max(200.0, left[1] + left[3] - sil_top - 14.0),
-    )
+    preview_top = brand_block[1] + brand_block[3] + specimen_gap
+    preview_h = max(200.0, left[1] + left[3] - preview_top - 14.0)
+    preview = (plate_x, preview_top, plate_w, preview_h)
     side_pad, top_pad, bot_pad = 16.0, 20.0, 18.0
     card = (
         right[0] + side_pad,
@@ -84,16 +76,15 @@ def _layout_rects() -> dict:
     def area(r: tuple[float, float, float, float]) -> float:
         return r[2] * r[3]
 
-    occupied = area(brand_block) + area(seal) + area(sil) + area(card) + gutter * outer[3] * 0.35
+    occupied = area(brand_block) + area(preview) + area(card) + gutter * outer[3] * 0.35
     empty = 1.0 - occupied / max(1.0, area(outer))
-    verso_empty = 1.0 - (area(brand_block) + area(seal) + area(sil)) / max(1.0, area(left))
+    verso_empty = 1.0 - (area(brand_block) + area(preview)) / max(1.0, area(left))
     return {
         "outer": outer,
         "left": left,
         "right": right,
         "brand_block": brand_block,
-        "seal": seal,
-        "silhouette": sil,
+        "preview": preview,
         "field_index": card,
         "brand_px": brand_px,
         "verso_frac": left_w / outer[2],
@@ -102,7 +93,7 @@ def _layout_rects() -> dict:
         "empty_frac": empty,
         "verso_empty_frac": verso_empty,
         "specimen_gap": specimen_gap,
-        "seal_maze_gap": seal_maze_gap,
+        "preview_verso_frac": preview[3] / left[3],
     }
 
 
@@ -158,12 +149,6 @@ def _read_png_luma(path: Path) -> tuple[int, int, list[bytearray], int]:
     return w, h, rows, bpp
 
 
-def _seal_fn_body() -> str:
-    m = re.search(r"func draw_seal_stamp\([\s\S]*?\nfunc ", ART)
-    assert m, "draw_seal_stamp missing"
-    return m.group(0)
-
-
 class TestMenuCompositionDensity(unittest.TestCase):
     def test_hard_anchors_present(self) -> None:
         for token in (
@@ -173,15 +158,14 @@ class TestMenuCompositionDensity(unittest.TestCase):
             "const MAX_EMPTY_FRAC",
             "const MAX_VERSO_EMPTY_FRAC",
             "const SPECIMEN_GAP",
-            "const SEAL_MAZE_GAP",
-            "const SEAL_PLATE_H",
+            "const PREVIEW_VERSO_FRAC",
             "const INDEX_ROW_H",
             "func composition_layout",
             'tr("brand.title")',
             'tr("brand.tagline")',
-            '"caption": ""',
             '"sharp_edge": true',
-            '"dense": true',
+            "ArtKit.draw_ledger_film_plate",
+            "_ensure_gameplay_preview",
         ):
             self.assertIn(token, MENU, msg=token)
         self.assertLessEqual(_const_float("MAX_EMPTY_FRAC"), 0.28)
@@ -190,7 +174,8 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertGreaterEqual(_const_float("INDEX_ROW_H"), 36.0)
         self.assertLessEqual(_const_float("INDEX_ROW_H"), 44.0)
         self.assertLessEqual(_const_float("SPECIMEN_GAP"), 16.0)
-        self.assertLessEqual(_const_float("SEAL_MAZE_GAP"), 16.0)
+        self.assertGreaterEqual(_const_float("PREVIEW_VERSO_FRAC"), 0.55)
+        self.assertLessEqual(_const_float("PREVIEW_VERSO_FRAC"), 0.70)
         verso = _const_float("VERSO_FRAC")
         recto = _const_float("RECTO_FRAC")
         self.assertGreaterEqual(verso, 0.48)
@@ -218,17 +203,11 @@ class TestMenuCompositionDensity(unittest.TestCase):
             msg=f"verso_empty_frac={lay['verso_empty_frac']:.3f} — left leaf still empty",
         )
         self.assertLessEqual(lay["specimen_gap"], 16.0)
-        self.assertLessEqual(lay["seal_maze_gap"], 16.0)
-        # Wide seal plate at top of specimen stack — not a tiny corner die.
-        seal = lay["seal"]
-        self.assertGreaterEqual(seal[2], 700.0, msg="seal plate too narrow")
-        self.assertGreaterEqual(seal[3], 72.0, msg="seal plate too short")
-        # Dense maze fills remaining verso.
-        sil = lay["silhouette"]
-        self.assertGreaterEqual(sil[3], 520.0, msg="maze too short — cream band remains")
-        # Seal sits above maze with ≤16px gap.
-        self.assertLessEqual(sil[1] - (seal[1] + seal[3]), 16.0)
-        # Field Index full readable height.
+        preview = lay["preview"]
+        self.assertGreaterEqual(preview[2], 700.0, msg="film plate too narrow")
+        self.assertGreaterEqual(preview[3], 520.0, msg="film plate too short — cream band remains")
+        self.assertGreaterEqual(lay["preview_verso_frac"], 0.55)
+        self.assertLessEqual(lay["preview_verso_frac"], 0.80)
         card = lay["field_index"]
         self.assertGreaterEqual(card[3], 900.0)
 
@@ -248,31 +227,24 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertIn("SIZE_SHRINK_BEGIN", body)
         self.assertNotIn("clampf(even,", body)
 
-    def test_no_circle_seal_code_paths(self) -> None:
-        """Circle seal geometry + FIELD / SURVEY SEAL captions must stay eradicated."""
-        body = _seal_fn_body()
-        self.assertNotIn("TAU * float(i)", body)
-        self.assertNotIn("inner_ring", body)
-        self.assertNotIn("ring_w", body)
-        self.assertNotIn("draw_circle", body)
-        self.assertNotIn("draw_arc", body)
-        self.assertIn("rectangular", body.lower())
-        self.assertIn('caption.to_upper() == "FIELD"', body)
+    def test_film_plate_and_preview_hooks(self) -> None:
+        """Gameplay preview is the left visual anchor — no giant static maze specimen."""
+        self.assertIn("func draw_ledger_film_plate", ART)
+        self.assertIn("registration", ART.lower())
+        self.assertIn("func film_plate_media_rect", ART)
+        self.assertIn("menu_preview_mode", PREVIEW)
+        self.assertIn("pause_preview", PREVIEW)
+        self.assertIn("MOUSE_FILTER_IGNORE", PREVIEW)
+        self.assertIn("SubViewport", PREVIEW)
+        # Giant static habit silhouette must not own the title verso anymore.
+        self.assertNotIn("ArtKit.draw_habit_silhouette", MENU)
+        self.assertNotIn("ArtKit.draw_seal_stamp", MENU)
         for src, label in ((MENU, "menu"), (BOOT, "boot")):
             self.assertNotIn('"caption": "FIELD"', src, msg=label)
-            self.assertNotIn('"caption": "field"', src, msg=label)
             self.assertNotIn("SURVEY SEAL", src, msg=label)
-            self.assertNotIn('tr("menu.seal_caption")', src, msg=label)
         self.assertNotIn("SURVEY SEAL", LOCALE)
-        self.assertIn("ArtKit.draw_seal_stamp", MENU)
-        self.assertIn("ArtKit.draw_seal_stamp", BOOT)
-        self.assertIn("plate_w", MENU)
-        self.assertIn("plate_h", MENU)
-        # Seal is drawn as its own plate above the maze — not a corner inset.
-        self.assertIn("SEAL_PLATE_H", MENU)
-        self.assertIn("SEAL_MAZE_GAP", MENU)
 
-    def test_brand_slate_shows_brand_dense_verso_and_field_index(self) -> None:
+    def test_brand_slate_shows_brand_film_preview_and_field_index(self) -> None:
         if not SHOT.is_file():
             self.skipTest("02_brand_main_menu.png missing — capture before merge")
         w, h, rows, bpp = _read_png_luma(SHOT)
@@ -287,7 +259,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
             r, g, b = rgb(x, y)
             return (r + g + b) // 3
 
-        # Brand ink on the left leaf (ECHO LATTICE zone — largest type, upper verso).
         brand = sum(
             1
             for y in range(60, 220, 2)
@@ -296,8 +267,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
         )
         self.assertGreater(brand, 400, msg="ECHO LATTICE brand ink missing on left")
 
-        # LEFT RECT empty mass: fraction of 20×20 tiles that are uniform cream (no ink).
-        # Brand type sits on paper by design; this catches hollow specimen bands, not glyph air.
         paper_ref = (239, 230, 209)
         tile = 20
         empty_tiles = 0
@@ -332,7 +301,7 @@ class TestMenuCompositionDensity(unittest.TestCase):
             msg=f"verso tile empty_mass={empty_frac:.3f} ≥ 0.22 — left page still hollow",
         )
 
-        # Specimen/maze zone (lower ~60%) must itself stay ink-heavy.
+        # Film-plate / gameplay zone (lower ~60%) must stay ink-heavy (not cream).
         maze_empty = 0
         maze_total = 0
         for y in range(400, 1040, 2):
@@ -344,40 +313,17 @@ class TestMenuCompositionDensity(unittest.TestCase):
                     maze_empty += 1
         self.assertLess(
             maze_empty / max(1, maze_total),
-            0.18,
-            msg="habit maze zone still cream-hollow",
+            0.22,
+            msg="gameplay film plate zone still cream-hollow",
         )
-        maze_ink = sum(
+        preview_ink = sum(
             1
             for y in range(420, 1020, 3)
             for x in range(80, 900, 3)
             if lum(x, y) < 120
         )
-        self.assertGreater(maze_ink, 3500, msg="habit maze optical weight missing on verso")
+        self.assertGreater(preview_ink, 2500, msg="gameplay preview optical weight missing on verso")
 
-        # No concentric dashed-circle seal on the letterpress seal band (above the maze).
-        # Sample only the seal plate mid-band — maze tip/goal copper dots are playable grammar.
-        lay = _layout_rects()
-        seal_cx = int(lay["seal"][0] + lay["seal"][2] * 0.5)
-        seal_cy = int(lay["seal"][1] + lay["seal"][3] * 0.5)
-        ring_scores = []
-        for radius in (28, 44, 60, 80):
-            dark = 0
-            total_r = 0
-            for deg in range(0, 360, 5):
-                x = int(seal_cx + math.cos(math.radians(deg)) * radius)
-                y = int(seal_cy + math.sin(math.radians(deg)) * radius)
-                if 0 <= x < w and 0 <= y < h:
-                    total_r += 1
-                    if lum(x, y) < 140:
-                        dark += 1
-            if total_r:
-                ring_scores.append(dark / total_r)
-        # A dashed double-ring seal lights ≥2 radii heavily and evenly; a rectangular die does not.
-        hot = sum(1 for s in ring_scores if s > 0.55)
-        self.assertLess(hot, 2, msg=f"concentric circle seal returned (scores={ring_scores})")
-
-        # Field Index left edge in the right ~42% column — skip spine trough ink.
         left = None
         for x in range(1040, 1280):
             if lum(x, 220) < 100:

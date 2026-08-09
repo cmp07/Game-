@@ -82,6 +82,10 @@ var goal_pulse_t: float = 0.0
 var has_won: bool = false
 var lantern_t: float = 0.0
 
+## Decorative title-menu SubViewport loop — mute authorship / audio / input.
+var menu_preview_mode: bool = false
+var preview_chamber_id: int = 2
+
 ## Hold-to-walk (accessibility) — initial delay then repeat while held.
 const HOLD_INITIAL_DELAY: float = 0.22
 const HOLD_REPEAT_DELAY: float = 0.08
@@ -123,17 +127,29 @@ var _ink_bleed: InkBleedOverlay = null
 func _ready() -> void:
 	_load_art()
 	set_process(true)
-	set_process_input(true)
+	set_process_input(not menu_preview_mode)
 	var a11y := get_node_or_null("/root/AccessibilityService")
 	_ghost_assist = GhostPathAssist.new(a11y)
 	if a11y != null and a11y.has_signal("colorblind_changed"):
 		a11y.colorblind_changed.connect(queue_redraw)
 	if a11y != null and a11y.has_signal("fossil_style_changed"):
 		a11y.fossil_style_changed.connect(queue_redraw)
-	if not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
+	if not menu_preview_mode and not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
 		Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	_ensure_ink_bleed_host()
-	load_chamber(GameState.current_chamber)
+	if menu_preview_mode:
+		load_chamber(preview_chamber_id)
+	else:
+		load_chamber(GameState.current_chamber)
+
+
+func configure_as_menu_preview(chamber_id: int = 2) -> void:
+	## Call before or after enter-tree — silent scripted loop for the title film plate.
+	menu_preview_mode = true
+	preview_chamber_id = chamber_id
+	set_process_input(false)
+	if is_inside_tree() and (grid.is_empty() or int(chamber.get("id", -1)) != chamber_id):
+		load_chamber(chamber_id)
 
 
 func _ensure_ink_bleed_host() -> void:
@@ -287,7 +303,7 @@ func load_chamber(id: int) -> void:
 	_hold_dir = Vector2i.ZERO
 	_hold_timer = 0.0
 	_load_museum_ghost_overlay()
-	if has_node("/root/AudioDirector"):
+	if not menu_preview_mode and has_node("/root/AudioDirector"):
 		AudioDirector.set_chamber(id)
 		# Induction Quiet Span stays silent; later chambers keep the ghost-floor tick.
 		if not bool(chamber.get("onboarding", false)) or str(chamber.get("teaches", "")) != "move":
@@ -306,7 +322,7 @@ func load_chamber(id: int) -> void:
 func reset_chamber() -> void:
 	if chamber.is_empty():
 		return
-	if has_node("/root/AudioDirector"):
+	if not menu_preview_mode and has_node("/root/AudioDirector"):
 		AudioDirector.on_fail_reset()
 	load_chamber(int(chamber.get("id", 0)))
 
@@ -339,6 +355,8 @@ func _notification(what: int) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if menu_preview_mode:
+		return
 	if has_won:
 		return
 	# OS key-repeat echoes are handled by hold-to-walk, not as fresh presses.
@@ -380,7 +398,7 @@ func _dir_from_event(event: InputEvent) -> Vector2i:
 
 
 func _update_hold_to_walk(delta: float) -> void:
-	if has_won or not _hold_to_walk_enabled():
+	if menu_preview_mode or has_won or not _hold_to_walk_enabled():
 		_hold_dir = Vector2i.ZERO
 		_hold_timer = 0.0
 		return
@@ -417,13 +435,13 @@ func _try_move(dir: Vector2i) -> void:
 		return
 	var t: int = grid[target.y][target.x]
 	if t == Tile.WALL or t == Tile.ECHO_WALL:
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.on_footstep(true)
-		if has_node("/root/Juice"):
+		if not menu_preview_mode and has_node("/root/Juice"):
 			# Ink scuff only — cadmium is reserved for rewrite-imminent warn/heartbeat.
 			Juice.bump(0.06)
 			Juice.flash(0.05, 0.08, Palette.INK_SOFT)
-		if t == Tile.ECHO_WALL and rewrites_fired > 0:
+		if not menu_preview_mode and t == Tile.ECHO_WALL and rewrites_fired > 0:
 			_arm_undo_teach()
 		return
 	undo_stack.push_back({
@@ -442,9 +460,10 @@ func _try_move(dir: Vector2i) -> void:
 	walked[target] = true
 	trail_path.append(target)
 	traverse_count[target] = int(traverse_count.get(target, 0)) + 1
-	GameState.record_direction(dir)
+	if not menu_preview_mode:
+		GameState.record_direction(dir)
 	emit_signal("moves_changed", move_count)
-	if has_node("/root/AudioDirector"):
+	if not menu_preview_mode and has_node("/root/AudioDirector"):
 		AudioDirector.on_footstep(false)
 		_update_habit_audio()
 
@@ -503,6 +522,8 @@ func _undo() -> void:
 
 func _maybe_reveal_habit_identity() -> void:
 	## Mirror Birth / Looking Glass slam unlocks habit identity in the HUD.
+	if menu_preview_mode:
+		return
 	if GameState.is_habit_identity_visible():
 		return
 	if IdentityStamp.is_birth_moment(chamber):
@@ -584,7 +605,7 @@ func _trigger_rewrite() -> void:
 			habit_cells_added += 1
 	if not pending_habit_echoes.is_empty():
 		last_habit_op = str(habit_pick.get("op", ""))
-	if has_node("/root/GameState"):
+	if not menu_preview_mode and has_node("/root/GameState"):
 		if last_habit_op != "" and habit_cells_added > 0:
 			GameState.note_habit_answer(last_habit_archetype, last_habit_op, habit_cells_added)
 		elif last_habit_archetype != "" and last_habit_archetype != "balanced":
@@ -605,7 +626,7 @@ func _trigger_rewrite() -> void:
 	moves_since_checkpoint.clear()
 	# Refresh diegetic punch-card (buffer emptied; move_count unchanged).
 	emit_signal("moves_changed", move_count)
-	if has_node("/root/Juice"):
+	if not menu_preview_mode and has_node("/root/Juice"):
 		Juice.rewrite_punch(pending_echoes.size())
 		var offset: Vector2 = _grid_offset()
 		for p in pending_echoes:
@@ -617,21 +638,22 @@ func _trigger_rewrite() -> void:
 			# Habit ink is quieter — secondary channel, not a second slam.
 			var burst_n: int = (3 if is_habit else 6) if not _reduce_motion() else 2
 			Juice.spawn_burst(wp, burst_color, burst_n)
-	if has_node("/root/AudioDirector"):
+	if not menu_preview_mode and has_node("/root/AudioDirector"):
 		AudioDirector.on_rewrite(transform_name)
 		if last_habit_op != "" and last_habit_op != transform_name:
 			AudioDirector.on_rewrite(last_habit_op)
 		AudioDirector.on_pa_line("pa.checkpoint.armed")
-	_subtitle_line("checkpoint")
-	match transform_name:
-		"mirror_v", "mirror_h", "mirror_v_then_h":
-			_subtitle_line("rewrite_mirror")
-		"rotate_180":
-			_subtitle_line("rewrite_rotate")
-		"thicken":
-			_subtitle_line("rewrite_thicken")
-		_:
-			_subtitle_line("rewrite_begin")
+	if not menu_preview_mode:
+		_subtitle_line("checkpoint")
+		match transform_name:
+			"mirror_v", "mirror_h", "mirror_v_then_h":
+				_subtitle_line("rewrite_mirror")
+			"rotate_180":
+				_subtitle_line("rewrite_rotate")
+			"thicken":
+				_subtitle_line("rewrite_thicken")
+			_:
+				_subtitle_line("rewrite_begin")
 
 
 
@@ -854,25 +876,25 @@ func _update_rewrite_warn_state(near_cp: int) -> void:
 	var has_tele: bool = telegraph_cells.size() > 0 or habit_telegraph_cells.size() > 0
 	if near_cp < 0 or not has_tele:
 		rewrite_warn_armed = false
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(0.0)
 		return
 	if near_cp <= WARN_ARM_DIST:
-		if not rewrite_warn_armed and has_node("/root/AudioDirector"):
+		if not menu_preview_mode and not rewrite_warn_armed and has_node("/root/AudioDirector"):
 			AudioDirector.on_rewrite_warn()
 		rewrite_warn_armed = true
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(1.0 - float(near_cp) / float(WARN_ARM_DIST))
 	elif near_cp >= WARN_DISARM_DIST:
 		rewrite_warn_armed = false
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(0.0)
 	elif rewrite_warn_armed:
 		# Hysteresis band (dist 4): keep a soft tension, do not re-fire warn.
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(0.25)
 	else:
-		if has_node("/root/AudioDirector"):
+		if not menu_preview_mode and has_node("/root/AudioDirector"):
 			AudioDirector.set_rewrite_tension(0.0)
 
 
@@ -950,6 +972,9 @@ func _on_win() -> void:
 	has_won = true
 	_hold_dir = Vector2i.ZERO
 	_hold_timer = 0.0
+	# Title film plate never records a clear or leaves the menu.
+	if menu_preview_mode:
+		return
 	var cid: int = int(chamber.get("id", 0))
 	var bfs_par: int = _bfs_length(start_pos, goal_pos)
 	var stamp: Dictionary = {}
@@ -1020,7 +1045,7 @@ func _grid_offset() -> Vector2:
 func _draw() -> void:
 	var vp_size: Vector2 = get_viewport_rect().size
 	var offset: Vector2 = _grid_offset()
-	if has_node("/root/Juice"):
+	if not menu_preview_mode and has_node("/root/Juice"):
 		var sh: Dictionary = Juice.shake_offset(8.0, 1.5)
 		offset += Vector2(float(sh.get("dx", 0.0)), float(sh.get("dy", 0.0)))
 	var grid_px: Vector2 = Vector2(GRID_W * CELL_SIZE, GRID_H * CELL_SIZE)
@@ -1075,7 +1100,9 @@ func _draw() -> void:
 	if pending_echoes.size() > 0:
 		_draw_rewrite_slam(offset, vp_size, page)
 	elif _ceremony_hold_remaining > 0.0:
-		_draw_ceremony_freeze_label(vp_size, offset)
+		# No chamber HUD / ceremony chrome inside the title film plate.
+		if not menu_preview_mode:
+			_draw_ceremony_freeze_label(vp_size, offset)
 		if _ink_bleed != null:
 			_ink_bleed.clear()
 	elif _ink_bleed != null:
@@ -1084,7 +1111,7 @@ func _draw() -> void:
 	# Player — surveyor stamp + chest-lantern warm spot.
 	_draw_player(offset)
 
-	if has_node("/root/Juice"):
+	if not menu_preview_mode and has_node("/root/Juice"):
 		Juice.draw_particles(self)
 		var fa: float = Juice.flash_alpha()
 		if fa > 0.01:
@@ -1373,7 +1400,8 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 		_ink_bleed.clear()
 
 	# Birth-class slam plate — ceremony title ink (Habit V3 §6.2).
-	if _is_ceremony_chamber() and t_norm > 0.12 and t_norm < 0.85:
+	# Skip on title film plate (no chamber HUD / ceremony chrome overlays).
+	if not menu_preview_mode and _is_ceremony_chamber() and t_norm > 0.12 and t_norm < 0.85:
 		_draw_ceremony_slam_plate(vp_size, offset, t_norm)
 
 
@@ -1482,6 +1510,8 @@ func _ceremony_plate_text() -> String:
 
 func _begin_post_rewrite_feedback() -> void:
 	## After fossils land: birth freeze label, else habit hand line (T6).
+	if menu_preview_mode:
+		return
 	if _is_ceremony_chamber():
 		_begin_ceremony_hold()
 		return

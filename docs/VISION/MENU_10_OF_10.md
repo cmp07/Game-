@@ -1,14 +1,14 @@
 # Menu 10/10 — Title Shell Acceptance (LEFT PAGE FINAL)
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
-**Branch:** `cursor/menu-left-page-final` → RC1 · not `main`  
-**Supersedes** sparse #160 packing + hollow #161 specimen (layout claimed fill; pixels were cream).
+**Branch:** `cursor/menu-gameplay-preview` → RC1 · not `main`  
+**Supersedes** static seal+maze specimen (#161/#162) with a diegetic gameplay film plate.
 
 ---
 
 ## 0. Thesis
 
-One composed Field Ledger folio. **ECHO LATTICE** owns the verso; **one** wide rectangular letterpress seal sits at the top of the specimen stack; a **dense** habit maze fills the remaining verso height. Field Index owns the recto with a compact action block. Zero chamber HUD. **No dashed concentric circle seal. No FIELD / SURVEY SEAL watermark. No hollow cream specimen frame.**
+One composed Field Ledger folio. **ECHO LATTICE** owns the verso; under the brand stack a **gameplay film plate** (live SubViewport walk+slam loop, or ogv/frame-strip fallback) is the left visual anchor. Field Index owns the recto with a compact action block. Zero chamber HUD. **No dashed concentric circle seal. No FIELD / SURVEY SEAL watermark. No hollow cream specimen frame. No competing giant static maze.**
 
 ---
 
@@ -18,14 +18,14 @@ One composed Field Ledger folio. **ECHO LATTICE** owns the verso; **one** wide r
 |---|---|
 | **Micro header** | ONE quiet line: `FIELD LEDGER · WING I · seed` |
 | **Brand column LEFT ~52%** | `ECHO LATTICE` ≥ **72px**; tagline `IT LEARNED YOU` rust; one Serif blurb |
-| **Seal** | ONE wide rectangular letterpress plate at top of specimen (no circles, no caption watermark) |
-| **Maze** | Habit specimen immediately under seal (gap ≤16px), fills to bottom margin — ink walls + rust accents |
+| **Film plate** | Diegetic media window under brand (~≥55% verso height) — paper surround, registration marks, thin rust rule |
+| **Preview** | Silent scripted gameplay loop (or offline ogv/frames); no chamber HUD; does not block Field Index input |
 | **Field Index RIGHT ~42%** | Sharp card, all actions, row pitch ~36–44px, compact upper 2/3; width 40–48% |
-| **Empty region** | Page layout empty_frac < 28%; **LEFT tile empty mass < 22%**; maze-zone cream < 18% |
-| **Chamber HUD** | **Forbidden** |
-| **Capture** | `02_brand_main_menu.png` MUST show brand + dense left specimen + full Field Index |
+| **Empty region** | Page layout empty_frac < 28%; **LEFT tile empty mass < 22%** |
+| **Chamber HUD** | **Forbidden** on title (tiny diegetic seed label on film plate OK) |
+| **Capture** | `02_brand_main_menu.png` MUST show brand + gameplay film plate + full Field Index |
 
-Rejected forever: dashed circle seal · FIELD / SURVEY SEAL watermark · dual seal+maze with void band · hollow perimeter-only maze · stretched sparse action leading · brand collapsed so tagline reads as hero.
+Rejected forever: dashed circle seal · FIELD / SURVEY SEAL watermark · dual seal+maze with void band · hollow perimeter-only maze · stretched sparse action leading · brand collapsed so tagline reads as hero · YouTube player chrome on the verso.
 
 ---
 
@@ -39,25 +39,24 @@ Rejected forever: dashed circle seal · FIELD / SURVEY SEAL watermark · dual se
 
 ---
 
-## 3. Seal (eradicate circle paths)
+## 3. Film plate + preview (eradicate circle / empty maze)
 
-- `ArtKit.draw_seal_stamp` draws a **rectangular letterpress plate** + habit-maze mark only.
-- Ban: `TAU` ring segments, `inner_ring`, `ring_w`, `draw_circle`, `draw_arc`, caption `"FIELD"` / `"FIELD LEDGER"` / SURVEY SEAL draw.
-- Caption (if any) sits **under** the plate — never a watermark inside the die.
-- Menu draws seal **above** the maze (`SEAL_PLATE_H` + `SEAL_MAZE_GAP≤16`), not as a third competing seal.
+- `ArtKit.draw_ledger_film_plate` frames the media well (paper, rust rule, registration marks).
+- Runtime preference: live SubViewport (`menu_gameplay_preview.gd` + `Chamber.menu_preview_mode`) → muted `.ogv` → PNG frame strip.
+- Ban: `TAU` ring seals, FIELD / SURVEY SEAL watermarks, chamber HUD overlays on the title preview, YouTube player chrome.
+- Preview must `MOUSE_FILTER_IGNORE` and pause when leaving the menu / opening overlays.
 
 ---
 
 ## 4. Acceptance checklist
 
 - [x] No dashed / skipped-segment **circle** seal on title or boot
-- [x] Seal is rectangular letterpress plate + habit-maze mark
-- [x] Dense habit maze fills remaining verso (tile empty mass < 22% on LEFT)
+- [x] Gameplay film plate is the left visual anchor under the brand
+- [x] Preview is silent / non-blocking; no chamber HUD on title
 - [x] `ECHO LATTICE` is the largest type; tagline secondary rust
 - [x] Field Index ~40–48% width, full height, all actions visible
 - [x] No redundant Field Index / Wing labels
 - [x] Sharp folio edges — no torn deckle / black bar foot junk
-- [x] Zero chamber HUD on title stage
 - [x] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
 - [x] Gates: `test_menu_composition_density` · `test_menu_no_redundant_labels` · `test_menu_type_system` · `test_title_menu_no_hud` · `test_field_ledger_juice`
 
@@ -68,6 +67,9 @@ Rejected forever: dashed circle seal · FIELD / SURVEY SEAL watermark · dual se
 | Asset | Role |
 |---|---|
 | [`../RELEASE/screenshots/02_brand_main_menu.png`](../RELEASE/screenshots/02_brand_main_menu.png) | Partner brand slate |
+| [`../../game/echo_lattice/media/menu_preview/`](../../game/echo_lattice/media/menu_preview/) | ogv / frame-strip fallback + loop gif |
+
+Regenerate fallback loop: `python3 tools/release/build_menu_preview_loop.py`
 
 Raw (after branch push):  
-`https://github.com/cmp07/Game-/raw/cursor/menu-left-page-final/docs/RELEASE/screenshots/02_brand_main_menu.png`
+`https://github.com/cmp07/Game-/raw/cursor/menu-gameplay-preview/docs/RELEASE/screenshots/02_brand_main_menu.png`

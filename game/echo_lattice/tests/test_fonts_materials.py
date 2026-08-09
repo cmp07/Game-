@@ -80,6 +80,7 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_ledger_page",
             "draw_open_folio",
             "draw_habit_silhouette",
+            "draw_ledger_film_plate",
             "draw_index_card",
             "draw_seal_stamp",
             "draw_binder_clip",
@@ -97,7 +98,7 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn('"thickness"', art)
         self.assertIn("ruled_stock", art)
         self.assertIn("Open two-leaf Field Ledger", art)
-        self.assertIn("never an empty dashed box", art)
+        self.assertIn("not an empty dashed preview box", art)
 
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
@@ -111,11 +112,9 @@ class TestFontsMaterials(unittest.TestCase):
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)
         self.assertIn("ArtKit.draw_open_folio", menu)
-        self.assertIn("ArtKit.draw_habit_silhouette", menu)
+        self.assertIn("ArtKit.draw_ledger_film_plate", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
-        self.assertIn("ArtKit.draw_seal_stamp", menu)
-        self.assertIn('"hero": true', menu)
-        self.assertIn('"maze": true', menu)
+        self.assertNotIn("ArtKit.draw_habit_silhouette", menu)
         self.assertNotIn('"caption": "FIELD"', menu)
         self.assertIn('"ruled_stock": false', menu)
         self.assertIn("ArtKit.draw_oxide_flecks", menu)
@@ -128,8 +127,9 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("composition_layout", menu)
         self.assertIn("VERSO_FRAC", menu)
         self.assertIn("BRAND_MIN_PX", menu)
-        self.assertIn('"caption": ""', menu)
-        self.assertIn("ArtKit.draw_habit_maze_mark", menu)
+        self.assertIn("PREVIEW_VERSO_FRAC", menu)
+        self.assertIn("_ensure_gameplay_preview", menu)
+        self.assertIn("func draw_habit_maze_mark", (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8"))
         # Premium title: Medium actions, Bold brand, selection-only rules.
         type_src = (ROOT / "scripts" / "ledger_type.gd").read_text(encoding="utf-8")
         self.assertIn("IBMPlexSansCondensed-Bold.ttf", type_src)
