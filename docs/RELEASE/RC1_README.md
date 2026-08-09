@@ -87,6 +87,7 @@ Python contract suite: **22/22** green after media merge (incl. deck bindings).
 | Gate A Partner legal paste pack | [`legal/`](legal/) |
 | Gate A screenshot slate | [`screenshots/`](screenshots/) |
 | Gate A trailer editor pack | [`trailer/`](trailer/) |
+| View media gallery (GitHub links) | [`VIEW_MEDIA.md`](VIEW_MEDIA.md) |
 | Launch marketing | [`LAUNCH_PLAYBOOK.md`](LAUNCH_PLAYBOOK.md) · [`presskit/`](presskit/) |
 | Post-launch / live ops | [`POSTLAUNCH.md`](POSTLAUNCH.md) · [`ROADMAP.md`](ROADMAP.md) · [`SUPPORT_FAQ.md`](SUPPORT_FAQ.md) |
 | Crash / logs | [`CRASH_LOG_HOOK.md`](CRASH_LOG_HOOK.md) |
