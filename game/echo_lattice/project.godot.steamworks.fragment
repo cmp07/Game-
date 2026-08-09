@@ -6,7 +6,8 @@
 ;
 ; Feature flags: res://config/steam_features.json
 ; Achievement catalog: res://config/achievements_steam.json
-; Docs: docs/RELEASE/STEAMWORKS.md
+; Docs: docs/RELEASE/STEAMWORKS.md · docs/RELEASE/GODOTSTEAM.md
+; Missing GodotSteam with steam_enabled → fail-closed (no fake Steam APIs).
 
 [autoload]
 

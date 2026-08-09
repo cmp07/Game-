@@ -4,8 +4,8 @@ extends Node
 ##
 ## Default path is fully offline: stub backend + feature flags.
 ## When `steam_enabled` is true and GodotSteam is present, swaps to the real
-## backend. Achievements / rich presence / optional cloud / overlay pause all
-## soft-fail when Steam is unavailable.
+## backend. Missing SDK / invalid AppID / Spacewar-in-release are fail-closed:
+## Steam APIs stay disabled (no fake unlocks, no Spacewar 480).
 ##
 
 signal backend_changed(name: String)
@@ -14,6 +14,7 @@ signal presence_changed(status: String)
 signal overlay_paused(active: bool)
 
 const FEATURES_PATH: String = "res://config/steam_features.json"
+const SPACEWAR_APP_ID: int = 480
 
 var features: Dictionary = {}
 var backend: SteamBackend = null
@@ -22,6 +23,8 @@ var cloud: SteamCloudSave = SteamCloudSave.new()
 
 var _overlay_was_tree_paused: bool = false
 var _presence_status: String = ""
+## True when steam_enabled requested GodotSteam but the SDK/singleton is absent.
+var _steam_sdk_fail_closed: bool = false
 
 
 func _ready() -> void:
@@ -35,7 +38,12 @@ func _ready() -> void:
 		var app_id: int = _resolve_app_id()
 		# SEC-01: fail closed — never init Steam without a real (or explicitly
 		# allowed Spacewar) AppID. Stub still records a no-op init at 0 for offline.
-		if app_id > 0:
+		if _steam_sdk_fail_closed:
+			push_warning(
+				"SteamService: skipping Steam init (GodotSteam SDK missing; fail-closed)."
+			)
+			backend.init_steam(0)
+		elif app_id > 0:
 			backend.init_steam(app_id)
 		elif bool(features.get("steam_enabled", false)):
 			push_warning(
@@ -43,18 +51,22 @@ func _ready() -> void:
 			)
 		else:
 			backend.init_steam(0)
-	if bool(features.get("cloud_save_enabled", false)):
+	if bool(features.get("cloud_save_enabled", false)) and not _steam_sdk_fail_closed:
 		cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
 	set_menu_presence()
 
 
 func _process(_delta: float) -> void:
-	if backend != null and bool(features.get("steam_enabled", false)):
+	if backend != null and bool(features.get("steam_enabled", false)) and not _steam_sdk_fail_closed:
 		backend.run_callbacks()
 
 
 func is_using_steam() -> bool:
-	return backend != null and backend.is_steam_available()
+	return backend != null and backend.is_steam_available() and not _steam_sdk_fail_closed
+
+
+func is_steam_sdk_fail_closed() -> bool:
+	return _steam_sdk_fail_closed
 
 
 func backend_name() -> String:
@@ -67,6 +79,8 @@ func reload_features() -> void:
 
 
 func unlock_achievement(api_name: String) -> bool:
+	if _steam_sdk_fail_closed:
+		return false
 	if not bool(features.get("achievements_enabled", true)):
 		return false
 	if backend == null or api_name == "":
@@ -79,6 +93,8 @@ func unlock_achievement(api_name: String) -> bool:
 
 
 func evaluate_achievements() -> PackedStringArray:
+	if _steam_sdk_fail_closed:
+		return PackedStringArray()
 	if not bool(features.get("achievements_enabled", true)):
 		return PackedStringArray()
 	return achievements.evaluate_and_unlock(backend)
@@ -88,7 +104,7 @@ func set_rich_presence_status(status: String) -> void:
 	if not bool(features.get("rich_presence_enabled", true)):
 		return
 	_presence_status = status
-	if backend != null:
+	if backend != null and not _steam_sdk_fail_closed:
 		backend.set_rich_presence("steam_display", "#Status")
 		backend.set_rich_presence("status", status)
 	presence_changed.emit(status)
@@ -153,12 +169,16 @@ func notify_chamber_cleared(_chamber_id: int, _moves: int = 0) -> void:
 
 
 func push_cloud_save() -> bool:
+	if _steam_sdk_fail_closed:
+		return false
 	if not bool(features.get("cloud_save_enabled", false)):
 		return false
 	return cloud.push_local(backend, str(features.get("cloud_remote_path", "save.json")))
 
 
 func pull_cloud_save() -> bool:
+	if _steam_sdk_fail_closed:
+		return false
 	if not bool(features.get("cloud_save_enabled", false)):
 		return false
 	return cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
@@ -166,6 +186,8 @@ func pull_cloud_save() -> bool:
 
 func force_pull_cloud_save() -> bool:
 	## Debug / recovery: overwrite local with cloud regardless of updated_at.
+	if _steam_sdk_fail_closed:
+		return false
 	if not bool(features.get("cloud_save_enabled", false)):
 		return false
 	return cloud.force_pull(backend, str(features.get("cloud_remote_path", "save.json")))
@@ -233,18 +255,32 @@ func _load_features() -> void:
 
 
 func _select_backend() -> void:
-	var use_real: bool = bool(features.get("steam_enabled", false)) \
-		and bool(features.get("prefer_godotsteam_when_present", true)) \
-		and SteamGodotSteamBackend.is_godotsteam_present()
-	if use_real:
+	_steam_sdk_fail_closed = false
+	var steam_on: bool = bool(features.get("steam_enabled", false))
+	var prefer_real: bool = bool(features.get("prefer_godotsteam_when_present", true))
+	var sdk_present: bool = SteamGodotSteamBackend.is_godotsteam_present()
+	if steam_on and prefer_real and sdk_present:
 		backend = SteamGodotSteamBackend.new()
 	else:
 		backend = SteamStubBackend.new()
+		if steam_on and prefer_real and not sdk_present:
+			# Fail-closed without SDK: keep the offline stub for gameplay, but do
+			# not fake Steam unlocks / cloud / presence as if the client were live.
+			_steam_sdk_fail_closed = true
+			var msg := (
+				"SteamService: steam_enabled but GodotSteam SDK missing; "
+				+ "fail-closed (Steam APIs disabled). See docs/RELEASE/GODOTSTEAM.md."
+			)
+			if _is_shipping_steam_context():
+				push_error(msg)
+			else:
+				push_warning(msg)
 	backend_changed.emit(backend.backend_name())
 
 
 func _resolve_app_id() -> int:
 	# steam_appid.txt beside executable wins for local exported builds.
+	# Retail Steam launches should not ship this file (depot FileExclusion).
 	var beside := OS.get_executable_path().get_base_dir().path_join("steam_appid.txt")
 	if FileAccess.file_exists(beside):
 		var f := FileAccess.open(beside, FileAccess.READ)
@@ -269,9 +305,9 @@ func _resolve_app_id() -> int:
 			% from_cfg
 		)
 	# SEC-01: never silently fall back to Spacewar 480. Only when the dedicated
-	# flag is on and we are in editor/debug.
+	# flag is on and we are in editor/debug — never in shipping/release.
 	if _spacewar_dev_allowed():
-		return int(features.get("spacewar_dev_app_id", 480))
+		return int(features.get("spacewar_dev_app_id", SPACEWAR_APP_ID))
 	if bool(features.get("steam_enabled", false)):
 		push_warning(
 			"SteamService: no real AppID configured; refusing Spacewar fallback (fail-closed)."
@@ -282,7 +318,7 @@ func _resolve_app_id() -> int:
 func _is_allowed_app_id(app_id: int) -> bool:
 	if app_id <= 0:
 		return false
-	if app_id == int(features.get("spacewar_dev_app_id", 480)):
+	if app_id == int(features.get("spacewar_dev_app_id", SPACEWAR_APP_ID)):
 		return _spacewar_dev_allowed()
 	return true
 
@@ -292,7 +328,16 @@ func _spacewar_dev_allowed() -> bool:
 		return false
 	# Shipping/release exports must never resolve Spacewar even if the flag
 	# were accidentally left true in a mis-copied config.
+	if _is_shipping_steam_context():
+		return false
 	return OS.has_feature("editor") or OS.is_debug_build()
+
+
+func _is_shipping_steam_context() -> bool:
+	# custom_features="steam" on Steam-branded exports, or any non-editor release build.
+	if OS.has_feature("steam"):
+		return true
+	return not OS.has_feature("editor") and not OS.is_debug_build()
 
 
 func _notification(what: int) -> void:

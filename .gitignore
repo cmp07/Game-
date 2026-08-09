@@ -55,6 +55,10 @@ steam/**/depot_build/**
 steam/**/steam_build_output/
 dist/
 
+# Optional GodotSteam GDExtension binaries (install locally; see docs/RELEASE/GODOTSTEAM.md)
+game/echo_lattice/addons/godotsteam/*
+!game/echo_lattice/addons/godotsteam/README.md
+
 # Godot 4 imports & editor artifacts
 game/**/.godot/
 # Keep global class cache so headless CI / selftest can resolve class_name without an editor pass.

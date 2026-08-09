@@ -2,7 +2,7 @@
 
 **Policy:** Do **not** invent Steam AppIDs or DepotIDs in-repo. Until Steamworks Partner creates the apps, every identity token stays as a named placeholder. Spacewar `480` is **dev-only** and must never ship in retail depots.
 
-**Related:** [`STEAMWORKS.md`](STEAMWORKS.md) · [`DEMO_SPEC.md`](DEMO_SPEC.md) · [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) · [`../AUDIT/STEAM_READINESS.md`](../AUDIT/STEAM_READINESS.md)
+**Related:** [`STEAMWORKS.md`](STEAMWORKS.md) · [`GODOTSTEAM.md`](GODOTSTEAM.md) · [`DEMO_SPEC.md`](DEMO_SPEC.md) · [`STEAM_STORE_FINAL.md`](STEAM_STORE_FINAL.md) · [`../AUDIT/STEAM_READINESS.md`](../AUDIT/STEAM_READINESS.md)
 
 ---
 
@@ -85,14 +85,24 @@ python3 game/echo_lattice/tests/test_demo_spec.py
 
 CI workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) (`validate` job).
 
-After Partner assign, grep the tree for leftover tokens before the first `run_app_build`:
+After Partner assign, **prefer env render** (keeps git placeholders clean until you intentionally commit real IDs):
+
+```bash
+export STEAM_APP_ID=… STEAM_DEPOT_ID_WINDOWS=… STEAM_DEPOT_ID_LINUX=…
+python3 steam/echo_lattice/render_vdf_from_env.py --check
+python3 steam/echo_lattice/render_vdf_from_env.py --write
+python3 steam/echo_lattice/verify_retail_staging.py
+```
+
+Or grep the tree for leftover tokens before the first `run_app_build`:
 
 ```bash
 rg -n 'YOUR_APP_ID|YOUR_DEPOT_ID|YOUR_DEMO_APP_ID|YOUR_DEMO_DEPOT_ID|YOUR_DEPOT_ID_LINUX' \
   game/echo_lattice steam/echo_lattice docs/RELEASE
 ```
 
-Expect zero hits in VDF / runtime config / wishlist URL (docs may still mention the tokens historically).
+Expect zero hits in VDF / runtime config / wishlist URL (docs may still mention the tokens historically).  
+`render_vdf_from_env.py` **rejects** AppID `480` (Spacewar).
 
 ---
 

@@ -26,6 +26,8 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze + change control (short/long, tags, sysreqs, categories, pricing) |
 | [`capsules/`](capsules/) | Capsule art Gate A finals (Field Ledger) |
 | [`STEAMWORKS.md`](STEAMWORKS.md) | Offline stub + achievements + depot notes |
+| [`GODOTSTEAM.md`](GODOTSTEAM.md) | Optional GodotSteam install (fail-closed without SDK) |
+| [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md) | AppID / DepotID placeholder ship gates |
 | [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Achievement catalog |
 | [`STEAM_DECK.md`](STEAM_DECK.md) | Deck Verified prep |
 | [`DEMO_SPEC.md`](DEMO_SPEC.md) | Next Fest demo scope |

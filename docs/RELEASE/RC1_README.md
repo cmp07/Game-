@@ -51,6 +51,8 @@ Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md
 
 SEC-01 / SEC-02 / SEC-03 from [`../AUDIT/SECURITY.md`](../AUDIT/SECURITY.md) — fail-closed AppID (no Spacewar fallback), Cloud pull schema validation before `save.json` write, and constrained `--screenshot --out` paths. Note: [`../AUDIT/SECURITY_HIGH_FIXES.md`](../AUDIT/SECURITY_HIGH_FIXES.md). Tests: `python3 game/echo_lattice/tests/test_security_high.py`.
 
+GodotSteam optional path: [`GODOTSTEAM.md`](GODOTSTEAM.md) — clear install docs, fail-closed without SDK, depot `STEAM_*` env render, no Spacewar in release. Tests: `python3 game/echo_lattice/tests/test_godotsteam_gate.py`.
+
 ---
 
 ## Doc map
