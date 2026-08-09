@@ -294,7 +294,7 @@ func _draw() -> void:
 	if seed_tex != null:
 		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(16, 10), Vector2(256, 24)), false)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("mono"),
 		page.position + Vector2(280, 28),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
@@ -307,7 +307,7 @@ func _draw() -> void:
 	var brand_x: float = page.position.x + 48
 	var brand_y: float = page.position.y + page.size.y * 0.28
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 64, Palette.INK_BLACK
@@ -316,13 +316,13 @@ func _draw() -> void:
 	draw_rect(Rect2(brand_x, brand_y + 10, 420, 3), Palette.RUST_FOSSIL, true)
 
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("display"),
 		Vector2(brand_x, brand_y + 42),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Palette.SLATE_TEAL
 	)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("body"),
 		Vector2(brand_x, brand_y + 68),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Palette.INK_SOFT
@@ -345,7 +345,7 @@ func _draw() -> void:
 	draw_line(card.position + Vector2(22, 34), card.position + Vector2(card.size.x - 16, 34), Palette.INK_SOFT, 1.0)
 	draw_line(card.position + Vector2(22, 38), card.position + Vector2(card.size.x - 16, 38), Palette.INK_SOFT, 1.0)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("mono"),
 		card.position + Vector2(26, 26),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
@@ -359,7 +359,7 @@ func _draw() -> void:
 
 	# Footer controls hint — Deck glyphs > remap labels > localized default.
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("mono"),
 		Vector2(page.position.x + 16, page.end.y - 14),
 		_footer_controls_hint(),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
@@ -455,7 +455,7 @@ func _draw_button_underlines(_card: Rect2) -> void:
 func _draw_punchcard_ribbon(page: Rect2) -> void:
 	var y: float = page.end.y - 48
 	var x: float = page.position.x + 16
-	draw_string(ThemeDB.fallback_font, Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
+	draw_string(_type("mono"), Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
 	x += 64
 	var cells: Array = [
 		ArtKit.tex("res://art/ui/punchcard_cell_empty.png"),
@@ -477,3 +477,9 @@ func _draw_punchcard_ribbon(page: Rect2) -> void:
 			draw_texture_rect(tex, cell_r, false)
 		else:
 			draw_rect(cell_r, Palette.INK_SOFT, false, 1.0)
+
+
+func _type(role: String = "display") -> Font:
+	if has_node("/root/LedgerType"):
+		return LedgerType.font_or_fallback(role)
+	return ThemeDB.fallback_font

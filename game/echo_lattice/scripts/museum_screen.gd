@@ -75,9 +75,12 @@ func _make_row(row: Dictionary) -> Button:
 	btn.custom_minimum_size = Vector2(0, 36)
 	var habit: Dictionary = row.get("habit", {}) if typeof(row.get("habit", null)) == TYPE_DICTIONARY else {}
 	var stars: int = int(row.get("stars", 0))
-	var star_s := ""
-	for i in range(3):
-		star_s += "*" if i < stars else "-"
+	var star_s: String = ""
+	if has_node("/root/LedgerType"):
+		star_s = LedgerType.stars_ink(stars)
+	else:
+		for i in range(3):
+			star_s += "★" if i < stars else "☆"
 	btn.text = "%s  ·  %s  ·  %s" % [
 		str(row.get("title", "Self")),
 		star_s,

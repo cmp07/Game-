@@ -3,7 +3,7 @@ extends Node
 ## Main — the root router.
 ##
 ## Owns a single container child which we swap between menu, chamber, chamber win,
-## and end-of-slice screens. Keeps scene loads explicit and Godot-project-simple.
+## and wing-colophon screens. Keeps scene loads explicit and Godot-project-simple.
 ##
 
 const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
@@ -144,8 +144,7 @@ static func _safe_screenshot_filename(kind: String) -> String:
 func _capture_screenshot(kind: String, out_dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	if kind == "menu":
-		# Fresh-boot menu: no prior save, so Continue is disabled and the
-		# subtitle reads "A vertical slice — N chambers."
+		# Fresh-boot menu: no prior save, so Continue is disabled.
 		SaveManager.wipe()
 		GameState.current_chamber = 0
 		GameState.best_moves.clear()
@@ -208,6 +207,9 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.last_clear_bfs_par = 28
 		GameState.best_moves[idx] = 32
 		GameState.best_stars[idx] = 3
+		GameState.habit_identity_unlocked = true
+		# Seed a legible habit answer so media agents capture Clear Stamp copy.
+		GameState.note_habit_answer("looper", "fossilize_hot_cell", 2)
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
 		# Drive to the first checkpoint, then freeze the origami slam.

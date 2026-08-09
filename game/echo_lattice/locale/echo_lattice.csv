@@ -43,7 +43,7 @@ habit.up,up,上
 habit.down,down,下
 habit.left,left,左
 habit.right,right,右
-won.title,Chamber Cleared,间室通过
+won.title,CHAMBER CLEARED,间室通过
 won.next_chamber,→ Next Chamber,→ 下一间室
 won.finish_wing,→ Finish Wing,→ 完成本翼
 won.finish_demo,→ Finish Demo,→ 完成试玩
@@ -51,18 +51,18 @@ won.next_daily,→ Next Daily,→ 下一每日
 won.daily_complete,→ Daily Complete,→ 每日完成
 won.next_endless,→ Keep Climbing,→ 继续攀升
 won.replay,Replay this chamber,重玩本间室
-won.menu,Menu,菜单
+won.menu,Field Index,田野索引
 won.stats,"%s
-Moves: %s  (best %s)
-Best stars: %s★
-Par path: %s%s
+Moves %s  ·  best %s
+Best stamp %s
+Par path %s%s
 
-Habit: %s","%s
-步数：%s  （最佳 %s）
-最佳星级：%s★
-标准路径：%s%s
+%s","%s
+步数 %s  ·  最佳 %s
+最佳印记 %s
+标准路径 %s%s
 
-习惯：%s"
+%s"
 won.daily_line,"
 Daily %s","
 每日 %s"
@@ -71,27 +71,17 @@ Endless %s  ·  depth %s  ·  rewrite pressure %s%%","
 无尽 %s  ·  深度 %s  ·  改写压 %s%%"
 won.daily_line_code,"
 Daily %s · %s","
-每日 %s · %swon.stars_glyph",%s (%s/3),%s (%s/3)
-end.title,END OF SLICE,切片终章
-end.tagline,The lattice remembers you.,晶格记得你。
-end.new_run,New Run,新周目
-end.menu,Menu,菜单
-end.footer,Vertical slice · Echo Lattice · VISUAL v2 · ink on paper,可玩切片 · 回声晶格 · VISUAL v2 · 纸上墨迹
+每日 %s · %s"
+end.title,WING FILED,本翼归档
+end.tagline,IT LEARNED YOU,它学会了你
+end.new_run,New survey,新调查
+end.menu,Field Index,田野索引
+end.footer,Echo Lattice · Field Ledger · ink on paper,回声晶格 · 田野账本 · 纸上墨迹
 end.header_wing,Wing complete.,本翼完成。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
 end.header_endless,Endless %s — depth %s.,无尽 %s — 深度 %s。
-end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。end.summary,"%s
-Escaped %s / %s chambers.
-Stars this wing: %s★
-Total best moves: %s
-Habit signature: %s
-(u:%s  d:%s  l:%s  r:%s)","%s
-逃脱 %s / %s 间室。
-本翼星级：%s★
-最佳步数合计：%s
-习惯签名：%s
-(上:%s  下:%s  左:%s  右:%s)"
+end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。
 project.description,A labyrinth that rebuilds from your last thirty moves. Escape by rewriting your own habits.,一座根据你最近三十步重建的迷宫。改写自己的习惯以逃脱。
 locale.language,Language,语言
 locale.en,English,English
@@ -255,16 +245,14 @@ chamber.38_nameplate_hard.title,Nameplate+,铭牌+
 chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
 menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
 end.summary,"%s
-Escaped %s / %s chambers.
-Stars this wing: %s★
-Total best moves: %s
-Habit signature: %s
-(u:%s  d:%s  l:%s  r:%s)","%s
-逃脱 %s / %s 间室。
-本翼星级：%s★
-最佳步数合计：%s
-习惯签名：%s
-(上:%s  下:%s  左:%s  右:%s)"
+Surveys filed …… %s / %s
+Stars stamped …… %s★
+Best moves …… %s
+Handwriting …… %s","%s
+已归档调查 …… %s / %s
+星印 …… %s★
+最佳步数 …… %s
+笔迹 …… %s"
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
 hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
 hud.habit_identity,%s-leaning · %s,%s倾向 · %s
@@ -274,7 +262,7 @@ habit.hand_right_leaner,long corridor hand,长廊手笔
 habit.hand_looper,looping ink,回环墨迹
 habit.hand_zigzagger,zigzag hand,折线手笔
 habit.hand_balanced,even hand,匀衡手笔
-won.stars_glyph,%s (%s/3),%s (%s/3)
+won.stars_glyph,%s,%s
 won.stamp_birth,Birth stamp · %s · portrait %s%%,诞生印记 · %s · 肖像 %s%%
 won.stamp_boss,Ledger stamp · %s · portrait %s%%,账本印记 · %s · 肖像 %s%%
 won.stamp_grade_scribble,scribble,潦草
@@ -295,3 +283,22 @@ museum.detail,"%s
 %s · bias %s%% · %s moves · %s","%s
 %s · 偏向 %s%% · %s 步 · %s"
 museum.vignette_empty,No chalk path on this fossil.,此化石无粉笔路径。
+end.folio_mark,FIELD LEDGER · COLOPHON,田野账本 · 版权页
+won.folio_mark,FIELD LEDGER · CLEAR STAMP,田野账本 · 通关印
+won.habit_answer,"Habit answer · %s
+%s","习惯回应 · %s
+%s"
+won.habit_quiet,Habit · still reading the page,习惯 · 仍在读页
+habit.read.right_leaner,You kept one heading.,你总朝一个方向走。
+habit.read.looper,You circled the same hinge.,你在同一枢纽打转。
+habit.read.zigzagger,You never committed a line.,你从未认一条线。
+habit.read.balanced,Mixed ink.,混杂墨迹。
+habit.answer.counter,The lattice answered with %s.,晶格用%s回应了你。
+habit.op.place_deflector,a soft deflector,一枚轻柔偏转
+habit.op.fossilize_hot_cell,a fossil on your hinge,你枢纽上的化石
+habit.op.thicken_walked,thicker walked walls,更厚的足迹墙
+habit.op.grow_wall_far_from_path,a far wall seal,远端封墙
+habit.op.mirror_walked_v,a vertical habit mirror,一枚垂直习惯镜
+habit.op.mirror_walked_h,a horizontal habit mirror,一枚水平习惯镜
+habit.op.widen_hot_corridor,a widened corridor,拓宽走廊
+habit.op.carve_shortcut,a carved shortcut,凿出的捷径

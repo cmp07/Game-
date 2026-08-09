@@ -81,7 +81,7 @@ func _draw() -> void:
 	var brand_y: float = page.position.y + page.size.y * 0.42
 	var title_c := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 56, title_c
@@ -90,15 +90,21 @@ func _draw() -> void:
 	draw_rect(Rect2(brand_x, brand_y + 10.0, 380.0, 3.0), rust, true)
 	var tag := Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("display"),
 		Vector2(brand_x, brand_y + 40.0),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 20, tag
 	)
 	var wing := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.95 * fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		_type("mono"),
 		Vector2(brand_x, brand_y + 68.0),
 		tr("boot.wing_line"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 14, wing
 	)
+
+
+func _type(role: String = "display") -> Font:
+	if has_node("/root/LedgerType"):
+		return LedgerType.font_or_fallback(role)
+	return ThemeDB.fallback_font

@@ -526,6 +526,7 @@ func _trigger_rewrite() -> void:
 	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
 	last_habit_op = str(habit_pick.get("op", ""))
 	last_habit_archetype = str(habit_pick.get("archetype", ""))
+	var habit_cells_added: int = 0
 	for p in habit_pick.get("cells", []):
 		var hp: Vector2i = p
 		if seen.has(hp):
@@ -539,6 +540,13 @@ func _trigger_rewrite() -> void:
 		if _would_still_be_reachable(hp):
 			pending_echoes.append(hp)
 			seen[hp] = true
+			habit_cells_added += 1
+	if has_node("/root/GameState"):
+		if last_habit_op != "" and habit_cells_added > 0:
+			GameState.note_habit_answer(last_habit_archetype, last_habit_op, habit_cells_added)
+		elif last_habit_archetype != "" and last_habit_archetype != "balanced":
+			# Style was read even if no softlock-safe cell landed — still name it.
+			GameState.note_habit_answer(last_habit_archetype, last_habit_op, 0)
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
 	_rewrite_settle_start_msec = Time.get_ticks_msec()

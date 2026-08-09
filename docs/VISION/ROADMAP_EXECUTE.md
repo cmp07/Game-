@@ -47,13 +47,15 @@
 
 ### Wave 1A — Kill prototype tells (P0 surface)
 
-| PR wave | Branch pattern | Scope | Acceptance |
-|---|---|---|---|
-| **W1A.0** | `cursor/feel-quick-wins` (#132) | Boot title · diegetic menu chrome · settings-as-page · chamber margin/spine · rewrite warn tension — [`QUICK_WINS_SPEC.md`](QUICK_WINS_SPEC.md) | Cold boot + chrome stop reading as default UI |
-| **W1A.1** | `cursor/v3-end-language-*` | Rename `END OF SLICE` → product end card; purge “vertical slice” from player strings | No player-facing “slice” |
-| **W1A.2** | `cursor/v3-stars-ink-*` | Replace ASCII `***` / `---` with ink stamp ★ glyphs (won + Museum) | Win screen looks authored |
-| **W1A.3** | `cursor/v3-type-latin-*` | Vendor latin display + mono per art bible; stop ThemeDB-only brand | Brand lockup uses ledger type |
-| **W1A.4** | `cursor/v3-shell-boot-*` | Custom boot splash (`paper_bone` / ink stamp); quiet cold boot | No Godot robot / grey flash |
+| PR wave | Branch pattern | Scope | Acceptance | Status |
+|---|---|---|---|---|
+| **W1A.0** | `cursor/feel-quick-wins` (#132) | Boot title · diegetic menu chrome · settings-as-page · chamber margin/spine · rewrite warn tension — [`QUICK_WINS_SPEC.md`](QUICK_WINS_SPEC.md) | Cold boot + chrome stop reading as default UI | [x] merged |
+| **W1A.1** | `cursor/execute-g1` (was `cursor/v3-end-language-*`) | Rename `END OF SLICE` → product end card; purge “vertical slice” from player strings | No player-facing “slice” | [x] landed |
+| **W1A.2** | `cursor/execute-g1` (was `cursor/v3-stars-ink-*`) | Replace ASCII `***` / `---` with ink stamp ★ glyphs (won + Museum) | Win screen looks authored | [x] landed |
+| **W1A.3** | `cursor/execute-g1` (was `cursor/v3-type-latin-*`) | Vendor latin display + mono per art bible; stop ThemeDB-only brand | Brand lockup uses ledger type | [x] landed (IBM Plex OFL) |
+| **W1A.4** | `cursor/execute-g1` (was `cursor/v3-shell-boot-*`) | Custom boot splash (`paper_bone` / ink stamp); quiet cold boot | No Godot robot / grey flash | [x] landed |
+
+**Also on `cursor/execute-g1` (G1 MVP):** diegetic Clear Stamp / Wing Colophon plates ([`UI_DIEGETIC_V3`](UI_DIEGETIC_V3.md) §4.5–4.6); remix/Daily/Endless habit-answer plain speech ([`HABIT_SYSTEMS_V3`](HABIT_SYSTEMS_V3.md) READ aloud); screenshot path seeds habit answer for media agents.
 
 **Docs:** [`FEELS_PROTOTYPE.md`](FEELS_PROTOTYPE.md) · [`PRODUCTION_CRAFT.md`](PRODUCTION_CRAFT.md)
 
@@ -89,6 +91,8 @@
 **Docs:** [`UI_DIEGETIC_V3.md`](UI_DIEGETIC_V3.md) · [`NARRATIVE_ARC.md`](NARRATIVE_ARC.md)
 
 **Phase 1 exit gate (G1):** Game-feel score **≥ 55 / 100** on re-score rubric in [`MASTER_1000X.md`](MASTER_1000X.md) §3 (same axes). Prototype P0 tells 1–5 closed. Habit answer legible on at least one remix clear.
+
+**G1 progress (2026-08-09, `cursor/execute-g1`):** P0 tells **3–5 closed in code** (type · END OF SLICE · ASCII stars) + boot splash (shell). Habit answer legible on remix/Daily/Endless clear stamps. P0 tells **1–2** (authored audio / tiles) remain Phase 3. Waves **1B–1D** still open for full ≥55 re-score.
 
 ---
 
@@ -184,7 +188,7 @@ Suggested agent naming: `cursor/v3-*` (Phase 1), `cursor/depth-*` (Phases 2–4)
 
 ## 8. Depth gates checklist (Steam stays frozen until)
 
-- [ ] **G1** V3 vertical — prototype P0 tells closed; habit answer legible; feel ≥55  
+- [~] **G1** V3 vertical — W1A P0 surface closed + habit answer on remix clear; feel re-score still pending Waves 1B–1D (audio/tiles P0 remain Phase 3)  
 - [ ] **G2** Content — clone-free denser-4 path; honest Hard; identity stamps  
 - [ ] **G3** Audio/art — hero-path authored earprint + MVP tiles/type  
 - [ ] **G4** Meta — Museum race; claim hygiene; feel ≥70  
@@ -209,6 +213,7 @@ Until G1–G4 are checked, agents opening Steam Partner / Coming Soon work shoul
 | Date | Note |
 |---|---|
 | 2026-08-09 | Initial ROADMAP_EXECUTE — V3 → content → audio/art → meta → Steam resume |
+| 2026-08-09 | G1 exec lead (`cursor/execute-g1`): W1A.1–4 + diegetic clear/colophon + habit-answer MVP; G1 checklist → partial |
 
 ---
 

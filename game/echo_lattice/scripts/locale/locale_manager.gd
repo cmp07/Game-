@@ -215,7 +215,10 @@ func _load_catalog(path: String) -> void:
 func _apply_font_for_locale(locale: String) -> void:
 	var needs_cjk := locale.begins_with("zh") or locale in ["ja", "ko"]
 	if not needs_cjk:
-		if _default_fallback_font != null:
+		# Prefer Field Ledger latin display (IBM Plex) over bare engine default.
+		if has_node("/root/LedgerType") and LedgerType.display != null:
+			ThemeDB.fallback_font = LedgerType.display
+		elif _default_fallback_font != null:
 			ThemeDB.fallback_font = _default_fallback_font
 		return
 	if _cjk_font == null:

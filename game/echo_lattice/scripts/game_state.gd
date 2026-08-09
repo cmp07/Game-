@@ -30,6 +30,8 @@ var daily_best_stars: Dictionary = {}  # date_str (or legacy seed_str) -> total 
 var last_clear_stars: int = 0
 var last_clear_bfs_par: int = 0
 var last_identity_stamp: Dictionary = {}
+## Last habit-reactive answer (archetype + counter op) for clear-stamp copy.
+var last_habit_answer: Dictionary = {}
 ## Best portrait stamp per chamber index (ledger gallery).
 var identity_stamps: Dictionary = {}
 ## Habit identity HUD unlocks after a Mirror Birth (or Looking Glass) moment.
@@ -75,6 +77,7 @@ func start_new_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
@@ -92,6 +95,7 @@ func start_daily_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
@@ -108,6 +112,7 @@ func start_endless_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = true
 	SaveManager.save_to_disk()
 
@@ -125,6 +130,7 @@ func start_hard_run() -> void:
 	run_cleared.clear()
 	habit_profile = {"up": 0, "down": 0, "left": 0, "right": 0}
 	move_ring.clear()
+	clear_habit_answer()
 	run_started = run_queue.size() > 0
 	SaveManager.save_to_disk()
 
@@ -206,6 +212,19 @@ func record_direction(dir: Vector2i) -> void:
 		window = MOVE_BUFFER_MAX
 	if move_ring.size() > window:
 		move_ring.pop_front()
+
+
+func note_habit_answer(archetype: String, op: String, cell_count: int = 0) -> void:
+	## Called when a checkpoint fires a habit-reactive counter (or clears quietly).
+	last_habit_answer = {
+		"archetype": archetype,
+		"op": op,
+		"cells": cell_count,
+	}
+
+
+func clear_habit_answer() -> void:
+	last_habit_answer = {}
 
 
 func record_chamber_win(
