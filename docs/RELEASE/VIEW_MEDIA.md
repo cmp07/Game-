@@ -1,8 +1,9 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `f0c0a5fab9445c906aa160c2e970e2109fe5b042`  
+**Tip at index authoring:** `b8bec38a5aa3594e40ffefb722ed871eda7880d0` (post–menu-1000x Field Ledger shell; brand menu slate recaptured)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
+**Menu 1000×:** premium Field Ledger title shell (`menu-1000x` / #149) with integrated art materials (#148) + feel audio (#147).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
