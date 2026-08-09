@@ -1,8 +1,8 @@
 # RC1 Steam pack — freeze / resume
 
-**Status:** Steam pack frozen. **Next focus = game depth.**  
-**Policy:** Do **not** delete Steam / RELEASE / AUDIT work. Resume Partner + store upload from this freeze **only after** depth gates G1–G4 in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8.  
-**Vision lock:** [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) — game-feel **41/100** vs pack ship-readiness **78/100**; pause Coming Soon until feel/depth land.
+**Status:** Steam pack frozen. **Product-line pivot:** Echo Lattice is frozen; **Weaver** is the north star — see [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md).  
+**Policy:** Do **not** delete Steam / RELEASE / AUDIT work, and do **not** delete `game/echo_lattice/`. Resume Partner + store upload from this freeze **only after** depth gates G1–G4 in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8 *if* Echo Lattice shipping is explicitly reopened.  
+**Vision lock (historical EL):** [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) — game-feel **41/100** vs pack ship-readiness **78/100**. **Live north star:** [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md).
 
 | Field | Value |
 |---|---|
@@ -111,7 +111,8 @@ Until those are done, **public Coming Soon stays blocked**. In-repo pack remains
 - No Steam file deletion or Partner identity invention
 - No merge of RC1 → `main`
 - No claim of Next Fest Verified / paid 1.0
-- Gameplay depth work happens **after** this freeze on the normal RC1 line
+- No deletion of `game/echo_lattice/` (see Weaver pivot)
+- New product north-star work lands under [`../WEAVER/`](../WEAVER/) — not by overwriting this freeze
 
 ---
 
@@ -119,8 +120,9 @@ Until those are done, **public Coming Soon stays blocked**. In-repo pack remains
 
 | Doc | Role |
 |---|---|
-| [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Executive vision — pause Steam, deepen game |
-| [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) | Ordered waves + G1–G4 before Steam resume |
+| [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md) | **Weaver north star** — Echo Lattice frozen; `game/echo_lattice/` kept |
+| [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL executive vision — pause Steam, deepen game |
+| [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) | Ordered waves + G1–G4 before Steam resume (EL line) |
 | [`../RELEASE/RC1_README.md`](../RELEASE/RC1_README.md) | RC1 integration hub |
 | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) | Scorecard ~78 + gates |
 | [`KEY_PATHS.md`](KEY_PATHS.md) | Navigable tree of frozen areas |
