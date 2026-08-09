@@ -1,9 +1,10 @@
-# Echo Lattice audio (AUDIO v2)
+# Echo Lattice audio (AUDIO v3 procedural lift)
 
-Structured placeholders + Godot event wiring for habit addiction, operator identity, diegetic PA, early-chamber silence, and queue-next win fanfare.
+Structured event wiring + procedural streams lifted toward AUDIO v3 identity (multi-stage slam phrases, Ledger Cell habit stems, quieter rests, win/fail stingers). **Not** the authored 1.0 mix — see [`docs/AUDIT/PRODUCTION_AUDIO_DEBT.md`](../../../docs/AUDIT/PRODUCTION_AUDIO_DEBT.md).
 
-- **Bible:** [`docs/ECHO_LATTICE/06_AUDIO_BIBLE.md`](../../../docs/ECHO_LATTICE/06_AUDIO_BIBLE.md)
-- **Event catalog:** [`events/audio_events.json`](events/audio_events.json)
+- **Vision:** [`docs/VISION/AUDIO_V3.md`](../../../docs/VISION/AUDIO_V3.md)
+- **Bible (wiring):** [`docs/ECHO_LATTICE/06_AUDIO_BIBLE.md`](../../../docs/ECHO_LATTICE/06_AUDIO_BIBLE.md)
+- **Event catalog:** [`events/audio_events.json`](events/audio_events.json) (version 3)
 - **Buses:** [`../default_bus_layout.tres`](../default_bus_layout.tres) — Master / SFX / Music / UI / **PA**
 - **Regenerate:** `python3 tools/audio/generate_echo_lattice_placeholders.py`
 - **Validate:** `python3 tools/audio/validate_audio_events.py`
@@ -12,9 +13,10 @@ Structured placeholders + Godot event wiring for habit addiction, operator ident
 |---|---|
 | `sfx/*` (except `sfx/pa`) | SFX |
 | `sfx/pa/*` | PA |
-| `sfx/rewrite/*` | SFX (per-operator stingers) |
+| `sfx/rewrite/*` | SFX (per-operator ~0.90s slam phrases) |
 | `sfx/win/*` | SFX |
-| `music/L0…L3_*` | Music |
+| `sfx/fail/*` | SFX (restart / recover) |
+| `music/L0…L3_*` | Music (Ledger Cell transforms) |
 | `ui/*` | UI |
 
 ## Gameplay entry points
@@ -28,6 +30,7 @@ AudioDirector.on_footstep()
 AudioDirector.on_rewrite("fossilize_hot_cell")
 AudioDirector.on_pa_line("pa.checkpoint.armed")
 AudioDirector.on_chamber_won() # resolve + queue-next open loop
+AudioDirector.on_fail_reset()  # chamber restart
 ```
 
-Replace placeholders before ship; do not ship beep identity as final mix.
+Replace procedural streams with authored Field Ledger material before marketing a final mix.

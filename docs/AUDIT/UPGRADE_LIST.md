@@ -14,8 +14,8 @@ Must clear before marketing “final mix,” Partner Coming Soon with non-temp a
 
 | ID | Upgrade | Owner lane | Acceptance |
 |---|---|---|---|
-| P0-01 | **Author rewrite warn + generic rewrite + footstep one-shots** (replace `*_placeholder.ogg`) — paper-crease / ink-pop / chalk-scuff language | Audio | Blind A/B: placeholder beep vs new; warn readable on laptop speakers |
-| P0-02 | **Author L0–L3 stems** (HVAC bed → lattice ticks → habit dissonance → rewrite swell); keep adaptive API | Audio | Chamber 0 stays silent; intensity rises with habit metrics |
+| P0-01 | **Author rewrite warn + generic rewrite + footstep one-shots** (replace `*_placeholder.ogg`) — paper-crease / ink-pop / chalk-scuff language | Audio | Blind A/B: placeholder beep vs new; warn readable on laptop speakers. *[~] Procedural v3 lift: multi-stage slam phrases + chalkier warn — still DSP; see [`PRODUCTION_AUDIO_DEBT.md`](PRODUCTION_AUDIO_DEBT.md)* |
+| P0-02 | **Author L0–L3 stems** (HVAC bed → lattice ticks → habit dissonance → rewrite swell); keep adaptive API | Audio | Chamber 0 stays silent; intensity rises with habit metrics. *[~] Procedural v3: Ledger Cell motif transforms on L0–L3 — not authored hybrids* |
 | P0-03 | **Map content transforms → stinger events** (`mirror_v`/`mirror_h`/`mirror_v_then_h`→`mirror`, `rotate_180`→`rotate`, `thicken`, `invert`) in `AudioEvents.rewrite_event_id` | Audio/Code | [x] Alias map + catalog `operator_aliases`; campaign transforms hit unique stingers |
 | P0-04 | **Trailer audio pass** — warn + slam + queue-next audible in 15s / 30s cuts; Music ducked; no DSP-beep identity | Audio/Mkt | Matches `STEAM_STORE_FINAL.md` §9 |
 | P0-05 | **Final capsule set** (header/main/small/vertical/hero/logo/icon/background) — illustrator pass; remove PLACEHOLDER stamps; lock hex to `echo_lattice.palette.json` | Art/Mkt | Capsules README acceptance checklist 1–5 |
@@ -75,12 +75,16 @@ Must clear before marketing “final mix,” Partner Coming Soon with non-temp a
 
 | ID | Upgrade | Owner lane | Acceptance |
 |---|---|---|---|
-| P4-01 | Author **PA tones** (attention / board / armed / wing) to brutalist transit identity | Audio | No cute UI beeps; dry institutional |
-| P4-02 | Author **win.chamber + win.queue_next** open-loop (resolve then hungry cut) | Audio | Players queue next; not brass fanfare |
+| P4-01 | Author **PA tones** (attention / board / armed / wing) to brutalist transit identity | Audio | No cute UI beeps; dry institutional. *[~] Procedural PA + post hush tails* |
+| P4-02 | Author **win.chamber + win.queue_next** open-loop (resolve then hungry cut) | Audio | Players queue next; not brass fanfare. *[~] Ledger Cell 1→5 + cut-early fourth in generator; still DSP* |
 | P4-03 | Habit footstep **metallic overtone** layer at high tension (bible §8 polish) | Audio | Optional; placeholders currently omit |
 | P4-04 | Align leftover catalog operators (`fossilize_hot_cell`, …) with live rewrite grammar **or** mark post-1.0 | Design/Audio | No dead stinger ids without a call site |
 | P4-05 | Settings sliders → **SFX / Music / UI / PA** bus dB (bible checklist) | Code | Music mute ≠ SFX/PA mute |
 | P4-06 | Update credits when final mix lands; remove “procedural placeholders” marketing line | Compliance | COMPLIANCE C9 |
+| P4-07 | **Reduce-motion truncates slam phrase at stage boundaries** (AUDIO_V3 §3.4) | Audio/Code | No full 0.90s phrase under 50 ms visual stamp |
+| P4-08 | Wire / polish **`fail.reset`** against all recover paths (restart done; softlock / death PA as needed) | Audio/Code | [~] `AudioDirector.on_fail_reset` on chamber restart |
+
+**Debt register:** [`PRODUCTION_AUDIO_DEBT.md`](PRODUCTION_AUDIO_DEBT.md)
 
 ---
 

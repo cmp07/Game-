@@ -31,13 +31,13 @@ Impact scale used below: **P0** = ruins first-session trust · **P1** = keeps �
 
 ## Top 25 prototype tells (by player impact)
 
-### 1. The entire audio identity is procedural beepware — **P0**
+### 1. The entire audio identity is still procedural (lifted, not authored) — **P0**
 
-**Tell:** Footsteps, rewrite stingers, win fanfare, L0–L3 beds, PA “announcer,” and UI clicks are DSP tones from `tools/audio/generate_echo_lattice_placeholders.py`. Many filenames still contain `_placeholder`. Footstep OGG is ~60 ms of synth.
+**Tell:** Footsteps, rewrite slam phrases, win/fail stingers, L0–L3 beds, PA, and UI clicks are still DSP from `tools/audio/generate_echo_lattice_placeholders.py` (now v3: multi-stage ~0.90s slam, Ledger Cell stems, quieter rests). Many filenames still contain `_placeholder`. Material dictionary (paper / rust / chalk recordings) is absent.
 
-**Why it kills:** Sound is the cheapest way humans date a build. Buses + `AudioDirector` + silence policy are real; the *voice* is still a tone generator. Every checkpoint slam announces “programmer audio.”
+**Why it kills:** Sound is the cheapest way humans date a build. Buses + `AudioDirector` + silence policy + phrase *grammar* are real; the *materials* are still a tone generator. Trailer / store must not call this final mix.
 
-**Evidence:** `game/echo_lattice/audio/README.md` (“Replace placeholders before ship”); `audio/sfx/*_placeholder.*`; `sfx/rewrite/*.ogg` still generator output; compliance forbids marketing a “final mix.”
+**Evidence:** `docs/AUDIT/PRODUCTION_AUDIO_DEBT.md`; `audio/sfx/*_placeholder.*`; `sfx/rewrite/*.ogg` still generator output; compliance forbids marketing a “final mix.”
 
 ---
 

@@ -1,7 +1,7 @@
 {
-  "version": 2,
+  "version": 3,
   "product": "Echo Lattice",
-  "notes": "Structured audio events for Godot AudioDirector. Paths are res:// relative to the echo_lattice project root. Prefer .ogg; AudioManager falls back to .wav.",
+  "notes": "Structured audio events for Godot AudioDirector (AUDIO v3 earprint lift). Paths are res:// relative to the echo_lattice project root. Prefer .ogg; AudioManager falls back to .wav. Rewrite streams are multi-stage ~0.90s slam phrases; music stems are Ledger Cell motif transforms. Still procedural until authored 1.0 assets land.",
   "buses": ["Master", "SFX", "Music", "UI", "PA"],
   "operators": [
     "fossilize_hot_cell",
@@ -175,6 +175,14 @@
       "stream": "res://audio/sfx/win/wing_clear.ogg",
       "category": "win",
       "music_hook": "on_chamber_win"
+    },
+    "fail.reset": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/fail/reset.ogg",
+      "category": "fail",
+      "duck_music_db": -2.5,
+      "duck_ms": 350,
+      "music_hook": "on_death_reset"
     },
     "ui.click": {
       "bus": "UI",

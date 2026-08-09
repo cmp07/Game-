@@ -1,6 +1,7 @@
 extends Node
-## High-level AUDIO v2 facade for gameplay.
+## High-level AUDIO v3 facade for gameplay.
 ## Fire structured events; wires AdaptiveMusic, SilenceDirector, and PA.
+## Rewrite events play multi-stage slam phrases (~0.90s); see AUDIO_V3.md.
 
 signal event_fired(event_id: String, payload: Dictionary)
 
@@ -77,6 +78,11 @@ func on_wing_clear() -> void:
 	var music := _adaptive_music()
 	if music:
 		music.on_chamber_win()
+
+
+func on_fail_reset() -> void:
+	## Chamber restart / habit-death recovery — dry institutional cue, not cartoon.
+	fire("fail.reset")
 
 
 func on_pa_line(line_id: String) -> void:

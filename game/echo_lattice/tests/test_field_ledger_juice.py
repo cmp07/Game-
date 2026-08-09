@@ -40,6 +40,64 @@ class TestRewriteStingerAliases(unittest.TestCase):
             self.assertIn(f"sfx.rewrite.{op}", events)
 
 
+class TestAudioV3Lift(unittest.TestCase):
+    """Procedural AUDIO v3 lift — phrase grammar + fail wiring (not authored mix)."""
+
+    def setUp(self) -> None:
+        self.catalog = json.loads(
+            (ROOT / "audio" / "events" / "audio_events.json").read_text()
+        )
+        self.director = (ROOT / "scripts" / "audio" / "audio_director.gd").read_text()
+        self.chamber = (ROOT / "scripts" / "chamber.gd").read_text()
+        self.generator = (REPO / "tools" / "audio" / "generate_echo_lattice_placeholders.py").read_text()
+
+    def test_catalog_version_3_and_fail_event(self) -> None:
+        self.assertGreaterEqual(int(self.catalog.get("version", 0)), 3)
+        self.assertIn("fail.reset", self.catalog["events"])
+        fail = self.catalog["events"]["fail.reset"]
+        self.assertEqual(fail.get("bus"), "SFX")
+        self.assertIn("fail/reset", fail.get("stream", ""))
+
+    def test_fail_reset_wired_on_chamber_restart(self) -> None:
+        self.assertIn("func on_fail_reset", self.director)
+        self.assertIn('fire("fail.reset")', self.director)
+        self.assertIn("on_fail_reset()", self.chamber)
+
+    def test_generator_is_v3_multi_stage_phrase(self) -> None:
+        self.assertIn("GENERATOR_VERSION = 3", self.generator)
+        self.assertIn("REWRITE_DURATION = 0.90", self.generator)
+        self.assertIn("def rewrite_phrase", self.generator)
+        self.assertIn("CELL_FLAT2", self.generator)
+        self.assertIn("def fail_reset", self.generator)
+
+    def test_operator_slam_phrase_duration(self) -> None:
+        import struct
+        import wave
+
+        mirror = ROOT / "audio" / "sfx" / "rewrite" / "mirror.wav"
+        self.assertTrue(mirror.is_file())
+        with wave.open(str(mirror), "rb") as wf:
+            dur = wf.getnframes() / float(wf.getframerate())
+            n = wf.getnframes()
+            rate = wf.getframerate()
+            samples = struct.unpack("<" + "h" * n, wf.readframes(n))
+
+        self.assertAlmostEqual(dur, 0.90, places=2)
+
+        def rms(t0: float, t1: float) -> float:
+            a = int(t0 * rate)
+            b = int(t1 * rate)
+            chunk = samples[a:b]
+            if not chunk:
+                return 0.0
+            return (sum(x * x for x in chunk) / len(chunk)) ** 0.5 / 32767.0
+
+        # Post-heartbeat air should be quieter than the cadmium hit.
+        self.assertLess(rms(0.06, 0.08), rms(0.0, 0.05) * 0.5)
+        # Slot downbeat is the loudest stage region.
+        self.assertGreater(rms(0.55, 0.70), rms(0.36, 0.50))
+
+
 class TestCadmiumReserve(unittest.TestCase):
     def test_blocked_step_not_cadmium(self) -> None:
         chamber = (ROOT / "scripts" / "chamber.gd").read_text()
