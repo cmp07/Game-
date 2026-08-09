@@ -212,6 +212,9 @@ FORBIDDEN_LITERALS = {
     ),
     "scripts/menu.gd": (
         "Demo — Act I · Mirror Birth. Ink on paper.",
+        "Four Acts. Ink on paper.",
+        "Start New Run",
+        "Daily Challenge",
     ),
     "scripts/input_glyphs.gd": (
         "Move  WASD / Arrows     Undo  Z",

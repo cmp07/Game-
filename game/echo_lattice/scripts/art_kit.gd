@@ -187,17 +187,76 @@ func draw_ledger_page(
 		)
 
 
-func draw_index_card(canvas: CanvasItem, card: Rect2) -> void:
-	## Physical index-card plate: contact shadow, bone fill, ink hairline, inner rule.
-	canvas.draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
-	canvas.draw_rect(card, Palette.PAPER_BONE, true)
-	canvas.draw_rect(card, Palette.INK_SOFT, false, 1.5)
+func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> void:
+	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
+	## Contact shadow + paper_deep lift + bone face + fiber + letterpress rules +
+	## binder holes. opts: alpha, shadow_off, binder_holes, grain_seed, grain_a,
+	## folio_marks, ruled.
+	var alpha: float = clampf(float(opts.get("alpha", 1.0)), 0.0, 1.0)
+	if alpha <= 0.001:
+		return
+	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(5, 7))
+	var binder_holes: int = int(opts.get("binder_holes", 5))
+	var grain_seed: int = int(opts.get("grain_seed", 23))
+	var grain_a: float = float(opts.get("grain_a", 0.055))
+	var folio_marks: bool = bool(opts.get("folio_marks", true))
+	var ruled: bool = bool(opts.get("ruled", false))
+
+	# Soft contact shadow (ink multiply feel — never glass glow).
+	var shadow := Color(
+		Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.22 * alpha
+	)
+	canvas.draw_rect(Rect2(card.position + shadow_off, card.size), shadow, true)
+	# paper_deep backer — slight thickness / lift under the bone face.
+	var deep := Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, alpha)
+	canvas.draw_rect(Rect2(card.position + Vector2(2, 2), card.size), deep, true)
+	var bone := Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, alpha)
+	canvas.draw_rect(card, bone, true)
+	# Micro fiber + faint horizontal rules (index-card stock).
+	draw_paper_grain(canvas, card, grain_seed, grain_a * alpha)
+	if ruled:
+		var rule_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.08 * alpha)
+		var ry: float = card.position.y + 52.0
+		while ry < card.end.y - 16.0:
+			canvas.draw_line(
+				Vector2(card.position.x + 28.0, ry),
+				Vector2(card.end.x - 14.0, ry),
+				rule_c,
+				1.0
+			)
+			ry += 28.0
+	# Letterpress outer + inner hairline.
+	var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
+	canvas.draw_rect(card, ink, false, 1.5)
 	canvas.draw_rect(
 		card.grow(-3.0),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * alpha),
 		false,
 		1.0
 	)
+	# Binder holes — punched stock, not skeuomorphic chrome.
+	if binder_holes > 0 and card.size.y > 80.0:
+		var hole_step: float = maxf(48.0, (card.size.y - 56.0) / float(maxi(binder_holes - 1, 1)))
+		for i in range(binder_holes):
+			var hy: float = card.position.y + 30.0 + float(i) * hole_step
+			if hy > card.end.y - 22.0:
+				break
+			var hx: float = card.position.x + 12.0
+			canvas.draw_circle(
+				Vector2(hx, hy),
+				3.6,
+				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.85 * alpha)
+			)
+			canvas.draw_circle(Vector2(hx, hy), 2.0, bone)
+	# Folio registration ticks — surveyor's corner marks.
+	if folio_marks:
+		var tick := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.7 * alpha)
+		var tl: Vector2 = card.position + Vector2(18, 10)
+		var tr: Vector2 = Vector2(card.end.x - 14.0, card.position.y + 10.0)
+		canvas.draw_line(tl, tl + Vector2(10, 0), tick, 1.0)
+		canvas.draw_line(tl, tl + Vector2(0, 8), tick, 1.0)
+		canvas.draw_line(tr, tr + Vector2(-10, 0), tick, 1.0)
+		canvas.draw_line(tr, tr + Vector2(0, 8), tick, 1.0)
 
 
 func draw_letterpress_wall(

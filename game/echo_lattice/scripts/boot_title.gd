@@ -49,14 +49,18 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
+	# Fade the stamp plate only — desk wash stays so menu paper can read through
+	# (boot→menu handoff; never cross-fade through black).
 	var fade: float = 1.0
 	if _t > HOLD_SEC:
 		fade = clampf(1.0 - (_t - HOLD_SEC) / FADE_SEC, 0.0, 1.0)
 
 	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 7, 0.06 * fade)
+	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 7, 0.06)
 
 	var page := Rect2(vp.x * 0.18, vp.y * 0.22, vp.x * 0.64, vp.y * 0.56)
+	var y_lift: float = (1.0 - fade) * -10.0
+	page.position.y += y_lift
 	var shadow_a := Palette.PAPER_SHADOW
 	shadow_a.a *= fade
 	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), shadow_a, true)

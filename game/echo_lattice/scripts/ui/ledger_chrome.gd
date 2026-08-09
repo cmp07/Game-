@@ -3,6 +3,7 @@ class_name LedgerChrome
 ##
 ## Shared Field Ledger shell chrome — index actions, paper plates, folio marks.
 ## Nodes may remain Godot Controls under the hood; look must never read as stock UI.
+## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
 
@@ -21,11 +22,18 @@ static func style_index_button(btn: Button, primary: bool = false) -> void:
 	btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
 	btn.add_theme_color_override(
 		"font_disabled_color",
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35)
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.32)
 	)
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
+	# Vendor type stack when LedgerType is alive (ART_DIRECTION_V3 §3).
+	if Engine.get_main_loop() != null:
+		var root := Engine.get_main_loop().root if Engine.get_main_loop() is SceneTree else null
+		if root != null and root.has_node("/root/LedgerType"):
+			var lt: Node = root.get_node("/root/LedgerType")
+			if lt != null and lt.has_method("apply_to_control"):
+				lt.apply_to_control(btn, "display", 20 if primary else 18)
 
 
 static func paper_plate_style(deep: bool = false) -> StyleBoxFlat:
@@ -54,6 +62,12 @@ static func style_ink_label(lbl: Label, color: Color = Palette.INK_BLACK, size: 
 		return
 	lbl.add_theme_color_override("font_color", color)
 	lbl.add_theme_font_size_override("font_size", size)
+	if Engine.get_main_loop() != null:
+		var root := Engine.get_main_loop().root if Engine.get_main_loop() is SceneTree else null
+		if root != null and root.has_node("/root/LedgerType"):
+			var lt: Node = root.get_node("/root/LedgerType")
+			if lt != null and lt.has_method("apply_to_control"):
+				lt.apply_to_control(lbl, "mono" if size <= 12 else "body", size)
 
 
 static func style_folio_slider(slider: HSlider) -> void:
@@ -103,7 +117,17 @@ static func style_folio_check(check: BaseButton) -> void:
 	check.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
 
 
-static func draw_index_underlines(host: CanvasItem, buttons: Array, global_origin: Vector2) -> void:
+static func draw_index_underlines(
+	host: CanvasItem,
+	buttons: Array,
+	global_origin: Vector2,
+	focus_progress: float = 1.0
+) -> void:
+	## Selection = rust ink underline (draw-in). Hover = slate. Idle = soft hairline.
+	## Cadmium reserved — never used here.
+	var prog: float = clampf(focus_progress, 0.0, 1.0)
+	# EaseOut for underline draw (UI_DIEGETIC_V3 §7).
+	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
 		if btn == null or not (btn is Control):
 			continue
@@ -115,21 +139,41 @@ static func draw_index_underlines(host: CanvasItem, buttons: Array, global_origi
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		if focused:
+		var max_w: float = minf(r.size.x - 4.0, 220.0)
+		if focused and not disabled:
+			var w: float = max_w * eased
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, w, 2.0),
 				Palette.RUST_FOSSIL,
 				true
 			)
+			# Selection tick — small ink reserve mark left of the row (not cadmium).
+			if eased > 0.55:
+				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
+				var tick_c := Color(
+					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
+				)
+				host.draw_circle(
+					Vector2(local_pos.x - 10.0, local_pos.y + r.size.y * 0.55),
+					2.2,
+					tick_c
+				)
 		elif hovered and not disabled:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, max_w, 2.0),
 				Palette.SLATE_TEAL,
 				true
 			)
-		elif not disabled:
+		elif disabled:
+			# Elegant disabled: hairline fades rather than a loud strike-through.
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 180.0), 1.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 3.0, minf(max_w, 120.0), 1.0),
+				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
+				true
+			)
+		else:
+			host.draw_rect(
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 180.0), 1.0),
 				Palette.INK_SOFT,
 				true
 			)
@@ -140,6 +184,7 @@ static func wire_vertical_focus(buttons: Array) -> void:
 	for btn in buttons:
 		if btn != null and btn is Control:
 			var c: Control = btn
+			# Disabled rows stay visible (elegant ink fade) but leave the focus ring.
 			if c.visible and not (c is BaseButton and (c as BaseButton).disabled):
 				live.append(c)
 	for i in range(live.size()):

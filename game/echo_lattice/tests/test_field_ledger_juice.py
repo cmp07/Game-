@@ -151,10 +151,13 @@ class TestFeelQuickWins(unittest.TestCase):
         boot = (ROOT / "scripts" / "boot_title.gd").read_text()
         self.assertIn("boot.wing_line", boot)
         self.assertIn("signal finished", boot)
+        self.assertIn("y_lift", boot)
         main = (ROOT / "scripts" / "main.gd").read_text()
         self.assertIn("boot_title.tscn", main)
         self.assertIn("_show_boot_title_if_needed", main)
         self.assertIn("_boot_shown", main)
+        self.assertIn("begin_boot_handoff", main)
+        self.assertIn("_connect_menu_signals", main)
         self.assertTrue((ROOT / "scenes" / "boot_title.tscn").is_file())
 
     def test_menu_silent_boot_and_discrete_fold(self) -> None:
@@ -164,7 +167,12 @@ class TestFeelQuickWins(unittest.TestCase):
         # Fold tease must not breathe.
         self.assertNotIn("sin(_t * 2.0)", menu)
         self.assertIn("fold_on", menu)
-        self.assertIn("Binder holes", menu)
+        self.assertIn("binder_holes", menu)
+        # Cadmium reserved — selection is rust underline + ink tick.
+        self.assertNotIn("CADMIUM_WARN", menu)
+        self.assertIn("_draw_brand_seal", menu)
+        self.assertIn("begin_boot_handoff", menu)
+        self.assertIn("ArtKit.draw_index_card", menu)
 
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
@@ -246,14 +254,22 @@ class TestDiegeticShellMvp(unittest.TestCase):
         menu = (ROOT / "scripts" / "menu.gd").read_text()
         self.assertIn("menu.folio_mark", menu)
         self.assertIn("_card_slot_t", menu)
-        self.assertIn("PAPER_DEEP", menu)
         self.assertIn("LedgerChrome", menu)
+        self.assertIn("draw_ledger_page", menu)
+        self.assertIn("_focus_underline_t", menu)
+        self.assertIn("_style_meta_as_ledger_lines", menu)
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
         self.assertIn("settings.folio_mark", settings)
         self.assertIn("_style_folio_controls", settings)
         self.assertIn("LedgerChrome.paper_plate_style", settings)
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
         self.assertIn("class_name LedgerChrome", chrome)
+        self.assertIn("focus_progress", chrome)
+        self.assertIn("RUST_FOSSIL", chrome)
+        self.assertNotIn("CADMIUM_WARN", chrome)
+        art = (ROOT / "scripts" / "art_kit.gd").read_text()
+        self.assertIn('opts.get("binder_holes"', art)
+        self.assertIn('opts.get("folio_marks"', art)
 
     def test_field_index_card_syncs_with_card_column(self) -> None:
         """Regression: drawn Field Index plate and CardColumn must share layout."""
@@ -373,6 +389,7 @@ class TestDiegeticShellMvp(unittest.TestCase):
         for key in (
             "menu.colophon,",
             "menu.folio_mark,",
+            "menu.seal_caption,",
             "pause.resume,",
             "pause.abandon,",
             "colophon.heading,",
