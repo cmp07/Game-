@@ -3,7 +3,7 @@
 **Status:** craft authority (CLOUD ONLY) · **Branch:** `cursor/weaver-craft`  
 **Product:** Echo Lattice · Field Ledger  
 **Job:** Weave content bible + balance + meta loops + habit vision into a **progression craft bar** so every unlock, star, and return mode deepens *handwriting legibility* — never battle-pass chrome or purple-void “level up” theater.  
-**Does not replace:** [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) · [`14_BALANCE_V2.md`](14_BALANCE_V2.md) · [`../VISION/META_LOOPS_V3.md`](../VISION/META_LOOPS_V3.md) · [`../VISION/HABIT_SYSTEMS_V3.md`](../VISION/HABIT_SYSTEMS_V3.md) · [`15_META_V2.md`](15_META_V2.md) (when present)  
+**Does not replace:** [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) · [`14_BALANCE_V2.md`](14_BALANCE_V2.md) · [`../VISION/META_LOOPS_V3.md`](../VISION/META_LOOPS_V3.md) · [`../VISION/HABIT_SYSTEMS_V3.md`](../VISION/HABIT_SYSTEMS_V3.md) · `15_META_V2.md` (on `cursor/echo-lattice-meta-v2` when merged)  
 **Companions:** [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`../VISION/CONTENT_EXPANSION.md`](../VISION/CONTENT_EXPANSION.md) · [`../VISION/FIRST_TEN_MINUTES.md`](../VISION/FIRST_TEN_MINUTES.md)
 
 **Naming note:** Release notes may still mention a future `11_STORE_AND_TRAILER.md` for Steam pack craft. **This** `11_PROGRESSION.md` owns player progression / retention craft inside the weaver trilogy.
