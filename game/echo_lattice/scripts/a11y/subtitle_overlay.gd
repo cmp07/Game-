@@ -19,6 +19,7 @@ const STUB_LINES := {
 	"undo": "Step withdrawn.",
 	"win": "Chamber clear.",
 	"pa.ghost.floor": "Floor chalk noted.",
+	"pa.ghost.race": "Past-self chalk on the page — optional race.",
 	"pa.checkpoint.armed": "Checkpoint — buffer armed.",
 	"pa.rewrite.fired": "Rewrite committed.",
 	"pa.rewrite.matched": "It matches you.",

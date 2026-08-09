@@ -78,7 +78,7 @@ Try Rewind / Reset from the stall options. If Reset still cannot reach the goal,
 
 ### D3. What is the Museum of Selves?
 
-Clears archive a compact “self” (habit fossil). You can browse and ghost-race prior selves. Cosmetic frames/pedestals are **post-1.0 DLC**, not required for Museum use.
+Clears archive a compact “self” (habit fossil). You can browse, replay chalk, or optionally **race** a prior Self’s handwriting as an in-chamber chalk overlay (never required; not combat or a ladder). Cosmetic frames/pedestals are **post-1.0 DLC**, not required for Museum use.
 
 ### D4. Is there DLC / Act V?
 

@@ -78,6 +78,9 @@ func configure(chamber_id: int, moves: int) -> void:
 	elif GameState.run_mode == "endless":
 		next_text = tr("won.next_endless")
 		is_last = false
+	elif GameState.run_mode == "ghost":
+		next_text = tr("won.back_museum")
+		is_last = true
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
@@ -88,6 +91,9 @@ func configure(chamber_id: int, moves: int) -> void:
 	elif GameState.run_mode == "endless":
 		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
 		mode_line = tr("won.endless_line") % [GameState.endless_label, GameState.endless_depth, pct]
+	elif GameState.run_mode == "ghost":
+		var raced: Dictionary = GameState.raced_museum_self() if GameState.has_method("raced_museum_self") else {}
+		mode_line = tr("won.ghost_line") % str(raced.get("title", tr("museum.title")))
 	var stamp: Dictionary = GameState.last_identity_stamp
 	var stamp_line: String = ""
 	if not stamp.is_empty():

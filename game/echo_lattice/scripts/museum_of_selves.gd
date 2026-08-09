@@ -3,7 +3,8 @@ extends RefCounted
 ##
 ## Thin habit archive — Field Ledger fossils of who you were on a clear.
 ## Retention without genre mash: no cosmetics shop, no race ladder, no MX.
-## Ghost path is for replay vignette only (chalk handwriting, not PvP).
+## Ghost chalk is handwriting: Museum vignette + optional in-chamber overlay race
+## (visual only — never combat, never required to clear).
 ##
 
 const DEFAULT_CAP: int = 48
@@ -156,6 +157,21 @@ static func unpack_path(ghost: Dictionary) -> Array:
 	for p in path:
 		out.append(_unpack_point(p))
 	return out
+
+
+static func race_path_for(row: Dictionary) -> Array:
+	## Compact chalk for optional Museum race overlay. Empty ⇒ race unavailable.
+	if typeof(row) != TYPE_DICTIONARY or row.is_empty():
+		return []
+	var ghost = row.get("ghost", {})
+	if typeof(ghost) != TYPE_DICTIONARY:
+		return []
+	return unpack_path(ghost as Dictionary)
+
+
+static func can_race(row: Dictionary) -> bool:
+	## Race needs chalk (chamber resolve happens in GameState.start_ghost_race).
+	return race_path_for(row).size() >= 2 and str(row.get("chamber_id", "")) != ""
 
 
 static func sanitize_museum(raw: Variant, cap: int = DEFAULT_CAP) -> Dictionary:

@@ -1,10 +1,12 @@
 extends Control
 ##
 ## Museum of Selves — thin habit archive browser.
-## Browse fossils + replay chalk vignette. No race ladder or shop.
+## Browse fossils, replay chalk vignette, or optionally race a Self's handwriting
+## as an in-chamber slate overlay. No race ladder, shop, or combat.
 ##
 
 signal back_pressed()
+signal race_self(self_id: String)
 
 const VIGNETTE_SCRIPT: Script = preload("res://scripts/habit_replay_vignette.gd")
 const STAMP_CARD_SCRIPT: Script = preload("res://scripts/identity_stamp_card.gd")
@@ -15,6 +17,7 @@ const STAMP_CARD_SCRIPT: Script = preload("res://scripts/identity_stamp_card.gd"
 @onready var empty_label: Label = %EmptyLabel
 @onready var back_button: Button = %BackButton
 @onready var replay_button: Button = %ReplayButton
+@onready var race_button: Button = %RaceButton
 @onready var detail_label: Label = %DetailLabel
 @onready var vignette_host: Control = %VignetteHost
 @onready var stamp_host: Control = %StampHost
@@ -29,9 +32,11 @@ func _ready() -> void:
 	blurb_label.text = tr("museum.blurb")
 	back_button.text = tr("museum.back")
 	replay_button.text = tr("museum.replay")
+	race_button.text = tr("museum.race")
 	empty_label.text = tr("museum.empty")
 	back_button.pressed.connect(func(): emit_signal("back_pressed"))
 	replay_button.pressed.connect(_on_replay)
+	race_button.pressed.connect(_on_race)
 	_ensure_widgets()
 	refresh()
 	back_button.grab_focus()
@@ -50,6 +55,7 @@ func refresh() -> void:
 	var selves: Array = GameState.list_museum_selves()
 	empty_label.visible = selves.is_empty()
 	replay_button.disabled = selves.is_empty()
+	race_button.disabled = true
 	if selves.is_empty():
 		_selected_id = ""
 		detail_label.text = ""
@@ -102,6 +108,7 @@ func _make_row(row: Dictionary) -> Button:
 func _show_selected() -> void:
 	var row: Dictionary = GameState.get_museum_self(_selected_id)
 	if row.is_empty():
+		race_button.disabled = true
 		return
 	var habit: Dictionary = row.get("habit", {}) if typeof(row.get("habit", null)) == TYPE_DICTIONARY else {}
 	var bias_pct: int = int(round(float(habit.get("dominant_bias", 0.0)) * 100.0))
@@ -118,6 +125,14 @@ func _show_selected() -> void:
 	if _stamp_card and _stamp_card.has_method("set_stamp"):
 		_stamp_card.call("set_stamp", stamp)
 		_stamp_card.visible = not stamp.is_empty() and typeof(stamp.get("mask", null)) == TYPE_DICTIONARY
+	race_button.disabled = not _can_race_selected(row)
+
+
+func _can_race_selected(row: Dictionary) -> bool:
+	if not MuseumOfSelves.can_race(row):
+		return false
+	var content_id: String = str(row.get("chamber_id", ""))
+	return ChamberBook.index_for_content_id(content_id) >= 0
 
 
 func _on_replay() -> void:
@@ -125,6 +140,14 @@ func _on_replay() -> void:
 		_vignette.call("replay")
 	if has_node("/root/AudioDirector"):
 		AudioDirector.fire("ui.click")
+
+
+func _on_race() -> void:
+	if _selected_id == "" or race_button.disabled:
+		return
+	if has_node("/root/AudioDirector"):
+		AudioDirector.fire("ui.click")
+	emit_signal("race_self", _selected_id)
 
 
 func _ensure_widgets() -> void:
