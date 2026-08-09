@@ -15,7 +15,6 @@ const FlashScript = preload("res://scripts/juice/flash.gd")
 const CameraScript = preload("res://scripts/juice/camera_spring.gd")
 const ParticlesScript = preload("res://scripts/juice/particles.gd")
 const TelegraphsScript = preload("res://scripts/juice/telegraphs.gd")
-const MathScript = preload("res://scripts/juice/juice_math.gd")
 
 const COLOR_REWRITE := Color(0.63, 0.88, 1.0)
 const COLOR_ECHO := Color(1.0, 0.36, 0.24)
