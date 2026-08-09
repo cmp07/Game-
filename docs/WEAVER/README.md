@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### 32 — Prototype timing
+
+| Doc | Topic |
+|---|---|
+| [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) | Ultra-tight first-five beat script (W1 spike) |
+
 ---
 
 ## Sibling PR sources (design wave)
