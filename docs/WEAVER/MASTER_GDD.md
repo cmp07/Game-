@@ -140,7 +140,7 @@ Brace · Feed · Oppose · Echo
 | Layer | Lock | Authority |
 |---|---|---|
 | Visual | Workshop page / textile loom; Tension seat is the signature still | [`09_VISUAL.md`](09_VISUAL.md) |
-| Audio | Slack / taut / snap / seat as audible sentences; workshop hush | [`10_AUDIO.md`](10_AUDIO.md) |
+| Audio | Slack / taut / snap / seat as audible sentences; workshop hush; Fragment/Thread/Structure leitmotifs | [`10_AUDIO.md`](10_AUDIO.md) · [`26_AUDIO_V2.md`](26_AUDIO_V2.md) |
 | First thirty | Material → line → Structure → world answer → one CTA | [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) |
 
 **Motion budget (≥3):** Fragment settle with weight · Thread tension climb · Structure seat (dust/joints).

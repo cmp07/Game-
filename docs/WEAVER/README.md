@@ -54,6 +54,12 @@
 | [`10_AUDIO.md`](10_AUDIO.md) | Tension earprint |
 | [`11_PROGRESSION.md`](11_PROGRESSION.md) | Literacy unlocks, not XP theater |
 
+### 20+ — Identity deepeners
+
+| Doc | Topic |
+|---|---|
+| [`26_AUDIO_V2.md`](26_AUDIO_V2.md) | Fragment / Thread / Structure leitmotifs (Atom · Stitch · Cloth) |
+
 ### 12–15 — Biz / tech
 
 | Doc | Topic |
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-audio-v2` | AUDIO v2 leitmotifs (`26_AUDIO_V2`) |
 
 ---
 
