@@ -3,7 +3,7 @@
 **Doc:** `docs/WEAVER/03_FRAGMENTS.md`  
 **Status:** Systems lock — atomic craft units (CLOUD ONLY)  
 **Product line:** Weaver  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) (recover juice · silhouette · beat color)
 
 ---
 
@@ -131,6 +131,12 @@ Fragments do nothing permanent until Threads bind them and Tension seats a Struc
 
 ---
 
-## 9. Lock line
+## 9. Feel deepen (pointer)
+
+Hand-feel beyond this systems lock — recover settle phrase, greyscale silhouette grammar, and **brass/patina Pulse beat color (never purple)** — lives in [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md).
+
+---
+
+## 10. Lock line
 
 Fragments are **craft atoms with ports** — span, anchor, channel, charge, filter, pulse — recovered and spent to weave Structures. They are never purple time.

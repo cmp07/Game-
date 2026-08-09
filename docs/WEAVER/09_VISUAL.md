@@ -69,6 +69,8 @@ Six MVP families — one silhouette language each ([`03_FRAGMENTS.md`](03_FRAGME
 
 Ports = **glyphs on the body**, not paragraph tooltips. Capacity = thickness / stitch density — not DPS numbers. Seat = press into cloth/page — never Pokémon catch beam.
 
+**Feel deepen:** recover settle, greyscale silhouette grammar, and Pulse **brass/patina beat color (never purple)** — [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md).
+
 ### 3.2 Threads
 
 | State | Look |

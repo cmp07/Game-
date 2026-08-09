@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### 20+ — Feel deepeners
+
+| Doc | Topic |
+|---|---|
+| [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) | Recover juice · silhouette grammar · Pulse beat color (not purple) |
+
 ---
 
 ## Sibling PR sources (design wave)
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-fragment-feel` | [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) deepen |
 
 ---
 

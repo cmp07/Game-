@@ -221,6 +221,7 @@ Merged into `cursor/weaver-master` from remotes (2026-08-09 wave):
 | `15_MARKET` store sentence / comps still path→cloth / Mirror Birth | **M** | Align to Yard craft trailer math; keep category purity |
 | `14_TECH` module sketch still names chambers / daily / endless EL-style | **M** | Retarget modules to fields / jobs / gallery when `game/weaver/` spikes |
 | No playable `game/weaver/` yet | **H** | Docs-only wave — schedule throwaway prototype before art ramp ([`18_RISKS.md`](18_RISKS.md) P2) |
+| Fragment hand-feel (recover / silhouette / Pulse color) | **M** | Deepened in [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) — brass beat, not purple time |
 | Sim fence unset (2D vs constrained 3D) | **H** | Pick in week-1 of prototype ([`17_MVP.md`](17_MVP.md) §5) |
 | Legal name check | **M** | Human before Partner ([`19_NAMES.md`](19_NAMES.md)) |
 | GAME_PLAN.md still lists older Game-1 research lanes | **L** | Update separately if Weaver becomes catalog Game 1 |
