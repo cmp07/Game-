@@ -44,12 +44,14 @@ const SAVE_ALLOWED_KEYS: Array[String] = [
 	"identity_stamps",
 	"museum",
 	"tutorial_flags",
+	"ghost_race_self_id",
 ]
 const SAVE_RUN_MODES: Array[String] = [
 	"standard",
 	"daily",
 	"endless",
 	"hard",
+	"ghost",
 ]
 const SAVE_MAX_MUSEUM_SELVES: int = 128
 const SAVE_MAX_MUSEUM_PATH: int = 96
@@ -99,6 +101,7 @@ func save_to_disk() -> bool:
 		"identity_stamps": GameState.identity_stamps,
 		"museum": GameState.museum,
 		"tutorial_flags": GameState.tutorial_flags,
+		"ghost_race_self_id": GameState.ghost_race_self_id,
 	}
 	var payload: String = JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_TMP, FileAccess.WRITE)
@@ -231,6 +234,7 @@ static func validate_save_dict(data: Dictionary) -> Dictionary:
 		"daily_chamber_id",
 		"daily_source",
 		"endless_label",
+		"ghost_race_self_id",
 	]:
 		if data.has(str_field) and str(data.get(str_field, "")).length() > SAVE_MAX_STRING_LEN:
 			return {"ok": false, "reason": "%s_too_long" % str_field}
@@ -441,6 +445,14 @@ func _apply_save(parsed: Dictionary) -> void:
 	var selves = GameState.museum.get("selves", [])
 	if typeof(selves) == TYPE_ARRAY and selves.size() > 0 and typeof(selves[0]) == TYPE_DICTIONARY:
 		GameState.last_museum_self = (selves[0] as Dictionary).duplicate(true)
+	GameState.ghost_race_self_id = str(parsed.get("ghost_race_self_id", ""))
+	if GameState.run_mode == "ghost":
+		# Drop orphan race ids (museum pruned / corrupt payload).
+		if GameState.get_museum_self(GameState.ghost_race_self_id).is_empty():
+			GameState.ghost_race_self_id = ""
+			GameState.run_mode = "standard"
+	elif GameState.ghost_race_self_id != "":
+		GameState.ghost_race_self_id = ""
 	var tflags = parsed.get("tutorial_flags", {})
 	if typeof(tflags) == TYPE_DICTIONARY:
 		GameState.tutorial_flags = (tflags as Dictionary).duplicate(true)

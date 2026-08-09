@@ -167,6 +167,13 @@ func _refresh_title() -> void:
 		mode_tag = tr("hud.endless_tag") % [GameState.endless_label, pct]
 	elif GameState.run_mode == "hard":
 		mode_tag = tr("hud.hard_tag")
+	elif GameState.run_mode == "ghost":
+		var raced: Dictionary = GameState.raced_museum_self() if GameState.has_method("raced_museum_self") else {}
+		var race_title: String = str(raced.get("title", ""))
+		if race_title != "":
+			mode_tag = tr("hud.ghost_tag") % race_title
+		else:
+			mode_tag = tr("hud.ghost_tag_plain")
 	if GameState.run_mode == "endless":
 		title_label.text = "%s — %s%s" % [
 			tr("hud.endless_depth") % (GameState.endless_depth + 1),

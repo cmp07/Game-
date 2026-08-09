@@ -102,6 +102,8 @@ var tex_rust: Array = []
 
 var _ghost_assist: GhostPathAssist
 var _assist_path: Array = []
+## Optional Museum past-self chalk (race overlay). Visual only — never collides.
+var _museum_ghost_path: Array = []
 ## Teach: arm undo toast after first rewrite self-trap bump.
 var _undo_hint_visible: bool = false
 
@@ -246,6 +248,7 @@ func load_chamber(id: int) -> void:
 	rewrite_warn_armed = false
 	has_won = false
 	_assist_path.clear()
+	_museum_ghost_path.clear()
 	_undo_hint_visible = false
 	_telegraph_dirty = true
 	_invalidate_checkpoint_dist()
@@ -254,12 +257,16 @@ func load_chamber(id: int) -> void:
 		_ghost_assist.begin_chamber(str(id))
 	_hold_dir = Vector2i.ZERO
 	_hold_timer = 0.0
+	_load_museum_ghost_overlay()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.set_chamber(id)
 		# Induction Quiet Span stays silent; later chambers keep the ghost-floor tick.
 		if not bool(chamber.get("onboarding", false)) or str(chamber.get("teaches", "")) != "move":
 			AudioDirector.on_pa_line("pa.ghost.floor")
 			_subtitle_line("pa.ghost.floor")
+		if not _museum_ghost_path.is_empty():
+			AudioDirector.on_pa_line("pa.ghost.race")
+			_subtitle_line("pa.ghost.race")
 	emit_signal("moves_changed", move_count)
 	emit_signal("caption_changed", str(chamber.get("caption", "")))
 	emit_signal("undo_hint_changed", false)
@@ -1000,6 +1007,8 @@ func _draw() -> void:
 
 	# Ghost trail — dashed chalk diagram line (art bible §5).
 	_draw_ghost_trail(offset)
+	# Museum past-self chalk (optional race) under a11y assist so assist stays readable.
+	_draw_museum_ghost_path(offset)
 	_draw_assist_path(offset)
 
 	# Telegraph ticks — slate/chalk diagram marks by default; cadmium only when
@@ -1387,6 +1396,48 @@ func _surface_first_hint() -> void:
 	if overlay != null and overlay.has_method("show_text"):
 		overlay.call("show_text", text, 3.2, "teach.hint")
 
+
+
+func _load_museum_ghost_overlay() -> void:
+	## F01 — Ghost of Past Self: slate chalk from MuseumOfSelves.unpack_path.
+	## Overlay only; never mutates grid / never required to clear.
+	_museum_ghost_path.clear()
+	if not has_node("/root/GameState"):
+		return
+	if not GameState.has_method("active_ghost_race_path"):
+		return
+	var path: Array = GameState.active_ghost_race_path()
+	if path.size() < 2:
+		return
+	_museum_ghost_path = path.duplicate()
+
+
+func _draw_museum_ghost_path(offset: Vector2) -> void:
+	if _museum_ghost_path.is_empty():
+		return
+	# Slate chalk (informational) via GHOST role — distinct from live buffer footprints.
+	var ghost_c: Color = _role_color(FossilPalette.FossilRole.GHOST)
+	# Prefer slate soft when default palette so assist (chalk_white role tint) can contrast.
+	var a11y := get_node_or_null("/root/AccessibilityService")
+	if a11y != null and a11y.has_method("colorblind_mode"):
+		if a11y.call("colorblind_mode") == FossilPalette.Mode.DEFAULT:
+			ghost_c = Palette.SLATE_TEAL_SOFT
+	ghost_c.a = 0.55
+	for i in range(_museum_ghost_path.size()):
+		var p: Vector2i = _museum_ghost_path[i]
+		var rect := Rect2(
+			offset + Vector2(p.x * CELL_SIZE + 10, p.y * CELL_SIZE + 10),
+			Vector2(CELL_SIZE - 20, CELL_SIZE - 20)
+		)
+		draw_rect(rect, ghost_c, false, 1.5)
+		_draw_role_pattern(rect, FossilPalette.FossilRole.GHOST, ghost_c)
+	if _museum_ghost_path.size() >= 2:
+		for i in range(_museum_ghost_path.size() - 1):
+			var a: Vector2i = _museum_ghost_path[i]
+			var b: Vector2i = _museum_ghost_path[i + 1]
+			var pa: Vector2 = offset + Vector2(a.x * CELL_SIZE + CELL_SIZE * 0.5, a.y * CELL_SIZE + CELL_SIZE * 0.5)
+			var pb: Vector2 = offset + Vector2(b.x * CELL_SIZE + CELL_SIZE * 0.5, b.y * CELL_SIZE + CELL_SIZE * 0.5)
+			ArtKit.draw_dashed_line(self, pa, pb, ghost_c, 1.75, 6.0, 4.0)
 
 
 func _try_ghost_assist() -> void:

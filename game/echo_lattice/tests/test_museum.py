@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Headless acceptance tests for thin Museum / habit archive meta.
+"""Headless acceptance tests for Museum / habit archive + Ghost of Past Self.
 
 Mirrors MuseumOfSelves contracts without Godot.
 Run: python3 game/echo_lattice/tests/test_museum.py
@@ -25,6 +25,9 @@ VIGNETTE = ROOT / "scripts" / "habit_replay_vignette.gd"
 SCREEN = ROOT / "scripts" / "museum_screen.gd"
 SCENE = ROOT / "scenes" / "museum_screen.tscn"
 PRODUCT = REPO / "docs" / "AUDIT" / "PRODUCT_UPGRADES.md"
+SYSTEMS_TRUTH = REPO / "docs" / "VISION" / "SYSTEMS_TRUTH.md"
+LOCALE = ROOT / "locale" / "echo_lattice.csv"
+SECURITY = ROOT / "tests" / "test_security_high.py"
 
 DEFAULT_CAP = 48
 DEFAULT_STRIDE = 2
@@ -65,6 +68,13 @@ def compact_path(path: list, stride: int = DEFAULT_STRIDE) -> list:
     return packed
 
 
+def unpack_path(ghost: dict) -> list:
+    out = []
+    for p in ghost.get("path", []):
+        out.append([int(p[0]), int(p[1])])
+    return out
+
+
 def title_for(archetype: str, chamber_title: str) -> str:
     arch = archetype if archetype in TITLE_TEMPLATES else "default"
     return TITLE_TEMPLATES[arch].replace("{chamber}", chamber_title or "the Lattice")
@@ -78,6 +88,7 @@ def archive_clear(museum: dict, chamber_title: str, archetype: str, path: list, 
     row = {
         "id": f"self_test_{len(state['selves']) + 1:04d}",
         "outcome": "clear",
+        "chamber_id": "01_echo_plate",
         "stars": stars,
         "title": title_for(archetype, chamber_title),
         "habit": {"archetype": archetype, "dominant_bias": 0.6},
@@ -88,6 +99,11 @@ def archive_clear(museum: dict, chamber_title: str, archetype: str, path: list, 
     while len(state["selves"]) > state["cap"]:
         state["selves"].pop()
     return {"museum": state, "self": row}
+
+
+def can_race(row: dict) -> bool:
+    path = unpack_path(row.get("ghost", {}))
+    return len(path) >= 2 and bool(row.get("chamber_id"))
 
 
 class TestMuseumContracts(unittest.TestCase):
@@ -162,13 +178,80 @@ class TestMuseumContracts(unittest.TestCase):
 
     def test_no_genre_mash_in_thin_surface(self) -> None:
         screen = _read(SCREEN)
-        self.assertNotIn("Race this self", screen)
+        # F01 ships optional Race this self (chalk overlay) — still no combat mash.
+        self.assertIn("museum.race", screen)
+        self.assertIn("race_self", screen)
+        self.assertIn("RaceButton", screen)
         self.assertNotIn("battle pass", screen.lower())
         self.assertNotIn("gacha", screen.lower())
+        self.assertNotIn("enemy", screen.lower())
+        self.assertNotIn("PvP", screen)
         self.assertIn("museum.replay", screen)
+        self.assertIn("Race this self", _read(SCENE))
+        self.assertIn("museum.race,Race this self,", _read(LOCALE))
         vignette = _read(VIGNETTE)
         self.assertIn("Field Ledger", vignette)
-        self.assertIn("No race", vignette)
+        self.assertIn("In-chamber race is a separate overlay", vignette)
+
+    def test_ghost_of_past_self_wire(self) -> None:
+        museum = _read(MUSEUM_GD)
+        self.assertIn("func unpack_path", museum)
+        self.assertIn("func race_path_for", museum)
+        self.assertIn("func can_race", museum)
+        gs = _read(GAME_STATE)
+        self.assertIn("func start_ghost_race", gs)
+        self.assertIn('run_mode = "ghost"', gs)
+        self.assertIn("func active_ghost_race_path", gs)
+        self.assertIn("ghost_race_self_id", gs)
+        chamber = _read(CHAMBER)
+        self.assertIn("_museum_ghost_path", chamber)
+        self.assertIn("_draw_museum_ghost_path", chamber)
+        self.assertIn("FossilPalette.FossilRole.GHOST", chamber)
+        self.assertIn("active_ghost_race_path", chamber)
+        main = _read(MAIN)
+        self.assertIn("_on_museum_race_self", main)
+        self.assertIn("start_ghost_race", main)
+        self.assertIn("clear_ghost_race", main)
+        scene = _read(SCENE)
+        self.assertIn("RaceButton", scene)
+        save = _read(SAVE)
+        self.assertIn('"ghost"', save)
+        self.assertIn('"ghost_race_self_id"', save)
+
+    def test_race_path_contract(self) -> None:
+        result = archive_clear(
+            {"selves": [], "cap": DEFAULT_CAP},
+            "Echo Plate",
+            "looper",
+            [[1, 1], [2, 1], [3, 1], [3, 2]],
+        )
+        row = result["self"]
+        self.assertTrue(can_race(row))
+        path = unpack_path(row["ghost"])
+        self.assertGreaterEqual(len(path), 2)
+        self.assertEqual(path[0], [1, 1])
+        empty = {"ghost": {"path": [[0, 0]]}, "chamber_id": "01_echo_plate"}
+        self.assertFalse(can_race(empty))
+
+    def test_systems_truth_marks_race_lived(self) -> None:
+        truth = _read(SYSTEMS_TRUTH)
+        self.assertIn("T14", truth)
+        self.assertIn("SHIPPED", truth)
+        self.assertIn("Race this self", truth)
+        # Must not leave the old "tests forbid Race this self" claim-only lie.
+        self.assertNotIn('tests forbid “Race this self”', truth)
+        self.assertNotIn("No ghost **race**", truth)
+
+    def test_locale_race_keys(self) -> None:
+        locale = _read(LOCALE)
+        for key in (
+            "museum.race,",
+            "hud.ghost_tag,",
+            "won.back_museum,",
+            "won.ghost_line,",
+            "subtitle.pa.ghost.race,",
+        ):
+            self.assertIn(key, locale)
 
     def test_save_validator_accepts_museum_blob(self) -> None:
         # Keep Python allowlist in sync enough for museum key presence in GD.
@@ -177,6 +260,10 @@ class TestMuseumContracts(unittest.TestCase):
         allowed = re.search(r"SAVE_ALLOWED_KEYS: Array\[String\] = \[([\s\S]*?)\]", save)
         self.assertIsNotNone(allowed)
         self.assertIn('"museum"', allowed.group(1))
+        self.assertIn('"ghost_race_self_id"', allowed.group(1))
+        modes = re.search(r"SAVE_RUN_MODES: Array\[String\] = \[([\s\S]*?)\]", save)
+        self.assertIsNotNone(modes)
+        self.assertIn('"ghost"', modes.group(1))
 
 
 class TestMuseumSavePythonMirror(unittest.TestCase):
@@ -196,10 +283,11 @@ class TestMuseumSavePythonMirror(unittest.TestCase):
                 }
             ],
         }
-        raw = json.dumps({"version": 2, "museum": museum})
+        raw = json.dumps({"version": 2, "museum": museum, "run_mode": "ghost", "ghost_race_self_id": "self_20260809_0001"})
         parsed = json.loads(raw)
         self.assertEqual(parsed["museum"]["cap"], 48)
         self.assertEqual(parsed["museum"]["selves"][0]["outcome"], "clear")
+        self.assertEqual(parsed["run_mode"], "ghost")
 
 
 if __name__ == "__main__":

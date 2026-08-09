@@ -1165,6 +1165,8 @@ func show_museum() -> void:
 	stage.add_child(m)
 	if m.has_signal("back_pressed"):
 		m.connect("back_pressed", Callable(self, "show_menu"))
+	if m.has_signal("race_self"):
+		m.connect("race_self", Callable(self, "_on_museum_race_self"))
 
 
 func show_chamber() -> void:
@@ -1244,6 +1246,13 @@ func _on_menu_museum() -> void:
 	show_museum()
 
 
+func _on_museum_race_self(self_id: String) -> void:
+	## Optional chalk overlay race — launches a real chamber, never combat.
+	if not GameState.start_ghost_race(self_id):
+		return
+	show_chamber()
+
+
 func _on_menu_quit() -> void:
 	get_tree().quit()
 
@@ -1255,12 +1264,20 @@ func _on_chamber_won(chamber_id: int, moves: int) -> void:
 
 
 func _on_menu_requested() -> void:
+	if GameState.run_mode == "ghost":
+		GameState.clear_ghost_race()
+		show_museum()
+		return
 	show_menu()
 
 
 # ---------- win-screen callbacks ----------
 
 func _on_win_next() -> void:
+	if GameState.run_mode == "ghost":
+		GameState.clear_ghost_race()
+		show_museum()
+		return
 	var advanced: bool = GameState.advance_chamber()
 	if advanced:
 		show_chamber()
@@ -1273,6 +1290,10 @@ func _on_win_replay() -> void:
 
 
 func _on_win_menu() -> void:
+	if GameState.run_mode == "ghost":
+		GameState.clear_ghost_race()
+		show_museum()
+		return
 	show_menu()
 
 

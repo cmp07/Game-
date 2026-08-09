@@ -38,6 +38,8 @@ hud.daily_tag, · Daily %s, · 每日 %s
 hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
 hud.endless_depth,Depth %s,深度 %s
 hud.hard_tag, · Hard+, · 高难+
+hud.ghost_tag, · Race · %s, · 竞速 · %s
+hud.ghost_tag_plain, · Race chalk, · 粉笔竞速
 hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %s
 habit.up,up,上
 habit.down,down,下
@@ -50,6 +52,10 @@ won.finish_demo,→ Finish Demo,→ 完成试玩
 won.next_daily,→ Next Daily,→ 下一每日
 won.daily_complete,→ Daily Complete,→ 每日完成
 won.next_endless,→ Keep Climbing,→ 继续攀升
+won.back_museum,→ Back to Museum,→ 返回博物馆
+won.ghost_line,"
+Race chalk · %s","
+粉笔竞速 · %s"
 won.replay,Replay this chamber,重玩本间室
 won.menu,Menu,菜单
 won.stats,"%s
@@ -150,6 +156,7 @@ subtitle.ghost_assist,Ghost path revealed once.,幽灵路径已显示一次。
 subtitle.undo,Step withdrawn.,已撤回一步。
 subtitle.win,Chamber clear.,间室清除。
 subtitle.pa.ghost.floor,Floor chalk noted.,已记录地面粉笔。
+subtitle.pa.ghost.race,Past-self chalk on the page — optional race.,纸上的往昔粉笔——可选竞速。
 subtitle.pa.checkpoint.armed,Checkpoint — buffer armed.,检查点 — 缓冲已就绪。
 subtitle.pa.rewrite.fired,Rewrite committed.,改写已提交。
 subtitle.pa.rewrite.matched,It matches you.,它与你吻合。
@@ -287,10 +294,11 @@ menu.museum,Museum of Selves,自我博物馆
 menu.museum_meta,%s selves archived,已归档 %s 个自我
 won.museum_archive,Archived · %s · %s · bias %s%% · museum %s,已归档 · %s · %s · 偏向 %s%% · 馆藏 %s
 museum.title,Museum of Selves,自我博物馆
-museum.blurb,Each clear leaves a fossil. Browse who you were — handwriting on paper.,每次通关留下化石。浏览曾经的你——纸上的笔迹。
+museum.blurb,Each clear leaves a fossil. Browse who you were — or race the chalk. Overlay only; never required.,每次通关留下化石。浏览曾经的你——或与粉笔竞速。仅为叠加显示；从不强制。
 museum.empty,No selves archived yet. Clear a chamber.,尚无归档自我。先通过一间室。
 museum.back,Back,返回
 museum.replay,Replay handwriting,重播笔迹
+museum.race,Race this self,与此自我竞速
 museum.detail,"%s
 %s · bias %s%% · %s moves · %s","%s
 %s · 偏向 %s%% · %s 步 · %s"

@@ -1,7 +1,7 @@
 extends Control
 ##
 ## Field Ledger replay vignette — chalk handwriting draws itself from a Museum self.
-## Atmosphere only: paper plate + dashed path. No race, no score overlay.
+## Atmosphere only: paper plate + dashed path. In-chamber race is a separate overlay.
 ##
 
 var _path: Array = []  ## Vector2i

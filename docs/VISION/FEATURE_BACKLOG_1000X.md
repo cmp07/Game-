@@ -74,7 +74,7 @@ Tables are sorted by **Score** descending, then Bang, then Impact.
 
 | ID | Feature | I | E | P | Score | Bang | One-line |
 |---|---|---|---|---|---|---|---|
-| **F01** | **Ghost of Past Self (Museum race chalk)** | 5 | 2 | 5 | **12.5** | 100 | Overlay a cleared Self’s compact path as slate chalk; optional; never blocks clear. Extends `MuseumOfSelves.unpack_path` + chamber draw role `GHOST`. |
+| **F01** | **Ghost of Past Self (Museum race chalk)** ✅ | 5 | 2 | 5 | **12.5** | 100 | **Shipped** (`cursor/g1-ghost-self`): optional Race this self → `run_mode=ghost` slate chalk overlay via `unpack_path` + FossilRole `GHOST`; never blocks clear; no combat/ladder. |
 | **F02** | **Ledger Annotations (margin footnotes)** | 5 | 2 | 5 | **12.5** | 100 | After first rewrite / softlock recovery / identity clear, print 1–2 ink lines in the page margin (“Right-lean fossilized.”). Diegetic captions from existing archetype + stamp grades — not a quest log. |
 | **F03** | **Habit Archetype → Visible Counter (once/chamber)** | 5 | 2 | 5 | **12.5** | 100 | On remix/daily (lessons stay forced), let `HabitRewriteLever` place 1–3 soft counter cells under BFS net; win screen names the archetype. Closes the critical thesis gap in DESIGN audit §I1. |
 | **F04** | **Identity Stamp Gallery (plaque wall)** | 5 | 2 | 5 | **12.5** | 100 | Museum page of `IdentityStamp` masks for Who Walked / Portrait / Calcify / Nameplate + birth ceremonies. Same card language as `identity_stamp_card.gd`. |
