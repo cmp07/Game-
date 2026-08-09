@@ -9,7 +9,6 @@
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Executive synthesis + glossary + conflict resolution |
 | [`ROADMAP.md`](ROADMAP.md) | Gates and build order |
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
-| [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | Safe EL → `archive/` plan (history-preserving; plan-only) |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
 
 ---
@@ -23,7 +22,6 @@
 | [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
-| [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | Archive migration plan (`game/echo_lattice` → `archive/echo_lattice`) |
 
 ### 01 — Fantasy
 
@@ -56,6 +54,12 @@
 | [`10_AUDIO.md`](10_AUDIO.md) | Tension earprint |
 | [`11_PROGRESSION.md`](11_PROGRESSION.md) | Literacy unlocks, not XP theater |
 
+### 20+ — Elevations
+
+| Doc | Topic |
+|---|---|
+| [`25_VOID_ART_V2.md`](25_VOID_ART_V2.md) | Void art V2 — depth/materials; kill circles-on-black |
+
 ### 12–15 — Biz / tech
 
 | Doc | Topic |
@@ -74,12 +78,6 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
-### 20+ — Deepen wave
-
-| Doc | Topic |
-|---|---|
-| [`28_LEGACY_V2.md`](28_LEGACY_V2.md) | Offline Structure evolution (no always-online) |
-
 ---
 
 ## Sibling PR sources (design wave)
@@ -94,7 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-legacy-v2` | [`28_LEGACY_V2.md`](28_LEGACY_V2.md) — offline Structure evolution |
+| `cursor/weaver-void-art` | Void art V2 elevation ([`25_VOID_ART_V2.md`](25_VOID_ART_V2.md)) |
 
 ---
 
@@ -104,4 +102,4 @@
 |---|---|
 | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Echo Lattice Steam freeze |
 | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL vision (not live north star) |
-| `game/echo_lattice/` | Frozen playable — **keep** until migrate execute ([`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md)) |
+| `game/echo_lattice/` | Frozen playable — **keep** |
