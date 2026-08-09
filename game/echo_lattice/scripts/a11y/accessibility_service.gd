@@ -26,17 +26,17 @@ func _ready() -> void:
 
 
 func colorblind_mode() -> FossilPalette.Mode:
-	var id := str(_get("accessibility", "colorblind_mode", "default"))
+	var id := str(_cfg_get("accessibility", "colorblind_mode", "default"))
 	# v1 key fallback
-	if id == "default" and str(_get("accessibility", "fossil_palette", "")) != "":
-		var legacy := str(_get("accessibility", "fossil_palette", "default"))
+	if id == "default" and str(_cfg_get("accessibility", "fossil_palette", "")) != "":
+		var legacy := str(_cfg_get("accessibility", "fossil_palette", "default"))
 		if legacy != "default":
 			id = legacy
 	return FossilPalette.mode_from_string(id)
 
 
 func set_colorblind_mode(mode: FossilPalette.Mode) -> void:
-	_set("accessibility", "colorblind_mode", FossilPalette.mode_to_string(mode))
+	_cfg_set("accessibility", "colorblind_mode", FossilPalette.mode_to_string(mode))
 	colorblind_changed.emit()
 	fossil_style_changed.emit()
 
@@ -51,11 +51,11 @@ func set_fossil_mode(mode: FossilPalette.Mode) -> void:
 
 
 func fossil_use_patterns() -> bool:
-	return bool(_get("accessibility", "fossil_use_patterns", true))
+	return bool(_cfg_get("accessibility", "fossil_use_patterns", true))
 
 
 func set_fossil_use_patterns(enabled: bool) -> void:
-	_set("accessibility", "fossil_use_patterns", enabled)
+	_cfg_set("accessibility", "fossil_use_patterns", enabled)
 	colorblind_changed.emit()
 	fossil_style_changed.emit()
 
@@ -69,22 +69,22 @@ func role_color(role: FossilPalette.FossilRole) -> Color:
 
 
 func reduce_flash() -> bool:
-	return bool(_get("accessibility", "reduce_flash", false))
+	return bool(_cfg_get("accessibility", "reduce_flash", false))
 
 
 func set_reduce_flash(enabled: bool) -> void:
-	_set("accessibility", "reduce_flash", enabled)
+	_cfg_set("accessibility", "reduce_flash", enabled)
 	flash_policy_changed.emit()
 
 
 func flash_max_intensity() -> float:
 	if reduce_flash():
-		return minf(float(_get("accessibility", "flash_max_intensity", 1.0)), 0.25)
-	return clampf(float(_get("accessibility", "flash_max_intensity", 1.0)), 0.0, 1.0)
+		return minf(float(_cfg_get("accessibility", "flash_max_intensity", 1.0)), 0.25)
+	return clampf(float(_cfg_get("accessibility", "flash_max_intensity", 1.0)), 0.0, 1.0)
 
 
 func set_flash_max_intensity(value: float) -> void:
-	_set("accessibility", "flash_max_intensity", clampf(value, 0.0, 1.0))
+	_cfg_set("accessibility", "flash_max_intensity", clampf(value, 0.0, 1.0))
 	flash_policy_changed.emit()
 
 
@@ -92,46 +92,50 @@ func screen_shake_enabled() -> bool:
 	if reduce_motion():
 		return false
 	# Field Ledger default: shake off (document game). Opt-in via Settings.
-	return bool(_get("accessibility", "screen_shake_enabled", false))
+	return bool(_cfg_get("accessibility", "screen_shake_enabled", false))
 
 
 func set_screen_shake_enabled(enabled: bool) -> void:
-	_set("accessibility", "screen_shake_enabled", enabled)
+	_cfg_set("accessibility", "screen_shake_enabled", enabled)
 	shake_policy_changed.emit()
 
 
 func screen_shake_intensity() -> float:
 	if not screen_shake_enabled():
 		return 0.0
+<<<<<<< HEAD
 	# Default subtle when enabled — never ship intensity 1.0 as the stock feel.
 	return clampf(float(_get("accessibility", "screen_shake_intensity", 0.35)), 0.0, 1.0)
+=======
+	return clampf(float(_cfg_get("accessibility", "screen_shake_intensity", 1.0)), 0.0, 1.0)
+>>>>>>> origin/cursor/fix-perf-grain
 
 
 func set_screen_shake_intensity(value: float) -> void:
-	_set("accessibility", "screen_shake_intensity", clampf(value, 0.0, 1.0))
+	_cfg_set("accessibility", "screen_shake_intensity", clampf(value, 0.0, 1.0))
 	shake_policy_changed.emit()
 
 
 func subtitles_enabled() -> bool:
-	return bool(_get("accessibility", "subtitles_enabled", true))
+	return bool(_cfg_get("accessibility", "subtitles_enabled", true))
 
 
 func set_subtitles_enabled(enabled: bool) -> void:
-	_set("accessibility", "subtitles_enabled", enabled)
+	_cfg_set("accessibility", "subtitles_enabled", enabled)
 	subtitle_policy_changed.emit()
 
 
 func subtitle_size() -> String:
-	return str(_get("accessibility", "subtitle_size", "medium"))
+	return str(_cfg_get("accessibility", "subtitle_size", "medium"))
 
 
 func set_subtitle_size(size_id: String) -> void:
-	_set("accessibility", "subtitle_size", size_id)
+	_cfg_set("accessibility", "subtitle_size", size_id)
 	subtitle_policy_changed.emit()
 
 
 func subtitle_background() -> bool:
-	return bool(_get("accessibility", "subtitle_background", true))
+	return bool(_cfg_get("accessibility", "subtitle_background", true))
 
 
 func set_subtitle_background(enabled: bool) -> void:
@@ -140,12 +144,12 @@ func set_subtitle_background(enabled: bool) -> void:
 
 
 func ui_scale() -> float:
-	return clampf(float(_get("accessibility", "ui_scale", 1.0)), 0.85, 1.5)
+	return clampf(float(_cfg_get("accessibility", "ui_scale", 1.0)), 0.85, 1.5)
 
 
 func set_ui_scale(value: float) -> void:
 	var s := clampf(value, 0.85, 1.5)
-	_set("accessibility", "ui_scale", s)
+	_cfg_set("accessibility", "ui_scale", s)
 	apply_ui_scale()
 	ui_scale_changed.emit(s)
 
@@ -159,29 +163,29 @@ func apply_ui_scale() -> void:
 
 
 func show_ghost_path_once_enabled() -> bool:
-	return bool(_get("accessibility", "show_ghost_path_once", false))
+	return bool(_cfg_get("accessibility", "show_ghost_path_once", false))
 
 
 func set_show_ghost_path_once_enabled(enabled: bool) -> void:
-	_set("accessibility", "show_ghost_path_once", enabled)
+	_cfg_set("accessibility", "show_ghost_path_once", enabled)
 	assist_policy_changed.emit()
 
 
 func hold_to_walk() -> bool:
-	return bool(_get("accessibility", "hold_to_walk", false))
+	return bool(_cfg_get("accessibility", "hold_to_walk", false))
 
 
 func set_hold_to_walk(enabled: bool) -> void:
-	_set("accessibility", "hold_to_walk", enabled)
+	_cfg_set("accessibility", "hold_to_walk", enabled)
 	assist_policy_changed.emit()
 
 
 func reduce_motion() -> bool:
-	return bool(_get("accessibility", "reduce_motion", false))
+	return bool(_cfg_get("accessibility", "reduce_motion", false))
 
 
 func set_reduce_motion(enabled: bool) -> void:
-	_set("accessibility", "reduce_motion", enabled)
+	_cfg_set("accessibility", "reduce_motion", enabled)
 	flash_policy_changed.emit()
 	shake_policy_changed.emit()
 
@@ -247,12 +251,12 @@ func _resolve_store() -> Node:
 	return null
 
 
-func _get(section: String, key: String, fallback: Variant) -> Variant:
+func _cfg_get(section: String, key: String, fallback: Variant) -> Variant:
 	if _store != null and _store.has_method("get_value"):
 		return _store.call("get_value", section, key, fallback)
 	return fallback
 
 
-func _set(section: String, key: String, value: Variant) -> void:
+func _cfg_set(section: String, key: String, value: Variant) -> void:
 	if _store != null and _store.has_method("set_value"):
 		_store.call("set_value", section, key, value, true)
