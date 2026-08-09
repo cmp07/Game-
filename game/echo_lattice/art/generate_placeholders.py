@@ -344,6 +344,36 @@ def keyart_capsule_thumb() -> Image.Image:
     return img.convert("RGB")
 
 
+def paper_grain_512(seed: int = 42) -> Image.Image:
+    """Tiled ink speck mask for TECH ART v3 paper_grain.gdshader (alpha = mask)."""
+    size, step, density = 512, 6, 0.18
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    px = img.load()
+    rng = random.Random(seed)
+    ink = hxa(SW["ink_soft"], 255)
+    for y in range(0, size, step):
+        for x in range(0, size, step):
+            if rng.random() < density:
+                px[x, y] = ink
+    return img
+
+
+def bleed_edge_lut(size: int = 64) -> Image.Image:
+    """U=join_mask, V=bleed soft falloff for ink_bleed.gdshader."""
+    img = Image.new("RGBA", (size, size), (0, 0, 0, 255))
+    px = img.load()
+    denom = max(size - 1, 1)
+    for y in range(size):
+        bleed = y / denom
+        for x in range(size):
+            join = x / denom
+            edge = join * join
+            v = max(0.0, min(1.0, edge * (0.35 + 0.65 * bleed)))
+            c = int(round(v * 255))
+            px[x, y] = (c, c, c, 255)
+    return img
+
+
 def main() -> None:
     save(tile_floor_fresh(),      "tiles/floor_fresh_32.png")
     save(tile_floor_walked(),     "tiles/floor_walked_32.png")
@@ -363,6 +393,8 @@ def main() -> None:
     save(ui_seed_header(),        "ui/seed_header_256x24.png")
     save(palette_strip(),         "palette/palette_strip.png")
     save(keyart_capsule_thumb(),  "keyart/capsule_header_460x215_thumb.png")
+    save(paper_grain_512(42),     "noise/paper_grain_512.png")
+    save(bleed_edge_lut(64),      "noise/bleed_edge_lut.png")
 
 
 if __name__ == "__main__":

@@ -68,6 +68,9 @@ jobs:
       - name: Accessibility settings gate
         run: python3 game/echo_lattice/tests/test_a11y_settings.py
 
+      - name: Tech art v3 gate
+        run: python3 game/echo_lattice/tests/test_tech_art_v3.py
+
   # ---------------------------------------------------------------------------
   # Godot export (container). Templates ship under /root in the image;
   # move them into the Actions user home before export (abarichello/godot-ci).

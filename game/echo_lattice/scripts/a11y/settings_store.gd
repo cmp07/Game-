@@ -168,6 +168,10 @@ func _migrate_v1_to_v2() -> void:
 		_data["locale"] = {"code": "system"}
 	elif not (_data["locale"] as Dictionary).has("code"):
 		(_data["locale"] as Dictionary)["code"] = "system"
+	if not _data.has("graphics"):
+		_data["graphics"] = {"tech_art_v3": false}
+	elif not (_data["graphics"] as Dictionary).has("tech_art_v3"):
+		(_data["graphics"] as Dictionary)["tech_art_v3"] = false
 	_data["version"] = 2
 
 
@@ -221,6 +225,9 @@ func _builtin_defaults() -> Dictionary:
 		},
 		"locale": {
 			"code": "system",
+		},
+		"graphics": {
+			"tech_art_v3": false,
 		},
 		"input_bindings": {
 			"move_up": ["W", "Up"],

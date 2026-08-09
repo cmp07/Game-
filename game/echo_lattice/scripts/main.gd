@@ -825,6 +825,8 @@ func _selftest_perf_budgets() -> bool:
 	else:
 		print("  grain bake: %d seeds cached (tiled ImageTexture)" % ArtKit.baked_grain_seed_count())
 
+	ok = _selftest_tech_art_v3() and ok
+
 	if not has_node("/root/Juice"):
 		printerr("Juice autoload missing"); return false
 	Juice.reset_transient()
@@ -840,6 +842,79 @@ func _selftest_perf_budgets() -> bool:
 	Juice.reset_transient()
 	if Juice.live_particle_count() != 0:
 		printerr("reset_transient did not clear particles"); ok = false
+	return ok
+
+
+func _selftest_tech_art_v3() -> bool:
+	## Cloud-safe TECH ART v3 contracts — no GPU ms. Flag stays off by default.
+	var ok := true
+	if not has_node("/root/SettingsStore"):
+		printerr("SettingsStore missing for tech_art_v3"); return false
+	var flagged_raw: Variant = SettingsStore.get_value("graphics", "tech_art_v3", null)
+	if flagged_raw == null:
+		printerr("graphics.tech_art_v3 missing from settings defaults"); ok = false
+	elif bool(flagged_raw):
+		printerr("tech_art_v3 must default false for CI / Deck-safe ship"); ok = false
+	else:
+		print("  tech_art_v3: default OFF (CI-safe)")
+	if TechArt.v3_enabled():
+		printerr("TechArt.v3_enabled unexpected true under defaults"); ok = false
+
+	for path in [
+		TechArt.PAPER_GRAIN_SHADER,
+		TechArt.INK_BLEED_SHADER,
+		TechArt.PAPER_GRAIN_PAGE_MAT,
+		TechArt.PAPER_GRAIN_MENU_MAT,
+		TechArt.INK_BLEED_SLAM_MAT,
+		TechArt.GRAIN_TEX_PATH,
+		TechArt.BLEED_LUT_PATH,
+	]:
+		if not ResourceLoader.exists(path):
+			printerr("tech_art_v3 missing resource: %s" % path); ok = false
+
+	var page_mat: Resource = load(TechArt.PAPER_GRAIN_PAGE_MAT)
+	if page_mat is ShaderMaterial:
+		var opacity: float = float((page_mat as ShaderMaterial).get_shader_parameter("opacity"))
+		if opacity > TechArt.MAX_GRAIN_OPACITY + 0.0001:
+			printerr("paper_grain_page opacity %.3f exceeds %.2f" % [opacity, TechArt.MAX_GRAIN_OPACITY])
+			ok = false
+		else:
+			print("  paper grain material opacity=%.3f (≤ %.2f)" % [opacity, TechArt.MAX_GRAIN_OPACITY])
+	else:
+		printerr("paper_grain_page.tres is not a ShaderMaterial"); ok = false
+
+	var b0: float = SlamShaderDriver.bleed_for_local_t(0.40)
+	var b_slot: float = SlamShaderDriver.bleed_for_local_t(0.64)
+	var b_end: float = SlamShaderDriver.bleed_for_local_t(1.0)
+	if b0 > 0.001 or b_slot < 0.05 or b_slot > 0.16 or b_end < 0.99:
+		printerr("ink bleed timing map unexpected: 0.40→%.3f 0.64→%.3f 1.0→%.3f" % [b0, b_slot, b_end])
+		ok = false
+	else:
+		print("  ink bleed timing: crease=0 slot≈%.2f end=%.2f" % [b_slot, b_end])
+
+	var shared_a: ShaderMaterial = SlamShaderDriver.shared_bleed_material()
+	var shared_b: ShaderMaterial = SlamShaderDriver.shared_bleed_material()
+	if shared_a == null or shared_a != shared_b:
+		printerr("ink bleed material must be a single shared instance"); ok = false
+	else:
+		print("  ink bleed: shared ShaderMaterial (no hot-path duplicate)")
+
+	# Host smoke: mount grain layer under a throwaway Control, then free.
+	var host := Control.new()
+	host.size = Vector2(960, 560)
+	add_child(host)
+	TechArt.set_v3_enabled(true, false)
+	var layer: PaperGrainLayer = PaperGrainLayer.attach_to(host, 42, 0.09, Vector2.ZERO, false)
+	if layer == null or not is_instance_valid(layer):
+		printerr("PaperGrainLayer.attach_to failed"); ok = false
+	else:
+		var clamped: float = float(layer.grain_opacity)
+		if clamped > TechArt.MAX_GRAIN_OPACITY + 0.0001:
+			printerr("PaperGrainLayer failed to clamp opacity (got %.3f)" % clamped); ok = false
+		else:
+			print("  PaperGrainLayer: opacity clamped to %.3f" % clamped)
+	TechArt.set_v3_enabled(false, false)
+	host.queue_free()
 	return ok
 
 

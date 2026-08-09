@@ -105,6 +105,9 @@ var _assist_path: Array = []
 ## Teach: arm undo toast after first rewrite self-trap bump.
 var _undo_hint_visible: bool = false
 
+## Optional TECH ART v3 ink-bleed host (shared ShaderMaterial; flag default off).
+var _ink_bleed: InkBleedOverlay = null
+
 
 func _ready() -> void:
 	_load_art()
@@ -118,7 +121,16 @@ func _ready() -> void:
 		a11y.fossil_style_changed.connect(queue_redraw)
 	if not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
 		Input.joy_connection_changed.connect(_on_joy_connection_changed)
+	_ensure_ink_bleed_host()
 	load_chamber(GameState.current_chamber)
+
+
+func _ensure_ink_bleed_host() -> void:
+	if _ink_bleed != null and is_instance_valid(_ink_bleed):
+		return
+	_ink_bleed = InkBleedOverlay.new()
+	_ink_bleed.name = "InkBleedOverlay"
+	add_child(_ink_bleed)
 
 
 func _on_joy_connection_changed(_device: int, connected: bool) -> void:
@@ -970,7 +982,9 @@ func _draw() -> void:
 
 	# Full viewport paper wash + margin.
 	draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
+	# TECH ART v3: PaperGrainLayer (scene host) owns grain; RC1 keeps CPU blit.
+	if not TechArt.v3_enabled():
+		ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
 
 	# Cast shadow under the ledger page.
 	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
@@ -985,7 +999,8 @@ func _draw() -> void:
 		1.0
 	)
 	ArtKit.draw_ledger_grid(self, page, 16)
-	ArtKit.draw_paper_grain(self, page, 42, 0.08)
+	if not TechArt.v3_enabled():
+		ArtKit.draw_paper_grain(self, page, 42, 0.08)
 
 	# Page border — double ink rule; heavier when rewrite is imminent.
 	var rule_w: float = 2.0 + (1.5 if warn_tension > 0.01 else 0.0)
@@ -1029,6 +1044,8 @@ func _draw() -> void:
 	# Pending rewrite origami slam.
 	if pending_echoes.size() > 0:
 		_draw_rewrite_slam(offset, vp_size, page)
+	elif _ink_bleed != null:
+		_ink_bleed.clear()
 
 	# Player — surveyor stamp + chest-lantern warm spot.
 	_draw_player(offset)
@@ -1234,16 +1251,33 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 			_blit(tex_wall_fossil, slotted, echo_c2)
 			draw_rect(slotted.grow(-1.0), echo_c2.darkened(0.25), false, 1.5)
 		else:
-			# Rust bleed from the joins.
-			var bleed: float = (local_t - 0.78) / 0.22
+			# Rust bleed from the joins (timing via SlamShaderDriver — TECH_ART_V3 §3.3).
 			var echo_c3: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
 			draw_rect(base, echo_c3, true)
 			_blit(tex_wall_fossil, base, echo_c3)
-			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
-			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
-				draw_texture_rect(tex_rust[rust_i], base.grow(-2.0 + 2.0 * (1.0 - bleed)), false, Color(1, 1, 1, 0.4 + 0.6 * bleed))
+			# Optional shader host draws rust when tech_art_v3; RC1 keeps CPU decal.
+			if not TechArt.v3_enabled():
+				var rust_i: int = SlamShaderDriver.rust_variant_index(p, tex_rust.size())
+				if tex_rust.size() > 0 and tex_rust[rust_i] != null:
+					var cpu_bleed: float = (local_t - 0.78) / 0.22
+					draw_texture_rect(
+						tex_rust[rust_i],
+						base.grow(-2.0 + 2.0 * (1.0 - cpu_bleed)),
+						false,
+						Color(1, 1, 1, 0.4 + 0.6 * cpu_bleed)
+					)
+			else:
+				var bleed: float = SlamShaderDriver.bleed_for_local_t(local_t)
+				# Join darkening hint while the shared bleed material soaks.
+				var join := Color(Palette.RUST_DEEP.r, Palette.RUST_DEEP.g, Palette.RUST_DEEP.b, 0.20 * bleed)
+				draw_rect(base.grow(-1.0), join, false, 1.0)
 			draw_rect(base.grow(-1.0), echo_c3.darkened(0.25), false, 1.5)
 			_draw_role_pattern(base, FossilPalette.FossilRole.ECHO_WALL, echo_c3)
+
+	if TechArt.v3_enabled() and _ink_bleed != null:
+		_ink_bleed.sync_slam(pending_echoes, offset, float(CELL_SIZE), t_norm, tex_wall_fossil, tex_rust)
+	elif _ink_bleed != null:
+		_ink_bleed.clear()
 
 	# Quiet title plate during slam — "IT LEARNED YOU"
 	if t_norm > 0.12 and t_norm < 0.85:
