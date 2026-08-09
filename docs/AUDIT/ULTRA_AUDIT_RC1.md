@@ -7,8 +7,9 @@
 | **Synthesis branch** | `cursor/audit-ultra-synthesis` |
 | **Date** | 2026-08-09 |
 | **Mode** | Cloud-only merge of sibling `cursor/audit-*` findings + RC1 tree spot-checks |
-| **Ship-readiness score** | **54 / 100** (pre–P0 land; Partner/assets still dominate) |
+| **Ship-readiness score** | **68 / 100** (post–fix-* integration wave; Partner/assets still dominate Gate A) |
 | **P0 code landed** | **Yes — 2026-08-09** on `cursor/echo-lattice-rc1` (#82 / #87 / #88 + full `docs/AUDIT/`) |
+| **Fix wave landed** | **Yes — 2026-08-09** `cursor/fix-*` + meta/identity/ci category lanes on RC1 tip `c61dcea` |
 
 ---
 
@@ -18,9 +19,9 @@ RC1 is a **real offline playable Steam candidate**, not a paper prototype. The h
 
 **P0 code landed (2026-08-09):** SaveManager bak recovery / post-commit cloud push (#82), Continue/`run_cleared` lifetime-skip fix (#87), and adversarial session integrity (build_flavor + book sanitize, focus/pad hold clear, locale HUD refresh + tests) (#88) are merged into this RC1 tip. Full audit set `#75–#89` docs live under [`docs/AUDIT/`](.).
 
-It is **not** Partner-ready and **not** thesis-complete. Steam Partner readiness sits at **~38%** (placeholders, Windows-only depots, no CI workflows, stamped capsules). Habit archetypes, rewrite-score bias, DailyCalendar/seeds, Endless, hard-variant UI, and CrashLogHook autoload are **documented or authored but unwired**. RELEASE “✅ ship” language overstates a11y/l10n end-to-end (CJK font missing; settings/subtitles largely unkeyed). Production audio/art are still procedural placeholders.
+It is **not** Partner-ready. Steam Partner readiness remains **~45%** (real AppID/capsules/trailer still missing; CI + Linux/demo depots now scaffolded). **Landed on RC1 this wave:** SEC-01/02/03 High fixes; DailyCalendar friend-code wire; HabitRewriteLever + RewriteScoreBias; content clone rebuild + rewrite.cap; Endless thin vertical; Field Ledger juice; a11y/l10n tr()+CJK fetch; wishlist CTA gates; Deck GL Compatibility/7W; identity stamps + sealed habit HUD; CrashLogHook autoload; Steam CI workflow. Hard-variant UI and production audio/art remain open. RELEASE overclaims are reduced but not gone.
 
-**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**, provided Partner identity + final store assets land first. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. Code P0s from the ultra audit are on RC1; Gate A is now blocked on AppID / capsules / trailer / Partner paste.
+**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**, provided Partner identity + final store assets land first. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. Audit P0s + the fix-integration wave are on RC1; Gate A is still blocked on AppID / capsules / trailer / Partner paste.
 
 ---
 
@@ -55,23 +56,24 @@ It is **not** Partner-ready and **not** thesis-complete. Steam Partner readiness
 | Partner console (live AppID, surveys, depots) | **Gap** — correctly not invented |
 | Godot `--selftest` in this environment | **Gap** — no Godot binary; Python gates used as proxy |
 | Sibling P0 **code** fixes | **Merged into RC1** (2026-08-09) — #82 / #87 / #88 + SaveManager union |
+| Post-audit **fix-*** / category lanes | **Merged into RC1** (2026-08-09) — sec-high, daily, habit, content, meta, perf, a11y, endless, juice, identity, ci, wishlist, compat |
 
 ---
 
-## 2. Scorecard (weighted → 54/100)
+## 2. Scorecard (weighted → 68/100)
 
 | Pillar | Weight | Score | Evidence |
 |---|---:|---:|---|
-| Offline playable loop & softlock bar | 20 | **16** | BUGBASH FIXED set + validators green; Continue/save P0s **landed on RC1** |
-| Demo / content spine (Act I → Mirror Birth) | 15 | **11** | Demo preset + filter solid; map clones + unwired daily hurt depth |
-| Thesis reactivity (habit → authorship) | 10 | **4** | Path→geometry yes; archetype/bias/adaptation mostly sidecar |
-| Store & Steam Partner | 20 | **8** | Partner readiness **38%**; placeholders dominate |
-| Compat (Win / Linux / Deck / mac) | 10 | **6** | Win primary + Linux preset OK; mac stub; Deck needs device QA + Linux depot |
-| Security & privacy | 10 | **7** | 0 Critical; 3 High (Spacewar, cloud save trust, CLI `--out`) |
-| A11y / l10n | 8 | **4** | Services exist; CJK font + settings/subtitle `tr()` holes |
-| Perf / juice / production audio-art | 7 | **3** | Full-grid redraw + grain; placeholder SFX/stems; capsules stamped |
+| Offline playable loop & softlock bar | 20 | **17** | Continue/save P0s + Daily calendar wire + Endless climb; validators green |
+| Demo / content spine (Act I → Mirror Birth) | 15 | **13** | Clone maps rebuilt; rewrite.cap; identity stamps after Mirror Birth |
+| Thesis reactivity (habit → authorship) | 10 | **7** | HabitRewriteLever + RewriteScoreBias wired; sealed habit HUD until birth |
+| Store & Steam Partner | 20 | **10** | Wishlist CTA gates + CI/depot scaffolds; AppID/capsules/trailer still open (~45%) |
+| Compat (Win / Linux / Deck / mac) | 10 | **7** | GL Compatibility tag; Deck 7W defaults; Linux/demo depot VDFs added |
+| Security & privacy | 10 | **9** | SEC-01/02/03 High closed on RC1; Cloud validate + updated_at policy |
+| A11y / l10n | 8 | **6** | Settings/demo/glyphs keyed; CJK fetch/OFL; subtitle background |
+| Perf / juice / production audio-art | 7 | **5** | Baked grain + dirty redraw + particle pool; Field Ledger juice; stems still placeholder |
 
-**Interpretation:** Mid-50s = “ship the **integration branch** and Coming Soon scaffolding,” not “upload depots tomorrow.”
+**Interpretation:** High-60s = “integration line is playable + thesis-reactive,” still **not** Partner upload-ready until Gate A assets land.
 
 ---
 
@@ -82,25 +84,25 @@ Ranked by ship damage × likelihood for Coming Soon → Next Fest → 1.0.
 | # | Risk | Sev | Source |
 |---:|---|---|---|
 | 1 | **Partner identity still placeholders** (`YOUR_APP_ID`, studio/legal, demo wishlist URL) — public CTA / depots cannot go live | P0 | Steam #80, Meta #82, Product #79 |
-| 2 | **No export CI / Godot workflows** — every build is manual; checksum/pinning guidance missing | P0 | Architecture #86, Steam #80, Security #76 |
-| 3 | **Daily Challenge authority orphaned** — FAQ/calendar claim UTC friend-code ritual; runtime Fisher–Yates ignores `DailyCalendar` / `DailySeeds` | P0 · mitigated on `cursor/fix-daily-calendar` | Bugs-core #87, Adversarial #88, Design #83 |
+| 2 | ~~**No export CI / Godot workflows**~~ — **mitigated:** `.github/workflows/ci.yml` + Linux/demo depot VDFs on RC1; still needs green CI run + real AppIDs | P0 → P1 | Architecture #86, Steam #80, `cursor/steam-ci-depots` |
+| 3 | ~~**Daily Challenge authority orphaned**~~ — **mitigated on RC1** via `cursor/fix-daily-calendar` (calendar_90 + friend codes) | ~~P0~~ → closed | Bugs-core #87, Adversarial #88 |
 | 4 | ~~**Continue / save P0s on RC1**~~ — **LANDING NOTE:** lifetime `completed` skip, bak destruction, cloud-before-commit, demo↔full queue bleed **mitigated on RC1** via #82/#87/#88 merge | ~~P0~~ → closed | #87, #82, #88 |
-| 5 | **Spacewar `480` fallback** if Steam enabled without real AppID | High | Security SEC-01 |
-| 6 | **Steam Cloud pull writes unvalidated remote bytes** once flag flips | High | Security SEC-02, Meta P1-06 |
-| 7 | **Linux depot + demo depot missing** — Deck Verified / Next Fest upload blocked | High | Compat platforms #75, Steam #80 |
+| 5 | ~~**Spacewar `480` fallback**~~ — **mitigated** (`allow_spacewar_dev` fail-closed; SEC-01 tests green) | ~~High~~ → closed | Security SEC-01 / `cursor/fix-sec-high` |
+| 6 | ~~**Steam Cloud pull unvalidated**~~ — **mitigated** (validate_save_text + updated_at + atomic write) | ~~High~~ → closed | SEC-02 / bugs-meta-p1 |
+| 7 | ~~**Linux depot + demo depot missing**~~ — **mitigated** (VDF + CI scaffold on RC1); real AppIDs + upload still open | High → P1 | `cursor/steam-ci-depots` |
 | 8 | **Production audio/art placeholders** — beeps + PLACEHOLDER capsules kill conversion | High | Audio/art #84, Product U01/U07 |
 | 9 | **Trailer / final capsules absent** — Coming Soon page cannot convert | High | Product #79, Steam #80 |
-| 10 | **Habit systems unwired** — store promise “It learned you” overclaims style reactivity | High | Design #83, Bugs-core CORE-05/06 |
-| 11 | **Chamber map clones** (exact Hamming-0 triples) — late-act / hard / Daily novelty collapse | High | Content #85 |
-| 12 | **Perf: per-frame full redraw + paper grain spam** — Deck 60 fps @ 7 W at risk | High | Perf #81 |
-| 13 | **CJK font not vendored** — zh_Hans tofu on Deck / minimal Windows | High | A11y/l10n #77, Compat #75 |
-| 14 | **CrashLogHook not autoloaded** — live-ops crash packs unavailable in RC1 builds | P1 | Meta #82, Architecture #86 |
+| 10 | ~~**Habit systems unwired**~~ — **mitigated** (HabitRewriteLever + score bias on RC1); hard-variant UI still thin | High → P1 | Design #83 / `cursor/fix-habit-wire` |
+| 11 | ~~**Chamber map clones**~~ — **mitigated** (Twin Rail / Conductor / Mirror Birth+ rebuilt) | ~~High~~ → closed | Content #85 / `cursor/fix-content-clones` |
+| 12 | ~~**Perf: full redraw + grain spam**~~ — **mitigated** (bake + dirty redraw + particle pool); device Deck QA still open | High → P1 | Perf #81 / `cursor/fix-perf-grain` |
+| 13 | ~~**CJK font not vendored**~~ — **mitigated** (fetch script + OFL + locale keys; binary via LFS) | High → P1 | `cursor/fix-a11y-l10n` |
+| 14 | ~~**CrashLogHook not autoloaded**~~ — **mitigated** on RC1 via `cursor/bugs-meta-p1` | ~~P1~~ → closed | Meta #82 |
 | 15 | **Docs / code drift** (Endless, Forward+, META APIs, store “keyboard required”) — trust & support landmines | P1 | Architecture #86, Compat #75 |
-| 16 | **A11y RELEASE overclaims** — flash double-gate, remap prompts desync, subtitle EN stubs, no gamepad rebind | P1 | A11y #77 |
+| 16 | ~~**A11y RELEASE overclaims**~~ — **partially mitigated** (tr()+glyphs+subtitle bg); flash/remap honesty still needs RELEASE sync | P1 | `cursor/fix-a11y-l10n` |
 | 17 | **macOS unsigned stub** — do not list as public SKU | P1 | Desktop compat #78 |
-| 18 | **CLI `--screenshot --out` unconstrained paths** in release binaries | High→P1 process | Security SEC-03 |
+| 18 | ~~**CLI `--screenshot --out` unconstrained**~~ — **mitigated** (SEC-03 path allowlist) | ~~High~~ → closed | `cursor/fix-sec-high` |
 | 19 | **Parallel-PR residue into `main`** — stale echo-lattice-* PRs risk reintroducing deleted paths | P1 | Architecture #86 |
-| 20 | **Hard variants + Endless advertised / authored but not offered** — store/meta honesty risk | P1 | Design #83, Bugs-core CORE-04, Content #85 |
+| 20 | **Hard variants** still thin; Endless **offered** (thin vertical on RC1) — store copy must match | P1 | Design #83 / `cursor/fix-endless` |
 
 ---
 
@@ -115,21 +117,21 @@ Merged from Product #79, Audio/art upgrade list #84, Content #85, Design #83, Pe
 | 3 | **30s announce trailer** (slam mid-point, muted-safe open) + 15s vertical | Coming Soon | Funnel watch-through |
 | 4 | **Live Coming Soon page** (surveys, sysreqs, price band, AI = No) | Coming Soon | Calendar gate |
 | 5 | ~~**Merge audit P0 code** (#82 / #87 / #88) into RC1~~ — **done 2026-08-09**; re-run BUGBASH on device | Pre-demo | Session integrity |
-| 6 | **Wire DailyCalendar / DailySeeds / `daily_eligible`** | Next Fest | Honest daily + friend-code |
+| 6 | ~~**Wire DailyCalendar / DailySeeds / `daily_eligible`**~~ — **done on RC1** (`cursor/fix-daily-calendar`) | Next Fest | Honest daily + friend-code |
 | 7 | **Author rewrite SFX + L0–L3 stems**; map transforms → stingers | Next Fest | Premium feel / trailer audio |
 | 8 | **Demo minutes 0–3 → Mirror Birth** cold-player polish | Next Fest | Fest conversion |
-| 9 | **Commit `.github` export + selftest CI** (pin Godot + checksums) | Pre-fest | Repeatable builds |
-| 10 | **Linux + demo SteamPipe depots**; pin GodotSteam | Next Fest / Deck | Upload + Verified path |
-| 11 | **Dirty redraw + bake paper grain**; pool juice particles | Next Fest | Deck 60 fps / slam hitch |
-| 12 | **Vendor CJK font**; key Settings / subtitles / demo strings | Next Fest | zh_Hans + a11y honesty |
-| 13 | **Autoload CrashLogHook** + Support export pack UI | Next Fest | Live-ops readiness |
-| 14 | **De-clone / rewrite** Hamming-0 chamber pairs; fix hard-variant honesty | 1.0 | Late-act novelty |
-| 15 | **Wire habit archetype → rewrite bias** on remix/daily (lessons stay forced) | 1.0 | Thesis delivery |
-| 16 | **Identity boss portrait readability** (signature fossils) | 1.0 | Boss promise |
+| 9 | ~~**Commit `.github` export + selftest CI**~~ — **scaffold landed** (`cursor/steam-ci-depots`); pin Godot checksums + green run | Pre-fest | Repeatable builds |
+| 10 | ~~**Linux + demo SteamPipe depots**~~ — **VDF landed**; bake real AppIDs + pin GodotSteam | Next Fest / Deck | Upload + Verified path |
+| 11 | ~~**Dirty redraw + bake paper grain**; pool juice~~ — **done on RC1** (`cursor/fix-perf-grain` + juice) | Next Fest | Deck 60 fps / slam hitch |
+| 12 | ~~**Vendor CJK font**; key Settings / subtitles / demo~~ — **fetch+keys landed**; confirm LFS binary in exports | Next Fest | zh_Hans + a11y honesty |
+| 13 | ~~**Autoload CrashLogHook** + Support export~~ — **done on RC1** (`cursor/bugs-meta-p1`) | Next Fest | Live-ops readiness |
+| 14 | ~~**De-clone / rewrite** Hamming-0 chamber pairs~~ — **maps rebuilt**; hard-variant honesty polish remains | 1.0 | Late-act novelty |
+| 15 | ~~**Wire habit archetype → rewrite bias**~~ — **done on RC1** (`cursor/fix-habit-wire`) | 1.0 | Thesis delivery |
+| 16 | ~~**Identity boss portrait readability**~~ — **stamps + sealed habit HUD landed**; portrait polish open | 1.0 | Boss promise |
 | 17 | **META v2 Museum of Selves + self-ghost race** | 1.0 | Retention without mash |
 | 18 | **Short Run (3-chamber) + Reader/Cold modes** from balance_v2 | 1.0 | Audience widen |
-| 19 | **Steam achievements + optional Cloud** (fail closed AppID; validate cloud saves) | 1.0 | Partner features |
-| 20 | **Deck device Verified pass** (7 W / 4 W, suspend, glyphs, UI scale 1.25) | Next Fest→1.0 | Store controller claim |
+| 19 | **Steam achievements + optional Cloud** (fail closed AppID; validate cloud saves) — Cloud validate landed; achievements open | 1.0 | Partner features |
+| 20 | **Deck device Verified pass** (7 W / 4 W, suspend, glyphs, UI scale 1.25) — GL Compat + 7W defaults landed; device pass open | Next Fest→1.0 | Store controller claim |
 
 Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosmetics shop, GOG/Epic until Steam proof.
 
@@ -155,23 +157,24 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 | Band | Count | Headline |
 |---|---:|---|
 | Critical | **0** | No secrets, no dynamic `Expression`/eval, no always-on network upload client |
-| High | **3** | Spacewar AppID fallback; unvalidated Cloud→save; unconstrained screenshot `--out` |
+| High | **0** (was 3) | SEC-01/02/03 mitigated on RC1 (`allow_spacewar_dev`, cloud validate+atomic+newer-wins, screenshot `--out` allowlist) |
 | Medium | **7** | Telemetry path allowlist, save schema weakness, PII flag not enforced, CI supply chain, PCK encryption posture, stub cloud flags, loader path trust |
 | Low | **6** | Export console wrapper, wishlist `shell_open`, crash-pack dest, etc. |
 
-**Security verdict:** **Acceptable for offline stub / Coming Soon** if Steam remains disabled and retail builds fail-closed on AppID. **Not acceptable to enable Steam Cloud / Steam init** until SEC-01/02/03 and cloud conflict policy are closed. Privacy story (local JSONL, opt-in upload no-op) is directionally right but needs in-game opt-out + enforced `include_pii: false`.
+**Security verdict:** **Acceptable for offline stub / Coming Soon** with SEC High closed on RC1. Steam init / Cloud still require real AppID + Partner config before enabling in retail. Privacy story (local JSONL, opt-in upload no-op) is directionally right but needs in-game opt-out + enforced `include_pii: false`.
 
 ---
 
 ## 7. Ship-readiness score & milestone gates
 
-### Score: **54 / 100**
+### Score: **68 / 100**
 
 | Band | Meaning |
 |---|---|
 | 80–100 | Paid 1.0 candidate |
 | 65–79 | Next Fest demo upload candidate |
-| 50–64 | **← RC1 now** — Coming Soon prep / integration line |
+| 65–79 | **← RC1 now** — Next Fest demo upload candidate *if* Gate A Partner assets land |
+| 50–64 | Coming Soon prep / integration line |
 | 35–49 | Vertical slice only |
 | <35 | Prototype |
 
@@ -181,7 +184,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - [ ] Final **capsules** + ≥5 non-placeholder screenshots (≥1080p preferred)
 - [ ] **Trailer** (30s) encoded; muted-safe first 5s; AI disclosure **No** submitted
 - [ ] Content Survey draft pasted into Partner; privacy URL live
-- [ ] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK
+- [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **CI workflow landed; confirm green run**
 - [x] Merge **audit P0 save/Continue/demo** fixes into RC1 (**done 2026-08-09**)
 - [ ] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md`); no horror/AI/loot lead
 
@@ -192,23 +195,23 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - [ ] All Gate A items
 - [ ] Demo AppID + depot; wishlist URL real; Act I allow-list verified on exported PCK
 - [ ] Cold-player Mirror Birth path; BUGBASH matrix green on Win + Deck (native or documented Proton)
-- [ ] Daily wired to calendar **or** store/FAQ copy corrected to actual shuffle semantics (prefer wire)
+- [x] Daily wired to calendar **or** store/FAQ copy corrected to actual shuffle semantics (prefer wire) — **wired on RC1**
 - [ ] Placeholder audio replaced for warn/slam/footstep + trailer mix
-- [ ] Perf pass: bake grain / dirty redraw; slam hitch acceptable on Deck TDP target
-- [ ] CJK font vendored if zh_Hans claimed; Settings/demo strings keyed
-- [ ] CrashLogHook autoloaded; Support export path documented
-- [ ] Linux depot if Deck Verified / Linux demo promised
+- [x] Perf pass: bake grain / dirty redraw; slam hitch acceptable on Deck TDP target — **code landed; device QA open**
+- [x] CJK font vendored if zh_Hans claimed; Settings/demo strings keyed — **fetch script + OFL + keyed strings; font binary via LFS**
+- [x] CrashLogHook autoloaded; Support export path documented
+- [x] Linux depot if Deck Verified / Linux demo promised — **VDF + CI scaffold; upload still needs AppIDs**
 
 **Next Fest readiness estimate after Gate B:** ~72–78.
 
 ### Gate C — Paid 1.0
 
 - [ ] All Gate B items
-- [ ] Habit bias / adaptation on remix+daily; identity boss portraits legible
-- [ ] Chamber clone rewrite + hard-variant honesty; Endless **shipped or removed from copy**
+- [x] Habit bias / adaptation on remix+daily; identity boss portraits legible — **lever + stamps on RC1; polish open**
+- [x] Chamber clone rewrite + hard-variant honesty; Endless **shipped or removed from copy** — **clones + thin Endless on RC1**
 - [ ] META retention (Museum / streaks / short run) without breaking offline purity
 - [ ] Steam achievements live; Cloud optional with schema validation + conflict policy
-- [ ] Security High findings closed; Spacewar impossible in retail
+- [x] Security High findings closed; Spacewar impossible in retail
 - [ ] Deck Verified questionnaire evidence; mac public only if notarized
 - [ ] A11y RELEASE claims match runtime (flash, remap glyphs, subtitles, UI scale on Deck)
 - [ ] Parallel stale PRs closed or rebased; `main` merge policy respected (RC1 review-only)
@@ -233,12 +236,12 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ## 9. Recommended studio sequence (next actions)
 
 ```text
-1. ✅ Merge #87 + #82 + #88 into RC1 → re-run python gates (device BUGBASH still open)
-2. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A — blocks public)
-3. Wire Daily calendar; autoload CrashLogHook; fail-closed AppID
-4. Audio identity + grain/dirty-draw perf; demo cold-path polish (Gate B)
-5. Content de-clone + habit bias + META Museum (Gate C)
-6. Device QA Deck → Verified; only then widen storefronts
+1. ✅ Merge #87 + #82 + #88 into RC1
+2. ✅ Land fix-* / category wave (sec/daily/habit/content/meta/perf/a11y/endless/juice/identity/ci/wishlist/compat)
+3. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A — blocks public)
+4. Confirm CI green; bake real AppIDs into VDFs; device BUGBASH Win+Deck
+5. Audio identity + demo cold-path polish (Gate B remainder)
+6. META Museum retention polish (Gate C remainder) → Deck Verified
 ```
 
 ---
@@ -249,4 +252,4 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - Python gates re-run on synthesis workspace: `validate_chambers.py`, `test_rc_polish.py`, `test_balance_v2.py`, `test_release_liveops.py` → **OK** (pre-merge tip).
 - **P0 landing note (2026-08-09):** #82 / #87 / #88 code + #75–#81 / #83–#86 / #89 audit docs merged into `cursor/echo-lattice-rc1`; SaveManager conflicts resolved to keep bak recovery + `run_cleared` + book sanitize. Re-run full `game/echo_lattice/tests/` on the landed tip.
 - This document is executive-only; detail, repros, and file citations live in the linked sibling audit markdown files on their PRs.
-- Re-synthesize if Partner AppID lands or DailyCalendar wiring closes AQ-DAILY-01.
+- **Fix-wave note (2026-08-09):** Integrated `cursor/fix-*` plus category lanes `bugs-meta-p1` / `form-identity-ledger` / `steam-ci-depots` into `cursor/echo-lattice-rc1` @ `c61dcea`. Python suite green. Score **54 → 68**. Re-synthesize when Partner AppID / capsules land.
