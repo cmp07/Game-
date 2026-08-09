@@ -71,13 +71,12 @@
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
-| [`31_NAME_LOCK.md`](31_NAME_LOCK.md) | Top 5 + ship recommend (**Threadfall**) |
 
-### 20+ — Feel deepeners
+### 20+ — Follow-on locks
 
 | Doc | Topic |
 |---|---|
-| [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) | Recover juice · silhouette grammar · Pulse beat color (not purple) |
+| [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) | Combination literacy + hint ecology (no spoiler wiki) |
 
 ---
 
@@ -93,7 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-fragment-feel` | [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) deepen |
+| `cursor/weaver-discovery` | Discovery UX (`22_DISCOVERY_UX`) |
 
 ---
 

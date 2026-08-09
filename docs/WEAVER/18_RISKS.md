@@ -19,6 +19,7 @@ Severity: **H** = can kill the product · **M** = can stall a quarter · **L** =
 | D5 | **Purple-void identity** — default AI-fantasy look (glow, chronomancy, rarity gems) | M | Capsule looks like every generative asset flip | Material bible: fiber, dust, timber, wire, chalk, rust |
 | D6 | **Echo Lattice mash** — store page or trailer mixes maze-habit with loom-craft | M | Wishlist confusion; “is this the same game?” | Separate fantasy; EL frozen; no shared store copy |
 | D7 | **Tutorial slides instead of literacy** | M | Tip stack in first eight minutes | Follow [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) pedagogy rules |
+| D8 | **Spoiler-wiki gravity** — players (or UI) treat recipe lists as the skill surface | H | In-game encyclopedia / “look up the graph” as default path | Hint ecology + thin stamps only ([`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md)) |
 
 ---
 
@@ -72,9 +73,9 @@ Severity: **H** = can kill the product · **M** = can stall a quarter · **L** =
 
 1. **D1 Verb mud** — if the chain isn’t obvious, nothing else matters.  
 2. **D3 Besiege gravity** — catalog is a trap.  
-3. **D4 Economy creep** — player trade is a different game.  
-4. **P2 Docs without playable** — schedule the spike.  
-5. **M5 / O2** — don’t Coming Soon early; don’t delete Echo Lattice.
+3. **D8 Spoiler-wiki gravity** — recipe lists must not become the skill surface.  
+4. **D4 Economy creep** — player trade is a different game.  
+5. **P2 / M5 / O2** — schedule the spike; don’t Coming Soon early; don’t delete Echo Lattice.
 
 ---
 

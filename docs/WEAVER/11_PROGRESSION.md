@@ -4,7 +4,7 @@
 **Status:** Craft authority (CLOUD ONLY) · **Branch:** `cursor/weaver-craft`  
 **Product:** **The Weaver** (north star)  
 **Job:** Define how players unlock literacy and pride — materials → joints → recipes → Yard jobs → gallery residue — without battle-pass chrome, XP theater, or purple loot ladders.  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`17_MVP.md`](17_MVP.md) · [`13_MONETIZATION.md`](13_MONETIZATION.md) · [`PIVOT.md`](PIVOT.md)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`17_MVP.md`](17_MVP.md) · [`13_MONETIZATION.md`](13_MONETIZATION.md) · [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) · [`PIVOT.md`](PIVOT.md)
 
 ---
 
@@ -79,7 +79,7 @@ Authority: [`17_MVP.md`](17_MVP.md) §3.5 — thin and honest.
 | Fail | Collapse is comedy + lesson; refund Fragments per [`03_FRAGMENTS.md`](03_FRAGMENTS.md); abandon without shame |
 | Softlock | Forbidden — always undo / recover path |
 
-Teaching ladder lives in core loop + first-thirty docs; this doc only asserts: **jobs teach verbs**, recipes do not replace jobs.
+Teaching ladder lives in core loop + first-thirty docs; this doc only asserts: **jobs teach verbs**, recipes do not replace jobs. How combinations are hinted without a spoiler wiki: [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md).
 
 ---
 

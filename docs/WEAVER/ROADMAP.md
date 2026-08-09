@@ -45,6 +45,7 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 - [x] Write `MASTER_GDD.md` · `ROADMAP.md` · index README  
 - [ ] Land PR into `cursor/echo-lattice-rc1`  
 - [ ] Follow-up: elevate `01_CONCEPT` + align `15_MARKET` / `14_TECH` stubs (see MASTER §11)
+- [ ] Follow-up: land [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) (hint ecology / anti-wiki) into integration line
 
 ### W1 — Prototype spike (playable truth)
 
