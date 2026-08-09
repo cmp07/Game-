@@ -15,6 +15,23 @@ ROOT = Path(__file__).resolve().parents[1]  # game/echo_lattice
 PROJECT = ROOT / "project.godot"
 SCENES = ROOT / "scenes"
 SCRIPTS = ROOT / "scripts"
+ACTION_REMAP = SCRIPTS / "a11y" / "action_remap.gd"
+DECK_PROFILE = SCRIPTS / "deck_profile.gd"
+INPUT_GLYPHS = SCRIPTS / "input_glyphs.gd"
+
+# Godot JoyButton indices → names used in ActionRemap.GAMEPAD_DEFAULTS.
+JOY_BUTTON_NAMES = {
+    0: "JOY_BUTTON_A",
+    1: "JOY_BUTTON_B",
+    2: "JOY_BUTTON_X",
+    3: "JOY_BUTTON_Y",
+    6: "JOY_BUTTON_START",
+    9: "JOY_BUTTON_LEFT_SHOULDER",
+    11: "JOY_BUTTON_DPAD_UP",
+    12: "JOY_BUTTON_DPAD_DOWN",
+    13: "JOY_BUTTON_DPAD_LEFT",
+    14: "JOY_BUTTON_DPAD_RIGHT",
+}
 
 REQUIRED_ACTIONS = {
     "move_up": {"joy_buttons": {11}, "joy_axes": {(1, -1.0)}},  # DPAD_UP, LEFT_Y -
@@ -25,6 +42,7 @@ REQUIRED_ACTIONS = {
     "restart": {"joy_buttons": {3}, "joy_axes": set()},  # Y
     "pause_menu": {"joy_buttons": {6, 1}, "joy_axes": set()},  # Start + B
     "confirm": {"joy_buttons": {0}, "joy_axes": set()},  # A
+    "ghost_assist": {"joy_buttons": {9}, "joy_axes": set()},  # Left shoulder
 }
 
 
@@ -73,6 +91,10 @@ def check_project() -> list[str]:
         errors.append("DeckProfile autoload missing")
     if "window/vsync/vsync_mode=1" not in text:
         errors.append("vsync must be enabled by default")
+    if 'renderer/rendering_method="gl_compatibility"' not in text:
+        errors.append('rendering_method must be gl_compatibility')
+    if '"GL Compatibility"' not in text or "Forward Plus" in text:
+        errors.append('config/features must advertise "GL Compatibility" (not Forward Plus)')
 
     # Slice the [input] section only.
     input_section = text.split("[input]", 1)
@@ -100,6 +122,53 @@ def check_project() -> list[str]:
     return errors
 
 
+def check_action_remap_defaults() -> list[str]:
+    """ActionRemap.GAMEPAD_DEFAULTS must match project.godot joy buttons."""
+    errors: list[str] = []
+    if not ACTION_REMAP.is_file():
+        return ["missing scripts/a11y/action_remap.gd"]
+    src = ACTION_REMAP.read_text(encoding="utf-8")
+    block_match = re.search(
+        r"const GAMEPAD_DEFAULTS\s*:=\s*\{(.*?)^\}",
+        src,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    if block_match is None:
+        return ["ActionRemap.GAMEPAD_DEFAULTS missing"]
+    defaults_body = block_match.group(1)
+    for action, expect in REQUIRED_ACTIONS.items():
+        row = re.search(
+            rf'"{re.escape(action)}"\s*:\s*\[([^\]]*)\]',
+            defaults_body,
+        )
+        if row is None:
+            errors.append(f"ActionRemap.GAMEPAD_DEFAULTS missing {action}")
+            continue
+        names = {n.strip() for n in row.group(1).split(",") if n.strip()}
+        expected_names = {JOY_BUTTON_NAMES[i] for i in expect["joy_buttons"]}
+        if names != expected_names:
+            errors.append(
+                f"ActionRemap.{action}={sorted(names)} != project {sorted(expected_names)}"
+            )
+    return errors
+
+
+def check_deck_profile_defaults() -> list[str]:
+    errors: list[str] = []
+    if not DECK_PROFILE.is_file():
+        return ["missing scripts/deck_profile.gd"]
+    deck = DECK_PROFILE.read_text(encoding="utf-8")
+    if "TARGET_FPS_VERIFIED: int = 60" not in deck:
+        errors.append("DeckProfile TARGET_FPS_VERIFIED must be 60 (7W Verified)")
+    if "TDP_TARGET_WATTS: int = 7" not in deck:
+        errors.append("DeckProfile TDP_TARGET_WATTS must be 7")
+    if "TDP_BATTERY_WATTS: int = 4" not in deck:
+        errors.append("DeckProfile TDP_BATTERY_WATTS must be 4")
+    if "func recommended_tdp_watts()" not in deck:
+        errors.append("DeckProfile.recommended_tdp_watts() missing")
+    return errors
+
+
 def check_no_text_entry() -> list[str]:
     errors: list[str] = []
     for path in list(SCENES.rglob("*.tscn")) + list(SCRIPTS.rglob("*.gd")):
@@ -123,13 +192,15 @@ def check_support_scripts() -> list[str]:
     for rel in ("scripts/input_glyphs.gd", "scripts/deck_profile.gd"):
         if not (ROOT / rel).is_file():
             errors.append(f"missing {rel}")
-    glyphs = (ROOT / "scripts/input_glyphs.gd").read_text(encoding="utf-8")
+    glyphs = INPUT_GLYPHS.read_text(encoding="utf-8")
     if "D-Pad" not in glyphs and "D-Pad / Stick" not in glyphs:
         errors.append("input_glyphs.gd missing D-Pad/Stick labels")
-    deck = (ROOT / "scripts/deck_profile.gd").read_text(encoding="utf-8")
+    if "Start / B" not in glyphs and "Start/B" not in glyphs:
+        errors.append("input_glyphs.gd menu glyphs must mention Start and B")
+    deck = DECK_PROFILE.read_text(encoding="utf-8")
     if "1280" not in deck or "TARGET_FPS_VERIFIED" not in deck:
         errors.append("deck_profile.gd missing Deck resolution / FPS targets")
-    main = (ROOT / "scripts/main.gd").read_text(encoding="utf-8")
+    main = (ROOT / "scripts" / "main.gd").read_text(encoding="utf-8")
     if "--deck-layout-check" not in main:
         errors.append("main.gd missing --deck-layout-check entry point")
     return errors
@@ -138,6 +209,8 @@ def check_support_scripts() -> list[str]:
 def main() -> int:
     errors: list[str] = []
     errors.extend(check_project())
+    errors.extend(check_action_remap_defaults())
+    errors.extend(check_deck_profile_defaults())
     errors.extend(check_no_text_entry())
     errors.extend(check_support_scripts())
     if errors:
@@ -146,7 +219,10 @@ def main() -> int:
             print(f"  - {e}")
         return 1
     print("Deck binding check OK")
-    print("  joypad actions bound (D-Pad/stick + A/B/X/Y/Start)")
+    print("  joypad actions bound (D-Pad/stick + A/B/X/Y/Start + LB ghost)")
+    print("  ActionRemap.GAMEPAD_DEFAULTS sync with project.godot")
+    print("  DeckProfile defaults: 60 FPS / 7W verified, 40 FPS / 4W battery")
+    print("  GL Compatibility feature tag matches gl_compatibility renderer")
     print("  stretch aspect=expand, vsync on, Deck autoloads present")
     print("  no LineEdit/TextEdit in play scenes (OSK not required)")
     return 0

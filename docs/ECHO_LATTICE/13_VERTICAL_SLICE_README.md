@@ -69,7 +69,7 @@ Same idea, mirrored across the horizontal axis. The path along the top of the ma
 1. Install [Godot 4.3](https://godotengine.org/download/archive/4.3-stable/) (Standard, not .NET). The project is single-language GDScript and does not need Mono.
 2. In the editor's project manager, **Import** `game/echo_lattice/project.godot`.
 3. Press **F5** (Run Project). Main scene is `res://scenes/main.tscn`.
-4. `Debug > Run Project` uses the built-in Forward+ renderer path automatically since we ship with `renderer/rendering_method="gl_compatibility"` — no additional configuration is needed.
+4. `Debug > Run Project` uses the Compatibility renderer (`renderer/rendering_method="gl_compatibility"`, `config/features` includes `"GL Compatibility"`) — no additional configuration is needed.
 
 ### Controls
 
@@ -164,7 +164,7 @@ This has been run against both the editor-driven project and the exported Linux 
 
 ```
 game/echo_lattice/
-├── project.godot                # Autoloads, input map, Forward+/GLES3 setup
+├── project.godot                # Autoloads, input map, gl_compatibility setup
 ├── icon.svg                     # Boot / window icon (lattice mark)
 ├── export_presets.cfg           # Windows + Linux/X11 + macOS stub + Windows Demo
 ├── content/

@@ -7,22 +7,29 @@ extends Node
 ##
 
 ## Verified performance targets (native Linux x86_64, Compatibility renderer).
+## Default Deck profile = Verified @ 60 FPS with SteamOS TDP guidance of 7 W.
 const TARGET_FPS_VERIFIED: int = 60
 const TARGET_FPS_BATTERY: int = 40
 const DECK_WIDTH: int = 1280
 const DECK_HEIGHT: int = 800
 ## Soft recommendation for SteamOS TDP slider (documentation / QA only).
+## Defaults assume the 7 W Verified profile; battery mode drops guidance to 4 W.
 const TDP_TARGET_WATTS: int = 7
 const TDP_BATTERY_WATTS: int = 4
 
 ## When true, prefer the lower FPS cap (battery-friendly). Off by default; Deck
-## still gets vsync + 60 FPS so Verified frames stay locked.
+## still gets vsync + 60 FPS (7 W Verified defaults) so frames stay locked.
 var battery_mode: bool = false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	apply_runtime_defaults()
+
+
+## Recommended SteamOS TDP for the active profile (7 W verified / 4 W battery).
+func recommended_tdp_watts() -> int:
+	return TDP_BATTERY_WATTS if battery_mode else TDP_TARGET_WATTS
 
 
 func is_steam_deck() -> bool:
@@ -60,6 +67,7 @@ func apply_runtime_defaults() -> void:
 		## Fullscreen matches Steam Deck gamepad-first launch expectations.
 		if DisplayServer.window_get_mode() != DisplayServer.WINDOW_MODE_FULLSCREEN:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		## Default: Verified 7 W profile (60 FPS + VSync). `--battery` → 40 FPS / 4 W.
 		_apply_fps_cap()
 		## Prefer gamepad glyphs immediately on Deck even before the first press.
 		if has_node("/root/InputGlyphs"):

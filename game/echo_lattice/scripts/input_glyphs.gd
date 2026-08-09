@@ -59,7 +59,8 @@ func restart_label() -> String:
 
 
 func menu_label() -> String:
-	return "Start" if prefer_gamepad_on_deck() else "Esc"
+	## project.godot binds pause_menu to B and Start.
+	return "Start / B" if prefer_gamepad_on_deck() else "Esc"
 
 
 func confirm_label() -> String:
@@ -70,9 +71,13 @@ func back_label() -> String:
 	return "B" if prefer_gamepad_on_deck() else "Esc"
 
 
+func ghost_assist_label() -> String:
+	return "LB" if prefer_gamepad_on_deck() else "G"
+
+
 func controls_line() -> String:
 	if prefer_gamepad_on_deck():
-		return "Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start     Confirm  A"
+		return "Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start/B     Confirm  A"
 	return "Move  WASD / Arrows     Undo  Z     Restart  R     Menu  Esc     Confirm  Enter"
 
 

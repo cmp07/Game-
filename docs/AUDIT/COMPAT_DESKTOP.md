@@ -88,7 +88,7 @@ Legend: **Ship** = intended public artifact · **QA** = must pass before store c
 |---|---|---|
 | Godot 4.3 desktop exports | `config/features` includes `"4.3"`; templates expected `4.3.stable` | OK |
 | Rendering = Compatibility | `renderer/rendering_method=gl_compatibility` | OK |
-| Feature tag `"Forward Plus"` | Still in `config/features` despite Compatibility renderer | **Mismatch** (editor tag only; fix recommended) |
+| Feature tag `"GL Compatibility"` | Aligned with `rendering_method=gl_compatibility` | OK |
 | Windows x86_64, PCK external, no rcedit | `architecture=x86_64`, `embed_pck=false`, `modify_resources=false` | OK |
 | Windows ANGLE / D3D12 multiarch | `export_angle=0`, `export_d3d12=0` | Reality: OpenGL Compatibility path only |
 | Linux/X11 x86_64 | Preset name/platform `Linux/X11` | OK for Deck/SteamOS; Wayland hosts use Godot’s SDL backend — **smoke needed** |
@@ -259,7 +259,7 @@ Authoritative map (from `project.godot` + Deck docs):
 |---|---|
 | Full pad path implemented for menu → chamber → won → end | OK |
 | `InputGlyphs` uses Xbox / Deck face labels | OK for Steam |
-| `ActionRemap.GAMEPAD_DEFAULTS` sets pause=`Start` only and ghost_assist=`B`, **dropping** project.godot’s B-as-pause + LS ghost | **Medium** — first keyboard remap / reset can change pad feel |
+| `ActionRemap.GAMEPAD_DEFAULTS` matches `project.godot` (pause=`B`+`Start`, ghost=`LB`) | OK — guarded by `check_deck_bindings.py` |
 | DualSense / Switch glyphs not localized | Low — Steam Input remaps to Xbox semantics |
 | Store copy still says “keyboard/mouse required until glyphs land” | **Doc drift** vs Deck/a11y work |
 | Support FAQ still downplays controllers | **Doc drift** |
@@ -320,9 +320,9 @@ Until then: treat mac artifacts as **non-shipping**, matching [`PLATFORMS.md`](.
 |---|---|---|---|---|
 | CD-1 | macOS | Unsigned / non-notarized preset | **Blocker for mac ship** | CI secrets + enable codesign/notarization on mac runner |
 | CD-2 | Steamworks | GodotSteam + redistribs absent; `steam_enabled` false | High for Steam features; **non-blocking** for offline | Pin addon; Steam-only feature flag / export |
-| CD-3 | Presets | `config/features` still lists `Forward Plus` while renderer is Compatibility | Low | Change feature tag to Compatibility / remove misleading tag |
+| CD-3 | Presets | `config/features` still lists `Forward Plus` while renderer is Compatibility | Low | **Fixed** on `cursor/fix-compat-renderer` — tag is `GL Compatibility` |
 | CD-4 | macOS | `min_macos_version=10.12` vs store macOS 12 | Medium | Align preset + store + Godot 4.3 floor |
-| CD-5 | Input | `ActionRemap` gamepad defaults ≠ `project.godot` (B / shoulder) | Medium | Unify defaults; keep B=back/menu + separate assist |
+| CD-5 | Input | `ActionRemap` gamepad defaults ≠ `project.godot` (B / shoulder) | Medium | **Fixed** — defaults + Deck binding check sync with project map |
 | CD-6 | Docs | FAQ `--windowed` not implemented | Low | Implement flag or remove FAQ line |
 | CD-7 | Docs | Store / FAQ controller copy lags Deck + a11y work | Low | Update Steam copy when claiming Full Controller Support |
 | CD-8 | Linux | Wayland / fractional scaling untested | Medium | Add Ubuntu Wayland + Deck smoke to QA |
