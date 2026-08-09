@@ -249,5 +249,7 @@ Placeholders only (READMEs, no image binaries yet):
 | `docs/RELEASE/presskit/trailers/` | 1 PNG poster + **2 MP4** | 30s master + 15s vertical; store loop optional |
 | `docs/RELEASE/presskit/images/gif_sequences/` | 13 PNG | Frame packs for social GIFs |
 
-**Best watch link:**  
-https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4
+**Direct watch URLs (raw):**  
+https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4  
+https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4  
+https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif
