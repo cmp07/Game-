@@ -132,6 +132,11 @@ func subtitle_background() -> bool:
 	return bool(_get("accessibility", "subtitle_background", true))
 
 
+func set_subtitle_background(enabled: bool) -> void:
+	_set("accessibility", "subtitle_background", enabled)
+	subtitle_policy_changed.emit()
+
+
 func ui_scale() -> float:
 	return clampf(float(_get("accessibility", "ui_scale", 1.0)), 0.85, 1.5)
 

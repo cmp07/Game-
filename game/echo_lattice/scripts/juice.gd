@@ -100,13 +100,18 @@ func rewrite_punch(segment_count: int = 1) -> void:
 	bump(shake_amt)
 	if not _reduce_motion():
 		hitstop(0.09, 0.06)
+	# FlashGate already applied reduce-flash / reduce-motion — set fields
+	# directly. Calling flash() here would gate a second time (intensity *= 0.5²).
 	var rewrite_flash: Dictionary = FlashGate.request_rewrite_flash()
-	if not rewrite_flash.is_empty():
-		flash(
-			float(rewrite_flash.get("duration", 0.28)),
-			float(rewrite_flash.get("intensity", 0.55)),
-			rewrite_flash.get("color", Color("#D6432B"))
-		)
+	if rewrite_flash.is_empty():
+		flash_left = 0.0
+		flash_duration = 0.0
+		flash_peak = 0.0
+		return
+	flash_duration = maxf(float(rewrite_flash.get("duration", 0.28)), 0.001)
+	flash_left = flash_duration
+	flash_peak = float(rewrite_flash.get("intensity", 0.55))
+	flash_color = rewrite_flash.get("color", Color("#D6432B"))
 
 
 func spawn_burst(world_pos: Vector2, color: Color, count: int = 8) -> void:

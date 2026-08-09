@@ -80,17 +80,17 @@ static func all_mode_ids() -> PackedStringArray:
 static func display_name(mode: Mode) -> String:
 	match mode:
 		Mode.PROTANOPIA:
-			return "Protanopia (red-weak)"
+			return tr("colorblind.protanopia")
 		Mode.DEUTERANOPIA:
-			return "Deuteranopia (green-weak)"
+			return tr("colorblind.deuteranopia")
 		Mode.TRITANOPIA:
-			return "Tritanopia (blue-weak)"
+			return tr("colorblind.tritanopia")
 		Mode.HIGH_CONTRAST:
-			return "High contrast"
+			return tr("colorblind.high_contrast")
 		Mode.MONO_PATTERN:
-			return "Mono + patterns"
+			return tr("colorblind.mono_pattern")
 		_:
-			return "Default (Field Ledger)"
+			return tr("colorblind.default")
 
 
 static func color_for(mode: Mode, role: FossilRole) -> Color:

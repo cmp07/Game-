@@ -24,16 +24,18 @@ Han coverage is **required** for Simplified Chinese UI. Do **not** rely on OS fo
 
 ### Vendor steps (release)
 
-1. Download Noto Sans SC from [Google Fonts — Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC) or the [noto-cjk](https://github.com/notofonts/noto-cjk) release.
-2. Place the Regular file at `game/echo_lattice/fonts/cjk/NotoSansSC-Regular.otf`.
+1. Run `python3 tools/fonts/fetch_noto_sans_sc.py` (downloads OFL-licensed Regular from [noto-cjk Sans 2.004](https://github.com/notofonts/noto-cjk/releases/tag/Sans2.004)), **or** download manually from [Google Fonts — Noto Sans SC](https://fonts.google.com/noto/specimen/Noto+Sans+SC).
+2. Confirm `game/echo_lattice/fonts/cjk/NotoSansSC-Regular.otf` exists (gitignored by default).
 3. Open the project once in Godot 4.3 so `.import` is generated (or commit a checked import).
-4. Keep the OFL text in `fonts/cjk/OFL.txt` and list the face in ship credits.
+4. Keep `fonts/cjk/OFL.txt` (committed) and list the face in ship credits / `COMPLIANCE_FINAL.md`.
 5. Smoke-test menu brand lockup + chamber captions at 960×560 and 1280×720 — CJK runs wider; shorten copy rather than shrinking below 14 px body.
+
+### Git LFS note
+
+Binaries stay **gitignored** to keep the clone small. Root `.gitattributes` already declares LFS filters for `fonts/cjk/*.{otf,ttf,ttc,otc}`. To commit the face: remove the ignore lines, `git lfs install`, add the file. Details in [`cjk/README.md`](cjk/README.md).
 
 ### Explicit non-goals for v1
 
 - No JP / KR catalogs yet (font candidates can stay; strings ship later).
 - No per-control Theme resource yet — fallback font swap is enough for the vertical slice HUD.
 - Do not commit multi‑MB variable font collections if a single Regular static face covers UI.
-
-Binary font files are **gitignored** until legal/size review clears them; CI may fetch via a release script later.

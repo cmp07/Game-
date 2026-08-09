@@ -31,7 +31,21 @@ func _ready() -> void:
 	stats_label.text = _summary()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_wing_clear()
+	if has_node("/root/LocaleManager"):
+		LocaleManager.locale_changed.connect(_on_locale_changed)
 	set_process_unhandled_input(true)
+
+
+func _on_locale_changed(_locale: String) -> void:
+	_localize_chrome()
+	if DemoBuild.is_demo():
+		title_label.text = tr("end.demo_title")
+		tagline_label.text = tr("end.demo_tagline")
+		footer_label.text = tr("end.demo_footer")
+		restart_button.text = tr("end.demo_replay")
+		if _wishlist_button != null:
+			_wishlist_button.text = tr("menu.wishlist")
+	stats_label.text = _summary()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -56,15 +70,15 @@ func _localize_chrome() -> void:
 
 
 func _configure_demo_end() -> void:
-	title_label.text = "DEMO COMPLETE"
-	tagline_label.text = "You met Mirror Birth. The full lattice waits."
-	footer_label.text = "Echo Lattice Demo · Act I · Wishlist the full game"
-	restart_button.text = "Replay Act I"
+	title_label.text = tr("end.demo_title")
+	tagline_label.text = tr("end.demo_tagline")
+	footer_label.text = tr("end.demo_footer")
+	restart_button.text = tr("end.demo_replay")
 	_wishlist_button = Button.new()
 	_wishlist_button.name = "WishlistButton"
 	_wishlist_button.unique_name_in_owner = true
 	_wishlist_button.custom_minimum_size = Vector2(360, 48)
-	_wishlist_button.text = "Wishlist on Steam"
+	_wishlist_button.text = tr("menu.wishlist")
 	_wishlist_button.flat = true
 	_wishlist_button.add_theme_font_size_override("font_size", 22)
 	_wishlist_button.add_theme_color_override("font_color", Color(0.545, 0.227, 0.122, 1))

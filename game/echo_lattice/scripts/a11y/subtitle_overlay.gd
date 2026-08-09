@@ -1,10 +1,12 @@
 extends CanvasLayer
 ## Subtitle overlay for PA / rewrite / system lines (no spoken dialogue).
 ## Toggle + size come from AccessibilityService.
+## Copy lives in locale/echo_lattice.csv under subtitle.<id>.
 
 signal line_shown(id: String, text: String)
 signal line_cleared()
 
+## Stub ids → catalog keys (subtitle.<id>). Values are English fallbacks only.
 const STUB_LINES := {
 	"rewrite_begin": "The lattice rewrites from your path.",
 	"rewrite_mirror": "Your trail folds into walls.",
@@ -45,7 +47,9 @@ func _ready() -> void:
 
 
 func show_line(id: String, duration: float = 2.4) -> void:
-	var text := str(STUB_LINES.get(id, id))
+	var key := "subtitle.%s" % id
+	var translated := tr(key)
+	var text := translated if translated != key else str(STUB_LINES.get(id, id))
 	show_text(text, duration, id)
 
 

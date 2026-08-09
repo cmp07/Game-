@@ -2,6 +2,7 @@ extends Node
 ##
 ## InputGlyphs — Xbox / Steam Deck face-button labels for on-screen hints.
 ## Tracks the last used device so menus show gamepad glyphs after a stick/button press.
+## Keyboard labels follow ActionRemap; chrome strings go through tr().
 ##
 
 enum Device { KEYBOARD, GAMEPAD }
@@ -47,38 +48,70 @@ func prefer_gamepad_on_deck() -> bool:
 
 
 func move_label() -> String:
-	return "D-Pad / Stick" if prefer_gamepad_on_deck() else "WASD / Arrows"
+	if prefer_gamepad_on_deck():
+		return tr("glyphs.move_pad")
+	var up := _binding_label("move_up", "W")
+	var left := _binding_label("move_left", "A")
+	var down := _binding_label("move_down", "S")
+	var right := _binding_label("move_right", "D")
+	# Compact WASD-style when defaults; otherwise list primaries.
+	if up == "W" and left == "A" and down == "S" and right == "D":
+		return tr("glyphs.move_wasd")
+	return "%s/%s/%s/%s" % [up, left, down, right]
 
 
 func undo_label() -> String:
-	return "X" if prefer_gamepad_on_deck() else "Z"
+	return "X" if prefer_gamepad_on_deck() else _binding_label("undo", "Z")
 
 
 func restart_label() -> String:
-	return "Y" if prefer_gamepad_on_deck() else "R"
+	return "Y" if prefer_gamepad_on_deck() else _binding_label("restart", "R")
 
 
 func menu_label() -> String:
-	return "Start" if prefer_gamepad_on_deck() else "Esc"
+	return "Start" if prefer_gamepad_on_deck() else _binding_label("pause_menu", "Esc")
 
 
 func confirm_label() -> String:
-	return "A" if prefer_gamepad_on_deck() else "Enter / Space"
+	return "A" if prefer_gamepad_on_deck() else _binding_label("confirm", "Enter")
 
 
 func back_label() -> String:
-	return "B" if prefer_gamepad_on_deck() else "Esc"
+	return "B" if prefer_gamepad_on_deck() else _binding_label("pause_menu", "Esc")
+
+
+func assist_label() -> String:
+	return "B" if prefer_gamepad_on_deck() else _binding_label("ghost_assist", "G")
 
 
 func controls_line() -> String:
 	if prefer_gamepad_on_deck():
-		return "Move  D-Pad/Stick     Undo  X     Restart  Y     Menu  Start     Confirm  A"
-	return "Move  WASD / Arrows     Undo  Z     Restart  R     Menu  Esc     Confirm  Enter"
+		return tr("glyphs.controls_gamepad")
+	return tr("glyphs.controls_keyboard") % [
+		move_label(),
+		undo_label(),
+		restart_label(),
+		menu_label(),
+		confirm_label(),
+		assist_label(),
+	]
 
 
 func restart_button_text() -> String:
-	return "Restart (%s)" % restart_label()
+	return tr("hud.restart_fmt") % restart_label()
 
 
 func menu_button_text() -> String:
-	return "Menu (%s)" % menu_label()
+	return tr("hud.menu_fmt") % menu_label()
+
+
+func _binding_label(action: String, fallback: String) -> String:
+	var remap := get_node_or_null("/root/ActionRemap")
+	if remap != null and remap.has_method("get_binding_labels"):
+		var labels: PackedStringArray = remap.get_binding_labels(action)
+		if labels.size() > 0:
+			var primary := str(labels[0])
+			if primary == "Escape":
+				return "Esc"
+			return primary
+	return fallback

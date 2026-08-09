@@ -19,16 +19,17 @@ const ACTIONS: PackedStringArray = [
 	"ghost_assist",
 ]
 
+## Catalog keys under input.* — English fallbacks kept for headless / pre-catalog.
 const DISPLAY_NAMES := {
-	"move_up": "Move Up",
-	"move_down": "Move Down",
-	"move_left": "Move Left",
-	"move_right": "Move Right",
-	"undo": "Undo",
-	"restart": "Restart",
-	"pause_menu": "Pause / Menu",
-	"confirm": "Confirm",
-	"ghost_assist": "Show Ghost Path (assist)",
+	"move_up": "input.move_up",
+	"move_down": "input.move_down",
+	"move_left": "input.move_left",
+	"move_right": "input.move_right",
+	"undo": "input.undo",
+	"restart": "input.restart",
+	"pause_menu": "input.pause_menu",
+	"confirm": "input.confirm",
+	"ghost_assist": "input.ghost_assist",
 }
 
 ## Default gamepad bindings kept when keyboard remaps (Xbox / Steam Deck).
@@ -158,7 +159,10 @@ func reset_to_defaults() -> void:
 
 
 func action_display_name(action: String) -> String:
-	return str(DISPLAY_NAMES.get(action, action))
+	var key := str(DISPLAY_NAMES.get(action, action))
+	if key.begins_with("input."):
+		return tr(key)
+	return key
 
 
 func _bindings_dict() -> Dictionary:

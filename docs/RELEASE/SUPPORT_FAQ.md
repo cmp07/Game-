@@ -20,7 +20,7 @@ Keep answers short; link deeper docs only when needed.
 
 ### A2. Wrong language / missing text
 
-1.0 ships English UI. Other languages are post-1.0. OS locale should not softlock menus; if it does, send a crash pack.
+1.0 ships **English** and **Simplified Chinese** (`zh_Hans`). Settings → Language can force English, Simplified Chinese, or System. OS locale should not softlock menus; if it does, send a crash pack. Missing Han glyphs usually mean the CJK font was not fetched for that build (`tools/fonts/fetch_noto_sans_sc.py`).
 
 ### A3. Steam Deck / controller
 

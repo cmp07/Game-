@@ -106,6 +106,61 @@ class TestSourceSurface(unittest.TestCase):
         self.assertIn("FlashGate.gate", juice)
         self.assertIn("_shake_intensity", juice)
 
+    def test_rewrite_punch_does_not_double_gate(self) -> None:
+        juice = (ROOT / "scripts" / "juice.gd").read_text()
+        # rewrite_punch must apply the gated dict directly, not call flash().
+        start = juice.index("func rewrite_punch")
+        end = juice.index("\nfunc ", start + 1)
+        body = juice[start:end]
+        self.assertIn("FlashGate.request_rewrite_flash", body)
+        self.assertIn("flash_peak", body)
+        # Strip comments — the anti-pattern note may mention flash().
+        code = "\n".join(
+            ln for ln in body.splitlines() if not ln.lstrip().startswith("#")
+        )
+        self.assertNotRegex(code, r"(?<!_)flash\s*\(")
+
+    def test_subtitle_background_setter_exists(self) -> None:
+        src = (ROOT / "scripts" / "a11y" / "accessibility_service.gd").read_text()
+        self.assertIn("func set_subtitle_background", src)
+
+    def test_settings_has_locale_and_subtitle_background(self) -> None:
+        tscn = (ROOT / "scenes" / "ui" / "settings_menu.tscn").read_text()
+        for needle in (
+            "LanguageOption",
+            "SubtitleBackgroundCheck",
+            "_on_language_selected",
+            "_on_subtitle_background_toggled",
+        ):
+            self.assertIn(needle, tscn)
+        menu = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
+        self.assertIn("apply_locale", menu)
+        self.assertIn('tr("settings.title")', menu)
+
+    def test_input_glyphs_use_remap_and_tr(self) -> None:
+        src = (ROOT / "scripts" / "input_glyphs.gd").read_text()
+        self.assertIn("ActionRemap", src)
+        self.assertIn("get_binding_labels", src)
+        self.assertIn('tr("glyphs.controls_keyboard")', src)
+        self.assertIn('tr("hud.restart_fmt")', src)
+
+    def test_menu_footer_uses_gamepad_not_last_device_ge_zero(self) -> None:
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        self.assertIn("using_gamepad()", menu)
+        self.assertNotIn("last_device >= 0", menu)
+        self.assertIn('tr("menu.controls_hint_remap")', menu)
+
+    def test_cjk_fetch_script_and_ofl(self) -> None:
+        script = REPO / "tools" / "fonts" / "fetch_noto_sans_sc.py"
+        ofl = ROOT / "fonts" / "cjk" / "OFL.txt"
+        self.assertTrue(script.is_file(), script)
+        self.assertTrue(ofl.is_file(), ofl)
+        self.assertIn("SIL OPEN FONT LICENSE", ofl.read_text())
+        self.assertIn("NotoSansSC", script.read_text())
+        gitattributes = (REPO / ".gitattributes").read_text()
+        self.assertIn("fonts/cjk/*.otf", gitattributes)
+        self.assertIn("filter=lfs", gitattributes)
+
     def test_chamber_uses_role_colors(self) -> None:
         chamber = (ROOT / "scripts" / "chamber.gd").read_text()
         for needle in (
@@ -145,10 +200,12 @@ class TestSourceSurface(unittest.TestCase):
     def test_settings_menu_wires_signals(self) -> None:
         tscn = (ROOT / "scenes" / "ui" / "settings_menu.tscn").read_text()
         for method in (
+            "_on_language_selected",
             "_on_colorblind_selected",
             "_on_reduce_flash_toggled",
             "_on_shake_toggled",
             "_on_subtitles_toggled",
+            "_on_subtitle_background_toggled",
             "_on_ui_scale_changed",
             "_on_ghost_assist_toggled",
             "_on_close_pressed",
