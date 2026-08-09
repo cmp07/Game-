@@ -116,7 +116,7 @@ func _ensure_wishlist_button() -> void:
 	_wishlist_button.name = "WishlistButton"
 	_wishlist_button.unique_name_in_owner = true
 	_wishlist_button.custom_minimum_size = Vector2(240, 34)
-	_wishlist_button.text = "Wishlist on Steam"
+	_wishlist_button.text = tr("menu.wishlist")
 	_wishlist_button.flat = true
 	_wishlist_button.add_theme_font_size_override("font_size", 18)
 	_wishlist_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -127,6 +127,7 @@ func _ensure_wishlist_button() -> void:
 		emit_signal("wishlist_pressed")
 		DemoBuild.open_wishlist()
 	)
+
 
 func _style_as_index_button(btn: Button, primary: bool) -> void:
 	var empty := StyleBoxEmpty.new()
