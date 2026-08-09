@@ -100,13 +100,14 @@ cd game/echo_lattice
 godot --headless --path . --export-release "Windows Desktop" builds/windows/EchoLattice.exe
 godot --headless --path . --export-release "Windows Demo"    builds/windows_demo/EchoLatticeDemo.exe
 
+# Prefer Python locally; CI uses the POSIX .sh helper (godot-ci has no python3).
 python3 ../../tools/release/stamp_export_artifacts.py \
   --out-dir builds/windows \
   --preset "Windows Desktop" \
   --artifact-name echo-lattice-windows-x86_64 \
   --exe-name EchoLattice.exe
 
-python3 ../../tools/release/stamp_export_artifacts.py \
+sh ../../tools/release/stamp_export_artifacts.sh \
   --out-dir builds/windows_demo \
   --preset "Windows Demo" \
   --artifact-name echo-lattice-windows-demo-x86_64 \

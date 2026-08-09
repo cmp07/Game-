@@ -15,6 +15,7 @@ PROJECT_GODOT = PROJECT / "project.godot"
 TOOLCHAIN = ROOT / "tools" / "release" / "godot_toolchain.json"
 EXPORT_SH = ROOT / "tools" / "release" / "export_windows.sh"
 STAMP_PY = ROOT / "tools" / "release" / "stamp_export_artifacts.py"
+STAMP_SH = ROOT / "tools" / "release" / "stamp_export_artifacts.sh"
 BUILD_DOC = ROOT / "docs" / "RELEASE" / "BUILD_WINDOWS.md"
 CI_YML = ROOT / ".github" / "workflows" / "ci.yml"
 
@@ -51,6 +52,8 @@ def main() -> None:
         fail(f"missing {EXPORT_SH.relative_to(ROOT)}")
     if not STAMP_PY.is_file():
         fail(f"missing {STAMP_PY.relative_to(ROOT)}")
+    if not STAMP_SH.is_file():
+        fail(f"missing {STAMP_SH.relative_to(ROOT)}")
     if not BUILD_DOC.is_file():
         fail(f"missing {BUILD_DOC.relative_to(ROOT)}")
     if not TOOLCHAIN.is_file():
@@ -114,7 +117,7 @@ def main() -> None:
     for needle in (
         "export-windows",
         "export-windows-demo",
-        "stamp_export_artifacts.py",
+        "stamp_export_artifacts.sh",
         "Windows Desktop",
         "Windows Demo",
         "echo-lattice-windows-x86_64",
@@ -124,7 +127,9 @@ def main() -> None:
         if needle not in ci:
             fail(f"ci.yml missing {needle!r}")
 
-    # Stamp helper smoke (no Godot): write into a temp-like builds path under /tmp.
+    # Stamp helper smoke (no Godot): Python + POSIX shell variants.
+    import json as _json
+    import subprocess
     import tempfile
 
     from importlib.util import module_from_spec, spec_from_file_location
@@ -153,11 +158,42 @@ def main() -> None:
         if len(stamp["checksums_sha256"]) != 2:
             fail("stamp should checksum exe + pck")
 
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp)
+        (out / "EchoLatticeDemo.exe").write_bytes(b"MZ-demo")
+        (out / "EchoLatticeDemo.pck").write_bytes(b"pck-demo")
+        subprocess.check_call(
+            [
+                "sh",
+                str(STAMP_SH),
+                "--out-dir",
+                str(out),
+                "--preset",
+                "Windows Demo",
+                "--artifact-name",
+                "echo-lattice-windows-demo-x86_64",
+                "--exe-name",
+                "EchoLatticeDemo.exe",
+                "--custom-features",
+                "demo",
+            ]
+        )
+        shell_stamp = _json.loads((out / "BUILD_STAMP.json").read_text(encoding="utf-8"))
+        if shell_stamp.get("product_version") != version:
+            fail("shell stamp product_version mismatch")
+        if shell_stamp.get("custom_features") != "demo":
+            fail("shell stamp custom_features mismatch")
+        if len(shell_stamp.get("checksums_sha256") or {}) != 2:
+            fail("shell stamp should checksum exe + pck")
+        sums = (out / "SHA256SUMS.txt").read_text(encoding="utf-8").strip().splitlines()
+        if len(sums) != 2:
+            fail("shell SHA256SUMS.txt line count mismatch")
+
     print(f"  project version: {version}")
     print(f"  windows file version: {win_ver}")
     print("  presets: Windows Desktop + Windows Demo OK")
     print("  toolchain pin + CI digest: OK")
-    print("  stamp helper smoke: OK")
+    print("  stamp helper smoke (py + sh): OK")
     print("result: OK")
 
 

@@ -15,6 +15,7 @@ set -eu
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PROJECT="$ROOT/game/echo_lattice"
 STAMP_PY="$ROOT/tools/release/stamp_export_artifacts.py"
+STAMP_SH="$ROOT/tools/release/stamp_export_artifacts.sh"
 TOOLCHAIN="$ROOT/tools/release/godot_toolchain.json"
 
 MODE="all"
@@ -77,12 +78,21 @@ export_one() {
     echo "error: export did not produce $PROJECT/$out_rel" >&2
     exit 1
   fi
-  python3 "$STAMP_PY" \
-    --out-dir "$out_dir" \
-    --preset "$preset" \
-    --artifact-name "$artifact_name" \
-    --exe-name "$exe_name" \
-    --custom-features "$features"
+  if command -v python3 >/dev/null 2>&1; then
+    python3 "$STAMP_PY" \
+      --out-dir "$out_dir" \
+      --preset "$preset" \
+      --artifact-name "$artifact_name" \
+      --exe-name "$exe_name" \
+      --custom-features "$features"
+  else
+    sh "$STAMP_SH" \
+      --out-dir "$out_dir" \
+      --preset "$preset" \
+      --artifact-name "$artifact_name" \
+      --exe-name "$exe_name" \
+      --custom-features "$features"
+  fi
   echo "    OK $out_dir (BUILD_STAMP.json + SHA256SUMS.txt + ARTIFACTS.md)"
 }
 

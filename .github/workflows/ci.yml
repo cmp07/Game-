@@ -59,7 +59,8 @@ jobs:
   # ---------------------------------------------------------------------------
   # Godot export (container). Templates ship under /root in the image;
   # move them into the Actions user home before export (abarichello/godot-ci).
-  # Windows (+ Demo) jobs write BUILD_STAMP.json / SHA256SUMS.txt / ARTIFACTS.md.
+  # Windows (+ Demo) jobs write BUILD_STAMP.json / SHA256SUMS.txt / ARTIFACTS.md
+# via tools/release/stamp_export_artifacts.sh (POSIX; no python3 in godot-ci).
   # Publish to Steam/itch remains manual (see steam/ + CI_BUILDS.md secrets).
   # ---------------------------------------------------------------------------
   export-linux:
@@ -98,7 +99,8 @@ jobs:
       - name: Stamp Linux artifact
         run: |
           set -eu
-          python3 tools/release/stamp_export_artifacts.py \
+          # godot-ci image has no python3 — use POSIX stamp helper.
+          sh tools/release/stamp_export_artifacts.sh \
             --out-dir game/echo_lattice/builds/linux \
             --preset "Linux/X11" \
             --artifact-name echo-lattice-linux-x86_64 \
@@ -148,7 +150,8 @@ jobs:
       - name: Version stamp + checksums
         run: |
           set -eu
-          python3 tools/release/stamp_export_artifacts.py \
+          # godot-ci image has no python3 — use POSIX stamp helper.
+          sh tools/release/stamp_export_artifacts.sh \
             --out-dir game/echo_lattice/builds/windows \
             --preset "Windows Desktop" \
             --artifact-name echo-lattice-windows-x86_64 \
@@ -156,7 +159,6 @@ jobs:
           test -f game/echo_lattice/builds/windows/BUILD_STAMP.json
           test -f game/echo_lattice/builds/windows/SHA256SUMS.txt
           test -f game/echo_lattice/builds/windows/ARTIFACTS.md
-          # Prefer sha256sum -c when available; fall back to listing.
           if command -v sha256sum >/dev/null 2>&1; then
             (cd game/echo_lattice/builds/windows && sha256sum -c SHA256SUMS.txt)
           fi
@@ -202,7 +204,8 @@ jobs:
       - name: Version stamp + checksums
         run: |
           set -eu
-          python3 tools/release/stamp_export_artifacts.py \
+          # godot-ci image has no python3 — use POSIX stamp helper.
+          sh tools/release/stamp_export_artifacts.sh \
             --out-dir game/echo_lattice/builds/windows_demo \
             --preset "Windows Demo" \
             --artifact-name echo-lattice-windows-demo-x86_64 \
