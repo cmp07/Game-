@@ -419,8 +419,8 @@ class TestDiegeticShellMvp(unittest.TestCase):
             for y in range(top, bottom + 20, 2)
             if sum(1 for x in range(left + 48, left + 360, 2) if lum(x, y) < 150) > 10
         )
-        # Allow a hairline for contact shadow / underline below the ink rule.
-        self.assertLessEqual(text_bottom, bottom + 16)
+        # Allow foot caption / contact shadow / underline below the ink rule.
+        self.assertLessEqual(text_bottom, bottom + 24)
         orphan = sum(
             1
             for y in range(bottom + 28, 1040, 2)

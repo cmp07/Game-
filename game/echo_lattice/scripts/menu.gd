@@ -97,8 +97,12 @@ func _ready() -> void:
 		_wishlist_button = null
 
 	_build_demo_path()
-	# Boot→menu handoff starts the card mid-slot so paper continuity reads as one turn.
-	_card_slot_t = 0.04 if _handoff_from_boot else 0.0
+	# Cold boot / screenshot / selftest: Field Index must be fully inked in frame 0.
+	# Only boot→menu handoff animates the paper-slot settle (mid-slot → rest).
+	if _handoff_from_boot:
+		_card_slot_t = 0.04
+	else:
+		_card_slot_t = CARD_SLOT_SEC
 	set_process(true)
 	_sync_field_index_layout()
 	call_deferred("_sync_field_index_layout")
@@ -237,7 +241,11 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	var brand_px: int = maxi(BRAND_MIN_PX, int(scale.get("brand", LedgerChrome.TYPE_BRAND)))
 	var brand_x: float = left.position.x + 36.0
 	var brand_y: float = left.position.y + left.size.y * 0.118
-	var brand_w: float = minf(float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN)), left.size.x - 72.0)
+	# Brand rule spans most of the verso — kills the cream column beside the lockup.
+	var brand_w: float = minf(
+		maxf(float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN)), left.size.x * 0.78),
+		left.size.x - 64.0
+	)
 	# Brand lockup mass (title + rust rule + tagline + serif blurb).
 	var brand_block := Rect2(
 		brand_x,
@@ -246,9 +254,9 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		float(brand_px) + 96.0
 	)
 	# Letterpress seal plate sits under the brand — rectangular die, never a circle.
-	var seal_half: float = 110.0 if left.size.y >= 700.0 else 54.0
-	seal_half = minf(seal_half, left.size.x * 0.22)
-	var seal_top: float = brand_block.end.y + 10.0
+	var seal_half: float = 128.0 if left.size.y >= 700.0 else 58.0
+	seal_half = minf(seal_half, left.size.x * 0.26)
+	var seal_top: float = brand_block.end.y + 8.0
 	var seal_plate := Rect2(
 		brand_x + 4.0,
 		seal_top,
@@ -256,12 +264,12 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		seal_half * 2.0
 	)
 	# Habit silhouette fills the remaining verso — one visual plane, no mid-leaf void.
-	var sil_top: float = seal_plate.end.y + 18.0
+	var sil_top: float = seal_plate.end.y + 28.0
 	var sil := Rect2(
 		left.position.x + 24.0,
 		sil_top,
 		maxf(200.0, left.size.x - 48.0),
-		maxf(120.0, left.end.y - sil_top - 28.0)
+		maxf(120.0, left.end.y - sil_top - 24.0)
 	)
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
 	var occupied: float = (
@@ -356,12 +364,35 @@ func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
 			btn.add_theme_stylebox_override(state, sb)
 
 
-func _apply_index_row_metrics(compact: bool) -> void:
+func _apply_index_row_metrics(compact: bool, fill_h: float = 0.0) -> void:
 	var scale: Dictionary = LedgerChrome.title_type_scale(560.0 if compact else 1080.0)
 	var row_h: float = float(scale.get("row_h", 44.0 if not compact else 26.0))
 	var primary_h: float = float(scale.get("primary_h", 52.0 if not compact else 32.0))
-	# Pack rows to the top of the Field Index plate — never vertically expand.
-	var shrink_top: int = Control.SIZE_SHRINK_BEGIN
+	# Title hard-reset: spread actions through the plate height (Obra Dinn density).
+	# Deck/compact keeps tight rows so the plate can still hug content.
+	if not compact and fill_h > 200.0:
+		var meta_budget: float = 0.0
+		if subtitle and subtitle.visible:
+			meta_budget += 22.0
+		if meta_label and meta_label.visible:
+			meta_budget += 22.0
+		var actions: Array = []
+		for b in _index_action_buttons():
+			if b == null:
+				continue
+			var btn0: Button = b as Button
+			if btn0 == hard_button and (not hard_button.visible or hard_button.disabled):
+				continue
+			actions.append(btn0)
+		var n: int = actions.size()
+		var sep: float = 10.0
+		if n > 0:
+			var usable: float = maxf(180.0, fill_h - meta_budget - sep * float(maxi(0, n - 1) + 2))
+			var even: float = usable / float(n)
+			row_h = clampf(even, 40.0, 72.0)
+			primary_h = clampf(even + 6.0, 46.0, 80.0)
+	# Title: expand rows through the plate. Deck: pack tight at the top.
+	var vflag: int = Control.SIZE_SHRINK_BEGIN if compact else Control.SIZE_EXPAND_FILL
 	_style_index_actions(compact)
 	_style_meta_as_ledger_lines(compact)
 	var buttons: Array = [
@@ -375,12 +406,16 @@ func _apply_index_row_metrics(compact: bool) -> void:
 		# Clamp after font style — content min-size can otherwise balloon past Deck budget.
 		btn.custom_minimum_size = Vector2(240.0, row_h)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.size_flags_vertical = shrink_top
+		btn.size_flags_vertical = vflag
 		btn.add_theme_constant_override("h_separation", 0)
 	if start_button:
 		start_button.custom_minimum_size = Vector2(240.0, primary_h)
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		start_button.size_flags_vertical = shrink_top
+		start_button.size_flags_vertical = vflag
+	if subtitle:
+		subtitle.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	if meta_label:
+		meta_label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
@@ -419,22 +454,20 @@ func _sync_field_index_layout() -> void:
 		vp = get_viewport_rect().size
 	var page: Rect2 = _ledger_page_rect(vp)
 	var compact: bool = page.size.y < 700.0
-	_apply_index_row_metrics(compact)
-	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
-	col.add_theme_constant_override("separation", int(scale.get("row_sep", 4 if compact else 8)))
-	# Place column using the shared card geometry (content-driven height + slot settle).
 	var y_off: float = _slot_y_off()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 	var inset: Rect2 = field_index_content_rect(card)
+	# First pass: size rows to fill the plate, then place the column.
+	_apply_index_row_metrics(compact, inset.size.y)
+	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
+	var sep: int = int(scale.get("row_sep", 4 if compact else 10))
+	if not compact:
+		sep = maxi(sep, 10)
+	col.add_theme_constant_override("separation", sep)
 	col.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 	col.position = inset.position
-	var needed: float = col.get_combined_minimum_size().y
-	col.size = Vector2(inset.size.x, maxf(needed, 1.0))
-	# Second pass: card height may shrink/grow once column min size is known.
-	card = field_index_card_rect(vp, y_off)
-	inset = field_index_content_rect(card)
-	col.position = inset.position
-	col.size = Vector2(inset.size.x, maxf(col.get_combined_minimum_size().y, 1.0))
+	# Fill the content rect — actions spread through the plate, not a top postage stamp.
+	col.size = Vector2(inset.size.x, inset.size.y)
 	col.modulate = Color(1, 1, 1, _slot_alpha())
 
 
@@ -875,9 +908,10 @@ func _draw() -> void:
 		"plate_h": seal_plate.size.y,
 		"caption": "",
 	})
+	# Caption sits in the air between seal die and silhouette — never overlaps the plate.
 	draw_string(
 		_type("micro"),
-		Vector2(seal_plate.position.x, seal_plate.end.y + 14.0),
+		Vector2(seal_plate.position.x, minf(seal_plate.end.y + 18.0, sil.position.y - 10.0)),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
 	)
@@ -886,7 +920,7 @@ func _draw() -> void:
 	if sil.size.y >= 100.0:
 		draw_string(
 			_type("micro"),
-			Vector2(sil.position.x + 10.0, sil.position.y - 8.0),
+			Vector2(sil.position.x + 10.0, sil.position.y + 16.0),
 			tr("menu.habit_silhouette"),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 		)
@@ -934,7 +968,7 @@ func _draw() -> void:
 	)
 	draw_string(
 		_type("micro"),
-		Vector2(card.position.x + 28.0, card.end.y - 16.0),
+		Vector2(card.position.x + 28.0, card.end.y - 22.0),
 		tr("menu.card_foot"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)

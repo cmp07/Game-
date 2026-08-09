@@ -55,19 +55,19 @@ def _layout_rects() -> dict:
     brand_y = left[1] + left[3] * 0.118
     brand_w = min(560.0, left[2] - 72.0)
     brand_block = (brand_x, brand_y - brand_px, brand_w, float(brand_px) + 96.0)
-    seal_half = min(110.0, left[2] * 0.22)
+    seal_half = min(128.0, left[2] * 0.26)
     seal = (
         brand_x + 4.0,
-        brand_block[1] + brand_block[3] + 10.0,
+        brand_block[1] + brand_block[3] + 8.0,
         seal_half * 2.0,
         seal_half * 2.0,
     )
-    sil_top = seal[1] + seal[3] + 18.0
+    sil_top = seal[1] + seal[3] + 28.0
     sil = (
         left[0] + 24.0,
         sil_top,
         max(200.0, left[2] - 48.0),
-        max(120.0, left[1] + left[3] - sil_top - 28.0),
+        max(120.0, left[1] + left[3] - sil_top - 24.0),
     )
     side_pad, top_pad, bot_pad = 16.0, 20.0, 18.0
     card = (
@@ -246,15 +246,15 @@ class TestMenuCompositionDensity(unittest.TestCase):
         )
         self.assertGreater(brand, 400, msg="ECHO LATTICE brand ink missing on left")
 
-        # Field Index left edge in the right ~42% column — not off-screen / corner.
+        # Field Index left edge in the right ~42% column — skip spine trough ink.
         left = None
-        for x in range(980, 1280):
+        for x in range(1040, 1280):
             if lum(x, 220) < 100:
                 left = x
                 break
         self.assertIsNotNone(left, msg="Field Index left edge missing")
         self.assertLess(left, 1180, msg="Field Index crammed to far corner")
-        self.assertGreaterEqual(left, 1000, msg="Field Index spilled into brand leaf")
+        self.assertGreaterEqual(left, 1040, msg="Field Index spilled into brand leaf")
 
         # Full-height plate edge.
         runs: list[tuple[int, int]] = []
@@ -272,14 +272,23 @@ class TestMenuCompositionDensity(unittest.TestCase):
         top, bottom = max(runs, key=lambda r: r[1] - r[0])
         self.assertGreater(bottom - top, 780, msg="Field Index plate too short")
 
-        # Action ink inside the plate (all rows readable).
+        # Action ink inside the plate — Condensed Medium strokes are thin; sample densely.
         text_hits = sum(
             1
-            for y in range(top + 40, bottom - 40, 3)
-            for x in range(left + 40, min(left + 420, w - 4), 3)
-            if lum(x, y) < 145
+            for y in range(top + 40, bottom - 40, 2)
+            for x in range(left + 40, min(left + 520, w - 4), 2)
+            if lum(x, y) < 100
         )
-        self.assertGreater(text_hits, 900, msg="Field Index actions missing / off-screen")
+        self.assertGreater(text_hits, 700, msg="Field Index actions missing / off-screen")
+        # Actions must span the plate height (not a postage-stamp cluster at the top).
+        ink_ys = [
+            y
+            for y in range(top + 50, bottom - 40, 2)
+            if any(lum(x, y) < 100 for x in range(left + 40, min(left + 420, w - 4), 2))
+        ]
+        self.assertGreaterEqual(len(ink_ys), 40, msg="Field Index action ink too sparse")
+        span = (max(ink_ys) - min(ink_ys)) if ink_ys else 0
+        self.assertGreaterEqual(span, 420, msg="Field Index actions still crammed to one band")
 
         # No concentric dashed-circle seal: polar ring score around brand seal zone.
         # Rectangular plate has ink on flats; a circle seal spikes at constant radius.
