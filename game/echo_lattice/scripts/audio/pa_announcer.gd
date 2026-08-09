@@ -10,6 +10,7 @@ const LINE_TO_EVENT := {
 	"pa.checkpoint.armed": "pa.rewrite_armed",
 	"pa.rewrite.fired": "pa.attention",
 	"pa.rewrite.matched": "pa.board_tick",
+	"pa.rewrite.second_birth": "pa.board_tick",
 	"pa.undo.hint": "pa.board_tick",
 	"pa.death.habit": "pa.attention",
 	"pa.wing.clear": "pa.wing_clear",
@@ -73,6 +74,6 @@ func _subtitle_for_pa(line_or_event: String) -> void:
 			stub = "pa.ghost.floor"
 		"pa.wing_clear":
 			stub = "pa.wing.clear"
-		"pa.rewrite.matched", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor":
+		"pa.rewrite.matched", "pa.rewrite.second_birth", "pa.undo.hint", "pa.checkpoint.armed", "pa.ghost.floor":
 			stub = line_or_event
 	overlay.call("show_line", stub)

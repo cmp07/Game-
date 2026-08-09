@@ -143,6 +143,18 @@ subtitle.pa.ghost.floor,Floor chalk noted.,已记录地面粉笔。
 subtitle.pa.checkpoint.armed,Checkpoint — buffer armed.,检查点 — 缓冲已就绪。
 subtitle.pa.rewrite.fired,Rewrite committed.,改写已提交。
 subtitle.pa.rewrite.matched,It matches you.,它与你吻合。
+subtitle.pa.rewrite.second_birth,Both axes remember you.,双轴记住了你。
+subtitle.habit.op.deflector,Corridor sealed.,走廊已封死。
+subtitle.habit.op.fossilize,Loop calcified.,回环已钙化。
+subtitle.habit.op.thicken,Walk thickened underfoot.,足迹在脚下增厚。
+subtitle.habit.op.grow,Far margin darkens.,远缘变暗。
+subtitle.habit.op.carve,A hairline door opens.,一线门缝打开。
+subtitle.habit.op.widen,The corridor breathes.,走廊松了一口气。
+subtitle.habit.answer.hand,Answered your %s.,回应了你的%s。
+ceremony.mirror_birth.plate,IT MATCHES YOU,与你吻合
+ceremony.looking_glass.plate,BOTH AXES REMEMBER,双轴铭记
+ceremony.mirror_birth.label,Orange walls = your mirror.,橙墙即你的镜像。
+ceremony.looking_glass.label,Both folds keep your ink.,两折都留住你的墨。
 subtitle.pa.undo.hint,Undo clears a step.,撤销可清除一步。
 subtitle.pa.boot.lattice_online,Lattice online.,晶格在线。
 subtitle.pa.wing.clear,Wing clear.,本翼清除。

@@ -439,6 +439,7 @@ CHAMBERS: list[dict] = [
         "role": "lesson",
         "par_moves": 58,
         "seed": 12004,
+        "spectacle": True,
         "hints": ["One checkpoint prints two reflections at once."],
         "map": R(
             "########################",
