@@ -35,7 +35,7 @@
 | Freeze tip | `5f0d463` |
 | Branch + tag | `backup/echo-lattice-rc1-steam-pack` |
 | Index | [`../BACKUP/README.md`](../BACKUP/README.md) · [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
-| Ship-readiness | **78 / 100** (pack) — game-feel **41 / 100** ([`MASTER_1000X.md`](MASTER_1000X.md) §3) |
+| Ship-readiness | **78 / 100** (pack) — game-feel **56 / 100** post-G1 estimate ([`MASTER_1000X.md`](MASTER_1000X.md) §3; was 41 at freeze) |
 
 **Exit:** Durable snapshot exists; agents treat Steam work as **parked**, not deleted.
 
