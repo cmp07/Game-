@@ -138,7 +138,8 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 const _INDEX_PAD_L: float = 48.0
 const _INDEX_PAD_R: float = 32.0
 const _INDEX_PAD_T: float = 72.0
-const _INDEX_PAD_B: float = 36.0
+# Extra bottom pad for ink-craft underlines drawn below Control rects.
+const _INDEX_PAD_B: float = 48.0
 
 
 ## Right-side Field Index plate — ~45% of the page at 1080p; never a postage stamp.
@@ -668,11 +669,13 @@ func _draw() -> void:
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
-	draw_line(
+	ArtKit.draw_letterpress_rule(
+		self,
 		page.position + Vector2(20, 34),
 		page.position + Vector2(page.size.x - 20, 34),
 		Palette.INK_SOFT,
-		1.5
+		1.5,
+		19
 	)
 
 	# Seed header strip along top margin (diegetic ledger, not chamber HUD).
@@ -695,9 +698,23 @@ func _draw() -> void:
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
-	# Rust rule under the title — the brand underline (never cadmium).
+	# Oxide brand rule — letterpress crush + flecks (never cadmium).
 	var brand_rule_len: float = minf(rule_len, (field_index_card_rect(vp, 0.0).position.x - brand_x) - 36.0)
-	draw_rect(Rect2(brand_x, brand_y + 14, brand_rule_len, rule_w), Palette.RUST_FOSSIL, true)
+	ArtKit.draw_letterpress_rule(
+		self,
+		Vector2(brand_x, brand_y + 14.0),
+		Vector2(brand_x + brand_rule_len, brand_y + 14.0),
+		Palette.RUST_FOSSIL,
+		rule_w,
+		42
+	)
+	ArtKit.draw_oxide_flecks(
+		self,
+		Rect2(brand_x, brand_y + 10.0, brand_rule_len * 0.55, 12.0),
+		43,
+		6,
+		0.55
+	)
 
 	draw_string(
 		_type("display"),
@@ -717,7 +734,7 @@ func _draw() -> void:
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
-	# Surveyor seal + lattice glyph — substantial ink character under the brand.
+	# Surveyor seal as hero glyph — imperfect rubber ink under the brand.
 	var seal_r: float = 78.0 if page.size.y >= 700.0 else 44.0
 	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 178.0)
 	if seal_c.x + seal_r + 20.0 > card.position.x:
@@ -755,6 +772,7 @@ func _draw() -> void:
 		"caption": "FIELD",
 		"font": _type("display"),
 		"font_size": maxi(15, folio_px + 5),
+		"hero": true,
 	})
 	_draw_seal_lattice(seal_c, seal_r * 0.50)
 	draw_string(
@@ -779,6 +797,8 @@ func _draw() -> void:
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
+		"thickness": 3.5,
+		"oxide_accents": true,
 		"skip_grain": false,
 	})
 	draw_string(
@@ -797,7 +817,7 @@ func _draw() -> void:
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)
 	)
 
-	# Focus underlines — rust ink draw-in + selection tick (cadmium reserved).
+	# Focus underlines — rust ink craft + selection tick (cadmium reserved).
 	_draw_button_underlines(card)
 
 	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.

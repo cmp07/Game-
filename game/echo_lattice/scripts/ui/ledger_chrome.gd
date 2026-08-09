@@ -6,8 +6,8 @@ class_name LedgerChrome
 ## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
-## ART_DIRECTION_V3 §3.2 — title-page type scale (px @ ~1080p reference).
-## Brand owns the left plane; Field Index type must read as a tactile card, not microcopy.
+## ART_DIRECTION_V3 §3.2 — published title-page type scale (px @ ~1080p).
+## Partners menu-restore-rich composition: brand owns the left plane; index 18–24.
 const TYPE_BRAND := 92
 const TYPE_TAGLINE := 24
 const TYPE_BLURB := 17
@@ -22,7 +22,7 @@ const BRAND_RULE_LEN := 560.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
-	## Compact (Deck / short page) vs full title-card scale.
+	## Compact (Deck / short page) vs full published title-card scale.
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
@@ -174,8 +174,8 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = rust ink underline (draw-in). Hover = slate. Idle = soft hairline.
-	## Cadmium reserved — never used here.
+	## Selection = rust ink craft (uneven letterpress rule + stamp tick). Hover = slate.
+	## Idle = soft hairline. Cadmium reserved — never used here. No filled pills / chrome.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -189,43 +189,85 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		# Wide card rows need long underlines — postage-stamp caps read as sparse chrome.
+		# Wide Field Index rows need long ink rules — postage-stamp caps read as sparse chrome.
 		var max_w: float = minf(r.size.x - 8.0, 420.0)
+		var y: float = local_pos.y + r.size.y - 4.0
 		if focused and not disabled:
 			var w: float = max_w * eased
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 5.0, w, 3.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				w,
+				2.4,
 				Palette.RUST_FOSSIL,
-				true
+				hash(c.get_instance_id()) ^ 0x51F01D
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
+				# Imperfect rubber-ink selection tick — not a UI bullet chrome.
 				var tick_c := Color(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
-				host.draw_circle(
-					Vector2(local_pos.x - 12.0, local_pos.y + r.size.y * 0.55),
-					2.8,
-					tick_c
-				)
+				var tick_p := Vector2(local_pos.x - 11.0, local_pos.y + r.size.y * 0.55)
+				host.draw_circle(tick_p, 2.4, tick_c)
+				host.draw_circle(tick_p + Vector2(1.2, 0.6), 1.1, Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55))
 		elif hovered and not disabled:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 5.0, max_w, 2.5),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				max_w,
+				2.0,
 				Palette.SLATE_TEAL,
-				true
+				hash(c.get_instance_id()) ^ 0x51A7E
 			)
 		elif disabled:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 160.0), 1.0),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y + 1.0),
+				minf(max_w, 120.0),
+				1.0,
 				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
-				true
+				11
 			)
 		else:
-			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 280.0), 1.5),
+			_draw_ink_rule(
+				host,
+				Vector2(local_pos.x, y),
+				minf(max_w, 280.0),
+				1.2,
 				Palette.INK_SOFT,
-				true
+				hash(c.get_instance_id()) ^ 0x1D1E
 			)
+
+
+static func _draw_ink_rule(
+	host: CanvasItem,
+	origin: Vector2,
+	width: float,
+	thickness: float,
+	color: Color,
+	seed: int
+) -> void:
+	## Segmented ink rule with pressure breaks — selection reads as craft, not StyleBox.
+	if width < 1.0:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed if seed != 0 else 17
+	var x: float = 0.0
+	var y: float = origin.y
+	while x < width:
+		var seg: float = rng.randf_range(5.0, 11.0)
+		if rng.randf() < 0.12:
+			# Broken letterpress gap.
+			x += rng.randf_range(1.5, 3.0)
+			continue
+		var w: float = minf(seg, width - x)
+		var pressure: float = rng.randf_range(0.72, 1.0)
+		var tw: float = thickness * rng.randf_range(0.85, 1.2)
+		var c := Color(color.r, color.g, color.b, color.a * pressure)
+		var y_off: float = rng.randf_range(-0.4, 0.4)
+		host.draw_rect(Rect2(origin.x + x, y + y_off, w, tw), c, true)
+		x += w
 
 
 static func wire_vertical_focus(buttons: Array) -> void:

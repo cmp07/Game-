@@ -159,8 +159,114 @@ func draw_desk_margin(canvas: CanvasItem, vp: Vector2, grain_seed: int = 11, gra
 	canvas.draw_rect(Rect2(0.0, vp.y - strip_h, vp.x, strip_h), Color(cool.r, cool.g, cool.b, 0.42), true)
 	canvas.draw_rect(Rect2(0.0, 0.0, strip_w, vp.y), Color(cool.r, cool.g, cool.b, 0.28), true)
 	canvas.draw_rect(Rect2(vp.x - strip_w, 0.0, strip_w, vp.y), Color(cool.r, cool.g, cool.b, 0.28), true)
+	# Ambient desk vignette — ink-soft multiply toward corners only. No bloom / purple.
+	# Keep strength modest so footer QA does not read vignette as BUFFER ink.
+	draw_desk_vignette(canvas, vp, 0.07)
 	if grain_a > 0.001:
 		draw_paper_grain(canvas, Rect2(Vector2.ZERO, vp), grain_seed, grain_a)
+
+
+func draw_desk_vignette(canvas: CanvasItem, vp: Vector2, strength: float = 0.11) -> void:
+	## Soft corner falloff into the blotter — reads as desk lamp, not UI dim.
+	## ART_DIRECTION_V3 §4.1: ±4% value drift; never crush to black.
+	if vp.x < 1.0 or vp.y < 1.0 or strength < 0.001:
+		return
+	var a: float = clampf(strength, 0.0, 0.16)
+	var ink := Palette.INK_BLACK
+	# Layered inset bands approximate a radial vignette without shaders/bloom.
+	var bands: Array = [
+		[0.00, a * 0.40],
+		[0.04, a * 0.22],
+		[0.08, a * 0.10],
+	]
+	for band in bands:
+		var inset: float = float(band[0])
+		var ba: float = float(band[1])
+		var m: float = minf(vp.x, vp.y)
+		var ix: float = m * inset
+		# Bias vignette to side/top; keep bottom thin so title footer stays bone.
+		var iy_top: float = m * inset
+		var iy_bot: float = m * inset * 0.45
+		var c := Color(ink.r, ink.g, ink.b, ba)
+		canvas.draw_rect(Rect2(0.0, 0.0, vp.x, iy_top), c, true)
+		canvas.draw_rect(Rect2(0.0, vp.y - iy_bot, vp.x, iy_bot), c, true)
+		canvas.draw_rect(Rect2(0.0, iy_top, ix, vp.y - iy_top - iy_bot), c, true)
+		canvas.draw_rect(Rect2(vp.x - ix, iy_top, ix, vp.y - iy_top - iy_bot), c, true)
+
+
+func draw_fiber_streaks(
+	canvas: CanvasItem,
+	rect: Rect2,
+	seed: int = 7,
+	opacity: float = 0.045,
+	count: int = 28
+) -> void:
+	## Print-shop fiber residue on stock — sparse ink_soft strands, never noise fog.
+	if rect.size.x < 8.0 or rect.size.y < 8.0 or opacity < 0.001:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var n: int = maxi(4, count)
+	for _i in range(n):
+		var x0: float = rect.position.x + rng.randf() * rect.size.x
+		var y0: float = rect.position.y + rng.randf() * rect.size.y
+		var length: float = rng.randf_range(10.0, 42.0)
+		var ang: float = rng.randf_range(-0.35, 0.35)  # mostly horizontal fiber
+		var a: float = opacity * rng.randf_range(0.35, 1.0)
+		var c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, a)
+		var x1: float = x0 + cos(ang) * length
+		var y1: float = y0 + sin(ang) * length
+		canvas.draw_line(Vector2(x0, y0), Vector2(x1, y1), c, 1.0, true)
+
+
+func draw_letterpress_rule(
+	canvas: CanvasItem,
+	a: Vector2,
+	b: Vector2,
+	color: Color = Palette.INK_SOFT,
+	width: float = 1.0,
+	seed: int = 3
+) -> void:
+	## Letterpress crush on chrome rules — 0–1 px edge tremor, never glow.
+	var delta: Vector2 = b - a
+	var length: float = delta.length()
+	if length < 1.0:
+		return
+	var dir: Vector2 = delta / length
+	var nrm := Vector2(-dir.y, dir.x)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var step: float = 7.0
+	var t: float = 0.0
+	var prev: Vector2 = a
+	while t < length:
+		t = minf(t + step, length)
+		var tremor: float = rng.randf_range(-0.7, 0.7)
+		var nxt: Vector2 = a + dir * t + nrm * tremor
+		canvas.draw_line(prev, nxt, color, width, true)
+		prev = nxt
+
+
+func draw_oxide_flecks(
+	canvas: CanvasItem,
+	rect: Rect2,
+	seed: int = 21,
+	count: int = 6,
+	alpha: float = 0.55
+) -> void:
+	## Iron-oxide accents — matte dust near joins / brand rules. Emissive = 0.
+	if rect.size.x < 4.0 or rect.size.y < 4.0:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	for _i in range(maxi(1, count)):
+		var p := Vector2(
+			rect.position.x + rng.randf() * rect.size.x,
+			rect.position.y + rng.randf() * rect.size.y
+		)
+		var r: float = rng.randf_range(1.1, 2.4)
+		var c: Color = Palette.RUST_FOSSIL if rng.randf() > 0.35 else Palette.RUST_DEEP
+		canvas.draw_circle(p, r, Color(c.r, c.g, c.b, alpha * rng.randf_range(0.4, 1.0)))
 
 
 func draw_ledger_page(
@@ -199,28 +305,60 @@ func draw_ledger_page(
 		)
 	if alpha >= 0.99:
 		draw_page_fiber_grid(canvas, page, major_cell)
+		draw_fiber_streaks(canvas, page, grain_seed + 5, 0.028 * alpha, 36)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, page, grain_seed, grain_a * alpha)
-	canvas.draw_rect(
-		page,
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-		false,
-		rule_w
+	# Letterpress outer rule — tremor sells print crush, not a UI stroke.
+	var rule_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
+	draw_letterpress_rule(
+		canvas, page.position, page.position + Vector2(page.size.x, 0.0), rule_c, rule_w, grain_seed
+	)
+	draw_letterpress_rule(
+		canvas,
+		page.position + Vector2(page.size.x, 0.0),
+		page.end,
+		rule_c,
+		rule_w,
+		grain_seed + 1
+	)
+	draw_letterpress_rule(
+		canvas,
+		page.end,
+		page.position + Vector2(0.0, page.size.y),
+		rule_c,
+		rule_w,
+		grain_seed + 2
+	)
+	draw_letterpress_rule(
+		canvas,
+		page.position + Vector2(0.0, page.size.y),
+		page.position,
+		rule_c,
+		rule_w,
+		grain_seed + 3
 	)
 	if double_rule:
-		canvas.draw_rect(
-			page.grow(-3.0),
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5 * alpha),
-			false,
-			1.0
+		var inner_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5 * alpha)
+		var inner: Rect2 = page.grow(-3.0)
+		draw_letterpress_rule(
+			canvas, inner.position, inner.position + Vector2(inner.size.x, 0.0), inner_c, 1.0, grain_seed + 7
+		)
+		draw_letterpress_rule(
+			canvas, inner.position + Vector2(inner.size.x, 0.0), inner.end, inner_c, 1.0, grain_seed + 8
+		)
+		draw_letterpress_rule(
+			canvas, inner.end, inner.position + Vector2(0.0, inner.size.y), inner_c, 1.0, grain_seed + 9
+		)
+		draw_letterpress_rule(
+			canvas, inner.position + Vector2(0.0, inner.size.y), inner.position, inner_c, 1.0, grain_seed + 10
 		)
 
 
 func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> void:
 	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
-	## Contact shadow + paper_deep thickness + bone face + fiber + binder holes + double header.
+	## Layered contact shadow + thickness + fiber stock + binder clip/holes (restore-rich).
 	## opts: alpha, shadow_off, grain_seed, grain_a, binder_holes, header_rules, deep_backer,
-	##       skip_grain, binder_clip, fiber_a
+	##       skip_grain, thickness, oxide_accents, binder_clip, fiber_a
 	if card.size.x < 2.0 or card.size.y < 2.0:
 		return
 	var alpha: float = float(opts.get("alpha", 1.0))
@@ -231,23 +369,59 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	var header_rules: bool = bool(opts.get("header_rules", true))
 	var deep_backer: bool = bool(opts.get("deep_backer", true))
 	var skip_grain: bool = bool(opts.get("skip_grain", false))
+	var thickness: float = float(opts.get("thickness", 3.5))
+	var oxide_accents: bool = bool(opts.get("oxide_accents", true))
 	var binder_clip: bool = bool(opts.get("binder_clip", true))
 	var fiber_a: float = float(opts.get("fiber_a", 0.055))
 
-	# Soft outer contact wash, then hard offset shadow — card as object, not outline.
+	# Soft outer contact wash, then ink-soft multiply stack — card as object.
+	# Keep α modest so contact reads as lift, not a dark slab under the plate.
 	var wash := Palette.PAPER_SHADOW
-	wash.a = 0.14 * alpha
+	wash.a = 0.10 * alpha
 	canvas.draw_rect(Rect2(card.position + Vector2(10, 14), card.size + Vector2(6, 6)), wash, true)
-	var shadow := Palette.PAPER_SHADOW
-	shadow.a *= alpha
-	canvas.draw_rect(Rect2(card.position + shadow_off, card.size), shadow, true)
+	var shadow_layers: Array = [
+		[shadow_off + Vector2(2, 3), 0.08],
+		[shadow_off, 0.16],
+		[shadow_off * 0.55, 0.10],
+	]
+	for layer in shadow_layers:
+		var off: Vector2 = layer[0]
+		var sa: float = float(layer[1]) * alpha
+		var shadow := Color(
+			Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, sa
+		)
+		canvas.draw_rect(Rect2(card.position + off, card.size), shadow, true)
 	if deep_backer:
+		# Cardstock thickness: deep face peeking past the bone plate.
 		var deep := Palette.PAPER_DEEP
 		deep.a = alpha
-		canvas.draw_rect(Rect2(card.position + Vector2(3, 3), card.size), deep, true)
+		var thick: float = clampf(thickness, 2.0, 5.0)
+		canvas.draw_rect(Rect2(card.position + Vector2(thick, thick), card.size), deep, true)
 		var deep2 := Palette.PAPER_DEEP.darkened(0.06)
 		deep2.a = 0.55 * alpha
-		canvas.draw_rect(Rect2(card.position + Vector2(5, 5), Vector2(card.size.x - 2.0, card.size.y - 2.0)), deep2, true)
+		canvas.draw_rect(
+			Rect2(card.position + Vector2(thick + 2.0, thick + 2.0), card.size - Vector2(2, 2)),
+			deep2,
+			true
+		)
+		# Right + bottom edge bevel (letterpress wall feel on chrome).
+		var edge := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35 * alpha)
+		canvas.draw_rect(
+			Rect2(card.end.x, card.position.y + thick, thick, card.size.y),
+			Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, alpha),
+			true
+		)
+		canvas.draw_rect(
+			Rect2(card.position.x + thick, card.end.y, card.size.x, thick),
+			Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, alpha),
+			true
+		)
+		canvas.draw_line(
+			Vector2(card.end.x + thick * 0.35, card.position.y + thick),
+			Vector2(card.end.x + thick * 0.35, card.end.y + thick * 0.35),
+			edge,
+			1.0
+		)
 	var bone := Palette.PAPER_BONE
 	bone.a = alpha
 	canvas.draw_rect(card, bone, true)
@@ -257,7 +431,7 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	canvas.draw_rect(card.grow(-2.0), face_warm, true)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, card, grain_seed, grain_a * alpha)
-	# Micro fiber grid on the card face — document stock, not a flat panel.
+	# Micro fiber grid + vertical stock + print-shop streaks.
 	var fiber: Color = Palette.INK_SOFT
 	fiber.a = fiber_a * alpha
 	var fy: float = card.position.y + 8.0
@@ -270,48 +444,89 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	while fx < card.end.x - 12.0:
 		canvas.draw_line(Vector2(fx, card.position.y + 10.0), Vector2(fx, card.end.y - 10.0), fiber_v, 1.0)
 		fx += 28.0
-	canvas.draw_rect(
-		card,
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-		false,
-		2.0
+	draw_fiber_streaks(canvas, card.grow(-6.0), grain_seed + 3, 0.04 * alpha, 18)
+	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
+	# Continuous plate edge first (enclosure / screenshot QA), then letterpress tremor.
+	canvas.draw_rect(card, border, false, 1.5)
+	draw_letterpress_rule(
+		canvas, card.position, card.position + Vector2(card.size.x, 0.0), border, 1.5, grain_seed + 11
 	)
-	canvas.draw_rect(
-		card.grow(-3.0),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * alpha),
-		false,
-		1.0
+	draw_letterpress_rule(
+		canvas, card.position + Vector2(card.size.x, 0.0), card.end, border, 1.5, grain_seed + 12
 	)
+	draw_letterpress_rule(
+		canvas, card.end, card.position + Vector2(0.0, card.size.y), border, 1.5, grain_seed + 13
+	)
+	draw_letterpress_rule(
+		canvas, card.position + Vector2(0.0, card.size.y), card.position, border, 1.5, grain_seed + 14
+	)
+	var inner_b := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * alpha)
+	var inner_card: Rect2 = card.grow(-3.0)
+	draw_letterpress_rule(
+		canvas,
+		inner_card.position,
+		inner_card.position + Vector2(inner_card.size.x, 0.0),
+		inner_b,
+		1.0,
+		grain_seed + 15
+	)
+	draw_letterpress_rule(
+		canvas, inner_card.position + Vector2(inner_card.size.x, 0.0), inner_card.end, inner_b, 1.0, grain_seed + 16
+	)
+	draw_letterpress_rule(
+		canvas, inner_card.end, inner_card.position + Vector2(0.0, inner_card.size.y), inner_b, 1.0, grain_seed + 17
+	)
+	draw_letterpress_rule(
+		canvas, inner_card.position + Vector2(0.0, inner_card.size.y), inner_card.position, inner_b, 1.0, grain_seed + 18
+	)
+	if oxide_accents:
+		draw_oxide_flecks(
+			canvas,
+			Rect2(card.position + Vector2(18, 8), Vector2(card.size.x - 36, 10)),
+			grain_seed + 29,
+			4,
+			0.45 * alpha
+		)
 	if binder_holes > 0:
 		var hole_step: float = maxf(48.0, (card.size.y - 64.0) / float(maxi(1, binder_holes - 1)))
 		for i in range(binder_holes):
 			var hy: float = card.position.y + 36.0 + float(i) * hole_step
 			if hy > card.end.y - 28.0:
 				break
+			# Punched hole: ink ring + paper show-through + oxide kiss.
 			canvas.draw_circle(
 				Vector2(card.position.x + 14.0, hy),
 				4.2,
 				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
 			)
 			canvas.draw_circle(Vector2(card.position.x + 14.0, hy), 2.2, bone)
-			# Soft hole shadow inside the punch.
 			canvas.draw_circle(
 				Vector2(card.position.x + 14.6, hy + 0.6),
 				1.4,
 				Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.35 * alpha)
 			)
+			if i % 2 == 0:
+				canvas.draw_circle(
+					Vector2(card.position.x + 16.5, hy + 1.2),
+					1.0,
+					Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.35 * alpha)
+				)
 	if header_rules:
-		canvas.draw_line(
+		draw_letterpress_rule(
+			canvas,
 			card.position + Vector2(26, 38),
 			card.position + Vector2(card.size.x - 18, 38),
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-			1.5
+			1.5,
+			grain_seed + 21
 		)
-		canvas.draw_line(
+		draw_letterpress_rule(
+			canvas,
 			card.position + Vector2(26, 43),
 			card.position + Vector2(card.size.x - 18, 43),
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-			1.0
+			1.0,
+			grain_seed + 22
 		)
 	if binder_clip:
 		draw_binder_clip(canvas, Vector2(card.position.x + card.size.x * 0.5, card.position.y - 2.0), alpha)
@@ -326,7 +541,6 @@ func draw_binder_clip(canvas: CanvasItem, tip: Vector2, alpha: float = 1.0) -> v
 	var r := Rect2(tip.x - w * 0.5, tip.y - h + 4.0, w, h)
 	canvas.draw_rect(r, fill, true)
 	canvas.draw_rect(r, ink, false, 1.5)
-	# Inner jaw.
 	canvas.draw_line(
 		Vector2(r.position.x + 8.0, r.position.y + 8.0),
 		Vector2(r.end.x - 8.0, r.position.y + 8.0),
@@ -339,48 +553,64 @@ func draw_binder_clip(canvas: CanvasItem, tip: Vector2, alpha: float = 1.0) -> v
 		Color(ink.r, ink.g, ink.b, 0.7 * alpha),
 		1.0
 	)
-	# Prongs into the card stock.
 	canvas.draw_line(Vector2(tip.x - 10.0, tip.y + 2.0), Vector2(tip.x - 10.0, tip.y + 14.0), ink, 1.5)
 	canvas.draw_line(Vector2(tip.x + 10.0, tip.y + 2.0), Vector2(tip.x + 10.0, tip.y + 14.0), ink, 1.5)
 
 
 func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, opts: Dictionary = {}) -> void:
 	## Rubber-stamp quality (ART_DIRECTION_V3 §2.2 checkpoint / §8.1 stamp_ink CPU path).
-	## Uneven ring pressure + micro rotation. Never emissive glow.
+	## Imperfect rubber ink: uneven ring pressure, blotches, registration ticks. Never glow.
 	var rot_deg: float = float(opts.get("rot_deg", -3.5))
 	var ink: Color = opts.get("color", Palette.SLATE_TEAL)
 	var alpha: float = float(opts.get("alpha", 0.82))
 	var seed: int = int(opts.get("seed", 17))
-	var ring_w: float = float(opts.get("ring_w", 2.2))
+	var ring_w: float = float(opts.get("ring_w", 2.6))
 	var inner: bool = bool(opts.get("inner_ring", true))
 	var caption: String = str(opts.get("caption", ""))
 	var font: Font = opts.get("font", null)
 	var font_size: int = int(opts.get("font_size", 11))
+	var hero: bool = bool(opts.get("hero", false))
 	if radius < 4.0 or alpha < 0.01:
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var rot: float = deg_to_rad(rot_deg)
-	var segments: int = 40
+	var segments: int = 56 if hero else 44
+	# Soft ink halo under the ring — transparency unevenness, not additive bloom.
+	if hero:
+		for k in range(5):
+			var ang: float = rng.randf() * TAU + rot
+			var rr: float = radius * rng.randf_range(0.82, 1.05)
+			var blot := Color(ink.r, ink.g, ink.b, alpha * rng.randf_range(0.05, 0.14))
+			canvas.draw_circle(
+				center + Vector2(cos(ang), sin(ang)) * rr * 0.15,
+				radius * rng.randf_range(0.08, 0.18),
+				blot
+			)
 	for i in range(segments):
 		var t0: float = TAU * float(i) / float(segments) + rot
 		var t1: float = TAU * float(i + 1) / float(segments) + rot
 		# ~20% of the ring prints light / broken — ink pressure unevenness.
 		var pressure: float = 1.0
-		if rng.randf() < 0.18:
-			pressure = rng.randf_range(0.22, 0.55)
-		elif rng.randf() < 0.12:
+		if rng.randf() < 0.20:
+			pressure = rng.randf_range(0.18, 0.50)
+		elif rng.randf() < 0.14:
 			continue
+		var rw: float = ring_w * rng.randf_range(0.75, 1.35)
 		var c := Color(ink.r, ink.g, ink.b, alpha * pressure)
 		var a: Vector2 = center + Vector2(cos(t0), sin(t0)) * radius
 		var b: Vector2 = center + Vector2(cos(t1), sin(t1)) * radius
-		canvas.draw_line(a, b, c, ring_w, true)
+		canvas.draw_line(a, b, c, rw, true)
+		# Occasional outer ink slap past the ring.
+		if hero and rng.randf() < 0.08:
+			var slap := center + Vector2(cos(t0), sin(t0)) * (radius + rng.randf_range(1.5, 3.5))
+			canvas.draw_circle(slap, rng.randf_range(0.8, 1.6), Color(ink.r, ink.g, ink.b, alpha * 0.35))
 	if inner:
 		var r2: float = radius * 0.72
 		for i in range(segments):
 			var t0: float = TAU * float(i) / float(segments) + rot
 			var t1: float = TAU * float(i + 1) / float(segments) + rot
-			if rng.randf() < 0.15:
+			if rng.randf() < 0.18:
 				continue
 			var c2 := Color(ink.r, ink.g, ink.b, alpha * 0.55)
 			canvas.draw_line(
@@ -390,11 +620,19 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 				1.0,
 				true
 			)
+	# Registration ticks — surveyor's stamp grammar (4 cardinal micro-marks).
+	for k in range(4):
+		var ang: float = rot + float(k) * TAU * 0.25 + rng.randf_range(-0.04, 0.04)
+		var p0: Vector2 = center + Vector2(cos(ang), sin(ang)) * (radius - 3.0)
+		var p1: Vector2 = center + Vector2(cos(ang), sin(ang)) * (radius + 2.5)
+		canvas.draw_line(p0, p1, Color(ink.r, ink.g, ink.b, alpha * 0.7), 1.2, true)
 	if caption != "" and font != null:
 		var tw: float = font.get_string_size(caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+		# Slight caption offset — rubber stamp never lands perfectly registered.
+		var cap_off := Vector2(rng.randf_range(-1.2, 1.2), rng.randf_range(-0.6, 0.8))
 		canvas.draw_string(
 			font,
-			center + Vector2(-tw * 0.5, font_size * 0.35),
+			center + Vector2(-tw * 0.5, font_size * 0.35) + cap_off,
 			caption,
 			HORIZONTAL_ALIGNMENT_LEFT,
 			-1,
