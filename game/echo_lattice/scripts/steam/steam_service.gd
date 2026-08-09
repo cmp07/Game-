@@ -185,6 +185,9 @@ func _load_features() -> void:
 		"prefer_godotsteam_when_present": true,
 		"app_id_placeholder": "YOUR_APP_ID",
 		"spacewar_dev_app_id": 480,
+		"wishlist_cta_enabled": true,
+		"store_wishlist_url": "",
+		"store_page_url": "",
 		"cloud_remote_path": "save.json",
 		"presence": {
 			"menu": "At the Field Ledger",

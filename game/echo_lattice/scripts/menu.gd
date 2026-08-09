@@ -66,7 +66,7 @@ func _ready() -> void:
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
-	if DemoBuild.is_demo():
+	if DemoBuild.wishlist_cta_enabled():
 		_ensure_wishlist_button()
 
 	_build_demo_path()

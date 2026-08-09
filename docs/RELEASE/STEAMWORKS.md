@@ -54,8 +54,14 @@ Autoload order (see `project.godot.steamworks.fragment`):
 | `cloud_save_enabled` | `false` | Optional Cloud sync of `save.json` |
 | `overlay_pause_enabled` | `true` | Pause tree when overlay opens |
 | `prefer_godotsteam_when_present` | `true` | Use real backend only if singleton exists |
+| `wishlist_cta_enabled` | `true` | Master switch for demo Steam wishlist buttons |
+| `store_wishlist_url` | `""` | Explicit Steam wishlist/store URL (preferred when set) |
+| `store_page_url` | `""` | Fallback store page URL if wishlist URL empty |
+| `app_id_placeholder` | `YOUR_APP_ID` | Used to derive `https://store.steampowered.com/app/{id}/` only when numeric and not Spacewar `480` |
 
-**itch / DRM-free:** leave `steam_enabled` false (default). Do not ship Steam DLLs in itch zips.
+**Store CTAs:** `DemoBuild.wishlist_cta_enabled()` requires a demo build, a non-empty resolved store URL with no `YOUR_APP_ID` token, and must not run under export tags `itch` or `drm_free`. `open_wishlist()` never `shell_open`s placeholder links.
+
+**itch / DRM-free:** leave `steam_enabled` false (default). Set `custom_features` to include `itch` or `drm_free`. Do not ship Steam DLLs in itch zips.
 
 ---
 

@@ -16,7 +16,7 @@
 | Export preset | `Windows Demo` in `game/echo_lattice/export_presets.cfg` |
 | Feature tag | `demo` (`OS.has_feature("demo")`) |
 | Local test flag | `--demo` on the cmdline (editor / full project tree) |
-| Wishlist CTA | `DemoBuild.WISHLIST_URL` — replace `YOUR_APP_ID` before ship |
+| Wishlist CTA | Feature-flagged via `steam_features.json` (`store_wishlist_url` / real AppID). Hidden on itch/`drm_free` and when URL still placeholder |
 
 The demo is a **marketing surface**, not a truncated full build left unlocked. Late-act chambers are excluded from the Windows Demo PCK and filtered out of the run queue at runtime.
 
@@ -40,7 +40,7 @@ The demo is a **marketing surface**, not a truncated full build left unlocked. L
 
 **Required beat:** the player reaches **Mirror Birth** (`02_mirror_birth`) — first vertical-mirror rewrite. Act I continues through the Induction identity boss so the wing has a clear finish.
 
-**Wishlist CTA:** once, on the demo end screen after Act I clear (also available from the demo main menu). Opens the Steam store wishlist URL. No other storefront links.
+**Wishlist CTA:** once, on the demo end screen after Act I clear (also available from the demo main menu), **only** when `DemoBuild.wishlist_cta_enabled()` is true — Steam demo builds with a real `store_wishlist_url` or numeric `app_id_placeholder`. Suppressed for `itch` / `drm_free` custom features and whenever the URL would still contain `YOUR_APP_ID` (no placeholder links opened). No other storefront links.
 
 **Daily Challenge:** remains available but draws only from the demo chamber pool (Act I).
 
@@ -74,11 +74,11 @@ Runtime still filters via `DemoBuild.filter_campaign_ids` so `--demo` in a full 
 |---|---|
 | Menu subtitle (fresh) | `Demo — Act I · Mirror Birth. Ink on paper.` |
 | Menu index header | `DEMO INDEX` |
-| Menu wishlist | `Wishlist on Steam` |
+| Menu wishlist | `Wishlist on Steam` (omitted when CTA gated off) |
 | Chamber-won (last) | `→ Finish Demo` |
 | End title | `DEMO COMPLETE` |
 | End tagline | `You met Mirror Birth. The full lattice waits.` |
-| End wishlist | `Wishlist on Steam` (focused) |
+| End wishlist | `Wishlist on Steam` (focused; omitted when CTA gated off) |
 
 Do not tease Reflection / Pressure / Mastery names or transforms beyond what Act I already teaches.
 
@@ -115,7 +115,7 @@ cd game/echo_lattice && godot --headless --path . -- --selftest --demo
 python3 game/echo_lattice/tests/test_demo_spec.py
 ```
 
-Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excluded from the allow-list, export preset `Windows Demo` + `demo` feature + exclude filters, wishlist placeholder present in `demo_build.gd`.
+Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excluded from the allow-list, export preset `Windows Demo` + `demo` feature + exclude filters, wishlist gates (no hardcoded `YOUR_APP_ID` store link). Also run `python3 game/echo_lattice/tests/test_wishlist_gates.py`.
 
 ---
 
@@ -123,7 +123,7 @@ Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excl
 
 - [ ] Windows Demo export runs on Win10 / Win11 / Steam Deck Proton
 - [ ] Fresh player clears Quiet Span → Echo Plate → **Mirror Birth** without a tutorial wall of text
-- [ ] Act I end screen shows wishlist once; URL uses real AppID (not `YOUR_APP_ID`)
+- [ ] Act I end screen shows wishlist once only after AppID / `store_wishlist_url` is real; itch/`drm_free` builds omit the CTA
 - [ ] No Reflection / Pressure / Mastery chamber files in the demo PCK
 - [ ] `--selftest --demo` (or `test_demo_spec.py`) green in CI
 - [ ] Store page marks demo playable; Next Fest trailer cut ready
@@ -134,7 +134,8 @@ Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excl
 
 | Placeholder | Where | Action |
 |---|---|---|
-| `YOUR_APP_ID` | `scripts/demo_build.gd` → `WISHLIST_URL` | Full game Steam AppID |
+| `YOUR_APP_ID` / empty store URLs | `config/steam_features.json` → `app_id_placeholder`, `store_wishlist_url`, `store_page_url` | Set real full-game AppID **or** explicit Steam store URL before enabling CTA |
+| `wishlist_cta_enabled` | same JSON | Leave `true`; set `false` to force-hide even on Steam demos |
 | Demo AppID / DepotID | Steamworks + `steam/echo_lattice/` (when present) | Separate demo app depot |
 | Exit survey | Marketing §9.4 | Optional follow-up; not required for this code gate |
 
@@ -145,3 +146,4 @@ Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excl
 | Date | Change |
 |---|---|
 | 2026-08-09 | Initial demo flag, Windows Demo preset, Act I + Mirror Birth scope, wishlist CTA, self-tests. |
+| 2026-08-09 | Wishlist CTA feature-flagged; hide on itch/DRM-free / missing AppID; no `YOUR_APP_ID` shell opens. |
