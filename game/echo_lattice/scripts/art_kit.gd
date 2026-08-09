@@ -1026,20 +1026,18 @@ func _draw_seal_plate_frame(
 		if length < 0.001:
 			continue
 		var dir: Vector2 = delta / length
+		# Continuous die edge — pressure varies, but never skips into dash grammar.
 		var segs: int = maxi(8, int(length / 5.0))
 		for i in range(segs):
-			# Rare skips only — plate must read as a solid stamp die, not dashes.
-			if rng.randf() < 0.04:
-				continue
 			var pressure: float = 1.0
 			if rng.randf() < 0.12:
-				pressure = rng.randf_range(0.55, 0.82)
+				pressure = rng.randf_range(0.70, 0.92)
 			var t0: float = length * float(i) / float(segs)
 			var t1: float = length * float(i + 1) / float(segs)
 			var p0: Vector2 = center + (a + dir * t0).rotated(rot)
 			var p1: Vector2 = center + (a + dir * t1).rotated(rot)
 			var c := Color(ink.r, ink.g, ink.b, alpha * pressure)
-			canvas.draw_line(p0, p1, c, width * rng.randf_range(0.92, 1.12), true)
+			canvas.draw_line(p0, p1, c, width * rng.randf_range(0.96, 1.08), true)
 
 
 func _draw_rotated_rect(

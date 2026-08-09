@@ -755,12 +755,13 @@ func _draw() -> void:
 
 	# Habit silhouette plate fills the verso under the brand — one visual plane, no mid-leaf void.
 	var sil_top: float = brand_y + 104.0
-	# Keep 56px clear above the leaf foot — dense wall cells must not trip punch-card ribbon QA.
+	# Keep clear air above the leaf foot — silhouette plate edge must sit above
+	# the punch-card ribbon QA band (y≈990–1040 @ 1080p).
 	var sil := Rect2(
 		left.position.x + 28.0,
 		sil_top,
 		maxf(200.0, left.size.x - 56.0),
-		maxf(140.0, left.end.y - sil_top - 56.0)
+		maxf(140.0, left.end.y - sil_top - 72.0)
 	)
 	if sil.size.y >= 100.0:
 		draw_string(

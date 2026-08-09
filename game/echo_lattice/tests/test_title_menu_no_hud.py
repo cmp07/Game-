@@ -174,12 +174,17 @@ class TestTitleMenuScreenshotHasNoBufferRibbon(unittest.TestCase):
         def lum(x: int, y: int) -> int:
             return int(im.getpixel((x, y)))
 
+        # Continuous letterpress foot rules / silhouette plate edges are not
+        # punch-card cells — require light gutters between dark hits (same as
+        # test_field_ledger_juice) so page-foot ink is not a false positive.
         ribbon = 0
         for y in range(990, 1040, 2):
             cells = 0
             x = 100
             while x < 520:
-                if lum(x, y) < 100 and lum(x + 6, y) < 100:
+                dark = lum(x, y) < 100 and lum(x + 6, y) < 100
+                gap = lum(x + 11, y) > 150
+                if dark and gap:
                     cells += 1
                 x += 14
             if cells >= 12:
