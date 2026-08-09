@@ -2,7 +2,7 @@
 
 Editor-ready package for the Steam Coming Soon **announce trailer** (Gate A item: 30s encode, muted-safe first 5s).
 
-**Branch intent:** land on RC1 via `cursor/gate-a-trailer`.  
+**Branch intent:** G1 recapture + MP4 encode via `cursor/media-g1-trailer` (originally Gate A pack on `cursor/gate-a-trailer`).  
 **Visual authority:** origami rewrite slam in `Chamber._draw_rewrite_slam()` — heartbeat → creases → lift → slot → rust bleed (`REWRITE_DURATION = 0.90s`).  
 **Palette:** Field Ledger only (`paper_bone` / `ink_black` / `rust_fossil` / `cadmium_warn`). **No neon purple.**
 
@@ -26,9 +26,10 @@ Finished encodes drop in [`../presskit/trailers/`](../presskit/trailers/) per th
 export PATH="$HOME/bin:$PATH"   # Godot 4.3 stable
 ./game/echo_lattice/tools/capture_gate_a_trailer.sh
 python3 tools/release/generate_trailer_text_cards.py
+python3 tools/release/encode_trailer_mp4.py   # → presskit/trailers/*.mp4
 ```
 
-Related scripts: [`SOCIAL_CLIP_SCRIPTS.md`](../SOCIAL_CLIP_SCRIPTS.md) Clip B · store §9 [`STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md).
+Related scripts: [`SOCIAL_CLIP_SCRIPTS.md`](../SOCIAL_CLIP_SCRIPTS.md) Clip A/B · store §9 [`STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md).
 
 ## Delivery specs (Gate A accept)
 

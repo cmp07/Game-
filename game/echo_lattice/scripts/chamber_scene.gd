@@ -202,21 +202,21 @@ func _style_ledger_chrome() -> void:
 	var bottom: PanelContainer = get_node_or_null("BottomBar")
 	if bottom:
 		bottom.add_theme_stylebox_override("panel", paper2)
-	if has_node("/root/TypeKit"):
-		TypeKit.apply_to_control(title_label, TypeKit.Role.DISPLAY)
-		TypeKit.apply_to_control(caption_label, TypeKit.Role.BODY)
-		TypeKit.apply_to_control(seed_label, TypeKit.Role.MONO)
-		TypeKit.apply_to_control(buffer_label, TypeKit.Role.MONO)
-		TypeKit.apply_to_control(moves_label, TypeKit.Role.MONO)
-		TypeKit.apply_to_control(habit_label, TypeKit.Role.BODY)
+	if has_node("/root/LedgerType"):
+		LedgerType.apply_to_control(title_label, "display", 18)
+		LedgerType.apply_to_control(caption_label, "body", 14)
+		LedgerType.apply_to_control(seed_label, "mono", 12)
+		LedgerType.apply_to_control(buffer_label, "mono", 12)
+		LedgerType.apply_to_control(moves_label, "mono", 12)
+		LedgerType.apply_to_control(habit_label, "body", 14)
 		if teach_hint_label:
-			TypeKit.apply_to_control(teach_hint_label, TypeKit.Role.BODY)
+			LedgerType.apply_to_control(teach_hint_label, "body", 13)
 		if undo_hint_label:
-			TypeKit.apply_to_control(undo_hint_label, TypeKit.Role.BODY)
-		TypeKit.apply_to_control(restart_button, TypeKit.Role.DISPLAY)
-		TypeKit.apply_to_control(menu_button, TypeKit.Role.DISPLAY)
+			LedgerType.apply_to_control(undo_hint_label, "body", 13)
+		LedgerType.apply_to_control(restart_button, "display", 16)
+		LedgerType.apply_to_control(menu_button, "display", 16)
 		if settings_button:
-			TypeKit.apply_to_control(settings_button, TypeKit.Role.DISPLAY)
+			LedgerType.apply_to_control(settings_button, "display", 16)
 
 
 func _refresh_title() -> void:

@@ -1,7 +1,8 @@
 # Trailer frame packs — tour
 
 Captured with `game/echo_lattice/tools/capture_gate_a_trailer.sh` (xvfb + Godot 4.3 `--screenshot`).  
-Viewport: 1152×672. Scale to 1920×1080 in the NLE.
+**G1 recapture** after `execute-g1` (diegetic Field Ledger UI, Plex lockup, habit beats).  
+Viewport: 1152×672. Scale to 1920×1080 in the NLE / `encode_trailer_mp4.py`.
 
 ## 01 — Open corridor
 

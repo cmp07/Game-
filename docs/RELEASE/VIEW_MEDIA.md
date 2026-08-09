@@ -1,11 +1,11 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `3ab33f7c7a8d96661434535e47b2b35e921da41c`  
-**G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) merged into RC1 with the G1 code wave.  
+**Tip at index authoring:** `0d829d6daebfdcc2c8aff96baf51e7a8e5ddfb41`  
+**G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
-> **No finished MP4 trailer is in the repo yet.** Planned drops (`echo_lattice_30s.mp4`, optional 15s vertical / store loop) belong under [`presskit/trailers/`](presskit/trailers/) — see that README. Until encode lands, watch the **slam GIF**, **poster**, **frame packs**, and read the **beat sheet**.
+> **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
 
 ---
 
@@ -13,7 +13,9 @@
 
 | What | Role | Blob | Raw |
 |---|---|---|---|
-| **Slam punch GIF** | Best motion preview (~0.85s, 8 fps) | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif) | [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif) |
+| **30s master MP4** | Gate A announce (1920×1080, 30 fps) | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4) | [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4) |
+| **15s vertical MP4** | Shorts / Reels (1080×1920) | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4) | [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4) |
+| **Slam punch GIF** | Best short motion preview (~0.85s, 8 fps) | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif) | [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif) |
 | **Poster slam** | Store / thumbnail still (slot t≈0.55) | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/poster_slam.png) | [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/poster_slam.png) |
 | Beat sheet | Picture / VO / text / SFX per second | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/trailer/BEAT_SHEET.md) | — |
 | Frame pack tour | Captions for all packs | [blob](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/TOUR.md) | — |
@@ -183,11 +185,11 @@ Field Ledger Steam capsule finals (**G1 refresh** — IBM Plex Condensed + mater
 
 | Path | Status |
 |---|---|
-| [`trailers/README.md`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/README.md) | Lists planned MP4s — **not present yet** |
-| [`trailers/poster_slam.png`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/poster_slam.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/poster_slam.png) | Present |
-| `trailers/echo_lattice_30s.mp4` | **Missing** (human encode from editor pack) |
-| `trailers/echo_lattice_15s_vertical.mp4` | **Missing** |
-| `trailers/echo_lattice_store_loop.mp4` | **Missing** |
+| [`trailers/README.md`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/README.md) | Drop folder + encode note |
+| [`trailers/poster_slam.png`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/poster_slam.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/poster_slam.png) | Present (G1 recapture) |
+| [`trailers/echo_lattice_30s.mp4`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4) | **Present** — 1920×1080 / 30s / H.264 |
+| [`trailers/echo_lattice_15s_vertical.mp4`](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4) | **Present** — 1080×1920 / 15s / H.264 |
+| `trailers/echo_lattice_store_loop.mp4` | **Missing** (optional 60–90s) |
 
 ### GIF sequence frames (`presskit/images/gif_sequences/`)
 
@@ -239,13 +241,15 @@ Placeholders only (READMEs, no image binaries yet):
 
 ## Inventory counts (RC1 tip)
 
-| Folder | Image binaries | Notes |
+| Folder | Image / video binaries | Notes |
 |---|---:|---|
-| `docs/RELEASE/screenshots/` | 8 PNG | + README, TOUR |
-| `docs/RELEASE/capsules/` | 8 PNG | + README |
-| `docs/RELEASE/trailer/` | 1 GIF + 20 frame PNGs + 1 poster + 11 text-card PNGs | Docs/SRT/manifest; **no MP4** |
-| `docs/RELEASE/presskit/trailers/` | 1 PNG poster | Planned MP4s absent |
+| `docs/RELEASE/screenshots/` | 8 PNG | G1 slate + README, TOUR |
+| `docs/RELEASE/capsules/` | 8 PNG | G1 Plex capsules + README |
+| `docs/RELEASE/trailer/` | 1 GIF + 20 frame PNGs + 1 poster + 11 text-card PNGs | G1 recapture; encode via `tools/release/encode_trailer_mp4.py` |
+| `docs/RELEASE/presskit/trailers/` | 1 PNG poster + **2 MP4** | 30s master + 15s vertical; store loop optional |
 | `docs/RELEASE/presskit/images/gif_sequences/` | 13 PNG | Frame packs for social GIFs |
 
-**Best “watch something move” link right now:**  
+**Direct watch URLs (raw):**  
+https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_30s.mp4  
+https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/presskit/trailers/echo_lattice_15s_vertical.mp4  
 https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/trailer/frame_packs/03_rewrite_slam/slam_punch_ref.gif
