@@ -392,20 +392,25 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 
 	match t:
 		Tile.WALL:
+			# Solid ink fill first so walls never read as hollow frames.
+			draw_rect(rect, Palette.INK_BLACK, true)
 			_blit(tex_wall_fresh, rect, Palette.INK_BLACK)
-			# Soft edge tremor — 1px ink rule.
 			draw_rect(rect, Palette.INK_SOFT, false, 1.0)
 		Tile.ECHO_WALL:
+			draw_rect(rect, Palette.RUST_FOSSIL, true)
 			_blit(tex_wall_fossil, rect, Palette.RUST_FOSSIL)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
 				draw_texture_rect(tex_rust[rust_i], rect.grow(-2.0), false)
-			draw_rect(rect.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+			draw_rect(rect.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
 		Tile.FLOOR, Tile.CHECKPOINT, Tile.CHECKPOINT_USED, Tile.GOAL:
-			if is_walked and tex_floor_walked != null:
+			var base_floor: Color = Palette.PAPER_BONE if (p.x + p.y) % 2 == 0 else Palette.PAPER_DEEP.lerp(Palette.PAPER_BONE, 0.55)
+			if is_walked:
+				draw_rect(rect, Palette.PAPER_DEEP, true)
 				_blit(tex_floor_walked, rect, Palette.PAPER_DEEP)
 			else:
-				_blit(tex_floor_fresh, rect, Palette.PAPER_BONE if (p.x + p.y) % 2 == 0 else Palette.PAPER_DEEP.lerp(Palette.PAPER_BONE, 0.55))
+				draw_rect(rect, base_floor, true)
+				_blit(tex_floor_fresh, rect, base_floor)
 			# Habit colonization — rust flecks on over-walked floors (never on unwalked).
 			var tc: int = int(traverse_count.get(p, 0))
 			if tc >= 3 and tex_rust.size() > 0:
@@ -504,36 +509,42 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 		var base := Rect2(offset + Vector2(p.x * CELL_SIZE, p.y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
 
 		if local_t < 0.25:
-			# Creases appear.
+			# Creases appear on doomed floor tiles.
 			var crease_a: float = local_t / 0.25
+			draw_rect(base, Palette.PAPER_DEEP, true)
 			_blit(tex_wall_folding, base, Palette.PAPER_DEEP)
-			var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.7 * crease_a)
-			draw_line(base.position + Vector2(2, 2), base.end - Vector2(2, 2), ink, 1.0, true)
-			draw_line(base.position + Vector2(CELL_SIZE - 2, 2), base.position + Vector2(2, CELL_SIZE - 2), ink, 1.0, true)
+			var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.85 * crease_a)
+			draw_line(base.position + Vector2(2, 2), base.end - Vector2(2, 2), ink, 1.5, true)
+			draw_line(base.position + Vector2(CELL_SIZE - 2, 2), base.position + Vector2(2, CELL_SIZE - 2), ink, 1.5, true)
+			var warn_edge := Color(Palette.CADMIUM_WARN.r, Palette.CADMIUM_WARN.g, Palette.CADMIUM_WARN.b, 0.35 * crease_a)
+			draw_rect(base, warn_edge, false, 1.0)
 		elif local_t < 0.50:
 			# Lift — cast shadow, no rim light.
 			var lift: float = (local_t - 0.25) / 0.25
-			var shadow_off: Vector2 = Vector2(3.0 + 4.0 * lift, 4.0 + 5.0 * lift)
-			var sh := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.22 + 0.18 * lift)
+			var shadow_off: Vector2 = Vector2(3.0 + 5.0 * lift, 4.0 + 6.0 * lift)
+			var sh := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.28 + 0.22 * lift)
 			draw_rect(Rect2(base.position + shadow_off, base.size), sh, true)
-			var raised := Rect2(base.position - Vector2(0, 3.0 * lift), base.size)
+			var raised := Rect2(base.position - Vector2(0, 4.0 * lift), base.size)
+			draw_rect(raised, Palette.PAPER_DEEP, true)
 			_blit(tex_wall_folding, raised, Palette.PAPER_DEEP)
-			draw_rect(raised, Palette.INK_SOFT, false, 1.0)
+			draw_rect(raised, Palette.INK_SOFT, false, 1.5)
 		elif local_t < 0.78:
-			# Slot with 1px overshoot bounce.
+			# Slot with 1px overshoot bounce into solid fossil.
 			var slot: float = (local_t - 0.50) / 0.28
-			var bounce: float = sin(slot * PI) * (1.0 - slot) * 2.0
+			var bounce: float = sin(slot * PI) * (1.0 - slot) * 3.0
 			var slotted := Rect2(base.position - Vector2(0, bounce), base.size)
+			draw_rect(slotted, Palette.RUST_FOSSIL, true)
 			_blit(tex_wall_fossil, slotted, Palette.RUST_FOSSIL)
-			draw_rect(slotted.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+			draw_rect(slotted.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
 		else:
 			# Rust bleed from the joins.
 			var bleed: float = (local_t - 0.78) / 0.22
+			draw_rect(base, Palette.RUST_FOSSIL, true)
 			_blit(tex_wall_fossil, base, Palette.RUST_FOSSIL)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
 				draw_texture_rect(tex_rust[rust_i], base.grow(-2.0 + 2.0 * (1.0 - bleed)), false, Color(1, 1, 1, 0.4 + 0.6 * bleed))
-			draw_rect(base.grow(-1.0), Palette.RUST_DEEP, false, 1.0)
+			draw_rect(base.grow(-1.0), Palette.RUST_DEEP, false, 1.5)
 
 	# Quiet title plate during slam — "IT LEARNED YOU"
 	if t_norm > 0.12 and t_norm < 0.85:
