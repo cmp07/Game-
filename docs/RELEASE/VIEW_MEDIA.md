@@ -1,6 +1,9 @@
-7dc54286dc903ce9636934c5dda9acf45adbb1d5**Tip at index authoring:** `77cd0d84f36dafea0b779b7828df2042f1044a40` (menu-design-craft / #152 print-shop craft on restore-rich; brand menu slate = craft recapture)  
+# Echo Lattice — view media (gallery)
+
+**Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
+**Tip at index authoring:** `ba8efb62a35948418aa490e78821f33a81ab8255` (menu-seal-v2 / #157 letterpress lattice plate; brand menu slate = seal recapture)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu seal v2:** letterpress lattice plate ( / #157) — rectangular stamp + habit-maze mark; no dashed FIELD ring. Recapture .
+**Menu seal v2:** letterpress lattice plate (`menu-seal-v2` / #157) — rectangular stamp + habit-maze mark; no dashed FIELD ring. Recapture `02_brand_main_menu.png`.
 **Menu design craft:** print-shop materials elevation (`menu-design-craft` / #152) — ArtKit desk vignette / letterpress / hero seal; LedgerChrome type + ink-craft selection; craft `02_brand_main_menu.png`.  
 **Menu restore:** rich Field Ledger title shell (`menu-restore-rich` / #151) — hero brand + substantial Field Index; enclosure fix kept; chamber HUD removed from title. Builds on menu-1000x (#149).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
