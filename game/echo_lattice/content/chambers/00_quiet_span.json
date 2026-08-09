@@ -1,0 +1,86 @@
+{
+  "id": "00_quiet_span",
+  "index": 0,
+  "slug": "quiet_span",
+  "title": "Quiet Span",
+  "caption": "Walk. Nothing here learns you yet.",
+  "act": "induction",
+  "act_index": 0,
+  "act_title": "Induction",
+  "teaches": "move",
+  "transform": "none",
+  "difficulty": 0,
+  "role": "lesson",
+  "seed": 11001,
+  "daily_eligible": false,
+  "par_moves": 18,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#......................#",
+      "#..P................G..#",
+      "#......................#",
+      "########################",
+      "#......................#",
+      "#......................#",
+      "#......................#",
+      "#......................#",
+      "#......................#",
+      "########################",
+      "#......................#",
+      "#......................#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#......................#",
+    "#..P................G..#",
+    "#......................#",
+    "########################",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "########################",
+    "#......................#",
+    "#......................#",
+    "########################"
+  ],
+  "motifs": [],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 1,
+    "forced_op": "none",
+    "soft_hard_bias": 0.25,
+    "require_shorter_or_equal": false
+  },
+  "hints": [
+    "Four directions. Reach the green seal."
+  ],
+  "variations": {
+    "allow_rotate": true,
+    "allow_reflect": true,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -4,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "induction",
+    "move",
+    "none",
+    "lesson"
+  ]
+}

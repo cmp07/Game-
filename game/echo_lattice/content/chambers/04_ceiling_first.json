@@ -1,0 +1,98 @@
+{
+  "id": "04_ceiling_first",
+  "index": 4,
+  "slug": "ceiling_first",
+  "title": "Ceiling First",
+  "caption": "The mirror is horizontal \u2014 dashes imprint the roof.",
+  "act": "induction",
+  "act_index": 0,
+  "act_title": "Induction",
+  "teaches": "mirror_h",
+  "transform": "mirror_h",
+  "difficulty": 1,
+  "role": "lesson",
+  "seed": 11005,
+  "daily_eligible": false,
+  "par_moves": 42,
+  "tempo_start": 9999,
+  "lattice": {
+    "rows": 14,
+    "cols": 24,
+    "cells": [
+      "########################",
+      "#P.....................#",
+      "#.####.####.####.####..#",
+      "#......................#",
+      "#..####.####.####.####.#",
+      "#......................#",
+      "#.####.####.C####.####.#",
+      "#......................#",
+      "#..####.####.####.####.#",
+      "#......................#",
+      "#.####.####.####.####..#",
+      "#......................#",
+      "#.....................G#",
+      "########################"
+    ]
+  },
+  "map": [
+    "########################",
+    "#P.....................#",
+    "#.####.####.####.####..#",
+    "#......................#",
+    "#..####.####.####.####.#",
+    "#......................#",
+    "#.####.####.C####.####.#",
+    "#......................#",
+    "#..####.####.####.####.#",
+    "#......................#",
+    "#.####.####.####.####..#",
+    "#......................#",
+    "#.....................G#",
+    "########################"
+  ],
+  "motifs": [
+    {
+      "id": "M1",
+      "kind": "CHECKPOINT",
+      "cell": [
+        12,
+        6
+      ],
+      "unique": true,
+      "operator": "mirror_h",
+      "banner": "The mirror is horizontal \u2014 dashes imprint the roof."
+    }
+  ],
+  "resonance": {
+    "kind": "REACH_GOAL"
+  },
+  "rewrite": {
+    "cap": 1,
+    "forced_op": "mirror_h",
+    "soft_hard_bias": 0.25,
+    "require_shorter_or_equal": false
+  },
+  "hints": [
+    "Horizontal mirror: top becomes bottom."
+  ],
+  "variations": {
+    "allow_rotate": false,
+    "allow_reflect": false,
+    "allow_palette_swap": true,
+    "budget_deltas": [
+      0
+    ],
+    "hard_mode": {
+      "tempo_delta": -4,
+      "par_moves_mult": 0.85
+    }
+  },
+  "unlocks": [],
+  "tags": [
+    "induction",
+    "mirror_h",
+    "mirror_h",
+    "lesson"
+  ]
+}
