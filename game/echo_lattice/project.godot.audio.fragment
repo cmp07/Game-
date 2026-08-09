@@ -1,0 +1,23 @@
+; Merge into game/echo_lattice/project.godot (Godot 4.3+).
+; AUDIO v2 — Master / SFX / Music / UI / PA + layered habit music.
+;
+; [audio]
+; buses/default_bus_layout="res://default_bus_layout.tres"
+;
+; Suggested autoloads (order matters: managers before director):
+; AudioManager="*res://scripts/audio/audio_manager.gd"
+; AdaptiveMusic="*res://scripts/audio/adaptive_music.gd"
+; SilenceDirector="*res://scripts/audio/silence_director.gd"
+; PaAnnouncer="*res://scripts/audio/pa_announcer.gd"
+; AudioDirector="*res://scripts/audio/audio_director.gd"
+
+[audio]
+buses/default_bus_layout="res://default_bus_layout.tres"
+
+[autoload]
+
+AudioManager="*res://scripts/audio/audio_manager.gd"
+AdaptiveMusic="*res://scripts/audio/adaptive_music.gd"
+SilenceDirector="*res://scripts/audio/silence_director.gd"
+PaAnnouncer="*res://scripts/audio/pa_announcer.gd"
+AudioDirector="*res://scripts/audio/audio_director.gd"
