@@ -132,6 +132,19 @@ static func _normalize(raw: Dictionary) -> Dictionary:
 
 static func to_playable(rec: Dictionary) -> Dictionary:
 	## Shape expected by chamber.gd / GameState (PR #48).
+	var raw: Dictionary = rec.get("raw", {}) if typeof(rec.get("raw", {})) == TYPE_DICTIONARY else {}
+	var rewrite: Dictionary = raw.get("rewrite", {}) if typeof(raw.get("rewrite", {})) == TYPE_DICTIONARY else {}
+	var rewrite_cap: int = int(rewrite.get("cap", -1))
+	if rewrite_cap < 0:
+		# Fallback: allow every authored checkpoint to fire.
+		var rows: Array = rec.get("map", [])
+		var cps := 0
+		for row in rows:
+			var s := str(row)
+			for i in range(s.length()):
+				if s.substr(i, 1) == "C":
+					cps += 1
+		rewrite_cap = maxi(cps, 1)
 	return {
 		"id": int(rec.get("id", 0)),
 		"title": str(rec.get("title", "")),
@@ -142,4 +155,5 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"role": str(rec.get("role", "")),
 		"content_id": str(rec.get("content_id", "")),
 		"seed": int(rec.get("seed", 0)),
+		"rewrite_cap": rewrite_cap,
 	}

@@ -32,3 +32,15 @@ Chamber `title` / `caption` stay English in JSON; localized display strings live
 2. **Reflection** — both axes / portraits  
 3. **Pressure** — habits harden  
 4. **Mastery** — compose + identity nameplate  
+
+Balance codenames (see `config/balance_v2.json`): SEED / GROWTH / PRISM / MASTERY.
+
+## CONTENT notes (P0 — RC1)
+
+Shipped on branch `cursor/fix-content-clones` against audit [`CONTENT_CHAMBERS.md`](../../../docs/AUDIT/CONTENT_CHAMBERS.md):
+
+| Item | Resolution |
+|---|---|
+| Exact clones `04==09`, `18==35`, `19==27` | Rebuilt distinct teach/test maps: Twin Rail (Reflection spine lesson), Mirror Birth+ (true hard of `02`, less floor), Conductor's Cut (Mastery baton carve). Author source: `tests/author_chambers_v2.py`. |
+| Dead `rewrite.cap` | Wired in `chamber.gd` (enforce + undo). Caps raised on `05` / `08` so dual checkpoints match captions. Author formula: `max(act_default, checkpoint_count)`. Validator fails if `cap < C` or Hamming==0 clones. |
+| Balance 3-act drift | Retargeted to **4 acts**: SEED→Induction, GROWTH→Reflection, **PRISM→Pressure**, **MASTERY→Mastery**. `ChamberBook` no longer clamps Act IV into PRISM. |

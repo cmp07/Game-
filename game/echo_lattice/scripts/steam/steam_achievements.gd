@@ -131,7 +131,7 @@ func _is_completed(gs: Node, chamber_id: int) -> bool:
 
 func _act_cleared(gs: Node, act: int) -> bool:
 	## `act` is 1-based in ACHIEVEMENTS.json. Prefer chamber `act_index` (0-based)
-	## because ChamberBook.act_for_chamber currently clamps display acts to 1..3.
+	## so Act IV Mastery stays distinct from Act III Pressure / PRISM.
 	if gs == null or act < 1:
 		return false
 	var target_index: int = act - 1

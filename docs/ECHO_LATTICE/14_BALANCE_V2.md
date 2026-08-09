@@ -12,7 +12,7 @@
 
 Balance v2 tunes five levers so Echo Lattice sells session addiction without softlocks:
 
-1. **Act curve** — SEED → GROWTH → PRISM escalate window size, rewrite cap, hardness, and BFS-par length — never HP or damage.
+1. **Act curve** — SEED → GROWTH → PRISM → MASTERY escalate window size, rewrite cap, hardness, and BFS-par length — never HP or damage.
 2. **Habit archetypes** — classify right-leaners / loopers / zigzaggers from `HabitSignature`, then bias rewrite operator scores toward counters.
 3. **Stars** — 1★ for any legal clear; 2★ / 3★ from moves vs BFS par (mode + act slack). Progression never gates on ★.
 4. **Anti-frustration** — undo + rewind budgets by mode; STALLED never Game Over; **BFS solvability invariant** after every commit.
@@ -33,12 +33,13 @@ Runtime entry points:
 
 | Goal | Metric (local telemetry) | Target |
 |---|---|---|
-| Easy start | Act I clear rate | ≥ 0.90 |
-| Growing bite | Act II clear rate | ~0.75–0.80 |
-| Mastery wall | Act III clear rate | ~0.55–0.65 |
+| Easy start | Act I (Induction / SEED) clear rate | ≥ 0.90 |
+| Growing bite | Act II (Reflection / GROWTH) clear rate | ~0.75–0.80 |
+| Pressure fold | Act III (Pressure / PRISM) clear rate | ~0.60–0.70 |
+| Mastery wall | Act IV (Mastery / MASTERY) clear rate | ~0.50–0.60 |
 | Fairness trust | `softlock_assert_failed` count | **0** |
 | Retry hunger | `one_more_run_proxy` after clear/stall | ≥ 0.50 |
-| Star chase | Share of clears with 2★+ | Act I ≥ 0.55; Act III ≥ 0.25 |
+| Star chase | Share of clears with 2★+ | Act I ≥ 0.55; Act IV ≥ 0.25 |
 
 Diegetic difficulty only (GDD P3): denser geometry, tighter habit windows, harder rewrite caps — never stat inflation.
 
@@ -46,15 +47,25 @@ Diegetic difficulty only (GDD P3): denser geometry, tighter habit windows, harde
 
 ## 2. Difficulty curve across acts
 
-Three acts × seven chambers = 21 authored clears. Relative difficulty is a unitless scalar applied to maze density / BFS-par targets (see JSON `difficulty_curve.chamber_escalation`).
+Four content acts map 1:1 onto balance acts (no Mastery→PRISM clamp):
+
+| Balance id | Codename | Content act | Campaign chambers |
+|---|---|---|---|
+| 1 | **SEED** | Induction | 9 |
+| 2 | **GROWTH** | Reflection | 9 |
+| 3 | **PRISM** | Pressure | 9 |
+| 4 | **MASTERY** | Mastery | 8 |
+
+Relative difficulty is a unitless scalar applied to maze density / BFS-par targets (see JSON `difficulty_curve.chamber_escalation`).
 
 ### 2.1 Act table
 
-| Act | Name | Window `W` | Rewrite cap | Soft/hard bias | Hard ops | Tempo base | ★ par mult | Session (min) |
-|---|---|---|---|---|---|---|---|---|
-| I | **SEED** | 32 | 1 | 0.25 | Off until chamber index ≥ 4 | 72 | 1.15 | 18–28 |
-| II | **GROWTH** | 48 | 2 | 0.50 | On | 84 | 1.00 | 22–36 |
-| III | **PRISM** | 64 | 3 | 0.72 | On | 96 | 0.92 | 28–45 |
+| Act | Name | Content | Window `W` | Rewrite cap | Soft/hard bias | Hard ops | Tempo base | ★ par mult | Session (min) |
+|---|---|---|---|---|---|---|---|---|---|
+| I | **SEED** | Induction | 32 | 1 | 0.25 | Off until chamber index ≥ 4 | 72 | 1.15 | 18–28 |
+| II | **GROWTH** | Reflection | 48 | 2 | 0.50 | On | 84 | 1.00 | 22–36 |
+| III | **PRISM** | Pressure | 64 | 3 | 0.72 | On | 96 | 0.92 | 28–45 |
+| IV | **MASTERY** | Mastery | 72 | 3 | 0.85 | On | 108 | 0.88 | 30–48 |
 
 Tempo formula (also in JSON):
 
@@ -66,18 +77,19 @@ tempo = floor((tempo_base + tempo_per_checkpoint * C + 12 * (act - 1)) * mode.te
 
 ```
 relative difficulty
-2.5 |                                              *
-2.0 |                                 *  *  *  *
-1.5 |                    *  *  *  *  *
-1.0 |        *  *  *  *
-0.5 |  *  *
-    +----------------------------------------------→ chamber
-      A1................ A2................ A3....
+3.0 |                                                    *
+2.5 |                                      *  *  *  *
+2.0 |                         *  *  *  *
+1.5 |            *  *  *  *
+1.0 |  *  *  *
+    +----------------------------------------------------→ chamber
+      A1............. A2............. A3........ A4....
 ```
 
-- **Act I** teaches: walk → checkpoint → one soft rewrite. Chambers 0–3 forbid hard ops (`fossilize_hot_cell`, `thicken_walked`).
-- **Act II** introduces counters that *feel personal* (archetype bias blend 0.65).
-- **Act III** stacks cap=3 + higher bias so players must break habits on purpose.
+- **Act I (SEED / Induction)** teaches: walk → checkpoint → one soft rewrite. Chambers 0–3 forbid hard ops (`fossilize_hot_cell`, `thicken_walked`). Multi-commit rooms override chamber `rewrite.cap` upward.
+- **Act II (GROWTH / Reflection)** introduces counters that *feel personal* (archetype bias blend 0.65).
+- **Act III (PRISM / Pressure)** stacks cap=3 + higher bias so players must break habits on purpose.
+- **Act IV (MASTERY)** keeps cap=3 but raises window / bias / tempo — compose transforms and sign identity without borrowing PRISM numbers.
 
 ### 2.3 Mode presets (Reader / Standard / Cold)
 
@@ -311,7 +323,7 @@ Load path: `res://config/balance_v2.json` when the Godot project root is `game/e
 | ID | Check |
 |---|---|
 | B2-1 | JSON parses; `schema_version == 2`. |
-| B2-2 | All three acts define 7 chambers worth of escalation entries. |
+| B2-2 | All four acts define escalation entries matching campaign sizes (9/9/9/8). |
 | B2-3 | Archetypes `right_leaner`, `looper`, `zigzagger`, `balanced` present with counters. |
 | B2-4 | Star formula awards 1★ on any clear; 3★ cut ≤ 2★ cut. |
 | B2-5 | Undo/rewind budgets match mode table; −1 = unlimited. |
@@ -326,3 +338,4 @@ Load path: `res://config/balance_v2.json` when the Godot project root is `game/e
 | Date | Change |
 |---|---|
 | 2026-08-09 | Balance v2 initial: act curve, archetypes→counters, stars, anti-frustration, local telemetry + JSON + loaders. |
+| 2026-08-09 | Retarget to four acts: SEED/GROWTH/PRISM/MASTERY ↔ Induction/Reflection/Pressure/Mastery; stop Mastery sharing PRISM. |

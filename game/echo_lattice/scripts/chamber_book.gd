@@ -82,9 +82,10 @@ func reload() -> void:
 
 func _to_playable(rec: Dictionary) -> Dictionary:
 	var play: Dictionary = _Loader.to_playable(rec)
-	# BalanceTuning keys acts as "1"/"2"/"3". Map content act_index 0..3 → 1..3.
+	# BalanceTuning keys acts as "1".."4" (SEED/GROWTH/PRISM/MASTERY).
+	# content act_index 0..3 → balance act 1..4 (Mastery no longer shares PRISM).
 	var act_idx: int = int(rec.get("act_index", 0))
-	play["act"] = clampi(act_idx + 1, 1, 3)
+	play["act"] = clampi(act_idx + 1, 1, 4)
 	play["act_index"] = act_idx
 	play["act_name"] = str(rec.get("act", ""))
 	return play

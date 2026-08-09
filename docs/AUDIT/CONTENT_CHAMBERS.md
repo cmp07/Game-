@@ -8,6 +8,16 @@
 
 **Verdict:** Campaign spine and Act I demo beat are coherent; the biggest content debt is **template reuse** (three exact map clones, several near-clones), **dead `rewrite.cap` metadata**, and **replay variation gates** that make Daily mostly palette-deep. Fix clones + hard-variant honesty before adding more chambers.
 
+### P0 resolution notes (`cursor/fix-content-clones`)
+
+| P0 item | Status | Notes |
+|---|---|---|
+| Exact clones `04==09`, `18==35`, `19==27` | **Fixed** | Distinct teach/test maps in author roster + regen; clone detector in `validate_chambers.py` |
+| Wire or delete `rewrite.cap` | **Wired** | Enforced in `chamber.gd`; `05`/`08` caps raised to 2; author `max(act_default, C)` |
+| Balance ↔ four-act roster | **Retargeted** | SEED/GROWTH/**PRISM**/**MASTERY** ↔ Induction/Reflection/**Pressure**/**Mastery**; no Act IV→PRISM clamp |
+
+See also [`content/README.md`](../../game/echo_lattice/content/README.md) CONTENT notes.
+
 ---
 
 ## 1. Inventory
