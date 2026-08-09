@@ -7,6 +7,9 @@ extends Node
 
 enum Device { KEYBOARD, GAMEPAD }
 
+## Deck move glyph (locale `glyphs.move_pad` mirrors this string).
+const DECK_MOVE_GLYPH := "D-Pad / Stick"
+
 var last_device: int = Device.KEYBOARD
 
 
