@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### 34 — Adversarial
+
+| Doc | Topic |
+|---|---|
+| [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Attack: boring idle · combo spreadsheet · empty void + fixes |
+
 ---
 
 ## Sibling PR sources (design wave)
@@ -85,7 +91,8 @@
 | `cursor/weaver-craft` | [#168](https://github.com/cmp07/Game-/pull/168) |
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
-| `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-master` | [#172](https://github.com/cmp07/Game-/pull/172) |
+| `cursor/weaver-adversarial` | Attack doc `34_ADVERSARIAL` (this wave) |
 
 ---
 

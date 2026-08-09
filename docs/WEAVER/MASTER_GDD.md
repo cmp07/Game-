@@ -89,7 +89,7 @@ Target teach-field clear: **3–8 minutes**. Trailer verb inside **60–90 secon
 | **Shed Yard** | Hub — job board, fragment shelf, gallery wall |
 | **Tension** | Commit check that stands or collapses a graph |
 | **Residue / Legacy** | Local silhouette, bias tag, optional scrap — not server monuments or trade goods |
-| **Void (allowed)** | Physical frayed gap in a field — torn span, starved basin — **never** cosmic purple emptiness |
+| **Void (designer shorthand only)** | Physical frayed gap in a field — torn span, starved basin — **never** cosmic purple emptiness; **never** player-facing product noun (prefer fray / gap / seam / span — [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) C1) |
 
 ### Fragment families (MVP six)
 
@@ -224,6 +224,7 @@ Merged into `cursor/weaver-master` from remotes (2026-08-09 wave):
 | Sim fence unset (2D vs constrained 3D) | **H** | Pick in week-1 of prototype ([`17_MVP.md`](17_MVP.md) §5) |
 | Legal name check | **M** | Human before Partner ([`19_NAMES.md`](19_NAMES.md)) |
 | GAME_PLAN.md still lists older Game-1 research lanes | **L** | Update separately if Weaver becomes catalog Game 1 |
+| Soft readings → idle / spreadsheet / empty void | **H** | Attack + fixes locked in [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md); absorb into siblings per that §5 |
 
 ---
 
@@ -236,6 +237,18 @@ From [`18_RISKS.md`](18_RISKS.md):
 3. **Economy creep** — player trade as “legacy”  
 4. **Docs without playable** — no feel proof  
 5. **Early Coming Soon** / **delete Echo Lattice** temptation  
+
+### Adversarial death modes (design integrity)
+
+From [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) — assume the soft reading wins unless fenced:
+
+| Mode | Soft gravity | Hard fence |
+|---|---|---|
+| **Boring idle** | Residue / gallery / quiet Survey become wait-loops | No offline accrual; Survey ≤3s to a hand; inhabit clears |
+| **Combo spreadsheet** | 6×4×recipes → wiki matrix | Jobs constrain chemistry; no numeric port sheet; spike 4×2 first |
+| **Empty void** | “Void-weave” + blank fray → cosmos or nothing | Player copy = fray/gap/seam; material tells; density budget |
+
+Kill-tests K1–K6 in that doc gate demo / Coming Soon asks.
 
 ---
 

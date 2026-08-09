@@ -44,7 +44,9 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 - [x] Merge into `cursor/weaver-master`  
 - [x] Write `MASTER_GDD.md` · `ROADMAP.md` · index README  
 - [ ] Land PR into `cursor/echo-lattice-rc1`  
-- [ ] Follow-up: elevate `01_CONCEPT` + align `15_MARKET` / `14_TECH` stubs (see MASTER §11)
+- [ ] Follow-up: elevate `01_CONCEPT` + align `15_MARKET` / `14_TECH` stubs (see MASTER §11)  
+- [x] Adversarial death modes locked — [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) (idle / spreadsheet / empty void)  
+- [ ] Absorb adversarial §5 patches into siblings (`02`, `09`, `11`, `18`, market copy)
 
 ### W1 — Prototype spike (playable truth)
 
@@ -53,11 +55,12 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 | Create `game/weaver/` Godot 4 project | Empty EL tree alone; copy **patterns**, not scenes |
 | Pick sim fence (G1) | Verlet/beam budget sheet day one |
 | Implement six-beat loop on **one** field | No hub meta, no gallery yet |
-| Fragment ×4 + Thread ×2 + Structure ×1 | Prefer Span/Anchor + Brace/Feed |
+| Fragment ×4 + Thread ×2 + Structure ×1 | Prefer Span/Anchor + Brace/Feed ([`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) B8) |
 | Collapse readability | Culprit highlight + undo tension |
 | Python/GDScript contracts | Determinism + softlock smoke |
+| Adversarial exits | Survey hand ≤3s (A2); inhabit clears (A3); material gap tells (C2) |
 
-**Exit:** Internal clip of Tension seat that passes still test.
+**Exit:** Internal clip of Tension seat that passes still test **and** adversarial K1/K3/K6.
 
 ### W2 — Vertical slice (first thirty)
 

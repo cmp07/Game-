@@ -19,6 +19,9 @@ Severity: **H** = can kill the product · **M** = can stall a quarter · **L** =
 | D5 | **Purple-void identity** — default AI-fantasy look (glow, chronomancy, rarity gems) | M | Capsule looks like every generative asset flip | Material bible: fiber, dust, timber, wire, chalk, rust |
 | D6 | **Echo Lattice mash** — store page or trailer mixes maze-habit with loom-craft | M | Wishlist confusion; “is this the same game?” | Separate fantasy; EL frozen; no shared store copy |
 | D7 | **Tutorial slides instead of literacy** | M | Tip stack in first eight minutes | Follow [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) pedagogy rules |
+| D8 | **Boring idle creep** — quiet Survey / residue / gallery become wait or drip loops | H | >30% session time with no hand verb; ask for offline earnings | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) A1–A8: no accrual; Survey ≤3s; inhabit clears |
+| D9 | **Combo spreadsheet** — Fragment×Thread×recipe matrix replaces craft literacy | H | Cold players open a wiki before stitch three | Jobs constrain chemistry; no numeric port UI; spike 4×2 first (adversarial B1–B8) |
+| D10 | **Empty void (content)** — fray reads as blank plate or cosmic nothing; “Void” as store noun | H | Capsule fails brand test; “what am I looking at?” on Survey | Material gap tells; density budget; player copy = fray/gap/seam (adversarial C1–C7) |
 
 ---
 
@@ -68,13 +71,14 @@ Severity: **H** = can kill the product · **M** = can stall a quarter · **L** =
 
 ---
 
-## 6. Top five to watch (print weekly)
+## 6. Top to watch (print weekly)
 
 1. **D1 Verb mud** — if the chain isn’t obvious, nothing else matters.  
-2. **D3 Besiege gravity** — catalog is a trap.  
-3. **D4 Economy creep** — player trade is a different game.  
-4. **P2 Docs without playable** — schedule the spike.  
-5. **M5 / O2** — don’t Coming Soon early; don’t delete Echo Lattice.
+2. **D8 / D9 / D10** — idle creep, spreadsheet gravity, empty void ([`34_ADVERSARIAL.md`](34_ADVERSARIAL.md)).  
+3. **D3 Besiege gravity** — catalog is a trap.  
+4. **D4 Economy creep** — player trade is a different game.  
+5. **P2 Docs without playable** — schedule the spike.  
+6. **M5 / O2** — don’t Coming Soon early; don’t delete Echo Lattice.
 
 ---
 
@@ -86,9 +90,10 @@ Stop the current Weaver prototype and replan if any hold after a honest slice:
 - Physics is unreadably noisy after a tuning week.
 - The only “fun” is a feature that MVP forbids (trade, combat, LLM worldgen).
 - Art direction collapses to purple-void generics and nobody will own a material bible.
+- Adversarial kill-tests K1–K6 in [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) fail after two honest pedagogy passes (idle / spreadsheet / empty void).
 
 ---
 
 ## Doc status
 
-**v0.1** — Risk register for Weaver MVP pack. Update severities when prototype telemetry exists; do not delete rows — mark **mitigated** with date instead.
+**v0.2** — Risk register + adversarial death modes D8–D10 (idle / spreadsheet / empty void). Update severities when prototype telemetry exists; do not delete rows — mark **mitigated** with date instead.
