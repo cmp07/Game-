@@ -256,18 +256,20 @@ Upload checklist:
 
 Steam wants ≥5; we ship **eight** native **1920×1080** (16:9) candidates in Partner upload order. The older [`v2_complete`](../ECHO_LATTICE/screenshots/v2_complete/) tour (1152×672) stays as loop-proof reference only — do **not** upload it to Partner.
 
+**G1 recapture (2026-08-09):** stills regenerated from `cursor/execute-g1` @ `26ae974` so the slate shows diegetic Field Ledger margins, habit print, and clear/end habit beats. Provenance: [`screenshots/TOUR.md`](screenshots/TOUR.md).
+
 | # | Store job | File | Silent-legible claim |
 |---|---|---|---|
-| 1 | Hook / header still | [`01_hook_rewrite_slam.png`](screenshots/01_hook_rewrite_slam.png) | Origami rewrite — walls agreeing with the habit |
-| 2 | Brand / tone | [`02_brand_main_menu.png`](screenshots/02_brand_main_menu.png) | Field Ledger title card — paper, ink, rust |
-| 3 | Clean chamber read | [`03_chamber_start.png`](screenshots/03_chamber_start.png) | Ink walls, copper goal, habit unwritten |
-| 4 | Habit forming | [`04_walking_trail.png`](screenshots/04_walking_trail.png) | Chalk trail writing toward checkpoint |
-| 5 | Depth / pressure | [`05_mid_act_chamber.png`](screenshots/05_mid_act_chamber.png) | Later-act chamber, same materials under pressure |
-| 6 | Meta / stars | [`06_win_stars.png`](screenshots/06_win_stars.png) | 1–3★ clear, moves vs par |
-| 7 | Modes | [`07_daily_select.png`](screenshots/07_daily_select.png) | Daily Challenge on the ledger menu |
-| 8 | Run close | [`08_wing_clear.png`](screenshots/08_wing_clear.png) | End-of-run ledger / habit signature |
+| 1 | Hook / header still | [`01_hook_rewrite_slam.png`](screenshots/01_hook_rewrite_slam.png) | Looking Glass slam — trail folds into walls; habit sealed |
+| 2 | Brand / tone | [`02_brand_main_menu.png`](screenshots/02_brand_main_menu.png) | Field Ledger / Field Index — paper, ink, rust |
+| 3 | Clean chamber read | [`03_chamber_start.png`](screenshots/03_chamber_start.png) | Quiet Span — ink walls, copper goal, empty BUFFER |
+| 4 | Habit forming | [`04_walking_trail.png`](screenshots/04_walking_trail.png) | Mirror Birth chalk trail — “Floor chalk noted.” |
+| 5 | Depth / pressure | [`05_mid_act_chamber.png`](screenshots/05_mid_act_chamber.png) | Cement Trail under the same ledger framing |
+| 6 | Meta / stars | [`06_win_stars.png`](screenshots/06_win_stars.png) | Clear stamp — 1–3★, moves vs par, Hand line |
+| 7 | Modes | [`07_daily_select.png`](screenshots/07_daily_select.png) | Daily sheet focused on the Field Index |
+| 8 | Run close | [`08_wing_clear.png`](screenshots/08_wing_clear.png) | Ledger closed — habit handwriting / Museum next |
 
-**Rules:** no debug overlays, no Discord watermarks, no fake combat key art. Regenerate with `./game/echo_lattice/tools/capture_steam_store.sh` (writes a temporary 1920×1080 `override.cfg`, then removes it).
+**Rules:** no debug overlays, no Discord watermarks, no fake combat key art. Regenerate with `./game/echo_lattice/tools/capture_steam_store.sh` (writes a temporary 1920×1080 `override.cfg`, then removes it). Prefer a G1 tip so stills match the diegetic shell.
 
 ---
 

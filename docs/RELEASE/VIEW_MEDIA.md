@@ -29,7 +29,7 @@ Presskit copy of the poster (same pixels):
 
 ## Steam screenshots (`docs/RELEASE/screenshots/`)
 
-1920×1080 Partner slate. Captions: [`TOUR.md`](screenshots/TOUR.md).
+1920×1080 Partner slate (**G1 recapture** from `execute-g1` @ `26ae974` — diegetic UI / habit beats). Captions: [`TOUR.md`](screenshots/TOUR.md).
 
 | # | File | Preview |
 |---|---|---|
