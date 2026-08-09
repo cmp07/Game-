@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `7a212e4d81fae2d3fae07029fdf102d16c1ffd78` (menu-restore-rich Field Ledger title shell; brand slate recaptured)  
+**Tip at index authoring:** `b65af08f1a4aa325128dd18038ad9359c313e053` (menu-restore-rich Field Ledger title shell; brand slate recaptured)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu restore:** rich Field Ledger title shell (`menu-restore-rich` / #151) — hero brand + substantial Field Index; enclosure fix kept; chamber HUD removed from title. Builds on menu-1000x (#149).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
