@@ -43,6 +43,8 @@ var pending_echo_settle_time: float = REWRITE_DURATION
 var rewrite_freeze: bool = false  ## hold mid-slam for screenshot capture
 var telegraph_cells: Array = []
 var rewrite_warn_armed: bool = false
+var rewrite_cap: int = 99
+var rewrites_fired: int = 0
 
 var walked: Dictionary = {}  ## Vector2i -> true — paper darkens under footprints
 var traverse_count: Dictionary = {}  ## Vector2i -> int — rust colonization intensity
@@ -165,9 +167,14 @@ func load_chamber(id: int) -> void:
 	if chamber.is_empty():
 		return
 	transform_name = str(chamber.get("transform", "none"))
+<<<<<<< HEAD
 	# Endless: rising rewrite pressure may stack mirrors (softlock-guarded on commit).
 	if GameState.run_mode == "endless" and GameState.has_method("endless_transform_for"):
 		transform_name = GameState.endless_transform_for(transform_name)
+=======
+	rewrite_cap = maxi(int(chamber.get("rewrite_cap", 99)), 0)
+	rewrites_fired = 0
+>>>>>>> origin/cursor/fix-content-clones
 	var rows: Array = chamber.get("map", [])
 	# Daily featured chamber applies calendar / catalog variation axes.
 	if has_node("/root/GameState") and GameState.run_mode == "daily":
@@ -348,6 +355,7 @@ func _try_move(dir: Vector2i) -> void:
 		"prev_tile_at_target": t,
 		"moves_since_cp_len": moves_since_checkpoint.size(),
 		"triggered_snapshot": checkpoints_triggered.duplicate(true),
+		"rewrites_fired": rewrites_fired,
 		"grid_deltas": [],
 		"walked_had_target": walked.has(target),
 		"walked_target": target,
@@ -366,7 +374,13 @@ func _try_move(dir: Vector2i) -> void:
 	if t == Tile.CHECKPOINT and not checkpoints_triggered.get(target, false):
 		checkpoints_triggered[target] = true
 		grid[target.y][target.x] = Tile.CHECKPOINT_USED
-		_trigger_rewrite()
+		# Chamber rewrite.cap is authoritative — unused C cells stay walkable
+		# markers but do not fire another transform once the cap is spent.
+		if rewrites_fired < rewrite_cap:
+			rewrites_fired += 1
+			_trigger_rewrite()
+		else:
+			moves_since_checkpoint.clear()
 	elif t == Tile.GOAL:
 		_on_win()
 	_telegraph_dirty = true
@@ -396,6 +410,7 @@ func _undo() -> void:
 				grid[pos.y][pos.x] = Tile.CHECKPOINT
 			_clear_all_echoes()
 	checkpoints_triggered = new_triggered
+	rewrites_fired = int(frame.get("rewrites_fired", rewrites_fired))
 	emit_signal("moves_changed", move_count)
 	_telegraph_dirty = true
 	_invalidate_checkpoint_dist()

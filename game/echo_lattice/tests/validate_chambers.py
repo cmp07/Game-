@@ -237,8 +237,37 @@ def validate_one(path: Path) -> list[str]:
             errs.append(f"{cid}: checkpoint {c} unreachable")
     if data.get("transform") != "none" and not cs:
         errs.append(f"{cid}: missing checkpoint")
+    cap = int(data.get("rewrite", {}).get("cap", -1))
+    if cap >= 0 and len(cs) > cap:
+        errs.append(f"{cid}: rewrite.cap {cap} < checkpoint count {len(cs)}")
     if not Sim(rows, data.get("transform", "none")).playthrough():
         errs.append(f"{cid}: playthrough failed")
+    return errs
+
+
+def hamming(a_rows, b_rows) -> int:
+    a = pad_rows(a_rows)
+    b = pad_rows(b_rows)
+    dist = 0
+    for y in range(GRID_H):
+        for x in range(GRID_W):
+            if a[y][x] != b[y][x]:
+                dist += 1
+    return dist
+
+
+def detect_exact_clones(files: list[Path]) -> list[str]:
+    """Fail if two distinct chamber ids share identical maps (Hamming 0)."""
+    maps: list[tuple[str, list[str]]] = []
+    for path in files:
+        data = json.loads(path.read_text())
+        rows = pad_rows(data.get("map") or data.get("lattice", {}).get("cells", []))
+        maps.append((data.get("id", path.stem), rows))
+    errs: list[str] = []
+    for i, (aid, a) in enumerate(maps):
+        for bid, b in maps[i + 1 :]:
+            if hamming(a, b) == 0:
+                errs.append(f"exact map clone: {aid} == {bid}")
     return errs
 
 
@@ -250,6 +279,7 @@ def main() -> int:
     errors = []
     for f in files:
         errors.extend(validate_one(f))
+    errors.extend(detect_exact_clones(files))
     # acts.json consistency
     acts_path = CONTENT / "acts.json"
     if acts_path.exists():

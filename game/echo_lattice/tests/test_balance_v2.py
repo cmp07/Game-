@@ -38,20 +38,35 @@ class BalanceV2Tests(unittest.TestCase):
 
     def test_acts_and_escalation(self) -> None:
         acts = self.data["acts"]
-        self.assertEqual(set(acts), {"1", "2", "3"})
-        for aid, act in acts.items():
-            self.assertEqual(act["chambers"], 7)
+        self.assertEqual(set(acts), {"1", "2", "3", "4"})
+        expected = {
+            "1": ("SEED", "induction", 9),
+            "2": ("GROWTH", "reflection", 9),
+            "3": ("PRISM", "pressure", 9),
+            "4": ("MASTERY", "mastery", 8),
+        }
+        for aid, (name, content_act, chambers) in expected.items():
+            act = acts[aid]
+            self.assertEqual(act["name"], name)
+            self.assertEqual(act["content_act"], content_act)
+            self.assertEqual(act["chambers"], chambers)
             self.assertIn("habit_window", act)
             self.assertIn("rewrite_cap", act)
+        # Mastery must not share PRISM numbers with Pressure.
+        self.assertNotEqual(acts["3"]["habit_window"], acts["4"]["habit_window"])
+        self.assertGreater(acts["4"]["soft_hard_bias"], acts["3"]["soft_hard_bias"])
         esc = self.data["difficulty_curve"]["chamber_escalation"]
         pairs = {(e["act"], e["index"]) for e in esc}
-        for act in (1, 2, 3):
-            for idx in range(7):
+        for act, count in ((1, 9), (2, 9), (3, 9), (4, 8)):
+            for idx in range(count):
                 self.assertIn((act, idx), pairs)
         # Monotone non-decreasing within each act
-        for act in (1, 2, 3):
+        for act in (1, 2, 3, 4):
             rels = [e["relative"] for e in esc if e["act"] == act]
             self.assertEqual(rels, sorted(rels))
+        rates = self.data["difficulty_curve"]["ideal_clear_rate_by_act"]
+        self.assertEqual(set(rates), {"1", "2", "3", "4"})
+        self.assertGreater(rates["3"], rates["4"])
 
     def test_modes_budgets(self) -> None:
         modes = self.data["modes"]

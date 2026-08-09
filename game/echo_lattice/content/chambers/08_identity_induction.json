@@ -80,7 +80,7 @@
     "kind": "REACH_GOAL"
   },
   "rewrite": {
-    "cap": 1,
+    "cap": 2,
     "forced_op": "mirror_v",
     "soft_hard_bias": 0.25,
     "require_shorter_or_equal": false
