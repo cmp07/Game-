@@ -6,13 +6,15 @@
 
 ---
 
-## 2026-08-09 — 1000× Narrative (diegetic mythos)
+## 2026-08-09 — 1000× Structures (classes · evolution · ecosystems · composition)
 
-**Branch:** `cursor/weaver-1000x-narrative` · **Base:** `cursor/echo-lattice-rc1`
+**Branch:** `cursor/weaver-1000x-structures` · **Base:** `cursor/echo-lattice-rc1`
 
-- Added [`1000X/11_NARRATIVE.md`](1000X/11_NARRATIVE.md) — yard-learns-your-hand mythos via chalk / coach stamps / gallery / ending
-- Hard ban on cutscene dumps, RPG lore, and Echo Lattice plot-noun bleed
-- Indexed under README 1000× vision
+- New [`1000X/04_STRUCTURES.md`](1000X/04_STRUCTURES.md) — class roster + listen/answer protocol
+- Named ecosystem formations (Call & Cross, Latch & Vent, Brace & Span, …)
+- Class-aware offline evolution stages (Seat → Chain → Weather → Scar)
+- Composition grammar: ≤2 stands, order locks, inhabit-as-win
+- Indexed from [`README.md`](README.md)
 
 ---
 
