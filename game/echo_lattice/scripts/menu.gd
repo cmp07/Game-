@@ -161,11 +161,12 @@ func folio_leaves(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 
 ## Chrome insets around CardColumn inside the Field Index plate.
 ## Top pad holds FIELD INDEX title + letterpress rules (meta lives in column).
-const _INDEX_PAD_L: float = 52.0
-const _INDEX_PAD_R: float = 36.0
-const _INDEX_PAD_T: float = 78.0
+## Left pad is content-hugging (no binder-hole gutter on boutique title card).
+const _INDEX_PAD_L: float = 40.0
+const _INDEX_PAD_R: float = 32.0
+const _INDEX_PAD_T: float = 72.0
 # Extra bottom pad for selection baseline drawn below Control rects.
-const _INDEX_PAD_B: float = 52.0
+const _INDEX_PAD_B: float = 48.0
 
 
 ## Recto Field Index plate — fills the right folio leaf; never a postage stamp.
@@ -811,39 +812,41 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
 
+	# Boutique Field Index (#159) — sharp paper, soft shadow, clip (no hollow bullet holes).
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
-		"shadow_off": Vector2(10, 13),
-		"binder_holes": 7,
+		"shadow_off": Vector2(8, 10),
+		"binder_holes": 0,
 		"grain_seed": 11,
-		"grain_a": 0.05,
+		"grain_a": 0.045,
 		"fiber_a": 0.035,
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
-		"thickness": 4.5,
-		"oxide_accents": true,
+		"thickness": 4.0,
+		"oxide_accents": false,
 		"skip_grain": false,
-		# Quiet stock under actions — dense 4px ruled fiber reads as underline spam.
 		"ruled_stock": false,
+		"sharp_edge": true,
 	})
 	# Field Index title — display face, not mono micro chrome.
 	var index_title_px: int = maxi(header_px + 4, int(scale.get("tagline", 18)) - 4)
 	draw_string(
 		_type("tagline"),
-		card.position + Vector2(32, 30),
+		card.position + Vector2(28, 30),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, index_title_px,
 		Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, slot_a)
 	)
 	draw_string(
 		_type("micro"),
-		Vector2(card.position.x + 32.0, card.end.y - 18.0),
+		Vector2(card.position.x + 28.0, card.end.y - 18.0),
 		tr("menu.card_foot"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)
 	)
 
+	# Selection — solid tick + text-width rust baseline only (MENU_TYPE_SYSTEM §4).
 	_draw_button_underlines(card)
 
 	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.

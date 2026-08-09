@@ -23,9 +23,9 @@ const TYPE_SEED := 13
 const TYPE_CARD_HEADER := 14
 const BRAND_RULE_W := 4.0
 const BRAND_RULE_LEN := 560.0
-## Selection baseline budget — text advance when available; premium cap keeps massy underlines.
-const SELECT_RULE_PAD := 8.0
-const SELECT_RULE_MAX := 220.0
+## Selection baseline budget — text advance, not full-row chrome (MENU_TYPE_SYSTEM §4).
+const SELECT_RULE_PAD := 6.0
+const SELECT_RULE_MAX := 240.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
@@ -101,12 +101,19 @@ static func style_index_button(btn: Button, primary: bool = false, font_size: in
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
-	var px: int = font_size
-	if px < 0:
-		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
 	var lt = _ledger_type()
-	if lt != null and lt.has_method("apply_to_control"):
-		# UI actions: Plex Sans Condensed Medium — never mono, never ThemeDB.
+	var role := "action_disabled" if btn.disabled else "action"
+	var px: int = font_size
+	if px < 0 and lt != null and lt.has_method("role_size"):
+		px = int(lt.role_size(role, 1080.0, primary))
+	elif px < 0:
+		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
+	## Actions = IBM Plex Sans Condensed Medium — NEVER mono (MENU_TYPE_SYSTEM §1).
+	if lt != null and lt.has_method("apply_role"):
+		lt.apply_role(btn, role, 1080.0, primary)
+		if px > 0:
+			btn.add_theme_font_size_override("font_size", px)
+	elif lt != null and lt.has_method("apply_to_control"):
 		lt.apply_to_control(btn, "action", px)
 	else:
 		btn.add_theme_font_size_override("font_size", px)
@@ -211,9 +218,9 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = margin tick + baseline rule (premium ink + MENU_TYPE_SYSTEM §4).
-	## Idle rows stay clean type — never underline-every-row spreadsheet chrome.
-	## Cadmium reserved — never used here. No filled pills.
+	## Selection = small solid ink tick + refined rust baseline under text width.
+	## Idle rows stay clean — quiet type only (no underlines, no circle bullets).
+	## Hover = slate baseline, no tick. Cadmium reserved. No dashed / jagged rules.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -229,40 +236,32 @@ static func draw_index_underlines(
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
 		if disabled or (not focused and not hovered):
 			continue
-		# Premium massy underline capped by type-system text-advance budget.
 		var baseline_w: float = _selection_baseline_width(c, r.size.x)
 		var y: float = local_pos.y + r.size.y - 5.0
 		if focused:
 			var w: float = baseline_w * eased
-			_draw_ink_rule(
+			_draw_selection_baseline(
 				host,
 				Vector2(local_pos.x, y),
 				w,
-				2.6,
-				Palette.RUST_FOSSIL,
-				hash(c.get_instance_id()) ^ 0x51F01D
+				2.25,
+				Palette.RUST_FOSSIL
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
-				# Imperfect rubber-ink selection tick — margin mark, not a UI bullet.
+				# Small solid ink tick (filled square) — never a hollow circle bullet.
 				var tick_c := Color(
-					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
+					Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, tick_a * 0.95
 				)
-				var tick_p := Vector2(local_pos.x - 12.0, local_pos.y + r.size.y * 0.52)
-				host.draw_circle(tick_p, 2.6, tick_c)
-				host.draw_circle(
-					tick_p + Vector2(1.3, 0.7),
-					1.15,
-					Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55)
-				)
+				var tick_p := Vector2(local_pos.x - 16.0, local_pos.y + r.size.y * 0.50)
+				host.draw_rect(Rect2(tick_p.x - 2.0, tick_p.y - 2.0, 4.0, 4.0), tick_c, true)
 		elif hovered:
-			_draw_ink_rule(
+			_draw_selection_baseline(
 				host,
 				Vector2(local_pos.x, y),
-				baseline_w * 0.92,
-				1.8,
-				Palette.SLATE_TEAL,
-				hash(c.get_instance_id()) ^ 0x51A7E
+				baseline_w,
+				1.6,
+				Palette.SLATE_TEAL
 			)
 
 
@@ -280,34 +279,31 @@ static func _selection_baseline_width(control: Control, row_w: float) -> float:
 	return clampf(text_w + SELECT_RULE_PAD, 24.0, minf(row_w - 8.0, SELECT_RULE_MAX))
 
 
+static func _draw_selection_baseline(
+	host: CanvasItem,
+	origin: Vector2,
+	width: float,
+	thickness: float,
+	color: Color
+) -> void:
+	## Single refined continuous baseline — solid rect, never dashed / jagged.
+	if width < 1.0:
+		return
+	var tw: float = maxf(1.5, thickness)
+	var core := Color(color.r, color.g, color.b, color.a * 0.98)
+	host.draw_rect(Rect2(origin.x, origin.y, width, tw), core, true)
+
+
 static func _draw_ink_rule(
 	host: CanvasItem,
 	origin: Vector2,
 	width: float,
 	thickness: float,
 	color: Color,
-	seed: int
+	_seed: int = 0
 ) -> void:
-	## Segmented ink rule with pressure breaks — selection reads as craft, not StyleBox.
-	if width < 1.0:
-		return
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed if seed != 0 else 17
-	var x: float = 0.0
-	var y: float = origin.y
-	while x < width:
-		var seg: float = rng.randf_range(5.0, 11.0)
-		if rng.randf() < 0.12:
-			# Broken letterpress gap.
-			x += rng.randf_range(1.5, 3.0)
-			continue
-		var w: float = minf(seg, width - x)
-		var pressure: float = rng.randf_range(0.72, 1.0)
-		var tw: float = thickness * rng.randf_range(0.85, 1.2)
-		var c := Color(color.r, color.g, color.b, color.a * pressure)
-		var y_off: float = rng.randf_range(-0.4, 0.4)
-		host.draw_rect(Rect2(origin.x + x, y + y_off, w, tw), c, true)
-		x += w
+	## Compat alias — boutique Field Index uses continuous selection baseline.
+	_draw_selection_baseline(host, origin, width, thickness, color)
 
 
 static func wire_vertical_focus(buttons: Array) -> void:

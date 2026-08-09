@@ -2,7 +2,7 @@
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
 **Branch:** `cursor/menu-10-of-10-afcb` → merge to `cursor/echo-lattice-rc1` (not `main`)  
-**Reconciles:** `cursor/menu-seal-v2` · `cursor/menu-field-index-10` (intent) · #153 type · #154 no-HUD · #155 premium · #156 composition-art  
+**Reconciles:** `cursor/menu-seal-v2` (#157) · `cursor/menu-field-index-10` (#159) · #153 type · #154 no-HUD · #155 premium · #156 composition-art  
 **Coordinates with:** [`MENU_TYPE_SYSTEM.md`](MENU_TYPE_SYSTEM.md) · [`ART_DIRECTION_V3.md`](ART_DIRECTION_V3.md) · [`UI_DIEGETIC_V3.md`](UI_DIEGETIC_V3.md) · [`QUALITY_BAR.md`](QUALITY_BAR.md)
 
 ---
@@ -44,11 +44,12 @@ Brand test: remove the Field Index card — the verso still reads *Echo Lattice 
 
 ---
 
-## 3. Field Index premium card
+## 3. Field Index boutique card (#159)
 
 - Shared geometry: `field_index_card_rect` / `field_index_content_rect` / `CardColumn` sync (Deck + 1080p + 1440).
-- Stock: `ruled_stock: false` on the title card — dense 4 px fiber grids under actions are **reject** (reads as underline spam).
-- Presence: thickness ≥ ~4.5, binder holes, clip, deep backer, quiet header band.
+- Stock: `ruled_stock: false` + `sharp_edge: true` — single clean plate edge; sparse fiber only.
+- Presence: thickness ~4, binder **clip** (no hollow row-bullet holes), soft shadow, quiet header band.
+- Selection: solid ink square tick + continuous rust text-width baseline (never jagged / dashed).
 - Title on the plate uses display/tagline weight — not mono micro chrome competing with brand.
 - Generous leading (`row_sep` / row heights from `LedgerChrome.title_type_scale`).
 
