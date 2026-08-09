@@ -6,6 +6,8 @@ extends Node2D
 ## Rewrite: 12-beat origami slam + juice/audio punches; cadmium only on warn/heartbeat.
 ## Habit reactivity: HabitRewriteLever + RewriteScoreBias add archetype counters
 ## (fossilize_hot_cell / place_deflector) under soft/hard adaptation.
+## Feel: split telegraph (forced chalk vs habit rust), post-rewrite hand line,
+## Mirror Birth / Looking Glass ceremony hold + freeze label (Habit V3 §6 / T6–T8).
 ## Stars via BFS par on win. Supports invert transform from the content book.
 ##
 
@@ -31,6 +33,8 @@ const GRID_H: int = ChamberBook.GRID_H
 ## Rewrite slam total duration (~12 beats × 75 ms).
 const REWRITE_DURATION: float = 0.90
 const REWRITE_HEARTBEAT: float = 0.07
+## Birth-class freeze after fossils land (Habit V3 §6.2 / FIRST_TEN hold).
+const CEREMONY_HOLD_SEC: float = 0.32
 ## Warn hysteresis — arm close, disarm farther (stops threshold spam).
 const WARN_ARM_DIST: int = 3
 const WARN_DISARM_DIST: int = 5
@@ -52,7 +56,7 @@ var pending_echo_settle_time: float = REWRITE_DURATION
 ## Wall-clock origin for rewrite settle (avoids Engine.time_scale stretch).
 var _rewrite_settle_start_msec: int = -1
 var rewrite_freeze: bool = false  ## hold mid-slam for screenshot capture
-var telegraph_cells: Array = []
+var telegraph_cells: Array = []  ## forced-transform foreshadow (chalk / slate / cadmium)
 var rewrite_warn_armed: bool = false
 var rewrite_cap: int = 99
 var rewrites_fired: int = 0
@@ -67,7 +71,12 @@ var transform_name: String = "none"
 ## Last habit-reactive rewrite (archetype counter) applied at a checkpoint.
 var last_habit_op: String = ""
 var last_habit_archetype: String = ""
-var habit_telegraph_cells: Array = []
+var habit_telegraph_cells: Array = []  ## style-counter foreshadow (rust / OVERUSE)
+## Habit cells inside the current slam — secondary ink, not a second spectacle.
+var pending_habit_echoes: Dictionary = {}
+## Post-slam birth hold — input locked while freeze label / PA lands.
+var _ceremony_hold_remaining: float = 0.0
+var _ceremony_label_key: String = ""
 
 var goal_pulse_t: float = 0.0
 var has_won: bool = false
@@ -168,6 +177,11 @@ func _process(delta: float) -> void:
 	elif pending_echoes.size() > 0:
 		# Screenshot freeze still paints the held slam pose when asked.
 		need_redraw = true
+	elif _ceremony_hold_remaining > 0.0:
+		_ceremony_hold_remaining = maxf(0.0, _ceremony_hold_remaining - delta)
+		if _ceremony_hold_remaining <= 0.0:
+			_end_ceremony_hold()
+		need_redraw = true
 	elif not has_won:
 		_update_hold_to_walk(delta)
 	if _telegraph_dirty:
@@ -241,8 +255,11 @@ func load_chamber(id: int) -> void:
 	rewrite_freeze = false
 	telegraph_cells.clear()
 	habit_telegraph_cells.clear()
+	pending_habit_echoes.clear()
 	last_habit_op = ""
 	last_habit_archetype = ""
+	_ceremony_hold_remaining = 0.0
+	_ceremony_label_key = ""
 	rewrite_warn_armed = false
 	has_won = false
 	_assist_path.clear()
@@ -283,8 +300,8 @@ func freeze_rewrite_at(t_norm: float) -> void:
 
 
 func is_rewrite_locking() -> bool:
-	## True while the origami slam owns the board — movement would softlock.
-	return pending_echoes.size() > 0
+	## True while the origami slam or birth freeze owns the board.
+	return pending_echoes.size() > 0 or _ceremony_hold_remaining > 0.0
 
 
 func _notification(what: int) -> void:
@@ -489,9 +506,10 @@ func _flush_pending_echoes() -> void:
 	_invalidate_checkpoint_dist()
 	if placed.size() > 0:
 		_maybe_reveal_habit_identity()
-		_teach_rewrite_settled()
 		if not _goal_reachable_now():
 			_recover_softlock(placed)
+		_begin_post_rewrite_feedback()
+	pending_habit_echoes.clear()
 
 
 func _clear_all_echoes() -> void:
@@ -521,10 +539,11 @@ func _trigger_rewrite() -> void:
 		seen[p] = true
 		candidates.append(p)
 	pending_echoes.clear()
+	pending_habit_echoes.clear()
 	_select_reachable_echoes(candidates)
 	# Habit-reactive lever: archetype counters via RewriteScoreBias (additive).
 	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
-	last_habit_op = str(habit_pick.get("op", ""))
+	last_habit_op = ""
 	last_habit_archetype = str(habit_pick.get("archetype", ""))
 	for p in habit_pick.get("cells", []):
 		var hp: Vector2i = p
@@ -538,7 +557,10 @@ func _trigger_rewrite() -> void:
 			continue
 		if _would_still_be_reachable(hp):
 			pending_echoes.append(hp)
+			pending_habit_echoes[hp] = true
 			seen[hp] = true
+	if not pending_habit_echoes.is_empty():
+		last_habit_op = str(habit_pick.get("op", ""))
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
 	_rewrite_settle_start_msec = Time.get_ticks_msec()
@@ -546,6 +568,8 @@ func _trigger_rewrite() -> void:
 		# Skip slam animation — commit fossils immediately for photosensitivity / vestibular comfort.
 		pending_echo_settle_time = 0.05
 	rewrite_freeze = false
+	_ceremony_hold_remaining = 0.0
+	_ceremony_label_key = ""
 	telegraph_cells.clear()
 	_telegraph_dirty = false
 	habit_telegraph_cells.clear()
@@ -555,10 +579,15 @@ func _trigger_rewrite() -> void:
 	if has_node("/root/Juice"):
 		Juice.rewrite_punch(pending_echoes.size())
 		var offset: Vector2 = _grid_offset()
-		var burst_color: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
 		for p in pending_echoes:
+			var is_habit: bool = pending_habit_echoes.has(p)
+			var burst_color: Color = _role_color(
+				FossilPalette.FossilRole.OVERUSE if is_habit else FossilPalette.FossilRole.ECHO_WALL
+			)
 			var wp: Vector2 = offset + Vector2(p.x + 0.5, p.y + 0.5) * CELL_SIZE
-			Juice.spawn_burst(wp, burst_color, 6 if not _reduce_motion() else 2)
+			# Habit ink is quieter — secondary channel, not a second slam.
+			var burst_n: int = (3 if is_habit else 6) if not _reduce_motion() else 2
+			Juice.spawn_burst(wp, burst_color, burst_n)
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_rewrite(transform_name)
 		if last_habit_op != "" and last_habit_op != transform_name:
@@ -756,7 +785,7 @@ func _apply_transform(name: String, path: Array) -> Array:
 func _refresh_telegraph() -> void:
 	telegraph_cells.clear()
 	habit_telegraph_cells.clear()
-	if has_won or pending_echoes.size() > 0:
+	if has_won or pending_echoes.size() > 0 or _ceremony_hold_remaining > 0.0:
 		return
 	if moves_since_checkpoint.is_empty():
 		return
@@ -774,7 +803,8 @@ func _refresh_telegraph() -> void:
 				continue
 			seen[p] = true
 			telegraph_cells.append(p)
-	# Foreshadow habit counters the same way — style, not only path mirror.
+	# Style foreshadow — habit lever cells stay out of the forced chalk set so
+	# streamers can point at rust “hand” walls before the slam (Systems Truth T7).
 	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
 	for p in habit_pick.get("cells", []):
 		var hp: Vector2i = p
@@ -785,7 +815,6 @@ func _refresh_telegraph() -> void:
 		if grid[hp.y][hp.x] != Tile.FLOOR:
 			continue
 		seen[hp] = true
-		telegraph_cells.append(hp)
 		habit_telegraph_cells.append(hp)
 	var near_cp := _nearest_unused_checkpoint_dist()
 	_update_rewrite_warn_state(near_cp)
@@ -793,7 +822,7 @@ func _refresh_telegraph() -> void:
 
 func _update_rewrite_warn_state(near_cp: int) -> void:
 	## Arm at ≤3, stay armed through 4, disarm at ≥5 or when telegraph dies (QW-5).
-	var has_tele: bool = telegraph_cells.size() > 0
+	var has_tele: bool = telegraph_cells.size() > 0 or habit_telegraph_cells.size() > 0
 	if near_cp < 0 or not has_tele:
 		rewrite_warn_armed = false
 		if has_node("/root/AudioDirector"):
@@ -845,7 +874,8 @@ func nearest_unused_checkpoint_dist() -> int:
 
 func is_rewrite_warn_active() -> bool:
 	## Shared arm state for punch-card / page tension (hysteresis-aware).
-	return rewrite_warn_armed and telegraph_cells.size() > 0 and not has_won
+	var has_tele: bool = telegraph_cells.size() > 0 or habit_telegraph_cells.size() > 0
+	return rewrite_warn_armed and has_tele and not has_won
 
 
 func rewrite_warn_tension() -> float:
@@ -1002,33 +1032,16 @@ func _draw() -> void:
 	_draw_ghost_trail(offset)
 	_draw_assist_path(offset)
 
-	# Telegraph ticks — slate/chalk diagram marks by default; cadmium only when
-	# rewrite warn is armed (hysteresis; art bible cadmium exclusivity ≤1%).
-	if telegraph_cells.size() > 0 and pending_echoes.is_empty():
-		var near_warn: bool = is_rewrite_warn_active()
-		var tension: float = rewrite_warn_tension()
-		for p in telegraph_cells:
-			var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
-			var c: Color
-			if near_warn and tension >= 0.34:
-				c = _role_color(FossilPalette.FossilRole.WARN)
-				c.a = 0.40 + 0.35 * tension
-			else:
-				c = _role_color(FossilPalette.FossilRole.CHECKPOINT)
-				c.a = 0.30 + (0.12 if near_warn else 0.0)
-			var tick := 4.0 + (2.0 * tension if near_warn else 0.0)
-			draw_line(r.position, r.position + Vector2(tick, 0), c, 1.5)
-			draw_line(r.position, r.position + Vector2(0, tick), c, 1.5)
-			draw_line(r.position + Vector2(r.size.x, 0), r.position + Vector2(r.size.x - tick, 0), c, 1.5)
-			draw_line(r.position + Vector2(r.size.x, 0), r.position + Vector2(r.size.x, tick), c, 1.5)
-			draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(tick, r.size.y), c, 1.5)
-			draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(0, r.size.y - tick), c, 1.5)
-			draw_line(r.end, r.end - Vector2(tick, 0), c, 1.5)
-			draw_line(r.end, r.end - Vector2(0, tick), c, 1.5)
+	# Split telegraph — forced path fossils vs habit lever (Systems Truth T7).
+	if pending_echoes.is_empty() and _ceremony_hold_remaining <= 0.0:
+		_draw_forced_telegraph(offset)
+		_draw_habit_telegraph(offset)
 
 	# Pending rewrite origami slam.
 	if pending_echoes.size() > 0:
 		_draw_rewrite_slam(offset, vp_size, page)
+	elif _ceremony_hold_remaining > 0.0:
+		_draw_ceremony_freeze_label(vp_size, offset)
 
 	# Player — surveyor stamp + chest-lantern warm spot.
 	_draw_player(offset)
@@ -1173,14 +1186,61 @@ func _draw_ghost_trail(offset: Vector2) -> void:
 			ArtKit.draw_dashed_line(self, pa, pb, chalk, 1.5, 4.0, 3.0)
 
 
+func _draw_forced_telegraph(offset: Vector2) -> void:
+	## Path-transform foreshadow — slate/chalk corner ticks; cadmium only when warn-armed.
+	if telegraph_cells.is_empty():
+		return
+	var near_warn: bool = is_rewrite_warn_active()
+	var tension: float = rewrite_warn_tension()
+	for p in telegraph_cells:
+		var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
+		var c: Color
+		if near_warn and tension >= 0.34:
+			c = _role_color(FossilPalette.FossilRole.WARN)
+			c.a = 0.40 + 0.35 * tension
+		else:
+			c = _role_color(FossilPalette.FossilRole.CHECKPOINT)
+			c.a = 0.30 + (0.12 if near_warn else 0.0)
+		var tick := 4.0 + (2.0 * tension if near_warn else 0.0)
+		draw_line(r.position, r.position + Vector2(tick, 0), c, 1.5)
+		draw_line(r.position, r.position + Vector2(0, tick), c, 1.5)
+		draw_line(r.position + Vector2(r.size.x, 0), r.position + Vector2(r.size.x - tick, 0), c, 1.5)
+		draw_line(r.position + Vector2(r.size.x, 0), r.position + Vector2(r.size.x, tick), c, 1.5)
+		draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(tick, r.size.y), c, 1.5)
+		draw_line(r.position + Vector2(0, r.size.y), r.position + Vector2(0, r.size.y - tick), c, 1.5)
+		draw_line(r.end, r.end - Vector2(tick, 0), c, 1.5)
+		draw_line(r.end, r.end - Vector2(0, tick), c, 1.5)
+
+
+func _draw_habit_telegraph(offset: Vector2) -> void:
+	## Habit-lever foreshadow — rust OVERUSE outline + punch-card tick (not chalk corners).
+	if habit_telegraph_cells.is_empty():
+		return
+	var near_warn: bool = is_rewrite_warn_active()
+	var tension: float = rewrite_warn_tension()
+	for p in habit_telegraph_cells:
+		var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
+		var c: Color = _role_color(FossilPalette.FossilRole.OVERUSE)
+		c.a = 0.42 + (0.18 * tension if near_warn else 0.0)
+		# Full cell outline — reads as “style wall,” distinct from forced corner ticks.
+		draw_rect(r.grow(-1.0), c, false, 1.5)
+		_draw_role_pattern(r.grow(-5.0), FossilPalette.FossilRole.OVERUSE, c)
+		# Inner punch-card tick (single corner) — secondary mark, never cadmium.
+		var tick := 5.0
+		var ink := Color(c.r, c.g, c.b, minf(0.85, c.a + 0.2))
+		draw_line(r.position + Vector2(3, 3), r.position + Vector2(3 + tick, 3), ink, 1.5)
+		draw_line(r.position + Vector2(3, 3), r.position + Vector2(3, 3 + tick), ink, 1.5)
+
+
 func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
-	var t_norm: float = clampf(pending_echo_timer / pending_echo_settle_time, 0.0, 1.0)
+	var t_norm: float = clampf(pending_echo_timer / maxf(pending_echo_settle_time, 0.001), 0.0, 1.0)
 	# 12-beat origami slam (art bible §5).
 	# 0.00–0.08: cadmium_warn margin heartbeat
 	# 0.08–0.28: creases (S2)
 	# 0.28–0.50: lift + cast shadow
 	# 0.50–0.78: slot into place with overshoot
 	# 0.78–1.00: rust bleed
+	# Habit cells stagger later (Habit V3 §6.2 step 3 — secondary ink).
 
 	if t_norm < REWRITE_HEARTBEAT / REWRITE_DURATION and not _reduce_flash():
 		# Single heartbeat — paper margin flash only (skipped when reduce-flash).
@@ -1198,10 +1258,17 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 	var n: int = pending_echoes.size()
 	for i in range(n):
 		var p: Vector2i = pending_echoes[i]
+		var is_habit: bool = pending_habit_echoes.has(p)
 		# Stagger each wall slightly so the cascade reads as paper folding, not a flash.
+		# Habit ink lands after forced fossils (+0–120 ms feel).
 		var stagger: float = float(i) / float(maxi(n, 1)) * 0.18
+		if is_habit:
+			stagger += 0.10
 		var local_t: float = clampf((t_norm - stagger) / max(0.001, 1.0 - stagger), 0.0, 1.0)
 		var base := Rect2(offset + Vector2(p.x * CELL_SIZE, p.y * CELL_SIZE), Vector2(CELL_SIZE, CELL_SIZE))
+		var fossil_role: FossilPalette.FossilRole = (
+			FossilPalette.FossilRole.OVERUSE if is_habit else FossilPalette.FossilRole.ECHO_WALL
+		)
 
 		if local_t < 0.25:
 			# Creases appear on doomed floor tiles.
@@ -1211,52 +1278,47 @@ func _draw_rewrite_slam(offset: Vector2, vp_size: Vector2, page: Rect2) -> void:
 			var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.85 * crease_a)
 			draw_line(base.position + Vector2(2, 2), base.end - Vector2(2, 2), ink, 1.5, true)
 			draw_line(base.position + Vector2(CELL_SIZE - 2, 2), base.position + Vector2(2, CELL_SIZE - 2), ink, 1.5, true)
-			var warn_base2: Color = _role_color(FossilPalette.FossilRole.WARN)
-			var warn_edge := Color(warn_base2.r, warn_base2.g, warn_base2.b, 0.35 * crease_a)
+			var edge_role: FossilPalette.FossilRole = (
+				FossilPalette.FossilRole.OVERUSE if is_habit else FossilPalette.FossilRole.WARN
+			)
+			var edge_base: Color = _role_color(edge_role)
+			var warn_edge := Color(edge_base.r, edge_base.g, edge_base.b, 0.35 * crease_a)
 			draw_rect(base, warn_edge, false, 1.0)
 		elif local_t < 0.50:
-			# Lift — cast shadow, no rim light.
+			# Lift — cast shadow, no rim light. Habit cells lift less (secondary ink).
 			var lift: float = (local_t - 0.25) / 0.25
-			var shadow_off: Vector2 = Vector2(3.0 + 5.0 * lift, 4.0 + 6.0 * lift)
+			var lift_scale: float = 0.55 if is_habit else 1.0
+			var shadow_off: Vector2 = Vector2(3.0 + 5.0 * lift, 4.0 + 6.0 * lift) * lift_scale
 			var sh := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.28 + 0.22 * lift)
 			draw_rect(Rect2(base.position + shadow_off, base.size), sh, true)
-			var raised := Rect2(base.position - Vector2(0, 4.0 * lift), base.size)
+			var raised := Rect2(base.position - Vector2(0, 4.0 * lift * lift_scale), base.size)
 			draw_rect(raised, Palette.PAPER_DEEP, true)
 			_blit(tex_wall_folding, raised, Palette.PAPER_DEEP)
 			draw_rect(raised, Palette.INK_SOFT, false, 1.5)
 		elif local_t < 0.78:
 			# Slot with 1px overshoot bounce into solid fossil.
 			var slot: float = (local_t - 0.50) / 0.28
-			var bounce: float = sin(slot * PI) * (1.0 - slot) * 3.0
+			var bounce: float = sin(slot * PI) * (1.0 - slot) * (1.5 if is_habit else 3.0)
 			var slotted := Rect2(base.position - Vector2(0, bounce), base.size)
-			var echo_c2: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
+			var echo_c2: Color = _role_color(fossil_role)
 			draw_rect(slotted, echo_c2, true)
 			_blit(tex_wall_fossil, slotted, echo_c2)
 			draw_rect(slotted.grow(-1.0), echo_c2.darkened(0.25), false, 1.5)
 		else:
 			# Rust bleed from the joins.
 			var bleed: float = (local_t - 0.78) / 0.22
-			var echo_c3: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
+			var echo_c3: Color = _role_color(fossil_role)
 			draw_rect(base, echo_c3, true)
 			_blit(tex_wall_fossil, base, echo_c3)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
 				draw_texture_rect(tex_rust[rust_i], base.grow(-2.0 + 2.0 * (1.0 - bleed)), false, Color(1, 1, 1, 0.4 + 0.6 * bleed))
 			draw_rect(base.grow(-1.0), echo_c3.darkened(0.25), false, 1.5)
-			_draw_role_pattern(base, FossilPalette.FossilRole.ECHO_WALL, echo_c3)
+			_draw_role_pattern(base, fossil_role, echo_c3)
 
-	# Quiet title plate during slam — "IT LEARNED YOU"
-	if t_norm > 0.12 and t_norm < 0.85:
-		var a: float = 1.0
-		if t_norm < 0.25:
-			a = (t_norm - 0.12) / 0.13
-		elif t_norm > 0.70:
-			a = 1.0 - (t_norm - 0.70) / 0.15
-		var label_pos := Vector2(vp_size.x * 0.5 - 90, offset.y - 18)
-		var plate := Rect2(label_pos - Vector2(8, 2), Vector2(188, 16))
-		var plate_c := Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.92 * a)
-		draw_rect(plate, plate_c, true)
-		draw_rect(plate, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.9 * a), false, 1.0)
+	# Birth-class slam plate — ceremony title ink (Habit V3 §6.2).
+	if _is_ceremony_chamber() and t_norm > 0.12 and t_norm < 0.85:
+		_draw_ceremony_slam_plate(vp_size, offset, t_norm)
 
 
 func _draw_player(offset: Vector2) -> void:
@@ -1339,22 +1401,224 @@ func _teach_checkpoint_armed() -> void:
 		GameState.set_tutorial_flag("flag.checkpoint_literacy")
 
 
+func _is_ceremony_chamber() -> bool:
+	## Mirror Birth class — spectacle flag or IdentityStamp birth detector.
+	return IdentityStamp.is_birth_moment(chamber) or bool(chamber.get("spectacle", false))
+
+
+func _is_second_birth() -> bool:
+	## Looking Glass dual-axis kinship (Habit V3 §6.1 / Systems Truth T10).
+	var slug := str(chamber.get("slug", ""))
+	var cid := str(chamber.get("content_id", chamber.get("id", "")))
+	return slug.contains("looking_glass") or str(cid).contains("looking_glass")
+
+
+func _ceremony_pa_line() -> String:
+	return "pa.rewrite.second_birth" if _is_second_birth() else "pa.rewrite.matched"
+
+
+func _ceremony_plate_text() -> String:
+	## Short uppercase ledger plate during slam — not archetype %.
+	if _is_second_birth():
+		return tr("ceremony.looking_glass.plate")
+	return tr("ceremony.mirror_birth.plate")
+
+
+func _begin_post_rewrite_feedback() -> void:
+	## After fossils land: birth freeze label, else habit hand line (T6).
+	if _is_ceremony_chamber():
+		_begin_ceremony_hold()
+		return
+	var first_mirror: bool = transform_name.begins_with("mirror") and rewrites_fired == 1
+	if first_mirror:
+		_teach_rewrite_settled()
+	_announce_habit_hand()
+
+
+func _begin_ceremony_hold() -> void:
+	## Habit V3 §6.2 steps 4–5 — freeze label, then release. Skip hold under reduce-motion.
+	_ceremony_label_key = _ceremony_pa_line()
+	_teach_rewrite_settled()
+	if _reduce_motion():
+		_ceremony_hold_remaining = 0.0
+		_announce_habit_hand()
+		return
+	_ceremony_hold_remaining = CEREMONY_HOLD_SEC
+	queue_redraw()
+
+
+func _end_ceremony_hold() -> void:
+	_ceremony_hold_remaining = 0.0
+	_ceremony_label_key = ""
+	# Habit op line only after ceremony PA — never stack on first Birth viewport.
+	_announce_habit_hand()
+	_telegraph_dirty = true
+	queue_redraw()
+
+
 func _teach_rewrite_settled() -> void:
-	## Mirror Birth coach: name the orange walls as the player's mirror.
-	var is_birth: bool = IdentityStamp.is_birth_moment(chamber) or bool(chamber.get("spectacle", false))
+	## Mirror Birth / Looking Glass coach: geometry truth, not archetype jargon.
+	var is_birth: bool = _is_ceremony_chamber()
 	var first_mirror: bool = transform_name.begins_with("mirror") and rewrites_fired == 1
 	if not is_birth and not first_mirror:
 		return
 	if has_node("/root/GameState") and GameState.has_tutorial_flag("flag.seen_matches_you") and not is_birth:
 		_surface_first_hint()
 		return
+	var line: String = _ceremony_pa_line() if is_birth else "pa.rewrite.matched"
 	if has_node("/root/AudioDirector"):
-		AudioDirector.on_pa_line("pa.rewrite.matched")
+		AudioDirector.on_pa_line(line)
 	else:
-		_subtitle_line("pa.rewrite.matched")
+		_subtitle_line(line)
 	if has_node("/root/GameState"):
 		GameState.set_tutorial_flag("flag.seen_matches_you")
 	_surface_first_hint()
+
+
+func _announce_habit_hand() -> void:
+	## Systems Truth T6 — one rust “hand” line when the habit lever actually bit.
+	if last_habit_op == "":
+		return
+	# Birth freeze label owns the subtitle budget; hand titles land on the win card.
+	if _is_ceremony_chamber():
+		return
+	var arch := last_habit_archetype
+	if arch == "" and has_node("/root/GameState"):
+		arch = GameState.habit_hand_id()
+	var hand_key := "habit.hand_%s" % arch
+	var hand: String = tr(hand_key)
+	if hand == hand_key or arch == "" or arch == "balanced":
+		hand = ""
+	var op_id := _habit_op_subtitle_id(last_habit_op)
+	var op_text := _habit_op_fallback_text(last_habit_op)
+	if op_id != "":
+		var op_key := "subtitle.%s" % op_id
+		var translated: String = tr(op_key)
+		if translated != op_key:
+			op_text = translated
+	var line := op_text
+	if hand != "":
+		var template: String = tr("subtitle.habit.answer.hand")
+		if template == "subtitle.habit.answer.hand":
+			template = "Answered your %s."
+		var hand_line: String = template % hand
+		line = ("%s — %s" % [op_text, hand]) if op_text != "" else hand_line
+	if line == "":
+		return
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return
+	var overlay := tree.root.find_child("SubtitleOverlay", true, false)
+	if overlay != null and overlay.has_method("show_text"):
+		overlay.call("show_text", line, 2.8, "habit.answer.hand")
+	elif op_id != "":
+		_subtitle_line(op_id)
+
+
+func _habit_op_fallback_text(op: String) -> String:
+	match op:
+		"place_deflector":
+			return "Corridor sealed."
+		"fossilize_hot_cell":
+			return "Loop calcified."
+		"thicken_walked":
+			return "Walk thickened underfoot."
+		"grow_wall_far_from_path":
+			return "Far margin darkens."
+		"carve_shortcut":
+			return "A hairline door opens."
+		"widen_hot_corridor":
+			return "The corridor breathes."
+		_:
+			return ""
+
+
+func _habit_op_subtitle_id(op: String) -> String:
+	match op:
+		"place_deflector":
+			return "habit.op.deflector"
+		"fossilize_hot_cell":
+			return "habit.op.fossilize"
+		"thicken_walked":
+			return "habit.op.thicken"
+		"grow_wall_far_from_path":
+			return "habit.op.grow"
+		"carve_shortcut":
+			return "habit.op.carve"
+		"widen_hot_corridor":
+			return "habit.op.widen"
+		_:
+			return ""
+
+
+func _draw_ceremony_slam_plate(vp_size: Vector2, offset: Vector2, t_norm: float) -> void:
+	var a: float = 1.0
+	if t_norm < 0.25:
+		a = (t_norm - 0.12) / 0.13
+	elif t_norm > 0.70:
+		a = 1.0 - (t_norm - 0.70) / 0.15
+	a = clampf(a, 0.0, 1.0)
+	var text: String = _ceremony_plate_text()
+	if text.begins_with("ceremony."):
+		text = "IT MATCHES YOU" if not _is_second_birth() else "BOTH AXES REMEMBER"
+	var font: Font = ThemeDB.fallback_font
+	var font_size: int = 12
+	var text_w: float = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var plate_w: float = text_w + 24.0
+	var label_pos := Vector2(vp_size.x * 0.5 - plate_w * 0.5, offset.y - 22)
+	var plate := Rect2(label_pos, Vector2(plate_w, 18))
+	var plate_c := Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.94 * a)
+	draw_rect(plate, plate_c, true)
+	var ink := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.95 * a)
+	draw_rect(plate, ink, false, 1.0)
+	draw_string(
+		font,
+		label_pos + Vector2(12, 13),
+		text,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		-1,
+		font_size,
+		Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.92 * a)
+	)
+
+
+func _draw_ceremony_freeze_label(vp_size: Vector2, offset: Vector2) -> void:
+	## Post-slam hold — one Field Ledger geometry line (not archetype %).
+	if _ceremony_label_key == "":
+		return
+	var progress: float = 1.0 - clampf(_ceremony_hold_remaining / CEREMONY_HOLD_SEC, 0.0, 1.0)
+	var a: float = 1.0
+	if progress < 0.15:
+		a = progress / 0.15
+	elif progress > 0.75:
+		a = 1.0 - (progress - 0.75) / 0.25
+	a = clampf(a, 0.0, 1.0)
+	var key := "subtitle.%s" % _ceremony_label_key
+	var text: String = tr(key)
+	if text == key:
+		text = "It matches you." if not _is_second_birth() else "Both axes remember you."
+	var font: Font = ThemeDB.fallback_font
+	var font_size: int = 14
+	var text_w: float = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var plate_w: float = text_w + 28.0
+	var label_pos := Vector2(vp_size.x * 0.5 - plate_w * 0.5, offset.y - 28)
+	var plate := Rect2(label_pos, Vector2(plate_w, 22))
+	draw_rect(plate, Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.96 * a), true)
+	draw_rect(
+		plate,
+		Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.9 * a),
+		false,
+		1.5
+	)
+	draw_string(
+		font,
+		label_pos + Vector2(14, 16),
+		text,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		-1,
+		font_size,
+		Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.95 * a)
+	)
 
 
 func _arm_undo_teach() -> void:

@@ -93,10 +93,14 @@ class OnboardingPathTests(unittest.TestCase):
             "func _teach_checkpoint_armed",
             "func _teach_rewrite_settled",
             "func _arm_undo_teach",
+            "func _begin_ceremony_hold",
+            "func _announce_habit_hand",
             "signal teach_hint",
             "signal undo_hint_changed",
             "pa.rewrite.matched",
+            "pa.rewrite.second_birth",
             "pa.undo.hint",
+            "CEREMONY_HOLD_SEC",
         ):
             self.assertIn(needle, chamber)
         self.assertIn("_on_teach_hint", scene)
