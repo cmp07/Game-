@@ -70,8 +70,9 @@ jobs:
 
       - name: Export Linux/X11 release
         working-directory: ${{ env.PROJECT_PATH }}
+        # Container default shell is sh (not bash) — keep POSIX.
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p builds/linux
           godot --headless --path . --export-release "Linux/X11" builds/linux/EchoLattice.x86_64
           test -f builds/linux/EchoLattice.x86_64
@@ -98,7 +99,7 @@ jobs:
       - name: Export Windows Desktop release
         working-directory: ${{ env.PROJECT_PATH }}
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p builds/windows
           godot --headless --path . --export-release "Windows Desktop" builds/windows/EchoLattice.exe
           test -f builds/windows/EchoLattice.exe
@@ -124,7 +125,7 @@ jobs:
       - name: Export Windows Demo
         working-directory: ${{ env.PROJECT_PATH }}
         run: |
-          set -euo pipefail
+          set -eu
           mkdir -p builds/windows_demo
           godot --headless --path . --export-release "Windows Demo" builds/windows_demo/EchoLatticeDemo.exe
           test -f builds/windows_demo/EchoLatticeDemo.exe
