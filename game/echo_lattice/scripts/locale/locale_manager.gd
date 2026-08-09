@@ -215,7 +215,10 @@ func _load_catalog(path: String) -> void:
 func _apply_font_for_locale(locale: String) -> void:
 	var needs_cjk := locale.begins_with("zh") or locale in ["ja", "ko"]
 	if not needs_cjk:
-		if _default_fallback_font != null:
+		# Prefer TypeKit body (IBM Plex Serif) over the engine Inter-like default.
+		if has_node("/root/TypeKit") and TypeKit.body_font() != null:
+			ThemeDB.fallback_font = TypeKit.body_font()
+		elif _default_fallback_font != null:
 			ThemeDB.fallback_font = _default_fallback_font
 		return
 	if _cjk_font == null:

@@ -968,29 +968,18 @@ func _draw() -> void:
 	var page := Rect2(offset - Vector2(PAGE_PAD, PAGE_PAD), grid_px + Vector2(PAGE_PAD * 2.0, PAGE_PAD * 2.0))
 	var warn_tension: float = rewrite_warn_tension()
 
-	# Full viewport paper wash + margin.
-	draw_rect(Rect2(Vector2.ZERO, vp_size), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp_size), 11, 0.05)
-
-	# Cast shadow under the ledger page.
-	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
-	draw_rect(page, Palette.PAPER_BONE, true)
-	# Binding wash — left spine of the field ledger (QW-4).
-	var spine := Rect2(page.position, Vector2(14.0, page.size.y))
-	draw_rect(spine, Palette.PAPER_DEEP, true)
-	draw_line(
-		page.position + Vector2(14.0, 0.0),
-		page.position + Vector2(14.0, page.size.y),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
-		1.0
-	)
-	ArtKit.draw_ledger_grid(self, page, 16)
-	ArtKit.draw_paper_grain(self, page, 42, 0.08)
-
-	# Page border — double ink rule; heavier when rewrite is imminent.
+	# Desk margin + ledger page substrate (V3 fiber grid / letterpress margins).
+	ArtKit.draw_desk_margin(self, vp_size, 11, 0.05)
 	var rule_w: float = 2.0 + (1.5 if warn_tension > 0.01 else 0.0)
-	draw_rect(page, Palette.INK_SOFT, false, rule_w)
-	draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.5), false, 1.0)
+	ArtKit.draw_ledger_page(self, page, {
+		"shadow_off": Vector2(5, 7),
+		"grain_seed": 42,
+		"grain_a": 0.08,
+		"major_cell": 16,
+		"rule_w": rule_w,
+		"spine": true,
+		"double_rule": true,
+	})
 	_draw_page_registration(page, warn_tension)
 
 	# Tiles
@@ -1069,13 +1058,17 @@ func _draw_tile(p: Vector2i, offset: Vector2) -> void:
 
 	match t:
 		Tile.WALL:
-			# Solid ink fill first so walls never read as hollow frames.
-			draw_rect(rect, Palette.INK_BLACK, true)
+			# Letterpress squash onto paper sides only; texture rides on top.
+			ArtKit.draw_letterpress_wall(self, rect, false, _paper_sides_for(p))
 			_blit(tex_wall_fresh, rect, Palette.INK_BLACK)
-			draw_rect(rect, Palette.INK_SOFT, false, 1.0)
 		Tile.ECHO_WALL:
 			var echo_c: Color = _role_color(FossilPalette.FossilRole.ECHO_WALL)
-			draw_rect(rect, echo_c, true)
+			ArtKit.draw_letterpress_wall(self, rect, true, _paper_sides_for(p))
+			# Role tint when colorblind remap diverges from default rust.
+			if not echo_c.is_equal_approx(Palette.RUST_FOSSIL):
+				var tint := echo_c
+				tint.a = 0.55
+				draw_rect(rect, tint, true)
 			_blit(tex_wall_fossil, rect, echo_c)
 			var rust_i: int = (p.x * 3 + p.y * 7) % max(1, tex_rust.size())
 			if tex_rust.size() > 0 and tex_rust[rust_i] != null:
@@ -1137,6 +1130,26 @@ func _blit(tex: Texture2D, rect: Rect2, fallback: Color) -> void:
 		draw_texture_rect(tex, rect, false)
 	else:
 		draw_rect(rect, fallback, true)
+
+
+func _paper_sides_for(p: Vector2i) -> int:
+	## Bitflags 1=N 2=E 4=S 8=W — sides abutting non-wall (paper) cells.
+	var sides: int = 0
+	var dirs: Array = [
+		[Vector2i(0, -1), 1],
+		[Vector2i(1, 0), 2],
+		[Vector2i(0, 1), 4],
+		[Vector2i(-1, 0), 8],
+	]
+	for d in dirs:
+		var n: Vector2i = p + d[0]
+		if not _in_bounds(n) or not _is_wall_tile(grid[n.y][n.x]):
+			sides |= int(d[1])
+	return sides
+
+
+func _is_wall_tile(t: int) -> bool:
+	return t == Tile.WALL or t == Tile.ECHO_WALL
 
 
 func _draw_ghost_trail(offset: Vector2) -> void:

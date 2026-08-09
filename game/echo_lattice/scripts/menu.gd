@@ -40,6 +40,9 @@ var _last_demo_step: int = -1
 
 
 func _ready() -> void:
+	if has_node("/root/TypeKit"):
+		TypeKit.apply_to_control(subtitle, TypeKit.Role.BODY)
+		TypeKit.apply_to_control(meta_label, TypeKit.Role.MONO)
 	_localize_chrome()
 	if has_node("/root/LocaleManager"):
 		LocaleManager.locale_changed.connect(func(_l): _localize_chrome())
@@ -208,6 +211,8 @@ func _style_as_index_button(btn: Button, primary: bool) -> void:
 	btn.add_theme_stylebox_override("hover", empty)
 	btn.add_theme_stylebox_override("focus", empty)
 	btn.add_theme_stylebox_override("disabled", empty)
+	if has_node("/root/TypeKit"):
+		TypeKit.apply_to_control(btn, TypeKit.Role.DISPLAY)
 	btn.add_theme_color_override("font_color", Palette.INK_BLACK if primary else Palette.INK_SOFT)
 	btn.add_theme_color_override("font_hover_color", Palette.SLATE_TEAL)
 	btn.add_theme_color_override("font_pressed_color", Palette.RUST_FOSSIL)
@@ -277,24 +282,28 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
-	# Lightbox paper.
-	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 3, 0.06)
+	var display_f: Font = TypeKit.display_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
+	var body_f: Font = TypeKit.body_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
+	var mono_f: Font = TypeKit.mono_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
 
-	# Large ledger page.
+	# Lightbox desk + ledger page (V3 materials — fiber grid, letterpress margins).
+	ArtKit.draw_desk_margin(self, vp, 3, 0.06)
 	var page := Rect2(40, 28, vp.x - 80, vp.y - 56)
-	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), Palette.PAPER_SHADOW, true)
-	draw_rect(page, Palette.PAPER_BONE, true)
-	ArtKit.draw_ledger_grid(self, page, 32)
-	ArtKit.draw_paper_grain(self, page, 19, 0.07)
-	draw_rect(page, Palette.INK_SOFT, false, 2.0)
+	ArtKit.draw_ledger_page(self, page, {
+		"shadow_off": Vector2(6, 8),
+		"grain_seed": 19,
+		"grain_a": 0.07,
+		"major_cell": 32,
+		"rule_w": 2.0,
+		"double_rule": true,
+	})
 
 	# Seed header strip along top margin.
 	var seed_tex: Texture2D = ArtKit.tex("res://art/ui/seed_header_256x24.png")
 	if seed_tex != null:
 		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(16, 10), Vector2(256, 24)), false)
 	draw_string(
-		ThemeDB.fallback_font,
+		mono_f,
 		page.position + Vector2(280, 28),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
@@ -307,7 +316,7 @@ func _draw() -> void:
 	var brand_x: float = page.position.x + 48
 	var brand_y: float = page.position.y + page.size.y * 0.28
 	draw_string(
-		ThemeDB.fallback_font,
+		display_f,
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 64, Palette.INK_BLACK
@@ -316,13 +325,13 @@ func _draw() -> void:
 	draw_rect(Rect2(brand_x, brand_y + 10, 420, 3), Palette.RUST_FOSSIL, true)
 
 	draw_string(
-		ThemeDB.fallback_font,
+		display_f,
 		Vector2(brand_x, brand_y + 42),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Palette.SLATE_TEAL
 	)
 	draw_string(
-		ThemeDB.fallback_font,
+		body_f,
 		Vector2(brand_x, brand_y + 68),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Palette.INK_SOFT
@@ -330,10 +339,7 @@ func _draw() -> void:
 
 	# Index-card plate behind the button column (right side).
 	var card := Rect2(page.end.x - 340, page.position.y + 80, 280, 360)
-	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
-	draw_rect(card, Palette.PAPER_BONE, true)
-	draw_rect(card, Palette.INK_SOFT, false, 1.5)
-	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45), false, 1.0)
+	ArtKit.draw_index_card(self, card)
 	# Binder holes — diegetic Field Index chrome (QW-2).
 	for i in range(5):
 		var hy: float = card.position.y + 28.0 + float(i) * 70.0
@@ -345,7 +351,7 @@ func _draw() -> void:
 	draw_line(card.position + Vector2(22, 34), card.position + Vector2(card.size.x - 16, 34), Palette.INK_SOFT, 1.0)
 	draw_line(card.position + Vector2(22, 38), card.position + Vector2(card.size.x - 16, 38), Palette.INK_SOFT, 1.0)
 	draw_string(
-		ThemeDB.fallback_font,
+		display_f,
 		card.position + Vector2(26, 26),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
@@ -359,7 +365,7 @@ func _draw() -> void:
 
 	# Footer controls hint — Deck glyphs > remap labels > localized default.
 	draw_string(
-		ThemeDB.fallback_font,
+		mono_f,
 		Vector2(page.position.x + 16, page.end.y - 14),
 		_footer_controls_hint(),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
@@ -378,10 +384,10 @@ func _draw_ambient_lattice(page: Rect2) -> void:
 	var fossil: Array = [Vector2i(8, 1), Vector2i(9, 1), Vector2i(9, 2), Vector2i(10, 2), Vector2i(11, 2), Vector2i(11, 3), Vector2i(12, 3)]
 	for w in walls:
 		var r := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1, cell - 1))
-		draw_rect(r, Palette.INK_BLACK, true)
+		ArtKit.draw_letterpress_wall(self, r, false)
 	for w in fossil:
 		var r2 := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1, cell - 1))
-		draw_rect(r2, Palette.RUST_FOSSIL, true)
+		ArtKit.draw_letterpress_wall(self, r2, true)
 
 	# Writing chalk path.
 	var visible: int = mini(_demo_path.size(), int(_demo_progress))
@@ -404,8 +410,7 @@ func _draw_ambient_lattice(page: Rect2) -> void:
 			var mx: float = origin.x + (26 - fp.x * 0.55) * cell
 			var my: float = origin.y + (fp.y - 6) * 0.55 * cell + j * cell * 0.55
 			var fr := Rect2(mx, my, cell - 1, cell - 1)
-			var fc := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.78)
-			draw_rect(fr, fc, true)
+			ArtKit.draw_letterpress_wall(self, fr, true)
 
 
 func _footer_controls_hint() -> String:
@@ -455,7 +460,8 @@ func _draw_button_underlines(_card: Rect2) -> void:
 func _draw_punchcard_ribbon(page: Rect2) -> void:
 	var y: float = page.end.y - 48
 	var x: float = page.position.x + 16
-	draw_string(ThemeDB.fallback_font, Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
+	var mono_f: Font = TypeKit.mono_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
+	draw_string(mono_f, Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
 	x += 64
 	var cells: Array = [
 		ArtKit.tex("res://art/ui/punchcard_cell_empty.png"),

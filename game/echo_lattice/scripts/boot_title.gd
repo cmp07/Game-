@@ -53,23 +53,25 @@ func _draw() -> void:
 	if _t > HOLD_SEC:
 		fade = clampf(1.0 - (_t - HOLD_SEC) / FADE_SEC, 0.0, 1.0)
 
-	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 7, 0.06 * fade)
+	ArtKit.draw_desk_margin(self, vp, 7, 0.06 * fade)
 
 	var page := Rect2(vp.x * 0.18, vp.y * 0.22, vp.x * 0.64, vp.y * 0.56)
-	var shadow_a := Palette.PAPER_SHADOW
-	shadow_a.a *= fade
-	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), shadow_a, true)
+	ArtKit.draw_ledger_page(self, page, {
+		"shadow_off": Vector2(6, 8),
+		"grain_seed": 19,
+		"grain_a": 0.07 * fade,
+		"major_cell": 28,
+		"rule_w": 2.0,
+		"double_rule": true,
+	})
+	# Fade the page plate when exiting — modulate ink/bone via overlay wash.
+	if fade < 0.999:
+		var wash := Palette.PAPER_MARGIN
+		wash.a = 1.0 - fade
+		draw_rect(page, wash, true)
+
 	var bone := Palette.PAPER_BONE
 	bone.a = fade
-	draw_rect(page, bone, true)
-	ArtKit.draw_ledger_grid(self, page, 28)
-	ArtKit.draw_paper_grain(self, page, 19, 0.07 * fade)
-	var ink := Palette.INK_SOFT
-	ink.a = fade
-	draw_rect(page, ink, false, 2.0)
-	draw_rect(page.grow(-4.0), Color(ink.r, ink.g, ink.b, 0.55 * fade), false, 1.0)
-
 	# Binder holes — diegetic notebook chrome.
 	for i in range(4):
 		var hy: float = page.position.y + 36.0 + float(i) * ((page.size.y - 72.0) / 3.0)
@@ -77,11 +79,13 @@ func _draw() -> void:
 		draw_circle(Vector2(page.position.x + 18.0, hy), 4.0, hc)
 		draw_circle(Vector2(page.position.x + 18.0, hy), 2.2, Color(bone.r, bone.g, bone.b, fade))
 
+	var display_f: Font = TypeKit.display_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
+	var body_f: Font = TypeKit.body_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
 	var brand_x: float = page.position.x + 48.0
 	var brand_y: float = page.position.y + page.size.y * 0.42
 	var title_c := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		display_f,
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 56, title_c
@@ -90,14 +94,14 @@ func _draw() -> void:
 	draw_rect(Rect2(brand_x, brand_y + 10.0, 380.0, 3.0), rust, true)
 	var tag := Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		display_f,
 		Vector2(brand_x, brand_y + 40.0),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 20, tag
 	)
 	var wing := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.95 * fade)
 	draw_string(
-		ThemeDB.fallback_font,
+		body_f,
 		Vector2(brand_x, brand_y + 68.0),
 		tr("boot.wing_line"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 14, wing

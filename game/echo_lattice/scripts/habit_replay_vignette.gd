@@ -67,14 +67,16 @@ func _draw() -> void:
 	draw_rect(plate, Palette.PAPER_DEEP, true)
 	draw_rect(plate.grow(-1.0), Palette.PAPER_BONE, true)
 	draw_rect(plate, Palette.INK_SOFT, false, 1.5)
-	ArtKit.draw_ledger_grid(self, plate.grow(-4.0), 14)
+	ArtKit.draw_page_fiber_grid(self, plate.grow(-4.0), 14)
 	ArtKit.draw_paper_grain(self, plate, 11, 0.05)
 
+	var display_f: Font = TypeKit.display_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
+	var body_f: Font = TypeKit.body_font() if has_node("/root/TypeKit") else ThemeDB.fallback_font
 	var pad := 12.0
 	var inner := Rect2(pad, pad + 18.0, maxf(8.0, size.x - pad * 2.0), maxf(8.0, size.y - pad * 2.0 - 22.0))
 	if _title != "":
 		draw_string(
-			ThemeDB.fallback_font,
+			display_f,
 			Vector2(pad, 16.0),
 			_title,
 			HORIZONTAL_ALIGNMENT_LEFT, int(size.x - pad * 2.0), 12, Palette.SLATE_TEAL
@@ -82,7 +84,7 @@ func _draw() -> void:
 
 	if _path.is_empty():
 		draw_string(
-			ThemeDB.fallback_font,
+			body_f,
 			inner.position + Vector2(0, 20),
 			tr("museum.vignette_empty"),
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Palette.INK_SOFT

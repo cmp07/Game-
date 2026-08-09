@@ -25,6 +25,7 @@ buses/default_bus_layout="res://default_bus_layout.tres"
 [autoload]
 
 SettingsStore="*res://scripts/a11y/settings_store.gd"
+TypeKit="*res://scripts/type_kit.gd"
 LocaleManager="*res://scripts/locale/locale_manager.gd"
 CrashLogHook="*res://scripts/ops/crash_log_hook.gd"
 Palette="*res://scripts/palette.gd"

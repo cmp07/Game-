@@ -1,14 +1,25 @@
 # Fonts — Echo Lattice
 
-## Latin stack (art bible)
+## Latin stack (art bible / ART_DIRECTION_V3 §3)
 
-| Role | Preferred | MVP fallback |
+| Role | Face | File |
 |---|---|---|
-| Display | Akkurat / Inter Tight / IBM Plex Sans Condensed | Godot default (Inter-like) |
-| Body | IBM Plex Serif / PT Serif | Godot default |
-| Mono (seed / buffer) | IBM Plex Mono | Godot default |
+| Display | IBM Plex Sans Condensed SemiBold | `latin/IBMPlexSansCondensed-SemiBold.ttf` |
+| UI / actions | IBM Plex Sans Condensed Regular | `latin/IBMPlexSansCondensed-Regular.ttf` |
+| Body | IBM Plex Serif Regular | `latin/IBMPlexSerif-Regular.ttf` |
+| Mono (seed / buffer) | IBM Plex Mono Regular | `latin/IBMPlexMono-Regular.ttf` |
 
-Ship final OFL or licensed files under `fonts/latin/` before store submission. See also `docs/RELEASE/COMPLIANCE_FINAL.md` (credits) when that pack lands.
+**Hard rule:** three faces max (display + body + mono). No script. No fourth “cute” display.
+
+Runtime: autoload `TypeKit` (`scripts/type_kit.gd`) loads the stack, installs a project `Theme`, and sets `ThemeDB.fallback_font` to the body face so Labels are never Godot’s default Inter-like path for identity. Brand / seed `draw_string` call sites use `TypeKit.display_font()` / `TypeKit.mono_font()` explicitly.
+
+### Vendor / refresh
+
+```bash
+python3 tools/fonts/fetch_ibm_plex_latin.py
+```
+
+Latin TTFs are **committed** (OFL embed for Steam/Deck). Keep `latin/OFL.txt`. Credits: `docs/RELEASE/COMPLIANCE_FINAL.md`.
 
 ## CJK plan (zh-Hans ship)
 
@@ -20,7 +31,7 @@ Han coverage is **required** for Simplified Chinese UI. Do **not** rely on OS fo
 | 2 (alt) | Source Han Sans SC Regular | `cjk/SourceHanSansSC-Regular.otf` | OFL-1.1 |
 | Optional body | Noto Serif SC Regular | `cjk/NotoSerifSC-Regular.otf` | OFL-1.1 |
 
-`LocaleManager` (`scripts/locale/locale_manager.gd`) swaps `ThemeDB.fallback_font` to the first existing candidate when the active locale is `zh_Hans` (or other CJK tags). Labels and `draw_string(..., ThemeDB.fallback_font, ...)` both pick it up.
+`LocaleManager` (`scripts/locale/locale_manager.gd`) swaps `ThemeDB.fallback_font` to the first existing candidate when the active locale is `zh_Hans` (or other CJK tags). `TypeKit` routes display/body through that face while mono stays Latin for seed hex.
 
 ### Vendor steps (release)
 
@@ -32,10 +43,10 @@ Han coverage is **required** for Simplified Chinese UI. Do **not** rely on OS fo
 
 ### Git LFS note
 
-Binaries stay **gitignored** to keep the clone small. Root `.gitattributes` already declares LFS filters for `fonts/cjk/*.{otf,ttf,ttc,otc}`. To commit the face: remove the ignore lines, `git lfs install`, add the file. Details in [`cjk/README.md`](cjk/README.md).
+CJK binaries stay **gitignored** to keep the clone small. Root `.gitattributes` already declares LFS filters for `fonts/cjk/*.{otf,ttf,ttc,otc}`. To commit the face: remove the ignore lines, `git lfs install`, add the file. Details in [`cjk/README.md`](cjk/README.md).
 
 ### Explicit non-goals for v1
 
 - No JP / KR catalogs yet (font candidates can stay; strings ship later).
-- No per-control Theme resource yet — fallback font swap is enough for the vertical slice HUD.
 - Do not commit multi‑MB variable font collections if a single Regular static face covers UI.
+- Akkurat is commercial — do **not** embed without a purchased license (prefer IBM Plex).

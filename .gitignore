@@ -79,5 +79,4 @@ game/echo_lattice/fonts/cjk/*.otf
 game/echo_lattice/fonts/cjk/*.ttf
 game/echo_lattice/fonts/cjk/*.ttc
 game/echo_lattice/fonts/cjk/*.otc
-game/echo_lattice/fonts/latin/*.otf
-game/echo_lattice/fonts/latin/*.ttf
+# Latin IBM Plex faces are small and committed under fonts/latin/ (V3-T0).
