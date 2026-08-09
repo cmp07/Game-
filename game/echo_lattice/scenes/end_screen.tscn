@@ -10,19 +10,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_end")
 
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.894, 0.847, 0.737, 1)
-
-[node name="AccentBar" type="ColorRect" parent="."]
-offset_right = 8.0
-anchor_bottom = 1.0
-color = Color(0.545, 0.227, 0.122, 1)
-
 [node name="VBox" type="VBoxContainer" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
@@ -36,9 +23,9 @@ offset_bottom = 220.0
 theme_override_constants/separation = 18
 
 [node name="Title" type="Label" parent="VBox"]
-text = "WING FILED"
+text = "LEDGER CLOSED"
 horizontal_alignment = 1
-theme_override_font_sizes/font_size = 56
+theme_override_font_sizes/font_size = 52
 theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 
 [node name="Tagline" type="Label" parent="VBox"]
@@ -68,20 +55,21 @@ theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 [node name="MenuButton" type="Button" parent="VBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 44)
-text = "Menu"
+text = "Field Index"
 flat = true
 theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
+theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 
 [node name="Footer" type="Label" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -32.0
+offset_top = -40.0
+offset_bottom = -12.0
 grow_horizontal = 2
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "Echo Lattice · Field Ledger · ink on paper"
+text = "Field Ledger · Echo Lattice · ink on paper"
 theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 1)
 theme_override_font_sizes/font_size = 12

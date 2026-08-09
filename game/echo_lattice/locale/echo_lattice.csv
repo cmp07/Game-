@@ -43,7 +43,7 @@ habit.up,up,上
 habit.down,down,下
 habit.left,left,左
 habit.right,right,右
-won.title,CHAMBER CLEARED,间室通过
+won.title,Chamber Cleared,间室通过
 won.next_chamber,→ Next Chamber,→ 下一间室
 won.finish_wing,→ Finish Wing,→ 完成本翼
 won.finish_demo,→ Finish Demo,→ 完成试玩
@@ -53,16 +53,16 @@ won.next_endless,→ Keep Climbing,→ 继续攀升
 won.replay,Replay this chamber,重玩本间室
 won.menu,Field Index,田野索引
 won.stats,"%s
-Moves %s  ·  best %s
-Best stamp %s
-Par path %s%s
+Moves: %s  (best %s)
+Best stamp: %s★
+Par path: %s%s
 
-%s","%s
-步数 %s  ·  最佳 %s
-最佳印记 %s
-标准路径 %s%s
+Hand: %s","%s
+步数：%s  （最佳 %s）
+最佳印记：%s★
+标准路径：%s%s
 
-%s"
+笔迹：%s"
 won.daily_line,"
 Daily %s","
 每日 %s"
@@ -72,12 +72,12 @@ Endless %s  ·  depth %s  ·  rewrite pressure %s%%","
 won.daily_line_code,"
 Daily %s · %s","
 每日 %s · %s"
-end.title,WING FILED,本翼归档
-end.tagline,IT LEARNED YOU,它学会了你
+end.title,LEDGER CLOSED,账本合上
+end.tagline,The lattice remembers you.,晶格记得你。
 end.new_run,New survey,新调查
 end.menu,Field Index,田野索引
-end.footer,Echo Lattice · Field Ledger · ink on paper,回声晶格 · 田野账本 · 纸上墨迹
-end.header_wing,Wing complete.,本翼完成。
+end.footer,Field Ledger · Echo Lattice · ink on paper,现场账本 · 回声晶格 · 纸上墨迹
+end.header_wing,Wing filed.,本翼已归档。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
 end.header_endless,Endless %s — depth %s.,无尽 %s — 深度 %s。
@@ -257,14 +257,14 @@ chamber.38_nameplate_hard.title,Nameplate+,铭牌+
 chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
 menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
 end.summary,"%s
-Surveys filed …… %s / %s
-Stars stamped …… %s★
-Best moves …… %s
-Handwriting …… %s","%s
-已归档调查 …… %s / %s
-星印 …… %s★
-最佳步数 …… %s
-笔迹 …… %s"
+Filed %s of %s chambers.
+Stars stamped: %s
+Best route ink: %s moves
+Handwriting: %s","%s
+已归档 %s / %s 间室。
+星印：%s
+最佳路线墨迹：%s 步
+笔迹：%s"
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
 hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
 hud.habit_identity,%s-leaning · %s,%s倾向 · %s
@@ -274,7 +274,7 @@ habit.hand_right_leaner,long corridor hand,长廊手笔
 habit.hand_looper,looping ink,回环墨迹
 habit.hand_zigzagger,zigzag hand,折线手笔
 habit.hand_balanced,even hand,匀衡手笔
-won.stars_glyph,%s,%s
+won.stars_glyph,%s (%s/3),%s (%s/3)
 won.stamp_birth,Birth stamp · %s · portrait %s%%,诞生印记 · %s · 肖像 %s%%
 won.stamp_boss,Ledger stamp · %s · portrait %s%%,账本印记 · %s · 肖像 %s%%
 won.stamp_grade_scribble,scribble,潦草
@@ -295,8 +295,8 @@ museum.detail,"%s
 %s · bias %s%% · %s moves · %s","%s
 %s · 偏向 %s%% · %s 步 · %s"
 museum.vignette_empty,No chalk path on this fossil.,此化石无粉笔路径。
-end.folio_mark,FIELD LEDGER · COLOPHON,田野账本 · 版权页
-won.folio_mark,FIELD LEDGER · CLEAR STAMP,田野账本 · 通关印
+end.folio_mark,FIELD LEDGER · COLOPHON,现场账本 · 版权栏
+won.folio_mark,FIELD LEDGER · CLEAR STAMP,现场账本 · 清关印记
 won.habit_answer,"Habit answer · %s
 %s","习惯回应 · %s
 %s"
@@ -314,3 +314,4 @@ habit.op.mirror_walked_v,a vertical habit mirror,一枚垂直习惯镜
 habit.op.mirror_walked_h,a horizontal habit mirror,一枚水平习惯镜
 habit.op.widen_hot_corridor,a widened corridor,拓宽走廊
 habit.op.carve_shortcut,a carved shortcut,凿出的捷径
+end.museum,Museum of Selves,自我博物馆

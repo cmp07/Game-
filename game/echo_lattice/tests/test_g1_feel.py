@@ -33,7 +33,7 @@ def load_locale() -> dict[str, dict[str, str]]:
 class TestW1AEndLanguage(unittest.TestCase):
     def test_no_player_facing_slice(self) -> None:
         rows = load_locale()
-        self.assertEqual(rows["end.title"]["en"], "WING FILED")
+        self.assertEqual(rows["end.title"]["en"], "LEDGER CLOSED")
         self.assertNotIn("SLICE", rows["end.title"]["en"].upper())
         self.assertNotIn("slice", rows["end.footer"]["en"].lower())
         self.assertNotIn("VISUAL v2", rows["end.footer"]["en"])
@@ -49,7 +49,7 @@ class TestW1AEndLanguage(unittest.TestCase):
         summary = rows["end.summary"]["en"]
         self.assertNotIn("u:%s", summary)
         self.assertNotIn("d:%s", summary)
-        self.assertIn("Handwriting", summary)
+        self.assertIn("Handwriting:", summary)
 
 
 class TestW1AStarsInk(unittest.TestCase):
@@ -102,9 +102,14 @@ class TestDiegeticClearScreens(unittest.TestCase):
         end = (ROOT / "scripts" / "end_screen.gd").read_text()
         for src in (won, end):
             self.assertIn("func _draw", src)
-            self.assertIn("_hide_flat_chrome", src)
             self.assertIn("folio_mark", src.lower())
             self.assertIn("PAPER_BONE", src)
+            self.assertIn("_draw_button_underlines", src)
+        # Flat ColorRect chrome removed from clear/colophon scenes.
+        for scene in ("chamber_won.tscn", "end_screen.tscn"):
+            tscn = (ROOT / "scenes" / scene).read_text()
+            self.assertNotIn("Background", tscn)
+            self.assertNotIn("AccentBar", tscn)
 
 
 class TestHabitAnswerReadability(unittest.TestCase):

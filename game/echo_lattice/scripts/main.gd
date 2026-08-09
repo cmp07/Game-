@@ -1206,6 +1206,8 @@ func show_end_screen() -> void:
 		e.connect("restart_pressed", Callable(self, "_on_end_restart"))
 	if e.has_signal("menu_pressed"):
 		e.connect("menu_pressed", Callable(self, "_on_end_menu"))
+	if e.has_signal("museum_pressed"):
+		e.connect("museum_pressed", Callable(self, "_on_end_museum"))
 	if has_node("/root/SteamService"):
 		SteamService.set_end_presence()
 
@@ -1287,3 +1289,7 @@ func _on_end_restart() -> void:
 
 func _on_end_menu() -> void:
 	show_menu()
+
+func _on_end_museum() -> void:
+	show_museum()
+
