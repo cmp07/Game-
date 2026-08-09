@@ -138,7 +138,7 @@ func _on_chamber_won(chamber_id: int, moves: int) -> void:
 
 func _on_moves_changed(moves: int) -> void:
 	moves_label.text = tr("hud.moves") % moves
-	habit_label.text = tr("hud.habit") % _habit_summary()
+	_refresh_habit_label()
 
 
 func _on_caption_changed(text: String) -> void:
@@ -159,6 +159,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		emit_signal("menu_requested")
 
 
+func _refresh_habit_label() -> void:
+	## Habit identity stays sealed until a Mirror Birth moment writes the ledger.
+	if not GameState.is_habit_identity_visible():
+		habit_label.visible = true
+		habit_label.text = tr("hud.habit") % tr("hud.habit_sealed")
+		return
+	habit_label.visible = true
+	habit_label.text = tr("hud.habit") % _habit_summary()
+
+
 func _habit_summary() -> String:
 	var hp: Dictionary = GameState.habit_profile
 	var total: int = int(hp.get("up", 0)) + int(hp.get("down", 0)) + int(hp.get("left", 0)) + int(hp.get("right", 0))
@@ -170,4 +180,9 @@ func _habit_summary() -> String:
 		dom_label = LocaleManager.habit_label(dom)
 	var dv: int = int(hp.get(dom, 0))
 	var pct: int = int(round(float(dv) / float(total) * 100.0))
-	return tr("hud.habit_leaning_pct") % [dom_label, pct]
+	var hand_id: String = GameState.habit_hand_id()
+	var hand_key := "habit.hand_%s" % hand_id
+	var hand: String = tr(hand_key)
+	if hand == hand_key:
+		hand = hand_id
+	return tr("hud.habit_identity_pct") % [dom_label, pct, hand]

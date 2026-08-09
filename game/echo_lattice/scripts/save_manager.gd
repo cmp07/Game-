@@ -41,6 +41,8 @@ func save_to_disk() -> bool:
 		"daily_label": GameState.daily_label,
 		"daily_best_stars": GameState.daily_best_stars,
 		"run_started": GameState.run_started,
+		"habit_identity_unlocked": GameState.habit_identity_unlocked,
+		"identity_stamps": GameState.identity_stamps,
 	}
 	var payload: String = JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_TMP, FileAccess.WRITE)
@@ -196,6 +198,13 @@ func _apply_save(parsed: Dictionary) -> void:
 		GameState.daily_best_stars = dbest.duplicate()
 	else:
 		GameState.daily_best_stars = {}
+	GameState.habit_identity_unlocked = bool(parsed.get("habit_identity_unlocked", false))
+	var stamps = parsed.get("identity_stamps", {})
+	if typeof(stamps) == TYPE_DICTIONARY:
+		GameState.identity_stamps = _stringify_int_keys(stamps)
+	else:
+		GameState.identity_stamps = {}
+	_sync_habit_unlock_from_progress()
 	# Drop chamber indices the active build cannot address (demo↔full / corrupt).
 	_sanitize_queue_against_book()
 	# Legacy / partial saves: rebuild a standard queue so Continue cannot softlock.
@@ -212,6 +221,17 @@ func _apply_save(parsed: Dictionary) -> void:
 			GameState.current_chamber = int(GameState.run_queue[GameState.run_queue.size() - 1])
 	else:
 		GameState.current_chamber = clampi(GameState.current_chamber, 0, maxi(0, ChamberBook.chamber_count() - 1))
+
+
+func _sync_habit_unlock_from_progress() -> void:
+	## Legacy saves: unlock habit identity if a birth / boss clear already exists.
+	if GameState.habit_identity_unlocked:
+		return
+	for idx in GameState.completed.keys():
+		var data: Dictionary = ChamberBook.get_chamber(int(idx))
+		if IdentityStamp.is_birth_moment(data) or IdentityStamp.is_identity_chamber(data):
+			GameState.habit_identity_unlocked = true
+			return
 
 
 func _sanitize_queue_against_book() -> void:

@@ -24,8 +24,11 @@ menu.daily_placeholder,Daily,每日
 hud.moves,Moves: %s,步数：%s
 hud.habit,Habit: %s,习惯：%s
 hud.habit_unwritten,unwritten,尚未写就
+hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
 hud.habit_leaning,%s-leaning,%s倾向
 hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
+hud.habit_identity,%s-leaning · %s,%s倾向 · %s
+hud.habit_identity_pct,%s-leaning (%s%%) · %s,%s倾向（%s%%） · %s
 hud.restart,Restart (R),重开 (R)
 hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
@@ -34,6 +37,10 @@ habit.up,up,上
 habit.down,down,下
 habit.left,left,左
 habit.right,right,右
+habit.hand_right_leaner,long corridor hand,长廊手笔
+habit.hand_looper,looping ink,回环墨迹
+habit.hand_zigzagger,zigzag hand,折线手笔
+habit.hand_balanced,even hand,匀衡手笔
 won.title,Chamber Cleared,间室通过
 won.next_chamber,→ Next Chamber,→ 下一间室
 won.finish_wing,→ Finish Wing,→ 完成本翼
@@ -58,6 +65,11 @@ won.daily_line,"
 Daily %s","
 每日 %s"
 won.stars_glyph,%s (%s/3),%s (%s/3)
+won.stamp_birth,Birth stamp · %s · portrait %s%%,诞生印记 · %s · 肖像 %s%%
+won.stamp_boss,Ledger stamp · %s · portrait %s%%,账本印记 · %s · 肖像 %s%%
+won.stamp_grade_scribble,scribble,潦草
+won.stamp_grade_readable,readable,可读
+won.stamp_grade_signed,signed,署名
 end.title,END OF SLICE,切片终章
 end.tagline,The lattice remembers you.,晶格记得你。
 end.new_run,New Run,新周目
