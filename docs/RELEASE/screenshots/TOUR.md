@@ -15,7 +15,7 @@ Looking Glass mid-slam — trail folding into walls; habit still sealed until Mi
 
 ![Main menu](02_brand_main_menu.png)
 
-Open Field Ledger folio: verso brand + wide rectangular letterpress seal above a dense habit maze (no circle die / no hollow cream band); recto Field Index with compact ~38px action pitch and a single date·EL meta line. Spine kills the dead center void. No chamber BUFFER / Move chrome.
+Open Field Ledger folio: verso brand stack over a diegetic gameplay film plate (walk + rewrite slam loop; paper surround); recto Field Index with compact ~38px action pitch and a single date·EL meta line. Spine kills the dead center void. No chamber BUFFER / Move chrome. No giant static seal/maze specimen.
 
 ## 03 — Chamber start
 
