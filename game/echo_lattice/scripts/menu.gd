@@ -22,22 +22,25 @@ var _demo_progress: float = 0.0
 
 
 func _ready() -> void:
+	_localize_chrome()
+	if has_node("/root/LocaleManager"):
+		LocaleManager.locale_changed.connect(func(_l): _localize_chrome())
 	var has: bool = GameState.has_progress()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.40)
 	var stars: int = GameState.total_stars_earned()
 	if has:
-		subtitle.text = "Chamber %d of %d  ·  %d★ earned" % [
+		subtitle.text = tr("menu.subtitle_progress") % [
 			GameState.run_progress_index() + 1,
 			GameState.chambers_in_run(),
 			stars,
 		]
 	else:
-		subtitle.text = "Four Acts — %d chambers. Ink on paper." % ChamberBook.chamber_count()
+		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
 	var today: String = GameState._today_label()
 	var dseed: int = GameState._today_seed()
 	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
-	meta_label.text = "Daily %s  ·  best %d★ / 15" % [today, dbest]
+	meta_label.text = tr("menu.daily_meta") % [today, dbest]
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
@@ -57,6 +60,14 @@ func _ready() -> void:
 	_style_as_index_button(quit_button, false)
 	if has_node("/root/AudioDirector"):
 		AudioDirector.fire("ui.click")
+
+
+func _localize_chrome() -> void:
+	continue_button.text = tr("menu.continue")
+	start_button.text = tr("menu.start_new")
+	daily_button.text = tr("menu.daily")
+	quit_button.text = tr("menu.quit")
+	queue_redraw()
 
 
 func _style_as_index_button(btn: Button, primary: bool) -> void:
@@ -118,7 +129,7 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		page.position + Vector2(280, 28),
-		"SEED  A7F3 · 19C2 · B004 · EE51",
+		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
 	)
 
@@ -131,7 +142,7 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(brand_x, brand_y),
-		"ECHO LATTICE",
+		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 64, Palette.INK_BLACK
 	)
 	# Rust rule under the title — the brand underline.
@@ -140,13 +151,13 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(brand_x, brand_y + 42),
-		"IT LEARNED YOU",
+		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Palette.SLATE_TEAL
 	)
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(brand_x, brand_y + 68),
-		"A labyrinth that rebuilds from your last thirty moves.",
+		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Palette.INK_SOFT
 	)
 
@@ -160,7 +171,7 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		card.position + Vector2(20, 28),
-		"FIELD INDEX",
+		tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
 	)
 
@@ -174,7 +185,7 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(page.position.x + 16, page.end.y - 14),
-		"Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc",
+		tr("menu.controls_hint"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
 	)
 
@@ -239,7 +250,7 @@ func _draw_button_underlines(_card: Rect2) -> void:
 func _draw_punchcard_ribbon(page: Rect2) -> void:
 	var y: float = page.end.y - 48
 	var x: float = page.position.x + 16
-	draw_string(ThemeDB.fallback_font, Vector2(x, y - 4), "BUFFER", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
+	draw_string(ThemeDB.fallback_font, Vector2(x, y - 4), tr("menu.buffer"), HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Palette.SLATE_TEAL)
 	x += 64
 	var cells: Array = [
 		ArtKit.tex("res://art/ui/punchcard_cell_empty.png"),

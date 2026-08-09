@@ -17,7 +17,10 @@ Authoritative design doc: [`docs/ECHO_LATTICE/04_CONTENT_BIBLE.md`](../../../doc
 ```bash
 python3 game/echo_lattice/tests/validate_chambers.py
 python3 game/echo_lattice/tests/author_chambers_v2.py   # regenerate from roster
+python3 game/echo_lattice/tests/validate_locale.py      # EN + zh_Hans catalog parity
 ```
+
+Chamber `title` / `caption` stay English in JSON; localized display strings live in [`locale/echo_lattice.csv`](../locale/echo_lattice.csv) (`chamber.<id>.title` / `.caption`). See [`docs/RELEASE/LOCALIZATION.md`](../../../docs/RELEASE/LOCALIZATION.md).
 
 ## Acts
 
