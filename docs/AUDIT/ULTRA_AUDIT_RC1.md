@@ -186,7 +186,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - [ ] Content Survey draft pasted into Partner; privacy URL live
 - [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **CI workflow landed; confirm green run**
 - [x] Merge **audit P0 save/Continue/demo** fixes into RC1 (**done 2026-08-09**)
-- [ ] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md`); no horror/AI/loot lead
+- [x] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md` + [`STORE_COPY_FREEZE.md`](../RELEASE/STORE_COPY_FREEZE.md)); habits / Daily / Endless; no horror/AI/loot lead
 
 **Coming Soon readiness estimate after Gate A only:** ~70 partner-page / ~60 overall.
 

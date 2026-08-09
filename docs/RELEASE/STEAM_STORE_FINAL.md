@@ -3,19 +3,23 @@
 **Product:** Echo Lattice  
 **Engine:** Godot 4.3 desktop (Windows primary; Linux / macOS per platforms plan)  
 **Doc:** `docs/RELEASE/STEAM_STORE_FINAL.md`  
-**Status:** Paste-ready store copy + asset slate for Coming Soon → Next Fest → launch  
+**Status:** **Store copy FROZEN** (Gate A) — short/long, tags, categories, sysreqs, pricing recommendation locked; see [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md)  
+**Freeze date:** 2026-08-09  
 **AppID:** `YOUR_APP_ID` *(do not invent)*  
 
 **Siblings (do not conflict — stay in this ship lane):**
 
 | Doc | PR / role |
 |---|---|
+| [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A change-control ledger for frozen Partner fields |
 | [`PLATFORMS.md`](PLATFORMS.md) | #63 — store priority, build matrix, regional pricing notes |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | #64 — Content Survey, ratings, privacy, AI survey **No** |
 | [`capsules/`](capsules/) | Capsule briefs + size-correct placeholders |
 | [`../ECHO_LATTICE/screenshots/v2_complete/`](../ECHO_LATTICE/screenshots/v2_complete/) | Live in-game screenshot source |
 
 This file is the **store page package**. Compliance answers live in #64; depot/CI live in #63. Marketing thesis: sell recognition — *the maze is a transcript of how I walked* — not mystery, not AI, not loot.
+
+**Change control:** Do not edit §§2–6 (short/long, tags, categories, pricing, sysreqs) without a dual-doc PR updating this file and [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md). Placeholders (`YOUR_*`) and non-prose assets may update without unfreeze.
 
 ---
 
@@ -31,33 +35,33 @@ This file is the **store page package**. Compliance answers live in #64; depot/C
 
 ---
 
-## 2. Short description (≤ 300 characters)
+## 2. Short description (≤ 300 characters) — FROZEN
 
-Steam search / header blurb. Paste verbatim.
+Steam search / header blurb. Paste verbatim. **Primary is the freeze;** alternates are archive-only (do not paste without unfreeze).
 
-**Primary (ship this):**
+**Primary (FROZEN — ship this):**
 
 > A labyrinth that studies your last thirty moves and rebuilds itself in that shape. To escape, change how you walk. No dice, no combat, no story — only your own footprints, learning back.
 
-Character count: **219**.
+Character count: **186**.
 
-**Alternate A (trailer / A-B):**
+**Alternate A (archive / A-B research only):**
 
 > Walk thirty tiles. At the thirty-first, the walls slam into the shape of your path. Escape by rewriting your own habits. A deterministic puzzle labyrinth with a memory.
 
-**Alternate B (genre-explicit):**
+**Alternate B (archive / genre-explicit):**
 
 > A top-down puzzle where the maze is a transcript of how you walked. Every checkpoint reads your last thirty moves and rebuilds the walls. The only way out is to walk differently.
 
-**Do not** lead with “In Echo Lattice, you will…” or “Explore a mysterious…”.
+**Do not** lead with “In Echo Lattice, you will…”, “Explore a mysterious…”, AI, loot, or horror.
 
 ---
 
-## 3. Long description (About This Game)
+## 3. Long description (About This Game) — FROZEN
 
-BBCode-ready. Line breaks intentional. Chamber count matches v2 complete (**35** campaign chambers + hard variants; four acts). Workshop / full editor remain post-launch — do not over-promise in the live page until shipped.
+BBCode-ready. Line breaks intentional. Chamber count matches v2 complete (**35** campaign chambers + hard variants; four acts). Modes match RC1 ship truth: **Campaign**, **Daily Challenge**, **Endless**. Workshop / full editor remain post-launch — do not over-promise in the live page until shipped.
 
-### 3.1 Master copy
+### 3.1 Master copy (FROZEN)
 
 ```
 [b]A labyrinth that learns your handwriting.[/b]
@@ -79,18 +83,19 @@ Echo Lattice is deterministic. Same seed, same thirty moves, same maze. Two play
 [*] Thirty-five handmade campaign chambers across four acts (Induction → Reflection → Pressure → Mastery), plus hard variants.
 [*] Origami rewrite slam — the spectacle beat when the lattice agrees with your footprints.
 [*] Stars (1–3★) against par; bests remembered.
-[*] Daily Challenge — a shared UTC seed, five chambers, everyone on the same day.
+[*] Daily Challenge — a shared UTC seed, five chambers, everyone on the same day (offline calendar).
+[*] Endless — a seeded climb through the chamber catalog; depth raises rewrite pressure; chase your best depth.
 [*] Field Ledger look: paper, ink, rust fossils. Clean, diagrammatic, readable.
-[*] Keyboard-first; controller path as it lands. English UI for v1.
+[*] Keyboard and controller supported. English + Simplified Chinese UI.
 [/list]
 
 [b]What Echo Lattice is not[/b]
 
-Not a roguelike loot crawl. Not a dungeon RPG. Not a chatbot dungeon. There is no combat, no inventory, and no procedurally generated story. The maze adapts; the writing does not.
+Not a roguelike loot crawl. Not a dungeon RPG. Not a chatbot dungeon. There is no combat, no inventory, and no generative AI creating levels, art, or story. Habit rules rewrite geometry; the writing does not invent itself.
 
 [b]Sessions[/b]
 
-A wing takes a short evening sitting. The campaign is a focused puzzle run; Daily Challenge and star-chasing extend it without a grind treadmill.
+A wing takes a short evening sitting. Campaign is a focused puzzle run; Daily Challenge, Endless depth climbs, and star-chasing extend it without a grind treadmill.
 
 [b]The line the game keeps saying to you:[/b]
 
@@ -101,50 +106,51 @@ A wing takes a short evening sitting. The campaign is a focused puzzle run; Dail
 
 - Walk thirty tiles. The thirty-first is your own path, weaponized.
 - Deterministic rebuilds from your last thirty moves. Same seed, different walkers, different maze.
-- 35 handmade chambers across four acts; Daily Challenge on a shared seed.
+- 35 handmade chambers across four acts; Daily Challenge on a shared UTC seed; Endless depth climb.
 - Origami rewrite slam + chalk habit trail — see the habit before it eats you.
 - No dice, no combat, no generative AI worldbuilding.
 
 ---
 
-## 4. Tags & categories
+## 4. Tags & categories — FROZEN
 
-### 4.1 Primary tags (≤5 most important, locked order)
+### 4.1 Primary tags (≤5 most important, FROZEN order)
 
 1. **Puzzle**  
-2. **Procedural Generation** *(authored grammar + habit hash — still the discovery claim)*  
+2. **Procedural Generation** *(habit-buffer geometry + authored grammar — discovery claim; not generative AI)*  
 3. **Minimalist**  
 4. **Singleplayer**  
 5. **Replay Value**
 
-### 4.2 Supporting tags (fill remaining slots)
+### 4.2 Supporting tags (FROZEN fill order)
 
-- Indie  
-- 2D  
-- Atmospheric  
-- Abstract  
-- Logic  
-- Difficult *(light — prefer only if reviews support)*  
-- Controllers *(enable when glyphs ship)*  
-- Roguelike *(optional, light framing only — chambers + rewrites, not loot)*  
+1. Indie  
+2. 2D  
+3. Atmospheric  
+4. Abstract  
+5. Logic  
+6. Controllers  
 
-### 4.3 Steamworks feature / category checkboxes
+**Do not** add Roguelike, Horror, or AI-adjacent tags. Do not lead discovery with Difficult until post-launch reviews support it.
+
+### 4.3 Steamworks feature / category checkboxes (FROZEN)
 
 | Feature | Ship answer |
 |---|---|
 | Single-player | **Yes** |
 | Multi-player / co-op / MMO | **No** |
-| Steam Achievements | Yes at launch candidate *(wire later)* |
+| Steam Achievements | **Yes** at launch candidate |
 | Steam Cloud | Optional *(local saves default — see compliance)* |
 | Steam Workshop | **No** for v1 |
 | Steam Leaderboards | **No** for v1 |
-| Steam Trading Cards | Optional later |
+| Steam Trading Cards | Optional later *(not a Coming Soon checkbox)* |
 | In-App Purchases | **No** |
 | HDR / Ray tracing / VR | **No** |
 | Remote Play Together | **No** |
-| Steam Deck | Target Playable → Verified *(desktop Linux path — see PLATFORMS)* |
+| Full controller support | **Yes** |
+| Steam Deck | Target Playable → Verified *(desktop Linux path — see PLATFORMS / STEAM_DECK)* |
 
-### 4.4 Store genre / category labels
+### 4.4 Store genre / category labels (FROZEN)
 
 - **Primary genre:** Puzzle  
 - **Secondary:** Indie  
@@ -152,24 +158,24 @@ A wing takes a short evening sitting. The campaign is a focused puzzle run; Dail
 
 ---
 
-## 5. Pricing
+## 5. Pricing — FROZEN recommendation
 
 **USD list band for this SKU:** **$4.99 – $9.99**.
 
-| Anchor | When to pick |
+| Anchor | Role under freeze |
 |---|---|
-| **$4.99** | Thin content perception risk / aggressive wishlist conversion; vignette framing |
-| **$6.99** *(recommended default)* | 35-chamber campaign + daily + polish matches peer puzzle shelves |
-| **$7.99 – $8.99** | Strong demo conversion + Next Fest heat + review score confidence |
-| **$9.99** | Only if launch trailer + deck Verified + clear content depth beat comps |
+| **$4.99** | Band floor only — not the Coming Soon default |
+| **$6.99** | **FROZEN recommended list price** — 35-chamber campaign + Daily + Endless + polish |
+| **$7.99 – $8.99** | Post–Next Fest uplift candidates (requires change-control unfreeze) |
+| **$9.99** | Band ceiling — only after trailer + Deck Verified + content-depth proof (unfreeze) |
 
-**Do not** price above $9.99 for v1. Regional / CNY guidance lives in [`PLATFORMS.md`](PLATFORMS.md) (§ Pricing). Launch discount ≤10–20% week one; avoid training 50% waits.
+**Do not** price above $9.99 for v1. Regional / CNY guidance lives in [`PLATFORMS.md`](PLATFORMS.md) (§ Pricing) and must preserve this USD anchor. Launch discount ≤10–20% week one; avoid training 50% waits.
 
-**Recommended ship price:** **$6.99 USD** list, revisit after Next Fest demo metrics.
+**Frozen ship price recommendation:** **$6.99 USD** list. Revisit only via [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) change control after Next Fest demo metrics.
 
 ---
 
-## 6. System requirements (Steam fields)
+## 6. System requirements (Steam fields) — FROZEN
 
 Godot 4.3 2D puzzle — light GPU load. Numbers are honest floors, not marketing flex.
 
@@ -205,7 +211,7 @@ Godot 4.3 2D puzzle — light GPU load. Numbers are honest floors, not marketing
 | Graphics | Metal-capable | Metal-capable |
 | Storage | 500 MB | 1 GB |
 
-**Controller:** keyboard/mouse required for v1 copy until gamepad glyphs land; then add Full controller support.
+**Controller:** keyboard/mouse and full controller support (gamepad glyphs via `InputGlyphs`; Deck path — see [`STEAM_DECK.md`](STEAM_DECK.md)).
 
 ---
 
@@ -261,7 +267,7 @@ Two cuts. Visual language = Field Ledger (paper/ink/rust), not purple glow. Firs
 | 0:03–0:06 | Punch-card / habit buffer filling; seed header visible | `Same seed. Different you.` | Buffer ticks |
 | 0:06–0:12 | Checkpoint → **origami rewrite slam** (hero spectacle) | *(none — let it land)* | Slam + cadmium heartbeat |
 | 0:12–0:18 | Rust colonization on over-walked tiles; second run | `The maze wears you.` | Rust crunch / PA hush |
-| 0:18–0:25 | Quick cuts: trail → mid-act chamber → stars clear | `Thirty-five chambers.` / `Daily seed.` | Sparse stingers |
+| 0:18–0:25 | Quick cuts: trail → mid-act chamber → stars clear | `Thirty-five chambers.` / `Daily + Endless.` | Sparse stingers |
 | 0:25–0:30 | Title card on paper: **ECHO LATTICE** · `IT LEARNED YOU` · Wishlist | Wishlist / Coming Soon | Logo hit, silence tail |
 
 ### 9.2 Next Fest / broadcast cut (~45–60 s)
@@ -331,14 +337,15 @@ Partner doc: [Steam Next Fest: October 2026](https://partner.steamgames.com/doc/
 
 ### 11.2 Coming Soon checklist (page publish)
 
-- [ ] Short description (primary) pasted  
-- [ ] Long description pasted  
-- [ ] Tags + categories set  
+- [x] Short / long / tags / categories / sysreqs / **$6.99** recommendation **frozen in-repo** — [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md)  
+- [ ] Short description (primary) pasted into Partner  
+- [ ] Long description pasted into Partner  
+- [ ] Tags + categories set in Partner  
 - [ ] Capsules uploaded (final or clearly temporary)  
 - [ ] Screenshot slate uploaded (v2_complete slate)  
 - [ ] Trailer uploaded (announce cut)  
-- [ ] Sysreqs filled  
-- [ ] Price in band $4.99–$9.99 (recommend $6.99)  
+- [ ] Sysreqs filled in Partner  
+- [ ] Price set to frozen **$6.99 USD** (band $4.99–$9.99)  
 - [ ] AI / Content Survey aligned with compliance pack (**No** gameplay AI)  
 - [ ] Release date: Coming Soon *(or quarter when confident)*  
 - [ ] Demo AppID linked when ready  
@@ -353,6 +360,7 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 
 | Path | Role |
 |---|---|
+| [`STORE_COPY_FREEZE.md`](STORE_COPY_FREEZE.md) | Gate A freeze ledger + change control |
 | [`capsules/`](capsules/) | Capsule briefs + placeholders |
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-store + Deck + regional pricing (#63) |
 | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Survey / ratings / privacy (#64) |
@@ -362,4 +370,4 @@ Demo = core loop in ≤3 minutes: silent teaching chambers → first rewrite sla
 
 ---
 
-*Last updated: 2026-08 — AppID still placeholder. Store package only; no depot binaries in this PR.*
+*Last updated: 2026-08-09 — Store copy frozen for Gate A (habits / Daily / Endless / no AI). AppID still placeholder. Store package only; no depot binaries in this PR.*
