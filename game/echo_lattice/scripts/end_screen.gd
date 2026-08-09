@@ -14,10 +14,20 @@ signal menu_pressed()
 func _ready() -> void:
 	restart_button.pressed.connect(func(): emit_signal("restart_pressed"))
 	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
+	restart_button.focus_mode = Control.FOCUS_ALL
+	menu_button.focus_mode = Control.FOCUS_ALL
 	menu_button.grab_focus()
 	stats_label.text = _summary()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_wing_clear()
+	set_process_unhandled_input(true)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	## B / Start → menu. A activates the focused Button via Godot ui_accept.
+	if event.is_action_pressed("pause_menu"):
+		emit_signal("menu_pressed")
+		get_viewport().set_input_as_handled()
 
 
 func _summary() -> String:

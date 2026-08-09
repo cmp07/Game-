@@ -19,7 +19,18 @@ func _ready() -> void:
 	next_button.pressed.connect(func(): emit_signal("next_pressed"))
 	replay_button.pressed.connect(func(): emit_signal("replay_pressed"))
 	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
+	next_button.focus_mode = Control.FOCUS_ALL
+	replay_button.focus_mode = Control.FOCUS_ALL
+	menu_button.focus_mode = Control.FOCUS_ALL
 	next_button.grab_focus()
+	set_process_unhandled_input(true)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	## B / Start returns to menu without needing the on-screen keyboard.
+	if event.is_action_pressed("pause_menu"):
+		emit_signal("menu_pressed")
+		get_viewport().set_input_as_handled()
 
 
 func configure(chamber_id: int, moves: int) -> void:

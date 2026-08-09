@@ -73,15 +73,17 @@ Same idea, mirrored across the horizontal axis. The path along the top of the ma
 
 ### Controls
 
-| Action | Keys |
-|---|---|
-| Move | `WASD` or arrow keys |
-| Undo last move | `Z` |
-| Restart chamber | `R` |
-| Menu | `Esc` |
-| Confirm (menus) | `Enter` or `Space` |
+| Action | Keys | Gamepad (Deck / Xbox) |
+|---|---|---|
+| Move | `WASD` or arrow keys | D-Pad or Left Stick |
+| Undo last move | `Z` | **X** |
+| Restart chamber | `R` | **Y** |
+| Menu / Back | `Esc` | **B** or **Start** |
+| Confirm (menus) | `Enter` or `Space` | **A** |
 
-Movement is grid-locked and step-based; every keypress is one tile. The undo stack rewinds one move at a time, including reverting an echo-wall rewrite if you undo across a checkpoint.
+Movement is grid-locked and step-based; every press is one tile. The undo stack rewinds one move at a time, including reverting an echo-wall rewrite if you undo across a checkpoint.
+
+Steam Deck Verified prep (glyphs, 16:10 layout check, TDP targets, native Linux notes): [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md).
 
 ---
 
@@ -226,7 +228,7 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 | Ghost path replay | Ghost of your previous solve visible in-scene | Ghost trail exists **only since the last checkpoint** — no cross-run ghost yet |
 | Undo | Present in MVP | ✅ Undo works (stack, reverts across rewrites) |
 | Audio | Footstep material pitch-shift + rewrite sting (identity beat) | **No audio yet** — silent build |
-| Accessibility | Colorblind lattice palette, hold-to-walk, controller glyphs | Grid tile parity + one accent color (already colorblind-safe); **no controller glyphs**, **no hold-to-walk repeat** |
+| Accessibility | Colorblind lattice palette, hold-to-walk, controller glyphs | Grid tile parity + one accent color (already colorblind-safe); **controller glyphs + full gamepad path shipped** (Deck prep); **no hold-to-walk repeat** |
 | Habit profile UI | Full readout (dash-heavy / loopy / hesitant), biases transform packs | **HUD readout only** (`Habit: right-leaning 64%`) — profile does **not** yet bias content |
 | Save format | Cloud sync + daily seed history | Local JSON save; **daily seed catalog shipped** (`content/daily/seeds.json`) — menu wiring still pending |
 | Steam integration | Achievements, Cloud, Workshop, leaderboards for ghost races | **None** — slice is store-agnostic |
@@ -247,7 +249,7 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 
 **Add audio identity:** wire an `AudioStreamPlayer` per material (floor / wall / checkpoint) in `chamber.tscn` and call it from `_try_move`. The design bible's identity beat is footstep pitch-shifting when a rewrite is about to punish a habit — for that, watch the move ring in `GameState` and pitch by the dominant-direction ratio.
 
-**Add a controller preset:** the `move_up|down|left|right`, `undo`, `restart`, `pause_menu`, `confirm` actions in `project.godot` currently only bind keys. Add `InputEventJoypadButton` entries under each action.
+**Controller / Deck:** joypad bindings, `InputGlyphs`, and `DeckProfile` are in place — see [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md). Run `python3 game/echo_lattice/tests/check_deck_bindings.py` and (with Godot) `godot --path game/echo_lattice -- --deck-layout-check`.
 
 ---
 
