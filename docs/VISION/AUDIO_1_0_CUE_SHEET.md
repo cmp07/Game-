@@ -117,7 +117,9 @@ Copy stays on-screen. Audio = institution only.
 
 | Cue ID | Event | Trigger | Duration | Musical brief | Bus | Pri |
 |---|---|---|---|---|---|---|
-| **G1** | `ui.click` | Confirm / navigate (not boot) | 30–60 ms | Soft ledger tick; never vs rewrite/PA | UI | P1 |
+| **G1** | `ui.click` | Confirm IndexAction (not boot) | 45–90 ms | Soft ledger stamp stinger; silence tail; never vs rewrite/PA | UI | P1 |
+| **G1b** | `ui.select` | Focus move / selection | 25–45 ms | Paper/ink tick; gaps between nav (AUDIO_V3 silence tool) | UI | P1 |
+| **G1c** | `ui.hover` | Mouse hover (unfocused) | 15–30 ms | Extremely soft fiber brush; omit if noisy | UI | P2 |
 | **G2** | pause duck | Pause menu | — | Music −8 dB; SFX/PA unchanged | Music | P1 |
 | **G3** | title bed | Main menu | Loop or silence | L0 whisper **or** authored silence — no trailer swell | Music | P1 |
 

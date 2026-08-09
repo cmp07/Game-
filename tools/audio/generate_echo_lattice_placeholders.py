@@ -245,11 +245,34 @@ def footstep_blocked() -> list[float]:
     )
 
 
-def ui_click() -> list[float]:
-    return mix(
-        tone(880, 0.028, 0.10, 0.001, 0.022),
-        band_noise(0.02, 0.06, seed=77, low_pass=0.5),
+def ui_select() -> list[float]:
+    """Selection tick — ink stroke / stick-on-wood (AUDIO_V3 §2.1 / UI_DIEGETIC §5.7)."""
+    # Short pencil tip + dry fiber; authored silence tail so rapid nav breathes.
+    tick = mix(
+        tone(2050, 0.011, 0.065, 0.0004, 0.007),
+        band_noise(0.016, 0.045, seed=41, low_pass=0.62),
+        tone(170, 0.02, 0.035, 0.001, 0.016),
     )
+    return concat(tick, silence(0.045))
+
+
+def ui_hover() -> list[float]:
+    """Extremely soft hover whisper — fiber brush only; omit if noisy in mix."""
+    return concat(
+        band_noise(0.014, 0.022, seed=53, low_pass=0.72),
+        silence(0.055),
+    )
+
+
+def ui_click() -> list[float]:
+    """Confirm stinger — soft ledger stamp (paper crease + ink), not arcade chirp."""
+    crease = paper_crease(seed=77, amp=0.11)
+    ink = tone(640, 0.032, 0.10, 0.001, 0.026)
+    plate = tone(105, 0.048, 0.07, 0.001, 0.038)
+    body = mix(crease, ink, plate)
+    confirm = tone(960, 0.018, 0.045, 0.001, 0.014)
+    phrase = overlay(body, confirm, start=int(SAMPLE_RATE * 0.018))
+    return concat(phrase, silence(0.06))
 
 
 # ---------------------------------------------------------------------------
@@ -728,9 +751,11 @@ def emit(rel: str, samples: list[float]) -> None:
 def main() -> int:
     print(f"Echo Lattice placeholder generator v{GENERATOR_VERSION} (AUDIO v3 lift)")
 
-    # Locomotion / UI
+    # Locomotion / UI (Field Index feel — select / hover / confirm)
     emit("sfx/footstep_placeholder.wav", footstep())
     emit("sfx/footstep_blocked_placeholder.wav", footstep_blocked())
+    emit("ui/ui_select_placeholder.wav", ui_select())
+    emit("ui/ui_hover_placeholder.wav", ui_hover())
     emit("ui/ui_click_placeholder.wav", ui_click())
 
     # Generic rewrite (compat) + warn — full multi-stage phrase

@@ -239,6 +239,12 @@ Brutalist transit authority. No speech. Events: `pa.attention`, `pa.board_tick`,
 
 Soft ledger ticks. Never compete with rewrite/PA. No menu boot chirp as branding.
 
+| Cue | Job | Silence job |
+|---|---|---|
+| `ui.select` | Paper/ink selection tick on focus move | ≥~90 ms rest between ticks |
+| `ui.hover` | Extremely soft fiber on mouse hover (unfocused) | Skip after select; longer gap |
+| `ui.click` | Confirm stinger — soft ledger stamp on activate | Authored silence tail; loudest UI one-shot |
+
 ### 6.5 Buses & mix targets
 
 Unchanged from v2 bible §2 / §10. Master ≈ −14 LUFS gameplay. Operator/slam phrase = loudest one-shots. Early silence = digital black on Music.

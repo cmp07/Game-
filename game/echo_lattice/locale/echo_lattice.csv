@@ -18,15 +18,16 @@ menu.wishlist,Wishlist on Steam,Steam 愿望单
 menu.quit,Close ledger,合上账本
 menu.colophon,Colophon,版权页
 menu.folio_mark,FIELD LEDGER · WING I,现场账本 · 第一翼
-menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间室。纸上墨迹。
-menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
-menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
+menu.seal_caption,SURVEY SEAL · LATTICE FRAGMENT,勘测印记 · 晶格残片
+menu.subtitle_fresh,Wing I — %s chambers on file.,第一翼 — 已归档 %s 间室。
+menu.subtitle_progress,Filed %s / %s  ·  %s★,已归档 %s / %s  ·  %s★
+menu.subtitle_wing_complete,Wing filed  ·  %s★ — open a new survey,本翼已归档  ·  %s★ — 开启新勘测
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
-menu.daily_endless_meta,Daily %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
+menu.daily_endless_meta,Daily %s  ·  best %s★  ·  Endless %s,每日 %s  ·  最佳 %s★  ·  无尽 %s
 menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15
-menu.demo_daily_meta_code,Next Fest demo  ·  Daily %s  ·  %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  %s  ·  最佳 %s★
+menu.demo_daily_meta_code,Demo sheet  ·  Daily %s  ·  %s  ·  best %s★,试玩页  ·  每日 %s  ·  %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引
-menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
+menu.subtitle_placeholder,Wing I on file.,第一翼已归档。
 menu.daily_placeholder,Daily,每日
 hud.moves,Moves: %s,步数：%s
 hud.habit,Habit: %s,习惯：%s
@@ -170,7 +171,7 @@ subtitle.pa.boot.lattice_online,Lattice online.,晶格在线。
 subtitle.pa.wing.clear,Wing clear.,本翼清除。
 subtitle.tutorial_buffer,Your last moves leave fossils behind you.,你最近的步伐会留下化石。
 hud.undo_hint,%s · UNDO,%s · 撤销
-menu.subtitle_demo,Demo — Act I · Mirror Birth. Ink on paper.,试玩 — 第一幕 · 镜生。纸上墨迹。
+menu.subtitle_demo,Demo — Act I · Mirror Birth.,试玩 — 第一幕 · 镜生。
 menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Pause  %s,移动  %s…     重开  %s     撤销  %s     暂停  %s
 hud.restart_fmt,Restart (%s),重开 (%s)
 hud.menu_fmt,Pause (%s),暂停 (%s)
@@ -265,7 +266,7 @@ chamber.37_cement_trail_hard.title,Cement Trail+,水泥足迹+
 chamber.37_cement_trail_hard.caption,Hard. Thicken with fewer detours.,困难。更少绕路的增厚。
 chamber.38_nameplate_hard.title,Nameplate+,铭牌+
 chamber.38_nameplate_hard.caption,Hard. Sign the lattice with less floor.,困难。用更少地板签署晶格。
-menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
+menu.daily_endless_meta_code,Daily %s  ·  %s  ·  best %s★  ·  Endless %s,每日 %s  ·  %s  ·  最佳 %s★  ·  无尽 %s
 end.summary,"%s
 Filed %s of %s chambers.
 Stars stamped: %s
@@ -275,7 +276,7 @@ Handwriting: %s","%s
 星印：%s
 最佳路线墨迹：%s 步
 笔迹：%s"
-menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+menu.demo_daily_meta,Demo sheet  ·  Daily %s  ·  best %s★,试玩页  ·  每日 %s  ·  最佳 %s★
 hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
 hud.habit_identity,%s-leaning · %s,%s倾向 · %s
 hud.habit_identity_pct,%s-leaning (%s%%) · %s,%s倾向（%s%%） · %s

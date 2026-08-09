@@ -43,6 +43,15 @@ class TestFontsMaterials(unittest.TestCase):
         locale_i = proj.index("LocaleManager=")
         self.assertLess(type_i, locale_i, "LedgerType must boot before LocaleManager")
 
+    def test_ledgertype_pins_font_oversampling(self) -> None:
+        """oversampling=0 (import default) can yield ~3× get_height and break Deck Field Index."""
+        src = (ROOT / "scripts" / "ledger_type.gd").read_text(encoding="utf-8")
+        self.assertIn("oversampling = 1.0", src)
+        self.assertIn('ResourceLoader.load(path, "FontFile")', src)
+        menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+        self.assertIn("title_type_scale(560.0 if compact else 1080.0)", menu)
+        self.assertNotIn("load_dynamic_font", menu)
+
     def test_menu_brand_uses_ledgertype_not_bare_themedb(self) -> None:
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("LedgerType", menu)
@@ -64,8 +73,28 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_desk_margin",
             "draw_ledger_page",
             "draw_index_card",
+            "draw_seal_stamp",
         ):
             self.assertIn(f"func {name}", art)
+        # Desk surface sells cooler blotter edges; seal is uneven rubber ink.
+        self.assertIn("blotter", art.lower())
+        self.assertIn("Uneven ring", art)
+        self.assertIn("binder_holes", art)
+
+    def test_ledger_chrome_title_type_scale(self) -> None:
+        chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
+        self.assertIn("func title_type_scale", chrome)
+        self.assertIn("const TYPE_BRAND := 72", chrome)
+        self.assertIn("TYPE_TAGLINE", chrome)
+        menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+        self.assertIn("ArtKit.draw_desk_margin", menu)
+        self.assertIn("ArtKit.draw_ledger_page", menu)
+        self.assertIn("ArtKit.draw_index_card", menu)
+        self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn("LedgerChrome.title_type_scale", menu)
+        # Field Index enclosure must stay on shared card geometry helpers.
+        self.assertIn("field_index_card_rect(vp, y_off)", menu)
+        self.assertIn("func verify_field_index_layout", menu)
 
 
 if __name__ == "__main__":

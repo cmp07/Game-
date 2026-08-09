@@ -21,21 +21,21 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 6
 
-[node name="Subtitle" type="Label" parent="CardColumn"]
-unique_name_in_owner = true
-size_flags_horizontal = 3
-text = "Four Acts. Ink on paper."
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
-
 [node name="MetaLabel" type="Label" parent="CardColumn"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
 text = "Daily"
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 0.85)
+
+[node name="Subtitle" type="Label" parent="CardColumn"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "Wing I on file."
+autowrap_mode = 3
 theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.29, 0.42, 0.467, 1)
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 0.78)
 
 [node name="ContinueButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true

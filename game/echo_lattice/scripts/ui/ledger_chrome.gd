@@ -3,10 +3,57 @@ class_name LedgerChrome
 ##
 ## Shared Field Ledger shell chrome — index actions, paper plates, folio marks.
 ## Nodes may remain Godot Controls under the hood; look must never read as stock UI.
+## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
+## ART_DIRECTION_V3 §3.2 — title-page type scale (px @ ~1080p reference).
+## Brand is the hero signal; meta/seed never compete with brand size.
+const TYPE_BRAND := 72
+const TYPE_TAGLINE := 20
+const TYPE_BLURB := 15
+const TYPE_INDEX_PRIMARY := 18
+const TYPE_INDEX := 16
+const TYPE_META := 12
+const TYPE_FOLIO := 11
+const TYPE_SEED := 12
+const TYPE_CARD_HEADER := 12
+const BRAND_RULE_W := 3.0
+const BRAND_RULE_LEN := 440.0
 
-static func style_index_button(btn: Button, primary: bool = false) -> void:
+
+static func title_type_scale(page_h: float = 720.0) -> Dictionary:
+	## Compact (Deck / short page) vs full title-card scale.
+	var compact: bool = page_h < 700.0
+	if compact:
+		return {
+			"brand": 48,
+			"tagline": 16,
+			"blurb": 13,
+			"index_primary": 15,
+			"index": 14,
+			"meta": 10,
+			"folio": 10,
+			"seed": 10,
+			"card_header": 10,
+			"rule_w": 2.0,
+			"rule_len": 300.0,
+		}
+	return {
+		"brand": TYPE_BRAND,
+		"tagline": TYPE_TAGLINE,
+		"blurb": TYPE_BLURB,
+		"index_primary": TYPE_INDEX_PRIMARY,
+		"index": TYPE_INDEX,
+		"meta": TYPE_META,
+		"folio": TYPE_FOLIO,
+		"seed": TYPE_SEED,
+		"card_header": TYPE_CARD_HEADER,
+		"rule_w": BRAND_RULE_W,
+		"rule_len": BRAND_RULE_LEN,
+	}
+
+
+static func style_index_button(btn: Button, primary: bool = false, font_size: int = -1) -> void:
 	if btn == null:
 		return
 	var empty := StyleBoxEmpty.new()
@@ -21,11 +68,26 @@ static func style_index_button(btn: Button, primary: bool = false) -> void:
 	btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
 	btn.add_theme_color_override(
 		"font_disabled_color",
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35)
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.32)
 	)
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
+	var px: int = font_size
+	if px < 0:
+		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
+	var lt = _ledger_type()
+	if lt != null and lt.has_method("apply_to_control"):
+		lt.apply_to_control(btn, "display", px)
+	else:
+		btn.add_theme_font_size_override("font_size", px)
+
+
+static func _ledger_type() -> Node:
+	var loop := Engine.get_main_loop()
+	if loop == null or not (loop is SceneTree):
+		return null
+	return (loop as SceneTree).root.get_node_or_null("/root/LedgerType")
 
 
 static func paper_plate_style(deep: bool = false) -> StyleBoxFlat:
@@ -54,6 +116,9 @@ static func style_ink_label(lbl: Label, color: Color = Palette.INK_BLACK, size: 
 		return
 	lbl.add_theme_color_override("font_color", color)
 	lbl.add_theme_font_size_override("font_size", size)
+	var lt = _ledger_type()
+	if lt != null and lt.has_method("apply_to_control"):
+		lt.apply_to_control(lbl, "mono" if size <= 12 else "body", size)
 
 
 static func style_folio_slider(slider: HSlider) -> void:
@@ -103,7 +168,16 @@ static func style_folio_check(check: BaseButton) -> void:
 	check.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
 
 
-static func draw_index_underlines(host: CanvasItem, buttons: Array, global_origin: Vector2) -> void:
+static func draw_index_underlines(
+	host: CanvasItem,
+	buttons: Array,
+	global_origin: Vector2,
+	focus_progress: float = 1.0
+) -> void:
+	## Selection = rust ink underline (draw-in). Hover = slate. Idle = soft hairline.
+	## Cadmium reserved — never used here.
+	var prog: float = clampf(focus_progress, 0.0, 1.0)
+	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
 		if btn == null or not (btn is Control):
 			continue
@@ -115,21 +189,39 @@ static func draw_index_underlines(host: CanvasItem, buttons: Array, global_origi
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		if focused:
+		var max_w: float = minf(r.size.x - 4.0, 220.0)
+		if focused and not disabled:
+			var w: float = max_w * eased
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, w, 2.0),
 				Palette.RUST_FOSSIL,
 				true
 			)
+			if eased > 0.55:
+				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
+				var tick_c := Color(
+					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
+				)
+				host.draw_circle(
+					Vector2(local_pos.x - 10.0, local_pos.y + r.size.y * 0.55),
+					2.2,
+					tick_c
+				)
 		elif hovered and not disabled:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, max_w, 2.0),
 				Palette.SLATE_TEAL,
 				true
 			)
-		elif not disabled:
+		elif disabled:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 180.0), 1.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 3.0, minf(max_w, 120.0), 1.0),
+				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
+				true
+			)
+		else:
+			host.draw_rect(
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 180.0), 1.0),
 				Palette.INK_SOFT,
 				true
 			)
@@ -152,3 +244,51 @@ static func wire_vertical_focus(buttons: Array) -> void:
 		cur.focus_neighbor_right = cur.get_path_to(cur)
 		cur.focus_previous = cur.get_path_to(prev)
 		cur.focus_next = cur.get_path_to(next)
+
+
+## Premium Field Index feel — select / hover / confirm only (no layout).
+## Pair with AudioDirector.arm_ui_feel() after grab_focus so open stays silent.
+static func wire_index_feel(buttons: Array) -> void:
+	for btn in buttons:
+		if btn == null or not (btn is BaseButton):
+			continue
+		var b: BaseButton = btn
+		if bool(b.get_meta("_ledger_feel_wired", false)):
+			continue
+		b.set_meta("_ledger_feel_wired", true)
+		b.focus_entered.connect(func(): _on_index_focus(b))
+		b.mouse_entered.connect(func(): _on_index_hover(b))
+		b.pressed.connect(func(): _on_index_confirm(b))
+
+
+static func _director() -> Node:
+	var tree := Engine.get_main_loop()
+	if tree == null or not (tree is SceneTree):
+		return null
+	return (tree as SceneTree).root.get_node_or_null("/root/AudioDirector")
+
+
+static func _on_index_focus(btn: BaseButton) -> void:
+	if btn == null or btn.disabled or not btn.visible:
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_select"):
+		director.call("on_ui_select")
+
+
+static func _on_index_hover(btn: BaseButton) -> void:
+	if btn == null or btn.disabled or not btn.visible:
+		return
+	if btn.has_focus():
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_hover"):
+		director.call("on_ui_hover")
+
+
+static func _on_index_confirm(btn: BaseButton) -> void:
+	if btn == null or btn.disabled:
+		return
+	var director := _director()
+	if director != null and director.has_method("on_ui_confirm"):
+		director.call("on_ui_confirm")

@@ -70,6 +70,9 @@ func _build_card() -> void:
 	_restart_button.pressed.connect(_on_restart)
 	_instruments_button.pressed.connect(_on_instruments)
 	_abandon_button.pressed.connect(_on_abandon)
+	LedgerChrome.wire_index_feel([
+		_resume_button, _restart_button, _instruments_button, _abandon_button,
+	])
 
 
 func _make_action(node_name: String) -> Button:
@@ -94,11 +97,12 @@ func open_pause() -> void:
 	LedgerChrome.wire_vertical_focus([
 		_resume_button, _restart_button, _instruments_button, _abandon_button,
 	])
+	# Silent open — arm before grab_focus; confirm on IndexAction press.
+	if has_node("/root/AudioDirector"):
+		AudioDirector.arm_ui_feel()
 	_resume_button.grab_focus()
 	set_process(not _reduce_motion)
 	queue_redraw()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
 
 
 func close_pause(unpause_tree: bool = true) -> void:
@@ -240,14 +244,14 @@ func _on_instruments() -> void:
 	# Keep tree paused; hide pause card while folio is open.
 	visible = false
 	_settings_overlay.open_menu()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
 
 
 func _on_settings_closed() -> void:
 	if not _open:
 		return
 	visible = true
+	if has_node("/root/AudioDirector"):
+		AudioDirector.arm_ui_feel()
 	_resume_button.grab_focus()
 	queue_redraw()
 

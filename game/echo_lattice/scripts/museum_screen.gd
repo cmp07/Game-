@@ -139,14 +139,14 @@ func _on_replay() -> void:
 	if _vignette and _vignette.has_method("replay"):
 		_vignette.call("replay")
 	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
+		AudioDirector.on_ui_confirm()
 
 
 func _on_race() -> void:
 	if _selected_id == "" or race_button.disabled:
 		return
 	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
+		AudioDirector.on_ui_confirm()
 	emit_signal("race_self", _selected_id)
 
 

@@ -86,9 +86,21 @@ func _load_first(candidates: Array) -> Font:
 	for path in candidates:
 		if not FileAccess.file_exists(path):
 			continue
+		# Imported FontFile often ships with oversampling=0 (project default). In headless
+		# / some DPI paths that default yields ~3× get_height and balloons Button mins.
+		# Pin oversampling to 1.0 so index-row metrics match glyph size at every px.
+		var res: Variant = ResourceLoader.load(path, "FontFile")
+		if res is FontFile:
+			var imported: FontFile = (res as FontFile).duplicate() as FontFile
+			if imported != null:
+				imported.oversampling = 1.0
+				return imported
+		if res is Font:
+			return res as Font
 		var font := FontFile.new()
 		var err := font.load_dynamic_font(path)
 		if err == OK:
+			font.oversampling = 1.0
 			return font
 		push_warning("LedgerType: failed to load %s (%s)" % [path, error_string(err)])
 	return null

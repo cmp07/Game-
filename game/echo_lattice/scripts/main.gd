@@ -59,13 +59,15 @@ func _ready() -> void:
 		get_tree().quit(0)
 		return
 	# Cold-boot Field Ledger title plate once, then menu (QW-1).
-	await _show_boot_title_if_needed()
-	show_menu()
+	# Boot handoff mounts the menu under the stamp — skip a second show_menu clear.
+	var handed: bool = await _show_boot_title_if_needed()
+	if not handed:
+		show_menu()
 
 
-func _show_boot_title_if_needed() -> void:
+func _show_boot_title_if_needed() -> bool:
 	if _boot_shown:
-		return
+		return false
 	_boot_shown = true
 	_clear_stage()
 	var boot: Node = BOOT_SCENE.instantiate()
@@ -74,10 +76,40 @@ func _show_boot_title_if_needed() -> void:
 		await boot.finished
 	else:
 		await get_tree().create_timer(1.2).timeout
+	# Paper handoff: mount menu under the boot plate, then release the stamp.
+	# Avoids a black frame / hard cut (PRODUCTION_CRAFT X1 · UI_DIEGETIC_V3 §7).
+	var menu_node: Node = MENU_SCENE.instantiate()
+	if menu_node.has_method("begin_boot_handoff"):
+		menu_node.call("begin_boot_handoff")
+	stage.add_child(menu_node)
+	stage.move_child(menu_node, 0)
+	_connect_menu_signals(menu_node)
+	await get_tree().process_frame
 	if is_instance_valid(boot):
 		boot.queue_free()
-	# Let the free apply before menu instantiate.
 	await get_tree().process_frame
+	return true
+
+
+func _connect_menu_signals(m: Node) -> void:
+	if m == null:
+		return
+	if m.has_signal("start_new_pressed") and not m.is_connected("start_new_pressed", Callable(self, "_on_menu_start_new")):
+		m.connect("start_new_pressed", Callable(self, "_on_menu_start_new"))
+	if m.has_signal("continue_pressed") and not m.is_connected("continue_pressed", Callable(self, "_on_menu_continue")):
+		m.connect("continue_pressed", Callable(self, "_on_menu_continue"))
+	if m.has_signal("quit_pressed") and not m.is_connected("quit_pressed", Callable(self, "_on_menu_quit")):
+		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
+	if m.has_signal("daily_pressed") and not m.is_connected("daily_pressed", Callable(self, "_on_menu_daily")):
+		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
+	if m.has_signal("endless_pressed") and not m.is_connected("endless_pressed", Callable(self, "_on_menu_endless")):
+		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
+	if m.has_signal("hard_pressed") and not m.is_connected("hard_pressed", Callable(self, "_on_menu_hard")):
+		m.connect("hard_pressed", Callable(self, "_on_menu_hard"))
+	if m.has_signal("museum_pressed") and not m.is_connected("museum_pressed", Callable(self, "_on_menu_museum")):
+		m.connect("museum_pressed", Callable(self, "_on_menu_museum"))
+	if has_node("/root/SteamService"):
+		SteamService.set_menu_presence()
 
 
 func _ensure_subtitle_overlay() -> void:
@@ -1319,22 +1351,7 @@ func show_menu() -> void:
 	_clear_stage()
 	var m: Node = MENU_SCENE.instantiate()
 	stage.add_child(m)
-	if m.has_signal("start_new_pressed"):
-		m.connect("start_new_pressed", Callable(self, "_on_menu_start_new"))
-	if m.has_signal("continue_pressed"):
-		m.connect("continue_pressed", Callable(self, "_on_menu_continue"))
-	if m.has_signal("quit_pressed"):
-		m.connect("quit_pressed", Callable(self, "_on_menu_quit"))
-	if m.has_signal("daily_pressed"):
-		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
-	if m.has_signal("endless_pressed"):
-		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
-	if m.has_signal("hard_pressed"):
-		m.connect("hard_pressed", Callable(self, "_on_menu_hard"))
-	if m.has_signal("museum_pressed"):
-		m.connect("museum_pressed", Callable(self, "_on_menu_museum"))
-	if has_node("/root/SteamService"):
-		SteamService.set_menu_presence()
+	_connect_menu_signals(m)
 
 
 func show_museum() -> void:

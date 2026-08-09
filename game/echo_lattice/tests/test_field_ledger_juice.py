@@ -151,10 +151,13 @@ class TestFeelQuickWins(unittest.TestCase):
         boot = (ROOT / "scripts" / "boot_title.gd").read_text()
         self.assertIn("boot.wing_line", boot)
         self.assertIn("signal finished", boot)
+        self.assertIn("y_lift", boot)
         main = (ROOT / "scripts" / "main.gd").read_text()
         self.assertIn("boot_title.tscn", main)
         self.assertIn("_show_boot_title_if_needed", main)
         self.assertIn("_boot_shown", main)
+        self.assertIn("begin_boot_handoff", main)
+        self.assertIn("_connect_menu_signals", main)
         self.assertTrue((ROOT / "scenes" / "boot_title.tscn").is_file())
 
     def test_menu_silent_boot_and_discrete_fold(self) -> None:
@@ -164,7 +167,14 @@ class TestFeelQuickWins(unittest.TestCase):
         # Fold tease must not breathe.
         self.assertNotIn("sin(_t * 2.0)", menu)
         self.assertIn("fold_on", menu)
-        self.assertIn("Binder holes", menu)
+        self.assertIn("binder_holes", menu)
+        self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn("LedgerChrome.title_type_scale", menu)
+        # Cadmium reserved — selection is rust underline + ink tick.
+        self.assertNotIn("CADMIUM_WARN", menu)
+        self.assertIn("_draw_seal_lattice", menu)
+        self.assertIn("begin_boot_handoff", menu)
+        self.assertIn("ArtKit.draw_index_card", menu)
 
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
@@ -246,14 +256,23 @@ class TestDiegeticShellMvp(unittest.TestCase):
         menu = (ROOT / "scripts" / "menu.gd").read_text()
         self.assertIn("menu.folio_mark", menu)
         self.assertIn("_card_slot_t", menu)
-        self.assertIn("PAPER_DEEP", menu)
         self.assertIn("LedgerChrome", menu)
+        self.assertIn("draw_ledger_page", menu)
+        self.assertIn("_focus_underline_t", menu)
+        self.assertIn("_style_meta_as_ledger_lines", menu)
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
         self.assertIn("settings.folio_mark", settings)
         self.assertIn("_style_folio_controls", settings)
         self.assertIn("LedgerChrome.paper_plate_style", settings)
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
         self.assertIn("class_name LedgerChrome", chrome)
+        self.assertIn("focus_progress", chrome)
+        self.assertIn("RUST_FOSSIL", chrome)
+        self.assertNotIn("CADMIUM_WARN", chrome)
+        art = (ROOT / "scripts" / "art_kit.gd").read_text()
+        self.assertIn('opts.get("binder_holes"', art)
+        self.assertIn('opts.get("header_rules"', art)
+        self.assertIn("func draw_seal_stamp", art)
 
     def test_field_index_card_syncs_with_card_column(self) -> None:
         """Regression: drawn Field Index plate and CardColumn must share layout."""
@@ -348,23 +367,40 @@ class TestDiegeticShellMvp(unittest.TestCase):
                 left = x
                 break
         self.assertIsNotNone(left)
-        ys = [
+        # Ink hairline on the plate — strict threshold so ledger fiber/grid
+        # (lum ~190–210) does not inflate the card height.
+        edge = [
             y
-            for y in range(80, 900)
-            if any(lum(left + dx, y) < 200 for dx in range(0, 3))
+            for y in range(80, 1000)
+            if any(lum(left + dx, y) < 130 for dx in range(0, 3))
         ]
-        self.assertGreater(ys[-1] - ys[0], 350)
+        self.assertGreater(len(edge), 200, msg="Field Index left rule missing")
+        # Longest contiguous ink run = physical card edge.
+        runs: list[tuple[int, int]] = []
+        run_a: int | None = None
+        for y in range(80, 1000):
+            dark = any(lum(left + dx, y) < 130 for dx in range(0, 3))
+            if dark and run_a is None:
+                run_a = y
+            elif not dark and run_a is not None:
+                runs.append((run_a, y - 1))
+                run_a = None
+        if run_a is not None:
+            runs.append((run_a, 999))
+        self.assertTrue(runs, msg="Field Index card edge run missing")
+        top, bottom = max(runs, key=lambda r: r[1] - r[0])
+        self.assertGreater(bottom - top, 300, msg="Field Index plate too short")
         text_bottom = max(
             y
-            for y in range(ys[0], ys[-1] + 40, 2)
-            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 200) > 10
+            for y in range(top, bottom + 20, 2)
+            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 150) > 10
         )
-        self.assertLessEqual(text_bottom, ys[-1] + 8)
+        self.assertLessEqual(text_bottom, bottom + 8)
         orphan = sum(
             1
-            for y in range(ys[-1] + 40, 1000, 2)
+            for y in range(bottom + 24, 1000, 2)
             for x in range(left + 40, left + 240, 2)
-            if lum(x, y) < 180
+            if lum(x, y) < 140
         )
         self.assertLess(orphan, 40, msg="menu rows orphaned below Field Index card")
 
@@ -373,6 +409,7 @@ class TestDiegeticShellMvp(unittest.TestCase):
         for key in (
             "menu.colophon,",
             "menu.folio_mark,",
+            "menu.seal_caption,",
             "pause.resume,",
             "pause.abandon,",
             "colophon.heading,",
