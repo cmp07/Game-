@@ -49,6 +49,7 @@
 
 | PR wave | Branch pattern | Scope | Acceptance |
 |---|---|---|---|
+| **W1A.0** | `cursor/feel-quick-wins` (#132) | Boot title · diegetic menu chrome · settings-as-page · chamber margin/spine · rewrite warn tension — [`QUICK_WINS_SPEC.md`](QUICK_WINS_SPEC.md) | Cold boot + chrome stop reading as default UI |
 | **W1A.1** | `cursor/v3-end-language-*` | Rename `END OF SLICE` → product end card; purge “vertical slice” from player strings | No player-facing “slice” |
 | **W1A.2** | `cursor/v3-stars-ink-*` | Replace ASCII `***` / `---` with ink stamp ★ glyphs (won + Museum) | Win screen looks authored |
 | **W1A.3** | `cursor/v3-type-latin-*` | Vendor latin display + mono per art bible; stop ThemeDB-only brand | Brand lockup uses ledger type |

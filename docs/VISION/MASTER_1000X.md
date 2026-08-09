@@ -172,6 +172,7 @@ Do **not** reorder Steam ahead of Phases 1–4. Do **not** mash genres to chase 
 | `cursor/vision-tech-art` | [`TECH_ART_V3.md`](TECH_ART_V3.md) |
 | `cursor/vision-ui-v3` | [`UI_DIEGETIC_V3.md`](UI_DIEGETIC_V3.md) |
 | `cursor/vision-prototype-tells` | [`FEELS_PROTOTYPE.md`](FEELS_PROTOTYPE.md) |
+| `cursor/feel-quick-wins` (#132) | [`QUICK_WINS_SPEC.md`](QUICK_WINS_SPEC.md) — Phase 1A.0 code lane |
 | `cursor/backup-rc1-freeze` | [`../BACKUP/`](../BACKUP/) |
 
 Lane detail stays in sibling docs. **This file + [`ROADMAP_EXECUTE.md`](ROADMAP_EXECUTE.md) win on priority and phase order.**

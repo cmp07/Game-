@@ -14,6 +14,7 @@ Steam pack is **frozen** until depth gates in the execute roadmap pass. Next foc
 | [`SYSTEMS_TRUTH.md`](SYSTEMS_TRUTH.md) | Lived vs claim after RC1 wires |
 | [`QUALITY_BAR.md`](QUALITY_BAR.md) | Craft ceiling (comps as polish, not genre) |
 | [`FEELS_PROTOTYPE.md`](FEELS_PROTOTYPE.md) | Why it still feels like a prototype |
+| [`QUICK_WINS_SPEC.md`](QUICK_WINS_SPEC.md) | Near-term feel stamps (boot/chrome/page/warn) — code PR #132 |
 | [`FEEL_JUICE_V3.md`](FEEL_JUICE_V3.md) | Interaction feel bible |
 | [`HABIT_SYSTEMS_V3.md`](HABIT_SYSTEMS_V3.md) | Reactive authorship contract |
 | [`FIRST_TEN_MINUTES.md`](FIRST_TEN_MINUTES.md) | Premium demo path |
