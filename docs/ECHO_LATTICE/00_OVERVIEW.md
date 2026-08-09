@@ -17,6 +17,7 @@
 | [`06_AUDIO_BIBLE.md`](06_AUDIO_BIBLE.md) | Audio architecture (buses, events, silence policy) |
 | [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) | **1.0 audio identity** — slam as musical event, habit as motif, silence as tool |
 | [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md) | Authored-mix cue sheet for 1.0 |
+| [`../VISION/META_LOOPS_V3.md`](../VISION/META_LOOPS_V3.md) | **Retention loop vision** — Campaign / Daily / Endless / Museum / Hard+ as one Habit Ledger |
 | [`../RELEASE/`](../RELEASE/) | Post-launch ops — hotfix runbook, crash logs, 90-day daily calendar, DLC fence, FAQ |
 | [`../RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | Next Fest demo — Act I + Mirror Birth + wishlist CTA |
 

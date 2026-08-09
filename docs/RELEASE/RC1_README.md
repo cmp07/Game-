@@ -100,6 +100,7 @@ Resume Partner / Coming Soon later from [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](.
 | Post-launch / live ops | [`POSTLAUNCH.md`](POSTLAUNCH.md) · [`ROADMAP.md`](ROADMAP.md) · [`SUPPORT_FAQ.md`](SUPPORT_FAQ.md) |
 | Crash / logs | [`CRASH_LOG_HOOK.md`](CRASH_LOG_HOOK.md) |
 | Playable slice | [`../ECHO_LATTICE/13_VERTICAL_SLICE_README.md`](../ECHO_LATTICE/13_VERTICAL_SLICE_README.md) |
+| Meta loops vision (v3) | [`../VISION/META_LOOPS_V3.md`](../VISION/META_LOOPS_V3.md) |
 | Changelog (v2) | [`../ECHO_LATTICE/CHANGELOG_V2.md`](../ECHO_LATTICE/CHANGELOG_V2.md) |
 
 ---
