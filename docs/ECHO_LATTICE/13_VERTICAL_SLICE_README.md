@@ -231,7 +231,7 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 | Save format | Cloud sync + daily seed history | Local JSON save; **daily seed catalog shipped** (`content/daily/seeds.json`) — menu wiring still pending |
 | Steam integration | Achievements, Cloud, Workshop, leaderboards for ghost races | **None** — slice is store-agnostic |
 | Level editor / Workshop | Post-MVP goal | **Not present** |
-| Localisation | Selected via Steam locale | **English only** |
+| Localisation | Selected via Steam locale | **EN + zh-Hans** via `TranslationServer` / `LocaleManager` — see [`docs/RELEASE/LOCALIZATION.md`](../RELEASE/LOCALIZATION.md) |
 | Presentation | Optional fake-3D parallax later | **Pure top-down 2D** |
 | Trailer / capsule art | Required for wishlist push | **Not authored** — see design bible for trailer beats |
 

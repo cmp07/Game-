@@ -16,6 +16,8 @@ signal menu_requested()
 
 
 func _ready() -> void:
+	restart_button.text = tr("hud.restart")
+	menu_button.text = tr("hud.menu")
 	restart_button.pressed.connect(func(): chamber_node.reset_chamber())
 	menu_button.pressed.connect(func(): emit_signal("menu_requested"))
 	chamber_node.chamber_won.connect(_on_chamber_won)
@@ -25,7 +27,7 @@ func _ready() -> void:
 	_refresh_title()
 	_on_moves_changed(0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
-	_on_caption_changed(str(data.get("caption", "")))
+	_on_caption_changed(_localized_caption(data))
 
 
 func _style_ledger_chrome() -> void:
@@ -52,13 +54,29 @@ func _refresh_title() -> void:
 	var data: Dictionary = ChamberBook.get_chamber(idx)
 	var mode_tag: String = ""
 	if GameState.run_mode == "daily":
-		mode_tag = " · Daily %s" % GameState.daily_label
-	title_label.text = "%d / %d — %s%s" % [
+		mode_tag = tr("hud.daily_tag") % GameState.daily_label
+	title_label.text = "%s / %s — %s%s" % [
 		GameState.run_progress_index() + 1,
 		GameState.chambers_in_run(),
-		str(data.get("title", "")),
+		_localized_title(data),
 		mode_tag,
 	]
+
+
+func _localized_title(data: Dictionary) -> String:
+	var cid: String = str(data.get("content_id", data.get("id", "")))
+	var fallback: String = str(data.get("title", ""))
+	if has_node("/root/LocaleManager") and cid != "":
+		return LocaleManager.translate_chamber_title(cid, fallback)
+	return fallback
+
+
+func _localized_caption(data: Dictionary) -> String:
+	var cid: String = str(data.get("content_id", data.get("id", "")))
+	var fallback: String = str(data.get("caption", ""))
+	if has_node("/root/LocaleManager") and cid != "":
+		return LocaleManager.translate_chamber_caption(cid, fallback)
+	return fallback
 
 
 func _on_chamber_won(chamber_id: int, moves: int) -> void:
@@ -66,12 +84,15 @@ func _on_chamber_won(chamber_id: int, moves: int) -> void:
 
 
 func _on_moves_changed(moves: int) -> void:
-	moves_label.text = "Moves: %d" % moves
-	habit_label.text = "Habit: %s" % _habit_summary()
+	moves_label.text = tr("hud.moves") % moves
+	habit_label.text = tr("hud.habit") % _habit_summary()
 
 
 func _on_caption_changed(text: String) -> void:
-	caption_label.text = text
+	# Chamber emits the English caption from content JSON; re-localize by id.
+	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
+	var localized: String = _localized_caption(data)
+	caption_label.text = localized if localized != "" else text
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -83,8 +104,11 @@ func _habit_summary() -> String:
 	var hp: Dictionary = GameState.habit_profile
 	var total: int = int(hp.get("up", 0)) + int(hp.get("down", 0)) + int(hp.get("left", 0)) + int(hp.get("right", 0))
 	if total <= 0:
-		return "unwritten"
+		return tr("hud.habit_unwritten")
 	var dom: String = GameState.dominant_habit()
+	var dom_label: String = dom
+	if has_node("/root/LocaleManager"):
+		dom_label = LocaleManager.habit_label(dom)
 	var dv: int = int(hp.get(dom, 0))
 	var pct: int = int(round(float(dv) / float(total) * 100.0))
-	return "%s-leaning (%d%%)" % [dom, pct]
+	return tr("hud.habit_leaning_pct") % [dom_label, pct]

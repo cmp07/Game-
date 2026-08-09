@@ -12,12 +12,27 @@ signal menu_pressed()
 
 
 func _ready() -> void:
+	_localize_chrome()
 	restart_button.pressed.connect(func(): emit_signal("restart_pressed"))
 	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
 	menu_button.grab_focus()
 	stats_label.text = _summary()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_wing_clear()
+
+
+func _localize_chrome() -> void:
+	var title: Label = get_node_or_null("VBox/Title")
+	var tagline: Label = get_node_or_null("VBox/Tagline")
+	var footer: Label = get_node_or_null("Footer")
+	if title:
+		title.text = tr("end.title")
+	if tagline:
+		tagline.text = tr("end.tagline")
+	if footer:
+		footer.text = tr("end.footer")
+	restart_button.text = tr("end.new_run")
+	menu_button.text = tr("end.menu")
 
 
 func _summary() -> String:
@@ -32,12 +47,15 @@ func _summary() -> String:
 			beat += 1
 		stars += int(GameState.best_stars.get(idx, 0))
 	var dom: String = GameState.dominant_habit()
+	var dom_label: String = dom
+	if has_node("/root/LocaleManager"):
+		dom_label = LocaleManager.habit_label(dom)
 	var hp: Dictionary = GameState.habit_profile
-	var header: String = "Wing complete."
+	var header: String = tr("end.header_wing")
 	if GameState.run_mode == "daily":
-		header = "Daily %s complete." % GameState.daily_label
-	return "%s\nEscaped %d / %d chambers.\nStars this wing: %d★\nTotal best moves: %d\nHabit signature: %s\n(u:%d  d:%d  l:%d  r:%d)" % [
-		header, beat, ids.size(), stars, total_best, dom,
+		header = tr("end.header_daily") % GameState.daily_label
+	return tr("end.summary") % [
+		header, beat, ids.size(), stars, total_best, dom_label,
 		int(hp.get("up", 0)), int(hp.get("down", 0)),
 		int(hp.get("left", 0)), int(hp.get("right", 0)),
 	]

@@ -1,0 +1,157 @@
+keys,en,zh_Hans
+brand.title,ECHO LATTICE,回声晶格
+brand.tagline,IT LEARNED YOU,它学会了你
+brand.blurb,A labyrinth that rebuilds from your last thirty moves.,一座根据你最近三十步重建的迷宫。
+menu.field_index,FIELD INDEX,现场索引
+menu.buffer,BUFFER,缓冲
+menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
+menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc,移动  WASD / 方向键     重开  R     撤销  Z     菜单  Esc
+menu.continue,Continue,继续
+menu.start_new,Start New Run,开始新周目
+menu.daily,Daily Challenge,每日挑战
+menu.quit,Quit,退出
+menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间室。纸上墨迹。
+menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
+menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
+menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
+menu.daily_placeholder,Daily,每日
+hud.moves,Moves: %s,步数：%s
+hud.habit,Habit: %s,习惯：%s
+hud.habit_unwritten,unwritten,尚未写就
+hud.habit_leaning,%s-leaning,%s倾向
+hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
+hud.restart,Restart (R),重开 (R)
+hud.menu,Menu (Esc),菜单 (Esc)
+hud.daily_tag, · Daily %s, · 每日 %s
+hud.chamber_fallback,Chamber,间室
+habit.up,up,上
+habit.down,down,下
+habit.left,left,左
+habit.right,right,右
+won.title,Chamber Cleared,间室通过
+won.next_chamber,→ Next Chamber,→ 下一间室
+won.finish_wing,→ Finish Wing,→ 完成本翼
+won.next_daily,→ Next Daily,→ 下一每日
+won.daily_complete,→ Daily Complete,→ 每日完成
+won.replay,Replay this chamber,重玩本间室
+won.menu,Menu,菜单
+won.stats,"%s
+Moves: %s  (best %s)
+Best stars: %s★
+Par path: %s%s
+
+Habit: %s","%s
+步数：%s  （最佳 %s）
+最佳星级：%s★
+标准路径：%s%s
+
+习惯：%s"
+won.daily_line,"
+Daily %s","
+每日 %s"
+won.stars_glyph,%s (%s/3),%s (%s/3)
+end.title,END OF SLICE,切片终章
+end.tagline,The lattice remembers you.,晶格记得你。
+end.new_run,New Run,新周目
+end.menu,Menu,菜单
+end.footer,Vertical slice · Echo Lattice · VISUAL v2 · ink on paper,可玩切片 · 回声晶格 · VISUAL v2 · 纸上墨迹
+end.header_wing,Wing complete.,本翼完成。
+end.header_daily,Daily %s complete.,每日 %s 完成。
+end.summary,"%s
+Escaped %s / %s chambers.
+Stars this wing: %s★
+Total best moves: %s
+Habit signature: %s
+(u:%s  d:%s  l:%s  r:%s)","%s
+逃脱 %s / %s 间室。
+本翼星级：%s★
+最佳步数合计：%s
+习惯签名：%s
+(上:%s  下:%s  左:%s  右:%s)"
+project.description,A labyrinth that rebuilds from your last thirty moves. Escape by rewriting your own habits.,一座根据你最近三十步重建的迷宫。改写自己的习惯以逃脱。
+locale.language,Language,语言
+locale.en,English,English
+locale.zh_Hans,简体中文,简体中文
+locale.system,System,跟随系统
+act.induction,Induction,诱导
+act.reflection,Reflection,反射
+act.pressure,Pressure,压力
+act.mastery,Mastery,精通
+chamber.00_quiet_span.title,Quiet Span,静距
+chamber.00_quiet_span.caption,Walk. Nothing here learns you yet.,走。这里还学不会你。
+chamber.01_echo_plate.title,Echo Plate,回声板
+chamber.01_echo_plate.caption,Turn once. The lattice is still asleep.,转一次。晶格仍在沉睡。
+chamber.02_mirror_birth.title,Mirror Birth,镜生
+chamber.02_mirror_birth.caption,Cross the checkpoint. Your path becomes wall.,跨过检查点。你的路径变成墙。
+chamber.03_break_the_loop.title,Break the Loop,破环
+chamber.03_break_the_loop.caption,A loop prints a dense mirror. Walk cleaner.,回路会印出密镜。走得干净些。
+chamber.04_ceiling_first.title,Ceiling First,天花板优先
+chamber.04_ceiling_first.caption,The mirror is horizontal — dashes imprint the roof.,镜子是水平的——破折号印在屋顶。
+chamber.05_two_glances.title,Two Glances,两瞥
+chamber.05_two_glances.caption,"Two checkpoints, two rewrites. Vary your route.",两个检查点，两次改写。变换路线。
+chamber.06_far_side.title,Far Side,远端
+chamber.06_far_side.caption,Rotation. Your path prints on the opposite corner.,旋转。你的路径印在对角。
+chamber.07_first_thicken.title,First Thicken,初凝
+chamber.07_first_thicken.caption,Habits solidify where you stepped. Do not re-tread.,习惯在你踏过处硬化。勿重蹈。
+chamber.08_identity_induction.title,Who Walked,谁走过
+chamber.08_identity_induction.caption,Boss. Leave a signature the lattice can read.,首领。留下晶格能读的签名。
+chamber.09_twin_rail.title,Twin Rail,双轨
+chamber.09_twin_rail.caption,A narrow spine. Your left becomes your right.,窄脊。你的左变成你的右。
+chamber.10_roof_writing.title,Roof Writing,屋顶书写
+chamber.10_roof_writing.caption,Write on the floor; the ceiling answers.,写在地板；天花板回答。
+chamber.11_opposite_room.title,Opposite Room,对置室
+chamber.11_opposite_room.caption,Turn the chamber inside-out with one rotation.,一次旋转，把间室内外翻转。
+chamber.12_looking_glass.title,Looking Glass,窥镜
+chamber.12_looking_glass.caption,Vertical and horizontal mirrors fire together.,垂直与水平镜同时触发。
+chamber.13_gallery_walk.title,Gallery Walk,长廊漫步
+chamber.13_gallery_walk.caption,A long hall of pillars. Reflect carefully.,柱廊长厅。小心反射。
+chamber.14_horizon_fold.title,Horizon Fold,地平折叠
+chamber.14_horizon_fold.caption,Two horizontal folds. The middle remembers both.,两次水平折叠。中间记住两者。
+chamber.15_spin_gallery.title,Spin Gallery,旋廊
+chamber.15_spin_gallery.caption,Rotate twice — leave a staggered signature.,旋转两次——留下交错签名。
+chamber.16_false_twin.title,False Twin,假双生子
+chamber.16_false_twin.caption,Symmetry lies. Choose which half becomes wall.,对称会说谎。选择哪一半成墙。
+chamber.17_identity_reflection.title,Portrait,肖像
+chamber.17_identity_reflection.caption,Boss. Both axes. Your path becomes a face.,首领。双轴。你的路径成一张脸。
+chamber.18_cement_trail.title,Cement Trail,水泥足迹
+chamber.18_cement_trail.caption,"Thicken under pressure. One path, no return.",压力下增厚。一条路，不回头。
+chamber.19_no_retread.title,No Retread,不重踏
+chamber.19_no_retread.caption,"A braid of corridors. Solidify once, commit.",走廊辫结。凝固一次，就承诺。
+chamber.20_squeeze_mirror.title,Squeeze Mirror,挤压镜
+chamber.20_squeeze_mirror.caption,Tight lanes. A messy path seals everything.,窄巷。凌乱路径会封死一切。
+chamber.21_stacked_echo.title,Stacked Echo,叠回声
+chamber.21_stacked_echo.caption,Three checkpoints. Each rewrite tightens the net.,三个检查点。每次改写收紧网。
+chamber.22_spin_trap.title,Spin Trap,旋阱
+chamber.22_spin_trap.caption,Rotation under load. Opposite corner seals exits.,负载下旋转。对角封住出口。
+chamber.23_ceiling_press.title,Ceiling Press,顶压
+chamber.23_ceiling_press.caption,Horizontal mirror in a low room. Keep the floor.,低室中的水平镜。守住地板。
+chamber.24_compound_fracture.title,Compound Fracture,复合裂
+chamber.24_compound_fracture.caption,"Both mirrors, twice. Cracks propagate.",双镜，两次。裂纹蔓延。
+chamber.25_panic_lattice.title,Panic Lattice,慌乱晶格
+chamber.25_panic_lattice.caption,Thicken in a maze of choices. Hesitation fills cells.,选择迷宫中增厚。犹豫填满格。
+chamber.26_identity_pressure.title,Calcify,钙化
+chamber.26_identity_pressure.caption,Boss. Your habits become the only walls left.,首领。习惯成为仅剩的墙。
+chamber.27_conductors_cut.title,Conductor's Cut,指挥裁切
+chamber.27_conductors_cut.caption,Master vertical mirror — carve with intent.,精通垂直镜——有意地雕刻。
+chamber.28_invert_ballet.title,Invert Ballet,倒置芭蕾
+chamber.28_invert_ballet.caption,Rotation as choreography. Land on the far mark.,旋转即编舞。落在远端标记。
+chamber.29_two_axes.title,Two Axes,双轴
+chamber.29_two_axes.caption,"Compose both mirrors with a short, sharp stroke.",短而锋利的一笔，组合双镜。
+chamber.30_habit_orchestra.title,Habit Orchestra,习惯管弦
+chamber.30_habit_orchestra.caption,Three vertical mirrors. Conduct three phrases.,三面垂直镜。指挥三段乐句。
+chamber.31_last_buffer.title,Last Buffer,末段缓冲
+chamber.31_last_buffer.caption,Thicken mastery — the buffer is almost full.,增厚精通——缓冲几乎满了。
+chamber.32_signature_stack.title,Signature Stack,签名叠层
+chamber.32_signature_stack.caption,"Both axes, twice. Stack two portraits.",双轴，两次。叠两幅肖像。
+chamber.33_nameplate.title,Nameplate,铭牌
+chamber.33_nameplate.caption,Boss. Final identity — sign the lattice.,首领。最终身份——签署晶格。
+chamber.34_open_lattice.title,Open Lattice,开放晶格
+chamber.34_open_lattice.caption,Epilogue. Same seed a friend can share.,尾声。朋友可分享的同一种子。
+chamber.35_mirror_birth_hard.title,Mirror Birth+,镜生+
+chamber.35_mirror_birth_hard.caption,"Hard. Less floor. Same lesson, less forgiveness.",困难。更少地板。同样课题，更少宽恕。
+chamber.36_looking_glass_hard.title,Looking Glass+,窥镜+
+chamber.36_looking_glass_hard.caption,Hard. Dual-axis with thinner corridors.,困难。双轴，更窄走廊。
+chamber.37_cement_trail_hard.title,Cement Trail+,水泥足迹+
+chamber.37_cement_trail_hard.caption,Hard. Thicken with fewer detours.,困难。更少绕路的增厚。
+chamber.38_nameplate_hard.title,Nameplate+,铭牌+
+chamber.38_nameplate_hard.caption,Hard. Final identity with less breathing room.,困难。最终身份，更少喘息空间。
