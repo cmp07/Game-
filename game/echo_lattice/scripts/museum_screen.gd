@@ -76,8 +76,9 @@ func _make_row(row: Dictionary) -> Button:
 	var habit: Dictionary = row.get("habit", {}) if typeof(row.get("habit", null)) == TYPE_DICTIONARY else {}
 	var stars: int = int(row.get("stars", 0))
 	var star_s := ""
+	var clamped: int = clampi(stars, 0, 3)
 	for i in range(3):
-		star_s += "*" if i < stars else "-"
+		star_s += "★" if i < clamped else "☆"
 	btn.text = "%s  ·  %s  ·  %s" % [
 		str(row.get("title", "Self")),
 		star_s,

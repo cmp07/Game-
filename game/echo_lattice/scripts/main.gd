@@ -3,7 +3,7 @@ extends Node
 ## Main — the root router.
 ##
 ## Owns a single container child which we swap between menu, chamber, chamber win,
-## and end-of-slice screens. Keeps scene loads explicit and Godot-project-simple.
+## and wing-colophon screens. Keeps scene loads explicit and Godot-project-simple.
 ##
 
 const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
@@ -145,7 +145,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	if kind == "menu":
 		# Fresh-boot menu: no prior save, so Continue is disabled and the
-		# subtitle reads "A vertical slice — N chambers."
+		# subtitle reads the Four Acts chamber count line.
 		SaveManager.wipe()
 		GameState.current_chamber = 0
 		GameState.best_moves.clear()
@@ -1204,6 +1204,8 @@ func show_end_screen() -> void:
 		e.connect("restart_pressed", Callable(self, "_on_end_restart"))
 	if e.has_signal("menu_pressed"):
 		e.connect("menu_pressed", Callable(self, "_on_end_menu"))
+	if e.has_signal("museum_pressed"):
+		e.connect("museum_pressed", Callable(self, "_on_end_museum"))
 	if has_node("/root/SteamService"):
 		SteamService.set_end_presence()
 
@@ -1285,3 +1287,7 @@ func _on_end_restart() -> void:
 
 func _on_end_menu() -> void:
 	show_menu()
+
+
+func _on_end_museum() -> void:
+	show_museum()
