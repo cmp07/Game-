@@ -17,27 +17,21 @@ Cloud capture of the W1 gather → combine → weave loop from `game/weaver/` (E
 
 ## GitHub links
 
-Repo: [`cmp07/Game-`](https://github.com/cmp07/Game-) · branch [`cursor/weaver-1000x-video`](https://github.com/cmp07/Game-/tree/cursor/weaver-1000x-video)
-
-Tip at doc update: `53283bb48bfb1173acb92df5dd3f71a5a31a313e` (branch tip may move; prefer SHA permalinks below).
+Repo: [`cmp07/Game-`](https://github.com/cmp07/Game-) · synthesis branch [`cursor/weaver-1000x-master`](https://github.com/cmp07/Game-/tree/cursor/weaver-1000x-master) (folded from [`cursor/weaver-1000x-video`](https://github.com/cmp07/Game-/tree/cursor/weaver-1000x-video))
 
 ### 30s landscape
 
 | Kind | URL |
 |---|---|
-| Blob (branch) | https://github.com/cmp07/Game-/blob/cursor/weaver-1000x-video/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
-| Blob (SHA) | https://github.com/cmp07/Game-/blob/53283bb48bfb1173acb92df5dd3f71a5a31a313e/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
-| Raw (branch) | https://github.com/cmp07/Game-/raw/cursor/weaver-1000x-video/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
-| Raw (SHA) | https://raw.githubusercontent.com/cmp07/Game-/53283bb48bfb1173acb92df5dd3f71a5a31a313e/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
+| Blob | https://github.com/cmp07/Game-/blob/cursor/weaver-1000x-master/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
+| Raw | https://raw.githubusercontent.com/cmp07/Game-/cursor/weaver-1000x-master/docs/WEAVER/media/video/weaver_gameplay_30s.mp4 |
 
 ### 15s vertical
 
 | Kind | URL |
 |---|---|
-| Blob (branch) | https://github.com/cmp07/Game-/blob/cursor/weaver-1000x-video/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
-| Blob (SHA) | https://github.com/cmp07/Game-/blob/53283bb48bfb1173acb92df5dd3f71a5a31a313e/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
-| Raw (branch) | https://github.com/cmp07/Game-/raw/cursor/weaver-1000x-video/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
-| Raw (SHA) | https://raw.githubusercontent.com/cmp07/Game-/53283bb48bfb1173acb92df5dd3f71a5a31a313e/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
+| Blob | https://github.com/cmp07/Game-/blob/cursor/weaver-1000x-master/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
+| Raw | https://raw.githubusercontent.com/cmp07/Game-/cursor/weaver-1000x-master/docs/WEAVER/media/video/weaver_gameplay_15s_vertical.mp4 |
 
 ## Recapture
 

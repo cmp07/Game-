@@ -1,8 +1,26 @@
 # The Weaver — Design Changelog
 
 **Role:** Durable record of design corpus landings and product-identity locks.  
-**Authority:** [`MASTER_GDD.md`](MASTER_GDD.md) (v2) · [`ROADMAP.md`](ROADMAP.md) · [`PIVOT.md`](PIVOT.md)  
+**Authority:** [`MASTER_GDD.md`](MASTER_GDD.md) (v2) · [`ROADMAP.md`](ROADMAP.md) · [`PIVOT.md`](PIVOT.md) · [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md)  
 **Mode:** Docs history only. No AppID invention.
+
+---
+
+## 2026-08-09 — 1000× design + media pack (master synthesis)
+
+**Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  
+**PR title:** The Weaver 1000X — design + media pack
+
+### Product
+
+- **1000× vision pack** landed under [`1000X/`](1000X/) — executive [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md)
+- [`MASTER_GDD.md`](MASTER_GDD.md) pointer updated to 1000× vision (EL VISION 1000× remains archive)
+- Folded sibling docs `00`–`16` + photos (6× 1920×1080) + gameplay MP4s
+- Index: [`1000X/README.md`](1000X/README.md) · gallery [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) · video [`media/VIDEO.md`](media/VIDEO.md)
+
+### Absorbed siblings
+
+`vision` · `loop` · `fragments` · `threads` · `structures` · `world` · `progress` · `modes` · `juice` · `audio` · `art` · `narrative` · `ui` · `tech` · `backlog` · `position` · `roadmap` · `photos` · `video`
 
 ---
 

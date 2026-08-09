@@ -8,6 +8,9 @@
 **Date:** 2026-08-09  
 **Mode:** Cloud-only. **No AppID invention. No Echo Lattice deletion in this PR.**
 
+**1000× vision (live deepen pack):** [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) · [`1000X/00_MASTER_VISION.md`](1000X/00_MASTER_VISION.md) · index [`1000X/README.md`](1000X/README.md)  
+*(Echo Lattice [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) is archive temperature — not the north star.)*
+
 **Companions:** [`ROADMAP.md`](ROADMAP.md) · [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`17_MVP.md`](17_MVP.md)
 
 ---
@@ -17,6 +20,7 @@
 | Field | Lock |
 |---|---|
 | **North star** | **The Weaver** — offline craft / physics-puzzle toy we **ship** |
+| **1000× vision** | Live deepen pack → [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) (shed-yard · slack→taut · category purity) |
 | **Echo Lattice** | **Frozen** product line; `game/echo_lattice/` **kept beside** `game/weaver/` until a human-approved migrate execute PR ([`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) is **plan only**) |
 | **Core verb** | Recover **Fragments** → draw **Threads** → tension **Structures** → inhabit what you wove |
 | **Hub** | One **Shed Yard** + authored fields/jobs (not open-world, not MMO) |

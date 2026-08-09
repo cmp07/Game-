@@ -9,12 +9,16 @@
 | Start here | Role |
 |---|---|
 | [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
+| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** executive vision + media pack (live deepen) |
+| [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
 | [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) | Lattice hosts Weaver loop — how to run |
 | [`ROADMAP.md`](ROADMAP.md) | Gates, scaffold status, build order |
 | [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) | Design corpus changelog |
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
+| [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Gameplay photo gallery + raw URLs |
+| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
 | [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave) + GitHub links |
 
 ---
@@ -101,11 +105,38 @@
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 
-### 1000× — Competitive / vision elevations
+### 1000× — Vision / deepen pack
+
+Full index: [`1000X/README.md`](1000X/README.md) · executive [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md)
 
 | Doc | Topic |
 |---|---|
+| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | Executive synthesis + media |
+| [`1000X/00_MASTER_VISION.md`](1000X/00_MASTER_VISION.md) | Ambition lock — shed-yard, slack→taut |
+| [`1000X/01_CORE_LOOP.md`](1000X/01_CORE_LOOP.md) | Layered gather / combine / weave / expand |
+| [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) | Families · grades · mutations · silhouettes |
+| [`1000X/03_THREADS.md`](1000X/03_THREADS.md) | Types · chemistry · anti-wiki recipes |
 | [`1000X/04_STRUCTURES.md`](1000X/04_STRUCTURES.md) | Classes · evolution · ecosystems · composition |
+| [`1000X/05_WORLD.md`](1000X/05_WORLD.md) | Void / surface / core · yards · seeds |
+| [`1000X/06_PROGRESSION.md`](1000X/06_PROGRESSION.md) | Five-phase content graph |
+| [`1000X/07_MODES.md`](1000X/07_MODES.md) | Campaign · Daily · Endless · Museum · Challenges |
+| [`1000X/08_JUICE.md`](1000X/08_JUICE.md) | 50 diegetic specs mapped to verbs |
+| [`1000X/09_AUDIO.md`](1000X/09_AUDIO.md) | Audio Bible |
+| [`1000X/10_ART.md`](1000X/10_ART.md) | Art bible — anti-AI-slop |
+| [`1000X/11_NARRATIVE.md`](1000X/11_NARRATIVE.md) | Diegetic mythos |
+| [`1000X/12_UI.md`](1000X/12_UI.md) | Yard Folio UI + a11y |
+| [`1000X/13_TECH.md`](1000X/13_TECH.md) | Godot hybrid + data-driven content |
+| [`1000X/14_FEATURE_BACKLOG.md`](1000X/14_FEATURE_BACKLOG.md) | 132 P0–P3 + acceptance tests |
+| [`1000X/15_POSITIONING.md`](1000X/15_POSITIONING.md) | vs Noita / craft / idle / cosmic |
+| [`1000X/16_ROADMAP_1000X.md`](1000X/16_ROADMAP_1000X.md) | Prototype → finished indie |
+
+### Media
+
+| Path | Topic |
+|---|---|
+| [`media/photos/`](media/photos/) | 1920×1080 gameplay stills (6) |
+| [`media/video/`](media/video/) | gather→combine→weave MP4s |
+| [`screenshots/`](screenshots/) | Legacy void / structure pair |
 
 ---
 
@@ -124,7 +155,7 @@
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | [#172](https://github.com/cmp07/Game-/pull/172) |
 
-### Wave-2 (this synthesis — `cursor/weaver-master-v2`)
+### Wave-2 (merged via hybrid / master-v2)
 
 | Branch | PR |
 |---|---|
@@ -147,7 +178,32 @@
 | `cursor/weaver-godot-scaffold` | [#189](https://github.com/cmp07/Game-/pull/189) |
 | `cursor/weaver-prototype-loop` | [#192](https://github.com/cmp07/Game-/pull/192) |
 | `cursor/weaver-juice` | [#191](https://github.com/cmp07/Game-/pull/191) |
-| `cursor/weaver-master-v2` | This synthesis |
+| `cursor/weaver-master-v2` | [#180](https://github.com/cmp07/Game-/pull/180) |
+
+### Wave-3 (1000× — `cursor/weaver-1000x-master`)
+
+| Branch | PR |
+|---|---|
+| `cursor/weaver-1000x-vision` | [#195](https://github.com/cmp07/Game-/pull/195) |
+| `cursor/weaver-1000x-position` | [#196](https://github.com/cmp07/Game-/pull/196) |
+| `cursor/weaver-1000x-narrative` | [#197](https://github.com/cmp07/Game-/pull/197) |
+| `cursor/weaver-1000x-progress` | [#198](https://github.com/cmp07/Game-/pull/198) |
+| `cursor/weaver-1000x-world` | [#199](https://github.com/cmp07/Game-/pull/199) |
+| `cursor/weaver-1000x-loop` | [#200](https://github.com/cmp07/Game-/pull/200) |
+| `cursor/weaver-1000x-backlog` | [#201](https://github.com/cmp07/Game-/pull/201) |
+| `cursor/weaver-1000x-art` | [#202](https://github.com/cmp07/Game-/pull/202) |
+| `cursor/weaver-1000x-modes` | [#203](https://github.com/cmp07/Game-/pull/203) |
+| `cursor/weaver-1000x-fragments` | [#204](https://github.com/cmp07/Game-/pull/204) |
+| `cursor/weaver-1000x-tech` | [#205](https://github.com/cmp07/Game-/pull/205) |
+| `cursor/weaver-1000x-roadmap` | [#206](https://github.com/cmp07/Game-/pull/206) |
+| `cursor/weaver-1000x-audio` | [#207](https://github.com/cmp07/Game-/pull/207) |
+| `cursor/weaver-1000x-juice` | [#208](https://github.com/cmp07/Game-/pull/208) |
+| `cursor/weaver-1000x-threads` | [#209](https://github.com/cmp07/Game-/pull/209) |
+| `cursor/weaver-1000x-structures` | [#210](https://github.com/cmp07/Game-/pull/210) |
+| `cursor/weaver-1000x-ui` | [#211](https://github.com/cmp07/Game-/pull/211) |
+| `cursor/weaver-1000x-photos` | [#212](https://github.com/cmp07/Game-/pull/212) |
+| `cursor/weaver-1000x-video` | [#213](https://github.com/cmp07/Game-/pull/213) |
+| `cursor/weaver-1000x-master` | This synthesis |
 
 ---
 
