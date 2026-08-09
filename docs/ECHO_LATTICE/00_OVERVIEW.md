@@ -9,6 +9,7 @@
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |
 | [`13_VERTICAL_SLICE_README.md`](13_VERTICAL_SLICE_README.md) | How to run the playable Godot project |
+| [`../RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | Next Fest demo — Act I + Mirror Birth + wishlist CTA |
 
 **Content root:** `game/echo_lattice/content/`  
 **Playable project:** `game/echo_lattice/project.godot`

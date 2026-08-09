@@ -54,20 +54,30 @@ func reload() -> void:
 			_by_content_id[str(cid)] = play2
 			_campaign.append(play2)
 		# Append hard variants after campaign (not in progression).
-		for rec3 in _records:
-			if str(rec3.get("role", "")) == "hard":
-				var play3: Dictionary = _to_playable(rec3)
-				_playable.append(play3)
-				_by_content_id[str(rec3.get("content_id", ""))] = play3
+		# Demo builds omit hard variants — they spoil later-act transforms.
+		if not DemoBuild.is_demo():
+			for rec3 in _records:
+				if str(rec3.get("role", "")) == "hard":
+					var play3: Dictionary = _to_playable(rec3)
+					_playable.append(play3)
+					_by_content_id[str(rec3.get("content_id", ""))] = play3
 	else:
 		for rec in _records:
+			var cid: String = str(rec.get("content_id", ""))
+			if not DemoBuild.allows_content_id(cid):
+				continue
+			if DemoBuild.is_demo() and str(rec.get("role", "")) == "hard":
+				continue
 			var play: Dictionary = _to_playable(rec)
 			_playable.append(play)
-			_by_content_id[str(rec.get("content_id", ""))] = play
+			_by_content_id[cid] = play
 			if str(rec.get("role", "")) != "hard":
 				_campaign.append(play)
 	_loaded = true
-	print("ChamberBook: loaded %d chambers (%d campaign)" % [_playable.size(), _campaign.size()])
+	var demo_tag: String = " [DEMO]" if DemoBuild.is_demo() else ""
+	print("ChamberBook: loaded %d chambers (%d campaign)%s" % [
+		_playable.size(), _campaign.size(), demo_tag
+	])
 
 
 func _to_playable(rec: Dictionary) -> Dictionary:
@@ -87,7 +97,9 @@ func _campaign_order_ids() -> Array:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return []
-	return parsed.get("campaign_order", [])
+	var order: Array = parsed.get("campaign_order", [])
+	# Demo / Next Fest: Act I only — no late-act spoilers in the run queue.
+	return DemoBuild.filter_campaign_ids(order)
 
 
 func get_chamber(idx: int) -> Dictionary:
@@ -159,4 +171,14 @@ func acts_summary() -> Array:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return []
-	return parsed.get("acts", [])
+	var acts: Array = parsed.get("acts", [])
+	if not DemoBuild.is_demo():
+		return acts
+	# Demo: expose Induction only — hide Reflection / Pressure / Mastery blurbs.
+	var out: Array = []
+	for a in acts:
+		if str(a.get("id", "")) == DemoBuild.ACT_ID:
+			var copy: Dictionary = a.duplicate(true)
+			copy["hard_variants"] = []
+			out.append(copy)
+	return out
