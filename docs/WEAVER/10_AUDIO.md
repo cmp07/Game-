@@ -4,7 +4,8 @@
 **Status:** Craft authority (CLOUD ONLY) · **Branch:** `cursor/weaver-craft`  
 **Product:** **The Weaver** (north star)  
 **Job:** Define the earprint of void-weave craft — fiber tension, timber knock, kiln hush — so audio sells Fragments / Threads / Structures without synth-trailer or purple-mystic pads.  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md) · [`14_TECH.md`](14_TECH.md) · [`PIVOT.md`](PIVOT.md)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md) · [`14_TECH.md`](14_TECH.md) · [`PIVOT.md`](PIVOT.md)  
+**Leitmotif identity (v2):** [`26_AUDIO_V2.md`](26_AUDIO_V2.md) — Fragment Atom · Thread Stitch · Structure Cloth
 
 ---
 
@@ -115,6 +116,8 @@ Players should clap or hum the seat after three hearings. Trailer and in-game sh
 | Pulse impose | Pendulum body — readable tempo, never rewind swoosh |
 
 Mastery is hearing **which** Thread failed — not a VO coach.
+
+**Motif expansion:** family consonants, Thread contours, and Structure archetype endings live in [`26_AUDIO_V2.md`](26_AUDIO_V2.md).
 
 ---
 
