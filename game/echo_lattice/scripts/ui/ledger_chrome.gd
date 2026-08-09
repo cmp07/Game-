@@ -74,10 +74,10 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"card_header": TYPE_CARD_HEADER,
 		"rule_w": BRAND_RULE_W,
 		"rule_len": BRAND_RULE_LEN,
-		"seal_r": 186.0,
-		"row_h": 44.0,
-		"primary_h": 52.0,
-		"row_sep": 10,
+		"seal_r": 118.0,
+		"row_h": 48.0,
+		"primary_h": 56.0,
+		"row_sep": 12,
 	}
 
 

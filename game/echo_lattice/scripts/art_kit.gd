@@ -787,87 +787,289 @@ func draw_binder_clip(canvas: CanvasItem, tip: Vector2, alpha: float = 1.0) -> v
 
 
 func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, opts: Dictionary = {}) -> void:
-	## Rubber-stamp quality (ART_DIRECTION_V3 §2.2 checkpoint / §8.1 stamp_ink CPU path).
-	## Imperfect rubber ink: uneven ring pressure, blotches, registration ticks. Never glow.
+	## Print-craft survey seal (ART_DIRECTION_V3 §2.2 / MENU_10_OF_10).
+	## Imperfect rubber ink on a rectangular plate — habit-maze silhouette, not a UI ring.
+	## No giant dashed circles; no watermark caption inside the plate. Never glow.
 	var rot_deg: float = float(opts.get("rot_deg", -3.5))
 	var ink: Color = opts.get("color", Palette.SLATE_TEAL)
 	var alpha: float = float(opts.get("alpha", 0.82))
 	var seed: int = int(opts.get("seed", 17))
-	var ring_w: float = float(opts.get("ring_w", 2.6))
-	var inner: bool = bool(opts.get("inner_ring", true))
+	var plate_w: float = float(opts.get("plate_w", radius * 2.05))
+	var plate_h: float = float(opts.get("plate_h", radius * 2.05))
+	var hero: bool = bool(opts.get("hero", false))
+	var maze: bool = bool(opts.get("maze", true))
+	var rust_accent: bool = bool(opts.get("rust_accent", true))
 	var caption: String = str(opts.get("caption", ""))
 	var font: Font = opts.get("font", null)
 	var font_size: int = int(opts.get("font_size", 11))
-	var hero: bool = bool(opts.get("hero", false))
 	if radius < 4.0 or alpha < 0.01:
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var rot: float = deg_to_rad(rot_deg)
-	var segments: int = 56 if hero else 44
-	# Soft ink halo under the ring — transparency unevenness, not additive bloom.
+	var hw: float = plate_w * 0.5
+	var hh: float = plate_h * 0.5
+	# Soft crush shadow under the plate — pressed into stock, not a glow halo.
+	var shadow := Color(
+		Palette.PAPER_SHADOW.r,
+		Palette.PAPER_SHADOW.g,
+		Palette.PAPER_SHADOW.b,
+		0.20 * alpha
+	)
+	_draw_seal_plate_fill(
+		canvas,
+		center + Vector2(2.5, 3.0).rotated(rot),
+		hw + 1.5,
+		hh + 1.5,
+		rot,
+		shadow
+	)
+	# Faint ink wash on the plate face (uneven pressure, never solid fill).
 	if hero:
-		for k in range(5):
-			var ang: float = rng.randf() * TAU + rot
-			var rr: float = radius * rng.randf_range(0.82, 1.05)
-			var blot := Color(ink.r, ink.g, ink.b, alpha * rng.randf_range(0.05, 0.14))
-			canvas.draw_circle(
-				center + Vector2(cos(ang), sin(ang)) * rr * 0.15,
-				radius * rng.randf_range(0.08, 0.18),
-				blot
-			)
-	for i in range(segments):
-		var t0: float = TAU * float(i) / float(segments) + rot
-		var t1: float = TAU * float(i + 1) / float(segments) + rot
-		# ~20% of the ring prints light / broken — ink pressure unevenness.
-		var pressure: float = 1.0
-		if rng.randf() < 0.20:
-			pressure = rng.randf_range(0.18, 0.50)
-		elif rng.randf() < 0.14:
-			continue
-		var rw: float = ring_w * rng.randf_range(0.75, 1.35)
-		var c := Color(ink.r, ink.g, ink.b, alpha * pressure)
-		var a: Vector2 = center + Vector2(cos(t0), sin(t0)) * radius
-		var b: Vector2 = center + Vector2(cos(t1), sin(t1)) * radius
-		canvas.draw_line(a, b, c, rw, true)
-		# Occasional outer ink slap past the ring.
-		if hero and rng.randf() < 0.08:
-			var slap := center + Vector2(cos(t0), sin(t0)) * (radius + rng.randf_range(1.5, 3.5))
-			canvas.draw_circle(slap, rng.randf_range(0.8, 1.6), Color(ink.r, ink.g, ink.b, alpha * 0.35))
-	if inner:
-		var r2: float = radius * 0.72
-		for i in range(segments):
-			var t0: float = TAU * float(i) / float(segments) + rot
-			var t1: float = TAU * float(i + 1) / float(segments) + rot
-			if rng.randf() < 0.18:
-				continue
-			var c2 := Color(ink.r, ink.g, ink.b, alpha * 0.55)
-			canvas.draw_line(
-				center + Vector2(cos(t0), sin(t0)) * r2,
-				center + Vector2(cos(t1), sin(t1)) * r2,
-				c2,
-				1.0,
-				true
-			)
-	# Registration ticks — surveyor's stamp grammar (4 cardinal micro-marks).
-	for k in range(4):
-		var ang: float = rot + float(k) * TAU * 0.25 + rng.randf_range(-0.04, 0.04)
-		var p0: Vector2 = center + Vector2(cos(ang), sin(ang)) * (radius - 3.0)
-		var p1: Vector2 = center + Vector2(cos(ang), sin(ang)) * (radius + 2.5)
-		canvas.draw_line(p0, p1, Color(ink.r, ink.g, ink.b, alpha * 0.7), 1.2, true)
+		for k in range(4):
+			var blot_c := Color(ink.r, ink.g, ink.b, alpha * rng.randf_range(0.04, 0.10))
+			var blot_p := center + Vector2(
+				rng.randf_range(-hw * 0.55, hw * 0.55),
+				rng.randf_range(-hh * 0.55, hh * 0.55)
+			).rotated(rot)
+			canvas.draw_circle(blot_p, radius * rng.randf_range(0.06, 0.14), blot_c)
+	# Double plate border — outer heavy, inner hairline — with ink breaks.
+	_draw_seal_plate_frame(canvas, center, hw, hh, rot, ink, alpha, 2.8 if hero else 2.1, rng)
+	_draw_seal_plate_frame(
+		canvas,
+		center,
+		hw - (5.0 if hero else 3.5),
+		hh - (5.0 if hero else 3.5),
+		rot,
+		ink,
+		alpha * 0.72,
+		1.15 if hero else 1.0,
+		rng
+	)
+	# Corner registration marks — surveyor plate grammar (tight ticks, not ring spokes).
+	var tick: float = 5.0 if hero else 3.5
+	var corners: Array = [
+		Vector2(-hw, -hh), Vector2(hw, -hh), Vector2(-hw, hh), Vector2(hw, hh),
+	]
+	for corner in corners:
+		var c0: Vector2 = center + (corner as Vector2).rotated(rot)
+		var inward: Vector2 = (-(corner as Vector2).sign()) * tick
+		var j: Vector2 = Vector2(rng.randf_range(-0.4, 0.4), rng.randf_range(-0.4, 0.4))
+		var tc := Color(ink.r, ink.g, ink.b, alpha * 0.78)
+		canvas.draw_line(c0 + j, c0 + Vector2(inward.x, 0.0) + j, tc, 1.2, true)
+		canvas.draw_line(c0 + j, c0 + Vector2(0.0, inward.y) + j, tc, 1.2, true)
+	if maze:
+		draw_habit_maze_mark(canvas, center, minf(hw, hh) * 0.78, {
+			"rot_deg": rot_deg,
+			"color": ink,
+			"alpha": alpha,
+			"seed": seed + 7,
+			"rust_accent": rust_accent,
+			"hero": hero,
+		})
+	# Optional caption sits under the plate — never a watermark inside the seal.
 	if caption != "" and font != null:
 		var tw: float = font.get_string_size(caption, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-		# Slight caption offset — rubber stamp never lands perfectly registered.
-		var cap_off := Vector2(rng.randf_range(-1.2, 1.2), rng.randf_range(-0.6, 0.8))
+		var cap_off := Vector2(rng.randf_range(-1.0, 1.0), rng.randf_range(-0.4, 0.6))
+		var cap_pos: Vector2 = center + Vector2(-tw * 0.5, hh + font_size + 6.0) + cap_off
 		canvas.draw_string(
 			font,
-			center + Vector2(-tw * 0.5, font_size * 0.35) + cap_off,
+			cap_pos,
 			caption,
 			HORIZONTAL_ALIGNMENT_LEFT,
 			-1,
 			font_size,
-			Color(ink.r, ink.g, ink.b, alpha * 0.9)
+			Color(ink.r, ink.g, ink.b, alpha * 0.85)
 		)
+
+
+func draw_habit_maze_mark(canvas: CanvasItem, center: Vector2, half: float, opts: Dictionary = {}) -> void:
+	## Habit-maze silhouette as crisp ink geometry — readable at brand / boot scale.
+	## Ruling-pen wall segments + one spare rust fossil cell. Not a chunky pixel blob.
+	var rot_deg: float = float(opts.get("rot_deg", 0.0))
+	var ink: Color = opts.get("color", Palette.SLATE_TEAL)
+	var alpha: float = float(opts.get("alpha", 0.9))
+	var seed: int = int(opts.get("seed", 24))
+	var rust_accent: bool = bool(opts.get("rust_accent", true))
+	var hero: bool = bool(opts.get("hero", false))
+	if half < 4.0 or alpha < 0.01:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var rot: float = deg_to_rad(rot_deg)
+	# 6-unit lattice — continuous wall segments so the silhouette reads as a maze, not dots.
+	var n: float = 6.0
+	var cell: float = (half * 2.0) / n
+	var origin: Vector2 = Vector2(-half, -half)
+	var stroke: float = maxf(1.6, cell * (0.22 if hero else 0.26))
+	var ink_c := Color(ink.r, ink.g, ink.b, alpha * 0.94)
+	# Horizontal wall runs: [x0, x1, y] in grid units (inclusive line along cell edges).
+	var h_runs: Array = [
+		Vector3(0, 6, 0), Vector3(0, 6, 6),
+		Vector3(2, 5, 2), Vector3(0, 2, 4), Vector3(4, 6, 4),
+	]
+	# Vertical wall runs: [y0, y1, x]
+	var v_runs: Array = [
+		Vector3(0, 6, 0), Vector3(0, 6, 6),
+		Vector3(0, 3, 2), Vector3(3, 6, 4), Vector3(1, 3, 5),
+	]
+	for run in h_runs:
+		var a_local := origin + Vector2(run.x * cell, run.z * cell)
+		var b_local := origin + Vector2(run.y * cell, run.z * cell)
+		_draw_rotated_ink_run(canvas, center, a_local, b_local, rot, ink_c, stroke, rng)
+	for run in v_runs:
+		var a_local := origin + Vector2(run.z * cell, run.x * cell)
+		var b_local := origin + Vector2(run.z * cell, run.y * cell)
+		_draw_rotated_ink_run(canvas, center, a_local, b_local, rot, ink_c, stroke, rng)
+	# Single rust fossil cell — habit calcified (spare accent, never a fill flood).
+	if rust_accent:
+		var fossil_cell := Vector2(3.0, 2.0)
+		var pad: float = cell * 0.22
+		var rect := Rect2(
+			origin + fossil_cell * cell + Vector2(pad, pad),
+			Vector2(cell - pad * 2.0, cell - pad * 2.0)
+		)
+		rect.position += Vector2(rng.randf_range(-0.3, 0.3), rng.randf_range(-0.3, 0.3))
+		var rust := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, alpha * 0.88)
+		_draw_rotated_rect(canvas, center, rect, rot, rust, true)
+	# Habit path — dashed chalk through open corridors (graphite, not glow).
+	var path: Array = [
+		Vector2(1.0, 1.0), Vector2(1.0, 3.0), Vector2(3.0, 3.0), Vector2(3.0, 5.0), Vector2(5.0, 5.0),
+	]
+	var chalk := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha * 0.50)
+	for i in range(path.size() - 1):
+		var a_local: Vector2 = origin + (path[i] as Vector2) * cell
+		var b_local: Vector2 = origin + (path[i + 1] as Vector2) * cell
+		_draw_rotated_dashed(
+			canvas,
+			center,
+			a_local,
+			b_local,
+			rot,
+			chalk,
+			1.2 if hero else 1.0,
+			2.6,
+			2.2
+		)
+
+
+func _draw_rotated_ink_run(
+	canvas: CanvasItem,
+	center: Vector2,
+	a_local: Vector2,
+	b_local: Vector2,
+	rot: float,
+	ink: Color,
+	width: float,
+	rng: RandomNumberGenerator
+) -> void:
+	## Segmented letterpress stroke with imperfect rubber-ink pressure.
+	var a: Vector2 = center + a_local.rotated(rot)
+	var b: Vector2 = center + b_local.rotated(rot)
+	var delta: Vector2 = b - a
+	var length: float = delta.length()
+	if length < 0.001:
+		return
+	var dir: Vector2 = delta / length
+	var segs: int = maxi(3, int(length / 6.0))
+	for i in range(segs):
+		if rng.randf() < 0.10:
+			continue
+		var pressure: float = 1.0
+		if rng.randf() < 0.18:
+			pressure = rng.randf_range(0.35, 0.70)
+		var t0: float = length * float(i) / float(segs)
+		var t1: float = length * float(i + 1) / float(segs)
+		var c := Color(ink.r, ink.g, ink.b, ink.a * pressure)
+		canvas.draw_line(a + dir * t0, a + dir * t1, c, width * rng.randf_range(0.88, 1.15), true)
+
+
+func _draw_seal_plate_fill(
+	canvas: CanvasItem,
+	center: Vector2,
+	hw: float,
+	hh: float,
+	rot: float,
+	color: Color
+) -> void:
+	var rect := Rect2(Vector2(-hw, -hh), Vector2(hw * 2.0, hh * 2.0))
+	_draw_rotated_rect(canvas, center, rect, rot, color, true)
+
+
+func _draw_seal_plate_frame(
+	canvas: CanvasItem,
+	center: Vector2,
+	hw: float,
+	hh: float,
+	rot: float,
+	ink: Color,
+	alpha: float,
+	width: float,
+	rng: RandomNumberGenerator
+) -> void:
+	## Segmented rectangle — ~15–20% of edges print light / skip (ink pressure).
+	var edges: Array = [
+		[Vector2(-hw, -hh), Vector2(hw, -hh)],
+		[Vector2(hw, -hh), Vector2(hw, hh)],
+		[Vector2(hw, hh), Vector2(-hw, hh)],
+		[Vector2(-hw, hh), Vector2(-hw, -hh)],
+	]
+	for edge in edges:
+		var a: Vector2 = edge[0]
+		var b: Vector2 = edge[1]
+		var delta: Vector2 = b - a
+		var length: float = delta.length()
+		if length < 0.001:
+			continue
+		var dir: Vector2 = delta / length
+		var segs: int = maxi(6, int(length / 7.0))
+		for i in range(segs):
+			var pressure: float = 1.0
+			if rng.randf() < 0.16:
+				pressure = rng.randf_range(0.55, 0.78)
+			var t0: float = length * float(i) / float(segs)
+			var t1: float = length * float(i + 1) / float(segs)
+			var p0: Vector2 = center + (a + dir * t0).rotated(rot)
+			var p1: Vector2 = center + (a + dir * t1).rotated(rot)
+			var c := Color(ink.r, ink.g, ink.b, alpha * pressure)
+			canvas.draw_line(p0, p1, c, width * rng.randf_range(0.85, 1.2), true)
+
+
+func _draw_rotated_rect(
+	canvas: CanvasItem,
+	center: Vector2,
+	local_rect: Rect2,
+	rot: float,
+	color: Color,
+	filled: bool
+) -> void:
+	var pts := PackedVector2Array([
+		center + local_rect.position.rotated(rot),
+		center + (local_rect.position + Vector2(local_rect.size.x, 0.0)).rotated(rot),
+		center + (local_rect.position + local_rect.size).rotated(rot),
+		center + (local_rect.position + Vector2(0.0, local_rect.size.y)).rotated(rot),
+	])
+	if filled:
+		canvas.draw_colored_polygon(pts, color)
+	else:
+		for i in range(4):
+			canvas.draw_line(pts[i], pts[(i + 1) % 4], color, 1.0, true)
+
+
+func _draw_rotated_dashed(
+	canvas: CanvasItem,
+	center: Vector2,
+	a_local: Vector2,
+	b_local: Vector2,
+	rot: float,
+	color: Color,
+	width: float,
+	dash: float,
+	gap: float
+) -> void:
+	var a: Vector2 = center + a_local.rotated(rot)
+	var b: Vector2 = center + b_local.rotated(rot)
+	draw_dashed_line(canvas, a, b, color, width, dash, gap)
 
 
 func draw_letterpress_wall(

@@ -85,13 +85,17 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_binder_clip",
         ):
             self.assertIn(f"func {name}", art)
-        # Desk vignette + blotter; seal is imperfect rubber ink; card has thickness.
+        # Desk vignette + blotter; seal is imperfect rubber ink plate; card has thickness.
         self.assertIn("blotter", art.lower())
         self.assertIn("vignette", art.lower())
         self.assertIn("Imperfect rubber ink", art)
+        self.assertIn("func draw_habit_maze_mark", art)
+        self.assertIn("rectangular plate", art)
+        self.assertIn("No giant dashed circles", art)
         self.assertIn("binder_holes", art)
         self.assertIn("contact wash", art.lower())
         self.assertIn('"thickness"', art)
+        self.assertIn("ruled_stock", art)
         self.assertIn("Open two-leaf Field Ledger", art)
         self.assertIn("never an empty dashed box", art)
 
@@ -111,14 +115,18 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
         self.assertIn('"hero": true', menu)
+        self.assertIn('"maze": true', menu)
+        self.assertNotIn('"caption": "FIELD"', menu)
+        self.assertIn('"ruled_stock": false', menu)
         self.assertIn("ArtKit.draw_oxide_flecks", menu)
         self.assertIn("LedgerChrome.title_type_scale", menu)
         # Field Index enclosure must stay on shared card geometry helpers.
         self.assertIn("field_index_card_rect(vp, y_off)", menu)
         self.assertIn("func verify_field_index_layout", menu)
         self.assertIn("func folio_leaves", menu)
-        # Large seal — composition art (menu-premium-v1).
-        self.assertIn("168.0", menu)
+        # Letterpress plate seal (menu-seal-v2) — not a dashed circle.
+        self.assertIn("118.0", menu)
+        self.assertIn("ArtKit.draw_habit_maze_mark", menu)
         # Premium title: Medium actions, Bold brand, selection-only rules.
         type_src = (ROOT / "scripts" / "ledger_type.gd").read_text(encoding="utf-8")
         self.assertIn("IBMPlexSansCondensed-Bold.ttf", type_src)

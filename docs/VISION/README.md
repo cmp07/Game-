@@ -27,4 +27,5 @@ Steam pack is **frozen** until depth gates in the execute roadmap pass. Next foc
 | [`AUDIO_V3.md`](AUDIO_V3.md) · [`AUDIO_1_0_CUE_SHEET.md`](AUDIO_1_0_CUE_SHEET.md) | Authored mix identity |
 | [`ART_DIRECTION_V3.md`](ART_DIRECTION_V3.md) · [`TECH_ART_V3.md`](TECH_ART_V3.md) | Art + tech-art |
 | [`MENU_TYPE_SYSTEM.md`](MENU_TYPE_SYSTEM.md) | Title-menu type roles + selection grammar |
+| [`MENU_10_OF_10.md`](MENU_10_OF_10.md) | Title-shell 10/10 composition acceptance (seal + Field Index) |
 | [`NARRATIVE_ARC.md`](NARRATIVE_ARC.md) | Emotional / ledger arc |
