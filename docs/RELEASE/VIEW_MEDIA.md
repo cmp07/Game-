@@ -1,9 +1,10 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `e853ecc` on `cursor/echo-lattice-rc1` — [#160](https://github.com/cmp07/Game-/pull/160) `cursor/menu-hard-reset` merged (hard composition after #158 USER 4/10).
+**Tip at index authoring:** `cursor/menu-dense-craft` → RC1 — dense ledger packing after [#160](https://github.com/cmp07/Game-/pull/160) hard-reset (USER: cut redundancy / air gaps).
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu hard-reset (#160):** explicit 52/42 anchors, ECHO LATTICE ≥72px, rectangular letterpress seal only, Field Index 40–48% width full height, empty layout mass <35%; [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py`.  
+**Menu dense craft:** one Field Index title, one Wing micro header, single date·EL meta, one mid-page specimen with inset seal, Field Index row pitch ~36–44px compact block, empty layout mass <28%; [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py` · `test_menu_no_redundant_labels.py`.  
+**Menu hard-reset (#160):** explicit 52/42 anchors, ECHO LATTICE ≥72px, rectangular letterpress seal only (superseded sparse packing).  
 **Menu 10/10 (superseded soft tip):** letterpress seal + Field Index (`menu-10-of-10` / #158).  
 **Menu composition art:** open folio fills the frame (`menu-composition-art` / #156).  
 **Menu premium / type / no-hud:** #155 · #153 · #154.  

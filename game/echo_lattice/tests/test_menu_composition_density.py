@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""CI gate: title menu hard composition @ 1920×1080.
+"""CI gate: title menu dense composition @ 1920×1080.
 
 Fails if:
   - Brand column / Field Index anchors drift off the 52/42 hard spec
-  - Measured empty (no ink/ui layout mass) ≥ 35% of the inner page
+  - Measured empty (no ink/ui layout mass) ≥ 28% of the inner page
   - Dashed concentric circle seal / FIELD watermark code paths return
+  - Field Index rows stretch with sparse leading
   - Store slate 02_brand_main_menu.png lacks brand + full Field Index
 """
 
@@ -44,6 +45,7 @@ def _layout_rects() -> dict:
     brand_min = _const_int("BRAND_MIN_PX")
     mx = _const_float("PAGE_MARGIN_X")
     my = _const_float("PAGE_MARGIN_Y")
+    specimen_gap = _const_float("SPECIMEN_GAP")
     outer = (mx, my, VP_W - 2 * mx, VP_H - 2 * my)
     left_w = outer[2] * verso
     right_w = outer[2] * recto
@@ -52,22 +54,22 @@ def _layout_rects() -> dict:
     right = (outer[0] + outer[2] - right_w, outer[1], right_w, outer[3])
     brand_px = max(brand_min, 92)
     brand_x = left[0] + 36.0
-    brand_y = left[1] + left[3] * 0.118
+    brand_top = left[1] + 88.0
     brand_w = min(560.0, left[2] - 72.0)
-    brand_block = (brand_x, brand_y - brand_px, brand_w, float(brand_px) + 96.0)
-    seal_half = min(128.0, left[2] * 0.26)
-    seal = (
-        brand_x + 4.0,
-        brand_block[1] + brand_block[3] + 8.0,
-        seal_half * 2.0,
-        seal_half * 2.0,
-    )
-    sil_top = seal[1] + seal[3] + 28.0
+    brand_block = (brand_x, brand_top, brand_w, float(brand_px) + 62.0)
+    sil_top = brand_block[1] + brand_block[3] + specimen_gap
     sil = (
-        left[0] + 24.0,
+        brand_x - 4.0,
         sil_top,
-        max(200.0, left[2] - 48.0),
-        max(120.0, left[1] + left[3] - sil_top - 24.0),
+        max(200.0, left[0] + left[2] - (brand_x - 4.0) - 20.0),
+        max(160.0, left[1] + left[3] - sil_top - 16.0),
+    )
+    seal_half = min(38.0, sil[2] * 0.10)
+    seal = (
+        sil[0] + 12.0,
+        sil[1] + 12.0,
+        seal_half * 2.0,
+        seal_half * 2.0,
     )
     side_pad, top_pad, bot_pad = 16.0, 20.0, 18.0
     card = (
@@ -80,13 +82,8 @@ def _layout_rects() -> dict:
     def area(r: tuple[float, float, float, float]) -> float:
         return r[2] * r[3]
 
-    occupied = (
-        area(brand_block)
-        + area(seal)
-        + area(sil)
-        + area(card)
-        + gutter * outer[3] * 0.35
-    )
+    # Seal lives inside specimen — do not double-count.
+    occupied = area(brand_block) + area(sil) + area(card) + gutter * outer[3] * 0.35
     empty = 1.0 - occupied / max(1.0, area(outer))
     return {
         "outer": outer,
@@ -101,6 +98,7 @@ def _layout_rects() -> dict:
         "recto_frac": right_w / outer[2],
         "index_width_frac": card[2] / VP_W,
         "empty_frac": empty,
+        "specimen_gap": specimen_gap,
     }
 
 
@@ -163,6 +161,8 @@ class TestMenuCompositionDensity(unittest.TestCase):
             "const RECTO_FRAC",
             "const BRAND_MIN_PX",
             "const MAX_EMPTY_FRAC",
+            "const SPECIMEN_GAP",
+            "const INDEX_ROW_H",
             "func composition_layout",
             'tr("brand.title")',
             'tr("brand.tagline")',
@@ -170,8 +170,10 @@ class TestMenuCompositionDensity(unittest.TestCase):
             '"sharp_edge": true',
         ):
             self.assertIn(token, MENU, msg=token)
-        self.assertLessEqual(_const_float("MAX_EMPTY_FRAC"), 0.35)
+        self.assertLessEqual(_const_float("MAX_EMPTY_FRAC"), 0.28)
         self.assertGreaterEqual(_const_int("BRAND_MIN_PX"), 72)
+        self.assertGreaterEqual(_const_float("INDEX_ROW_H"), 36.0)
+        self.assertLessEqual(_const_float("INDEX_ROW_H"), 44.0)
         verso = _const_float("VERSO_FRAC")
         recto = _const_float("RECTO_FRAC")
         self.assertGreaterEqual(verso, 0.48)
@@ -179,7 +181,7 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertGreaterEqual(recto, 0.40)
         self.assertLessEqual(recto, 0.48)
 
-    def test_layout_rects_density_under_35(self) -> None:
+    def test_layout_rects_density_under_28(self) -> None:
         lay = _layout_rects()
         self.assertGreaterEqual(lay["brand_px"], 72)
         self.assertGreaterEqual(lay["verso_frac"], 0.48)
@@ -193,13 +195,37 @@ class TestMenuCompositionDensity(unittest.TestCase):
             _const_float("MAX_EMPTY_FRAC"),
             msg=f"empty_frac={lay['empty_frac']:.3f} — title still a cream void",
         )
-        # Seal plate is rectangular mass under brand (not a postage stamp).
+        self.assertLessEqual(lay["specimen_gap"], 40.0)
+        self.assertGreaterEqual(lay["specimen_gap"], 24.0)
+        # Specimen fills remaining verso — no mid-leaf void band after brand.
+        sil = lay["silhouette"]
+        self.assertGreaterEqual(sil[3], 420.0, msg="specimen too short — cream band remains")
+        # Integrated seal is a small letterpress inset, not a second maze plane.
         seal = lay["seal"]
-        self.assertGreaterEqual(seal[2], 140.0)
-        self.assertGreaterEqual(seal[3], 140.0)
+        self.assertLessEqual(seal[2], 100.0)
+        self.assertLessEqual(seal[3], 100.0)
+        self.assertGreaterEqual(seal[2], 48.0)
         # Field Index full readable height.
         card = lay["field_index"]
         self.assertGreaterEqual(card[3], 900.0)
+
+    def test_dense_row_pitch_not_stretched(self) -> None:
+        """Actions pack as a compact block — never SIZE_EXPAND_FILL stretch."""
+        self.assertIn("Control.SIZE_SHRINK_BEGIN", MENU)
+        self.assertIn("INDEX_ROW_H", MENU)
+        self.assertIn("_field_index_block_height", MENU)
+        # Stretch path must stay gone on the title shell.
+        self.assertNotIn("SIZE_EXPAND_FILL if compact else Control.SIZE_EXPAND_FILL", MENU)
+        apply = re.search(
+            r"func _apply_index_row_metrics\([\s\S]*?\nfunc ",
+            MENU,
+        )
+        self.assertIsNotNone(apply)
+        body = apply.group(0)
+        # Horizontal fill is fine; vertical stretch is the sparse-list failure mode.
+        self.assertNotIn("size_flags_vertical = Control.SIZE_EXPAND_FILL", body)
+        self.assertIn("SIZE_SHRINK_BEGIN", body)
+        self.assertNotIn("clampf(even,", body)
 
     def test_no_circle_seal_code_paths(self) -> None:
         """Dashed concentric circle seal + FIELD watermark must stay eradicated."""
@@ -280,15 +306,21 @@ class TestMenuCompositionDensity(unittest.TestCase):
             if lum(x, y) < 100
         )
         self.assertGreater(text_hits, 700, msg="Field Index actions missing / off-screen")
-        # Actions must span the plate height (not a postage-stamp cluster at the top).
+        # Compact block in upper 2/3 — not stretched top-to-bottom with sparse air.
         ink_ys = [
             y
-            for y in range(top + 50, bottom - 40, 2)
+            for y in range(top + 40, bottom - 40, 2)
             if any(lum(x, y) < 100 for x in range(left + 40, min(left + 420, w - 4), 2))
         ]
-        self.assertGreaterEqual(len(ink_ys), 40, msg="Field Index action ink too sparse")
+        self.assertGreaterEqual(len(ink_ys), 30, msg="Field Index action ink too sparse")
         span = (max(ink_ys) - min(ink_ys)) if ink_ys else 0
-        self.assertGreaterEqual(span, 420, msg="Field Index actions still crammed to one band")
+        self.assertGreaterEqual(span, 240, msg="Field Index actions collapsed")
+        self.assertLessEqual(span, 560, msg="Field Index actions still stretched with air")
+        # Bottom fifth of the plate should be quieter than the action block.
+        mid = top + int((bottom - top) * 0.55)
+        lower = sum(1 for y in ink_ys if y > mid)
+        upper = sum(1 for y in ink_ys if y <= mid)
+        self.assertGreater(upper, lower, msg="actions not packed into upper 2/3")
 
         # No concentric dashed-circle seal: polar ring score around brand seal zone.
         # Rectangular plate has ink on flats; a circle seal spikes at constant radius.

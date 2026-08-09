@@ -504,17 +504,27 @@ func draw_habit_silhouette(
 		Palette.INK_SOFT, 1.6, seed + 3
 	)
 
-	# Fill the plate with a dense corridor specimen — sized to the stock, not a postage stamp.
-	var pad: float = 18.0
-	var cols: int = maxi(10, int((plate.size.x - pad * 2.0) / cell))
-	var rows: int = maxi(8, int((plate.size.y - pad * 2.0) / cell))
-	cols = mini(cols, 22)
-	rows = mini(rows, 16)
+	# Fill the plate edge-to-edge — never a postage-stamp maze floating in cream.
+	# Prefer denser cells over empty band when the leaf is tall.
+	var pad: float = 14.0
+	var cols: int = maxi(12, int((plate.size.x - pad * 2.0) / cell))
+	var rows: int = maxi(10, int((plate.size.y - pad * 2.0) / cell))
+	# Soft caps only — still fill ≥85% of the plate so tall leaves stay dense.
+	cols = mini(cols, 36)
+	rows = mini(rows, 28)
 	var grid_w: float = float(cols) * cell
 	var grid_h: float = float(rows) * cell
+	if grid_h < plate.size.y - pad * 2.0:
+		cell = maxf(10.0, (plate.size.y - pad * 2.0) / float(maxi(rows, 1)))
+		cols = maxi(12, int((plate.size.x - pad * 2.0) / cell))
+		rows = maxi(10, int((plate.size.y - pad * 2.0) / cell))
+		cols = mini(cols, 36)
+		rows = mini(rows, 28)
+		grid_w = float(cols) * cell
+		grid_h = float(rows) * cell
 	var origin := Vector2(
 		plate.position.x + (plate.size.x - grid_w) * 0.5,
-		plate.position.y + (plate.size.y - grid_h) * 0.55
+		plate.position.y + pad + maxf(0.0, (plate.size.y - pad * 2.0 - grid_h) * 0.15)
 	)
 	# Perimeter walls + authored corridor ribs (scales with cols/rows).
 	var walls: Array = []
