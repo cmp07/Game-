@@ -52,9 +52,9 @@ jobs:
         run: python3 game/echo_lattice/tests/test_a11y_settings.py
 
   # ---------------------------------------------------------------------------
-  # Godot export sketch (container). Produces Linux + Windows artifacts when
-  # templates are present in the image. Publish to Steam/itch remains manual
-  # (see steam/echo_lattice/ and docs/RELEASE/CI_BUILDS.md secrets checklist).
+  # Godot export sketch (container). Templates ship under /root in the image;
+  # move them into the Actions user home before export (abarichello/godot-ci).
+  # Publish to Steam/itch remains manual (see steam/ + CI_BUILDS.md secrets).
   # ---------------------------------------------------------------------------
   export-linux:
     name: Export Linux (Godot container)
@@ -67,6 +67,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
 
       - name: Export Linux/X11 release
         working-directory: ${{ env.PROJECT_PATH }}
@@ -96,6 +107,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+
       - name: Export Windows Desktop release
         working-directory: ${{ env.PROJECT_PATH }}
         run: |
@@ -121,6 +143,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Godot export templates
+        run: |
+          set -eu
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ]; then
+            mv /root/.config/godot "$HOME/.config/godot"
+          fi
+          mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" \
+            "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
 
       - name: Export Windows Demo
         working-directory: ${{ env.PROJECT_PATH }}
