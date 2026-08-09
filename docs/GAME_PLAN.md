@@ -1,8 +1,9 @@
 # Steam Desktop Game Plan
 
-**Repo:** [cmp07/sandpile-tycoon](https://github.com/cmp07/sandpile-tycoon)  
+**Repo:** [cmp07/Game-](https://github.com/cmp07/Game-) *(historical working nickname: sandpile-tycoon — not a Steam title)*  
 **Date:** August 2026  
-**Goal:** Ship real desktop Steam games (Windows `.exe`, not browser) quickly at **$0.99–$10**.
+**Goal:** Ship real desktop Steam games (Windows `.exe`, not browser) quickly at **$0.99–$10**.  
+**Game 1 in production:** **Echo Lattice** — habit → geometry authorship puzzle (Field Ledger). Craft ceiling: [`VISION/QUALITY_BAR.md`](VISION/QUALITY_BAR.md). The tension/horror vignette row below is catalog research history, not Echo Lattice’s locked fantasy.
 
 ---
 
@@ -124,5 +125,6 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 
 ## Related docs
 
+- [`docs/VISION/QUALITY_BAR.md`](VISION/QUALITY_BAR.md) — Echo Lattice craft ceiling (polish / presentation / moments; no genre mash)  
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)

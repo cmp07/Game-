@@ -79,6 +79,7 @@ Python contract suite: **22/22** green after media merge (incl. deck bindings).
 | Area | Entry |
 |---|---|
 | Release index | [`README.md`](README.md) |
+| Vision / craft quality bar | [`../VISION/QUALITY_BAR.md`](../VISION/QUALITY_BAR.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
 | Windows (+ Demo) export | [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) |
