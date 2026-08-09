@@ -1,6 +1,37 @@
-# Echo Lattice — Release / Live Ops
+# Echo Lattice — Release index
 
-Post-launch operations pack for shipping Echo Lattice like a small studio: hotfix playbooks, crash/log hooks, a pre-authored daily calendar, a fenced DLC roadmap, and player support copy.
+Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README.md).
+
+## Platforms & builds
+
+| Doc | Purpose |
+|---|---|
+| [`PLATFORMS.md`](PLATFORMS.md) | Multi-platform release strategy + macOS/Linux stubs |
+| [`CI_BUILDS.md`](CI_BUILDS.md) | CI / export build notes |
+
+## Compliance
+
+| Doc | Purpose |
+|---|---|
+| [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Final Steam compliance pack |
+
+## Marketing
+
+| Doc | Purpose |
+|---|---|
+| [`LAUNCH_PLAYBOOK.md`](LAUNCH_PLAYBOOK.md) | T−8 weeks → launch day → week-2 patches |
+| [`presskit/`](presskit/) | Factsheet, folder layout, GIF sequences, capsule/logo slots |
+| [`SOCIAL_CLIP_SCRIPTS.md`](SOCIAL_CLIP_SCRIPTS.md) | 15s / 30s scripts keyed to the rewrite slam |
+| [`INFLUENCER_OUTREACH.md`](INFLUENCER_OUTREACH.md) | Outreach CRM + email skeleton |
+| [`WISHLIST_MILESTONES.md`](WISHLIST_MILESTONES.md) | Wishlist tiers + creative unlocks |
+
+Regenerate GIF frame packs:
+
+```bash
+./game/echo_lattice/tools/capture_press_gifs.sh
+```
+
+## Live ops / post-launch
 
 | Doc | Purpose |
 |---|---|

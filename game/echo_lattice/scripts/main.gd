@@ -108,9 +108,15 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		GameState.best_stars[idx] = 3
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
-		# Drive to the first checkpoint, then freeze the origami slam mid-fold
-		# so the VISUAL v2 rewrite beat is visible (creases + cast shadow + rust).
-		var idx2: int = int(kind.substr(8))
+		# Drive to the first checkpoint, then freeze the origami slam.
+		# `rewrite:CHAMBER` freezes at 0.55 (lift/slot trailer still).
+		# `rewrite:CHAMBER:T` freezes at normalized slam progress T (GIF frames).
+		var rewrite_rest: String = kind.substr("rewrite:".length())
+		var rewrite_parts: PackedStringArray = rewrite_rest.split(":")
+		var idx2: int = int(rewrite_parts[0]) if rewrite_parts.size() > 0 else 2
+		var freeze_t: float = 0.55
+		if rewrite_parts.size() > 1:
+			freeze_t = clampf(float(rewrite_parts[1]), 0.0, 1.0)
 		GameState.start_new_run()
 		GameState.current_chamber = idx2
 		GameState.queue_pos = idx2
@@ -133,8 +139,7 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 			# Do NOT flush — leave the slam running so we can freeze mid-fold.
 			guard += 1
 		if chamber.pending_echoes.size() > 0:
-			# Mid-slam: lift + slot phase (~0.55) — the trailer still.
-			chamber.freeze_rewrite_at(0.55)
+			chamber.freeze_rewrite_at(freeze_t)
 		else:
 			# Fallback: if no echoes placed, step a few more and show settled walls.
 			for k in range(3):
