@@ -87,6 +87,7 @@ class TestLedgerTypeRoles(unittest.TestCase):
         self.assertIn("_selection_baseline_width", chrome)
         self.assertIn("_draw_selection_baseline", chrome)
         self.assertIn("solid ink tick", chrome)
+        self.assertIn("draw_rect(Rect2(tick_p.x - 2.0", chrome)
         # Idle / disabled must not draw rules (no underline spam).
         self.assertIn("if disabled or (not focused and not hovered):", chrome)
         self.assertNotIn("minf(max_w, 280.0)", chrome)

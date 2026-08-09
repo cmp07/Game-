@@ -236,23 +236,23 @@ static func draw_index_underlines(
 				host,
 				Vector2(local_pos.x, y),
 				w,
-				2.0,
+				2.25,
 				Palette.RUST_FOSSIL
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
-				# Single solid ink tick — refined mark, not hollow bullet chrome.
+				# Small solid ink tick (filled square) — never a hollow circle bullet.
 				var tick_c := Color(
-					Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, tick_a * 0.92
+					Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, tick_a * 0.95
 				)
-				var tick_p := Vector2(local_pos.x - 14.0, local_pos.y + r.size.y * 0.52)
-				host.draw_circle(tick_p, 2.2, tick_c)
+				var tick_p := Vector2(local_pos.x - 16.0, local_pos.y + r.size.y * 0.50)
+				host.draw_rect(Rect2(tick_p.x - 2.0, tick_p.y - 2.0, 4.0, 4.0), tick_c, true)
 		elif hovered:
 			_draw_selection_baseline(
 				host,
 				Vector2(local_pos.x, y),
 				baseline_w,
-				1.5,
+				1.6,
 				Palette.SLATE_TEAL
 			)
 
@@ -278,17 +278,12 @@ static func _draw_selection_baseline(
 	thickness: float,
 	color: Color
 ) -> void:
-	## Single refined continuous baseline — soft end fade, never dashed / jagged.
+	## Single refined continuous baseline — solid rect, never dashed / jagged.
 	if width < 1.0:
 		return
-	var tw: float = maxf(1.2, thickness)
-	var core := Color(color.r, color.g, color.b, color.a * 0.96)
+	var tw: float = maxf(1.5, thickness)
+	var core := Color(color.r, color.g, color.b, color.a * 0.98)
 	host.draw_rect(Rect2(origin.x, origin.y, width, tw), core, true)
-	# Hair soften at the tip so the rule reads as ink, not a UI bar.
-	if width > 10.0:
-		var tip_w: float = minf(6.0, width * 0.12)
-		var tip := Color(color.r, color.g, color.b, color.a * 0.35)
-		host.draw_rect(Rect2(origin.x + width - tip_w, origin.y, tip_w, tw), tip, true)
 
 
 static func wire_vertical_focus(buttons: Array) -> void:

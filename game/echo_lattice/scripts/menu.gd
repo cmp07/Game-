@@ -136,11 +136,11 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 
 ## Chrome insets around CardColumn inside the Field Index plate.
 ## Balanced padding — content column composed, not left-scraped into a void.
-const _INDEX_PAD_L: float = 44.0
-const _INDEX_PAD_R: float = 44.0
-const _INDEX_PAD_T: float = 70.0
+const _INDEX_PAD_L: float = 40.0
+const _INDEX_PAD_R: float = 48.0
+const _INDEX_PAD_T: float = 68.0
 # Extra bottom pad for selection baseline drawn below Control rects.
-const _INDEX_PAD_B: float = 44.0
+const _INDEX_PAD_B: float = 40.0
 
 
 ## Right-side Field Index plate — composed card width, never a postage stamp or empty slab.
@@ -153,30 +153,30 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	# Brand lockup + seal own the left ~54% — keep clearance for hero type + glyph.
 	var brand_clear: float = page.position.x + page.size.x * 0.54
 	var right_pad: float = 28.0 if page.size.x < 1100.0 else 40.0
-	# Boutique width hugs action type + balanced pads (~640–700 @1080p).
-	var card_w: float = page.size.x * 0.36
+	# Boutique width hugs action type + balanced pads (~640–680 @1080p).
+	var card_w: float = page.size.x * 0.35
 	if page.size.x >= 1100.0:
-		card_w = clampf(card_w, 640.0, 720.0)
+		card_w = clampf(card_w, 640.0, 680.0)
 	else:
 		card_w = clampf(card_w, 300.0, 400.0)
 	var card_x: float = page.end.x - right_pad - card_w
 	if card_x < brand_clear:
 		card_x = brand_clear
 		card_w = maxf(260.0, page.end.x - right_pad - card_x)
-	# Tall index-card object — fills the right column nearly to the page foot.
+	# Tall plate with content hug — substantial, not an empty slab under the list.
 	var top_pad: float = 32.0 if page.size.y < 700.0 else 44.0
 	var bottom_pad: float = 28.0 if page.size.y < 700.0 else 32.0
 	var top: float = page.position.y + top_pad + y_off
 	var bottom_limit: float = page.end.y - bottom_pad
-	var card_h: float = clampf(page.size.y * 0.86, 420.0, 900.0)
+	var card_h: float = clampf(page.size.y * 0.82, 420.0, 900.0)
 	var col: Control = get_node_or_null("CardColumn") as Control
 	if col != null and col.get_child_count() > 0:
 		var content_h: float = col.size.y
 		if content_h < 8.0:
 			content_h = col.get_combined_minimum_size().y
-		# Hug content from below, but never shrink under a substantial plate height.
 		var needed: float = content_h + _INDEX_PAD_T + _INDEX_PAD_B
-		var presence: float = clampf(page.size.y * 0.84, 420.0, bottom_limit - top)
+		# Presence floor keeps store-slate mass without a tall empty foot void.
+		var presence: float = clampf(page.size.y * 0.72, 400.0, bottom_limit - top)
 		card_h = clampf(maxf(needed, presence), 360.0, bottom_limit - top)
 	else:
 		card_h = minf(card_h, bottom_limit - top)

@@ -426,9 +426,12 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 		# Quiet boutique stock — sparse fiber streaks only (no dense rule grid).
 		draw_fiber_streaks(canvas, card.grow(-8.0), grain_seed + 3, fiber_a * alpha, 12)
 	# Sharp continuous ink edge — never torn / letterpress scribble.
-	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.92 * alpha)
-	canvas.draw_rect(card, border, false, 1.5)
-	if not sharp_edge:
+	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.88 * alpha)
+	if sharp_edge:
+		# Single clean plate edge (1 px) — no double hairline that reads as sketch tremor.
+		canvas.draw_rect(card, border, false, 1.0)
+	else:
+		canvas.draw_rect(card, border, false, 1.5)
 		draw_letterpress_rule(
 			canvas, card.position, card.position + Vector2(card.size.x, 0.0), border, 1.5, grain_seed + 11
 		)
@@ -441,10 +444,6 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 		draw_letterpress_rule(
 			canvas, card.position + Vector2(0.0, card.size.y), card.position, border, 1.5, grain_seed + 14
 		)
-	else:
-		# Inner hairline for stock depth — still sharp.
-		var inner_b := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.28 * alpha)
-		canvas.draw_rect(card.grow(-3.0), inner_b, false, 1.0)
 	if oxide_accents:
 		draw_oxide_flecks(
 			canvas,
