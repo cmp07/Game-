@@ -110,7 +110,8 @@ Progression voice: [`11_PROGRESSION.md`](11_PROGRESSION.md). Economy critique re
 
 | Temptation | Earliest reconsider |
 |---|---|
-| Realtime co-op / servers | Post-G7 + human reopen of [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md) |
+| Realtime co-op / servers | Post-G7 + human reopen per [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) (co-op only; no seamless competitive) |
+| Seamless competitive / invade / rival PvP | **Never** for Weaver — killed in [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) |
 | Player trade / stalls | Default **never**; narrow fence only in economy §3.5 |
 | Second biome pack | Post-MVP, pick one expansion lane |
 | Workshop / mods | After job quality proven |

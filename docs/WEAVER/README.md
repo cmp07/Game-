@@ -1,15 +1,14 @@
 # The Weaver — docs index
 
-**North star product docs** for **The Weaver** (shipping identity — not a forever side project).  
-**Pivot:** Echo Lattice is frozen; Weaver ships — see [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md).  
-**Do not delete** Echo Lattice (today `game/echo_lattice/`; later may archive to `game/_archive/echo_lattice/`) or the Steam pack freeze under [`../BACKUP/`](../BACKUP/). New playable root: `game/weaver/`.
+**North star product docs** for **The Weaver** (working title).  
+**Pivot:** Echo Lattice is frozen; Weaver is active — see [`PIVOT.md`](PIVOT.md).  
+**Do not delete** `game/echo_lattice/` or the Steam pack freeze under [`../BACKUP/`](../BACKUP/).
 
 | Start here | Role |
 |---|---|
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Executive synthesis + glossary + conflict resolution |
-| [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship as The Weaver · archive path · Steam rename plan |
 | [`ROADMAP.md`](ROADMAP.md) | Gates and build order |
-| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver ships · archive-capable) |
+| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
 
 ---
@@ -21,7 +20,6 @@
 | Doc | Topic |
 |---|---|
 | [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
-| [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Rename / archive / Steam page plan |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
 
@@ -74,11 +72,11 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
-### 32 — Prototype timing
+### Post-1.0 fences
 
 | Doc | Topic |
 |---|---|
-| [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) | Ultra-tight first-five beat script (W1 spike) |
+| [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) | Post-1.0 co-op only; seamless competitive killed |
 
 ---
 
@@ -94,7 +92,6 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-first-five` | [#175](https://github.com/cmp07/Game-/pull/175) |
 
 ---
 
@@ -104,5 +101,4 @@
 |---|---|
 | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Echo Lattice Steam freeze |
 | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL vision (not live north star) |
-| `game/echo_lattice/` | Frozen playable — **keep** (later → `game/_archive/echo_lattice/`) |
-| `game/weaver/` | Canonical new playable root |
+| `game/echo_lattice/` | Frozen playable — **keep** |

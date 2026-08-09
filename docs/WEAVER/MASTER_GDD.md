@@ -105,6 +105,7 @@ Brace · Feed · Oppose · Echo
 - Purple-void / neon chronomancy / “Fragments of Time”  
 - Player-to-player trade / auction / stalls  
 - Realtime multiplayer at MVP  
+- Seamless competitive (invade / rival sabotage / PvP race) — see [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md)  
 - F2P, battle pass, gacha, energy meters  
 - Besiege-scale part encyclopedia before jobs exist  
 - Deleting Echo Lattice, or renaming/overwriting `game/echo_lattice/` into Weaver (archive move to `game/_archive/echo_lattice/` is OK per [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md))  
@@ -152,7 +153,7 @@ Brace · Feed · Oppose · Echo
 
 | Area | MVP | Authority |
 |---|---|---|
-| Multiplayer | Singleplayer only; optional later async ghosts / share codes | [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md) |
+| Multiplayer | Singleplayer only; optional later async ghosts / share codes; post-1.0 realtime = co-op only (no seamless competitive) | [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md) · [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) |
 | Monetization | Premium paid; demo as marketing; DLC fence post-1.0 | [`13_MONETIZATION.md`](13_MONETIZATION.md) |
 | Tech | Godot 4; pick **one** sim fence (2D *or* constrained 3D) before art ramp; no game server | [`14_TECH.md`](14_TECH.md) |
 | Market | Demo + mute-legible trailer; pure puzzle/craft tags; no AI-dungeon heat | [`15_MARKET.md`](15_MARKET.md) |

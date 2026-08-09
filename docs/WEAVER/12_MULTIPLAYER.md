@@ -2,7 +2,8 @@
 
 **Doc:** `docs/WEAVER/12_MULTIPLAYER.md`  
 **Status:** Honest MVP cut — social surface only  
-**Peers:** [`01_CONCEPT.md`](01_CONCEPT.md) · [`PIVOT.md`](PIVOT.md) · [`14_TECH.md`](14_TECH.md) · [`17_MVP.md`](17_MVP.md) (when present)
+**Peers:** [`01_CONCEPT.md`](01_CONCEPT.md) · [`PIVOT.md`](PIVOT.md) · [`14_TECH.md`](14_TECH.md) · [`17_MVP.md`](17_MVP.md)  
+**Post-1.0 reopen:** [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) — co-op only; seamless competitive killed
 
 ---
 
@@ -63,11 +64,11 @@ Ordered by honesty of effort vs fantasy fit — not a commitment:
 |---|---|---|
 | A | Steam leaderboard for daily stars (opt-in) | 1.0 shipped; anti-cheat not required if scores are cosmetic |
 | B | Workshop / shared seed browser | Moderation plan + AppID; still no realtime |
-| C | Async “ghost rival” download | Needs CDN + ToS; still not co-op |
-| D | 2P hotseat / same-machine pass | Interesting toy; only if design docs invent a *second role* that isn’t “also walk” |
-| E | Online co-op loom | Explicit product reboot — new GDD, new budget, new category claim |
+| C | Async “ghost rival” download | **Killed** as opposition — see [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md); self/friend ghosts only |
+| D | 2P hotseat / same-machine pass | Preferred co-op fantasy spike before online |
+| E | Online co-op loom | Only realtime reopen — [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md); never seamless competitive |
 
-**Do not** skip A→E because a trailer “would look cool with two cursors.”
+**Do not** skip to online co-op because a trailer “would look cool with two cursors.” Competitive invade / rival-in-yard stays dead.
 
 ---
 
