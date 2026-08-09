@@ -743,9 +743,10 @@ func _selftest_demo_scope(acts: Array) -> bool:
 	for spoil in ["09_twin_rail", "17_identity_reflection", "26_identity_pressure", "33_nameplate"]:
 		if not ChamberBook.get_chamber_by_content_id(spoil).is_empty():
 			printerr("demo spoiler leak: %s still loaded" % spoil); ok = false
-	if DemoBuild.wishlist_url().strip_edges() == "":
-		printerr("demo wishlist URL empty"); ok = false
-	print("demo scope: Act I (%d) + Mirror Birth + wishlist OK" % expect.size())
+	# Placeholder AppID / itch / DRM-free builds must not surface a live CTA.
+	if DemoBuild.wishlist_url().find("YOUR_APP_ID") >= 0:
+		printerr("demo wishlist URL still contains YOUR_APP_ID"); ok = false
+	print("demo scope: Act I (%d) + Mirror Birth + wishlist gates OK" % expect.size())
 	return ok
 
 

@@ -57,6 +57,26 @@ class SteamworksTests(unittest.TestCase):
         self.assertTrue(self.features.get("overlay_pause_enabled"))
         self.assertIn("presence", self.features)
 
+    def test_store_url_feature_flags(self) -> None:
+        self.assertTrue(self.features.get("wishlist_cta_enabled"))
+        self.assertEqual(self.features.get("store_wishlist_url"), "")
+        self.assertEqual(self.features.get("store_page_url"), "")
+        self.assertEqual(self.features.get("app_id_placeholder"), "YOUR_APP_ID")
+        demo = (ROOT / "scripts" / "demo_build.gd").read_text(encoding="utf-8")
+        for needle in (
+            "wishlist_cta_enabled",
+            "store_wishlist_url",
+            "is_drm_free_storefront",
+            "STORE_WISHLIST_URL_TEMPLATE",
+            "refusing to open placeholder",
+        ):
+            self.assertIn(needle, demo)
+        self.assertNotIn("store.steampowered.com/app/YOUR_APP_ID", demo)
+        menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+        end = (ROOT / "scripts" / "end_screen.gd").read_text(encoding="utf-8")
+        self.assertIn("wishlist_cta_enabled()", menu)
+        self.assertIn("wishlist_cta_enabled()", end)
+
     def test_achievements_catalog_mirror(self) -> None:
         self.assertEqual(self.ach_doc, self.ach_rt, "docs and runtime achievement catalogs must match")
         ach = self.ach_doc.get("achievements", [])

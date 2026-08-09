@@ -55,8 +55,14 @@ Autoload order (see `project.godot.steamworks.fragment`):
 | `overlay_pause_enabled` | `true` | Pause tree when overlay opens |
 | `prefer_godotsteam_when_present` | `true` | Use real backend only if singleton exists |
 | `allow_spacewar_dev` | `false` | **SEC-01:** Permit AppID `480` only in editor/debug when explicitly true. Shipping builds never fall back to Spacewar. |
+| `wishlist_cta_enabled` | `true` | Master switch for demo Steam wishlist buttons |
+| `store_wishlist_url` | `""` | Explicit Steam wishlist/store URL (preferred when set) |
+| `store_page_url` | `""` | Fallback store page URL if wishlist URL empty |
+| `app_id_placeholder` | `YOUR_APP_ID` | Used to derive `https://store.steampowered.com/app/{id}/` only when numeric and not Spacewar `480` |
 
-**itch / DRM-free:** leave `steam_enabled` false (default). Do not ship Steam DLLs in itch zips.
+**Store CTAs:** `DemoBuild.wishlist_cta_enabled()` requires a demo build, a non-empty resolved store URL with no `YOUR_APP_ID` token, and must not run under export tags `itch` or `drm_free`. `open_wishlist()` never `shell_open`s placeholder links.
+
+**itch / DRM-free:** leave `steam_enabled` false (default). Set `custom_features` to include `itch` or `drm_free`. Do not ship Steam DLLs in itch zips.
 
 **AppID fail-closed (SEC-01):** `_resolve_app_id()` requires a positive non-Spacewar AppID from `steam_appid.txt` or a numeric `app_id_placeholder`. Missing/invalid → AppID `0`, Steam init skipped while `steam_enabled` is true.
 

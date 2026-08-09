@@ -105,8 +105,12 @@ def main() -> None:
         fail("DemoBuild missing FEATURE_TAG demo")
     if "02_mirror_birth" not in gd:
         fail("DemoBuild missing Mirror Birth id")
-    if "WISHLIST_URL" not in gd or "store.steampowered.com" not in gd:
-        fail("DemoBuild missing Steam wishlist URL")
+    if "STORE_WISHLIST_URL_TEMPLATE" not in gd or "store.steampowered.com" not in gd:
+        fail("DemoBuild missing Steam wishlist URL template")
+    if "wishlist_cta_enabled" not in gd or "is_drm_free_storefront" not in gd:
+        fail("DemoBuild missing wishlist / DRM-free gates")
+    if "store.steampowered.com/app/YOUR_APP_ID" in gd:
+        fail("DemoBuild must not hardcode a YOUR_APP_ID store link")
     for cid in ALLOWED:
         if cid not in gd:
             fail(f"DemoBuild.allowed_campaign_ids missing {cid}")
@@ -137,7 +141,7 @@ def main() -> None:
     print(f"  Act I chambers: {len(ALLOWED)}")
     print("  Mirror Birth: OK")
     print("  Windows Demo preset: OK")
-    print("  wishlist URL: present (placeholder AppID expected pre-Partner)")
+    print("  wishlist gates: feature-flagged (no YOUR_APP_ID hard link)")
     print("result: OK")
 
 

@@ -58,8 +58,12 @@ func _localize_chrome() -> void:
 func _configure_demo_end() -> void:
 	title_label.text = "DEMO COMPLETE"
 	tagline_label.text = "You met Mirror Birth. The full lattice waits."
-	footer_label.text = "Echo Lattice Demo · Act I · Wishlist the full game"
 	restart_button.text = "Replay Act I"
+	if not DemoBuild.wishlist_cta_enabled():
+		footer_label.text = "Echo Lattice Demo · Act I"
+		menu_button.grab_focus()
+		return
+	footer_label.text = "Echo Lattice Demo · Act I · Wishlist the full game"
 	_wishlist_button = Button.new()
 	_wishlist_button.name = "WishlistButton"
 	_wishlist_button.unique_name_in_owner = true

@@ -1,6 +1,6 @@
 {
 	"schema_version": 1,
-	"comment": "Feature flags for Steamworks readiness. Offline/stub is the default so CI, itch, and editor runs never require Steam.",
+	"comment": "Feature flags for Steamworks readiness. Offline/stub is the default so CI, itch, and editor runs never require Steam. Store URLs stay empty until Partner assigns a real AppID — wishlist CTAs hide on itch/DRM-free and when URLs still contain YOUR_APP_ID.",
 	"steam_enabled": false,
 	"achievements_enabled": true,
 	"rich_presence_enabled": true,
@@ -10,6 +10,9 @@
 	"app_id_placeholder": "YOUR_APP_ID",
 	"spacewar_dev_app_id": 480,
 	"allow_spacewar_dev": false,
+	"wishlist_cta_enabled": true,
+	"store_wishlist_url": "",
+	"store_page_url": "",
 	"cloud_remote_path": "save.json",
 	"presence": {
 		"menu": "At the Field Ledger",
