@@ -1,0 +1,245 @@
+extends Node
+##
+## SteamService — Steamworks readiness facade (autoload).
+##
+## Default path is fully offline: stub backend + feature flags.
+## When `steam_enabled` is true and GodotSteam is present, swaps to the real
+## backend. Achievements / rich presence / optional cloud / overlay pause all
+## soft-fail when Steam is unavailable.
+##
+
+signal backend_changed(name: String)
+signal achievement_unlocked(api_name: String)
+signal presence_changed(status: String)
+signal overlay_paused(active: bool)
+
+const FEATURES_PATH: String = "res://config/steam_features.json"
+
+var features: Dictionary = {}
+var backend: SteamBackend = null
+var achievements: SteamAchievements = SteamAchievements.new()
+var cloud: SteamCloudSave = SteamCloudSave.new()
+
+var _overlay_was_tree_paused: bool = false
+var _presence_status: String = ""
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_load_features()
+	_select_backend()
+	achievements.load_catalog()
+	achievements.unlocked.connect(func(api: String): achievement_unlocked.emit(api))
+	if backend != null:
+		backend.overlay_toggled.connect(_on_overlay_toggled)
+		var app_id: int = _resolve_app_id()
+		backend.init_steam(app_id)
+	if bool(features.get("cloud_save_enabled", false)):
+		cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
+	set_menu_presence()
+
+
+func _process(_delta: float) -> void:
+	if backend != null and bool(features.get("steam_enabled", false)):
+		backend.run_callbacks()
+
+
+func is_using_steam() -> bool:
+	return backend != null and backend.is_steam_available()
+
+
+func backend_name() -> String:
+	return backend.backend_name() if backend != null else "none"
+
+
+func reload_features() -> void:
+	_load_features()
+	_select_backend()
+
+
+func unlock_achievement(api_name: String) -> bool:
+	if not bool(features.get("achievements_enabled", true)):
+		return false
+	if backend == null or api_name == "":
+		return false
+	var ok: bool = backend.unlock_achievement(api_name)
+	if ok:
+		backend.store_stats()
+		achievement_unlocked.emit(api_name)
+	return ok
+
+
+func evaluate_achievements() -> PackedStringArray:
+	if not bool(features.get("achievements_enabled", true)):
+		return PackedStringArray()
+	return achievements.evaluate_and_unlock(backend)
+
+
+func set_rich_presence_status(status: String) -> void:
+	if not bool(features.get("rich_presence_enabled", true)):
+		return
+	_presence_status = status
+	if backend != null:
+		backend.set_rich_presence("steam_display", "#Status")
+		backend.set_rich_presence("status", status)
+	presence_changed.emit(status)
+
+
+func clear_rich_presence() -> void:
+	_presence_status = ""
+	if backend != null:
+		backend.clear_rich_presence()
+	presence_changed.emit("")
+
+
+func set_menu_presence() -> void:
+	var tpl: Dictionary = features.get("presence", {})
+	set_rich_presence_status(str(tpl.get("menu", "At the Field Ledger")))
+
+
+func set_chamber_presence(chamber_id: int) -> void:
+	var tpl: Dictionary = features.get("presence", {})
+	var title := "Chamber %d" % chamber_id
+	if has_node("/root/ChamberBook"):
+		var data: Dictionary = ChamberBook.get_chamber(chamber_id)
+		title = str(data.get("title", title))
+	var status: String
+	if has_node("/root/GameState") and GameState.run_mode == "daily":
+		status = str(tpl.get("daily_template", "Daily {label}")).format({
+			"label": GameState.daily_label,
+		})
+	else:
+		status = str(tpl.get("chamber_template", "Chamber {index}: {title}")).format({
+			"index": chamber_id + 1,
+			"title": title,
+		})
+	set_rich_presence_status(status)
+
+
+func set_won_presence(chamber_id: int) -> void:
+	var tpl: Dictionary = features.get("presence", {})
+	var title := "Chamber %d" % chamber_id
+	if has_node("/root/ChamberBook"):
+		var data: Dictionary = ChamberBook.get_chamber(chamber_id)
+		title = str(data.get("title", title))
+	set_rich_presence_status(str(tpl.get("won_template", "Cleared {title}")).format({
+		"title": title,
+	}))
+
+
+func set_end_presence() -> void:
+	var tpl: Dictionary = features.get("presence", {})
+	set_rich_presence_status(str(tpl.get("end", "Wing complete")))
+
+
+func notify_chamber_cleared(_chamber_id: int, _moves: int = 0) -> void:
+	evaluate_achievements()
+	if bool(features.get("cloud_save_enabled", false)):
+		push_cloud_save()
+
+
+func push_cloud_save() -> bool:
+	if not bool(features.get("cloud_save_enabled", false)):
+		return false
+	return cloud.push_local(backend, str(features.get("cloud_remote_path", "save.json")))
+
+
+func pull_cloud_save() -> bool:
+	if not bool(features.get("cloud_save_enabled", false)):
+		return false
+	return cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
+
+
+## Debug / tests: force stub overlay event.
+func debug_simulate_overlay(active: bool) -> void:
+	if backend is SteamStubBackend:
+		(backend as SteamStubBackend).simulate_overlay(active)
+
+
+func _on_overlay_toggled(active: bool) -> void:
+	if not bool(features.get("overlay_pause_enabled", true)):
+		overlay_paused.emit(active)
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	if active:
+		_overlay_was_tree_paused = tree.paused
+		tree.paused = true
+		if has_node("/root/AdaptiveMusic"):
+			AdaptiveMusic.set_paused(true)
+	else:
+		tree.paused = _overlay_was_tree_paused
+		if has_node("/root/AdaptiveMusic") and not _overlay_was_tree_paused:
+			AdaptiveMusic.set_paused(false)
+	overlay_paused.emit(active)
+
+
+func _load_features() -> void:
+	features = {
+		"steam_enabled": false,
+		"achievements_enabled": true,
+		"rich_presence_enabled": true,
+		"cloud_save_enabled": false,
+		"overlay_pause_enabled": true,
+		"prefer_godotsteam_when_present": true,
+		"app_id_placeholder": "YOUR_APP_ID",
+		"spacewar_dev_app_id": 480,
+		"cloud_remote_path": "save.json",
+		"presence": {
+			"menu": "At the Field Ledger",
+			"chamber_template": "Chamber {index}: {title}",
+			"daily_template": "Daily {label}",
+			"won_template": "Cleared {title}",
+			"end": "Wing complete",
+		},
+	}
+	if not FileAccess.file_exists(FEATURES_PATH):
+		return
+	var f := FileAccess.open(FEATURES_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var parsed = JSON.parse_string(f.get_as_text())
+	f.close()
+	if typeof(parsed) == TYPE_DICTIONARY:
+		for k in parsed.keys():
+			features[k] = parsed[k]
+
+
+func _select_backend() -> void:
+	var use_real: bool = bool(features.get("steam_enabled", false)) \
+		and bool(features.get("prefer_godotsteam_when_present", true)) \
+		and SteamGodotSteamBackend.is_godotsteam_present()
+	if use_real:
+		backend = SteamGodotSteamBackend.new()
+	else:
+		backend = SteamStubBackend.new()
+	backend_changed.emit(backend.backend_name())
+
+
+func _resolve_app_id() -> int:
+	# steam_appid.txt beside executable wins for local exported builds.
+	var beside := OS.get_executable_path().get_base_dir().path_join("steam_appid.txt")
+	if FileAccess.file_exists(beside):
+		var f := FileAccess.open(beside, FileAccess.READ)
+		if f != null:
+			var raw := f.get_as_text().strip_edges()
+			f.close()
+			if raw.is_valid_int():
+				return int(raw)
+	var placeholder := str(features.get("app_id_placeholder", "YOUR_APP_ID"))
+	if placeholder.is_valid_int():
+		return int(placeholder)
+	# Dev-only Spacewar when explicitly enabling Steam without a real AppID.
+	if bool(features.get("steam_enabled", false)):
+		return int(features.get("spacewar_dev_app_id", 480))
+	return 0
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_EXIT_TREE:
+		if bool(features.get("cloud_save_enabled", false)):
+			push_cloud_save()
+		if backend != null:
+			backend.clear_rich_presence()
+			backend.shutdown_steam()

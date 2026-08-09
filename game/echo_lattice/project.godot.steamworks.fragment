@@ -1,0 +1,16 @@
+; Merge into game/echo_lattice/project.godot (Godot 4.3+).
+; Steamworks readiness — offline stub by default; GodotSteam optional.
+;
+; Autoload order matters:
+;   SaveManager → SteamService (optional cloud pull) → ChamberBook → GameState (load)
+;
+; Feature flags: res://config/steam_features.json
+; Achievement catalog: res://config/achievements_steam.json
+; Docs: docs/RELEASE/STEAMWORKS.md
+
+[autoload]
+
+SaveManager="*res://scripts/save_manager.gd"
+SteamService="*res://scripts/steam/steam_service.gd"
+ChamberBook="*res://scripts/chamber_book.gd"
+GameState="*res://scripts/game_state.gd"

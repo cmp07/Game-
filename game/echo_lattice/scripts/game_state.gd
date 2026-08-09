@@ -100,6 +100,10 @@ func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1) -> void:
 	if run_mode == "daily":
 		_update_daily_stars()
 	SaveManager.save_to_disk()
+	if Engine.get_main_loop() is SceneTree:
+		var root: Node = (Engine.get_main_loop() as SceneTree).root
+		if root != null and root.has_node("SteamService"):
+			root.get_node("SteamService").notify_chamber_cleared(chamber_id, moves)
 
 
 func last_stars(chamber_id: int, moves: int, bfs_par: int) -> int:
