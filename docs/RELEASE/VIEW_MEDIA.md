@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `8d64034c42d5d500201af7d96becb25839c2b6f0` (menu-premium-v1 boutique title; 02_brand_main_menu.png recapture)  
+**Tip at index authoring:** `fb1634994c318a1a0938df8761880ed6c9b7fee8` (menu-premium-v1 boutique title; 02_brand_main_menu.png recapture)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu premium:** boutique title composition (`menu-premium-v1` / #155) — Bold/Medium stack, large seal, selection-only rules; overrides sparse clinical shells.  
 **Menu design craft:** print-shop materials elevation (`menu-design-craft` / #152) — ArtKit desk vignette / letterpress / hero seal; LedgerChrome type + ink-craft selection; craft `02_brand_main_menu.png`.  
