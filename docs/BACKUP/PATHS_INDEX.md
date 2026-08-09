@@ -320,8 +320,8 @@ game/echo_lattice/tools/capture_steam_store.sh
 game/echo_lattice/tools/capture_tour.sh
 game/echo_lattice/tools/capture_v2_complete.sh
 game/echo_lattice/tools/fonts/OFL.txt
-game/echo_lattice/tools/fonts/Oswald-Bold.ttf
-game/echo_lattice/tools/fonts/Oswald-Medium.ttf
+game/echo_lattice/tools/fonts/IBMPlexSansCondensed-Bold.ttf
+game/echo_lattice/tools/fonts/IBMPlexSansCondensed-Medium.ttf
 game/echo_lattice/tools/generate_steam_capsules.py
 game/.gitkeep
 ```

@@ -1,8 +1,8 @@
-# Echo Lattice — Steam capsule finals (Field Ledger)
+# Echo Lattice — Steam capsule finals (Field Ledger · G1)
 
-**Product:** Echo Lattice  
-**Look:** Field Ledger — paper bone / ink / rust (VISUAL v2 + `echo_lattice.palette.json`). Not neon, not purple, not fantasy key art.  
-**Status:** **Gate A finals** — size-correct sRGB PNGs generated from the briefs below. No `PLACEHOLDER` stamp.  
+**Product:** Echo Lattice (Game 1)  
+**Look:** Field Ledger — paper bone / ink / rust ([`ART_DIRECTION_V3.md`](../../VISION/ART_DIRECTION_V3.md) materials + typography; palette from `echo_lattice.palette.json`). Not neon, not purple, not fantasy key art.  
+**Status:** **G1 regenerated finals** — size-correct sRGB PNGs from the briefs below. No `PLACEHOLDER` stamp.  
 **Generator:** [`../../../game/echo_lattice/tools/generate_steam_capsules.py`](../../../game/echo_lattice/tools/generate_steam_capsules.py)  
 **Master package:** [`../STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md)
 
@@ -19,6 +19,10 @@ Palette lock (must match in-game ArtKit / `palette.json`):
 | `slate_teal` | `#2D4A55` | Tagline / secondary type |
 | `chalk_white` | `#F5EFDD` | Habit trail / ghost |
 | `copper_key` | `#B8763A` | Chest lantern |
+
+**Type (V3 display stack):** IBM Plex Sans Condensed Bold / Medium (SIL OFL) under [`../../../game/echo_lattice/tools/fonts/`](../../../game/echo_lattice/tools/fonts/) — replaces the earlier Oswald lockup so capsules match art-bible / V3-T2.
+
+**Materials (print-shop process):** fiber paper + faint 4 px ledger sub-grid, letterpress edge tremor on ink walls, circular rubber-stamp checkpoints, origami crease with contact shadow, Bayer-dithered copper lantern disk, rust veins from joins. No bloom / purple / emissive.
 
 ---
 
@@ -41,8 +45,6 @@ Regenerate:
 python3 game/echo_lattice/tools/generate_steam_capsules.py
 ```
 
-Fonts (OFL): [`../../../game/echo_lattice/tools/fonts/`](../../../game/echo_lattice/tools/fonts/) (Oswald Bold / Medium).
-
 Older keyart thumb (historical):  
 [`game/echo_lattice/art/keyart/capsule_header_460x215_thumb.png`](../../../game/echo_lattice/art/keyart/capsule_header_460x215_thumb.png)
 
@@ -53,11 +55,11 @@ Older keyart thumb (historical):
 ### Header capsule — 460×215
 
 **Title:** *Mid-step, the walls agreeing.*  
-Surveyor mid-step in a right-angled ledger corridor. Behind them, three walls fold up from the floor in origami creases shaped like their footprints. Rust creeps along one wall. Wordmark `ECHO LATTICE` in tall condensed grotesk, ink on paper. Tagline small-caps teal: `IT LEARNED YOU`. Safe margin: keep wordmark clear at 50% scale.
+Surveyor mid-step in a right-angled ledger corridor. Behind them, three walls fold up from the floor in origami creases shaped like their footprints. Rust creeps along one wall. Wordmark `ECHO LATTICE` in IBM Plex Sans Condensed, ink on paper. Tagline small-caps teal: `IT LEARNED YOU`. Safe margin: keep wordmark clear at 50% scale.
 
 ### Main capsule — 616×353
 
-Same key visual, low 3/4 angle. Chest lantern (copper stamp light). Chalk footprints receding; dashed chalk ghost of previous route. Checkpoint stamp (`§ 04`) on the tile ahead. Wordmark lower-left; tagline under rust underline. No review scores, no “OUT NOW” banners.
+Same key visual, low 3/4 angle. Chest lantern (copper dither disk). Chalk footprints receding; dashed chalk ghost of previous route. Checkpoint rubber stamp (`§ 04`) on the tile ahead. Wordmark lower-left; tagline under rust underline. No review scores, no “OUT NOW” banners.
 
 ### Small capsule — 231×87
 
@@ -93,12 +95,14 @@ Full-bleed ledger grid at low contrast; spine suggestion; no player; no collapse
 4. Wordmark legible on small capsule.  
 5. Delivery: sRGB PNG-24 (RGBA for logo), no embedded ICC drama.  
 6. Exact Steam pixel sizes (IHDR) match the inventory table.  
-7. No `PLACEHOLDER` stamp in any PNG.
+7. No `PLACEHOLDER` stamp in any PNG.  
+8. Typeface is IBM Plex Sans Condensed (not engine default / not Oswald).
 
 ---
 
 ## Related
 
 - Art bible capsule section: [`../../ECHO_LATTICE/05_ART_BIBLE.md`](../../ECHO_LATTICE/05_ART_BIBLE.md) §7  
+- Art direction V3 (materials + type): [`../../VISION/ART_DIRECTION_V3.md`](../../VISION/ART_DIRECTION_V3.md)  
 - Screenshot slate + trailer: [`../STEAM_STORE_FINAL.md`](../STEAM_STORE_FINAL.md)  
 - Platform asset reuse: [`../PLATFORMS.md`](../PLATFORMS.md)
