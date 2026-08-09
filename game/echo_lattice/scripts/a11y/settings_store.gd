@@ -1,11 +1,14 @@
 extends Node
-## Persists Echo Lattice player settings (accessibility, audio, input).
+## Persists Echo Lattice player settings (accessibility, audio, input, locale).
 ## Autoload name: SettingsStore
+## Writes via tmp + rename + .bak (same pattern as SaveManager).
 
 signal settings_changed(section: String, key: String, value: Variant)
 signal settings_reloaded()
 
 const SETTINGS_PATH := "user://echo_lattice_settings.json"
+const SETTINGS_TMP := "user://echo_lattice_settings.json.tmp"
+const SETTINGS_BAK := "user://echo_lattice_settings.json.bak"
 const DEFAULTS_RES := "res://config/default_settings.json"
 
 var _data: Dictionary = {}
@@ -62,6 +65,16 @@ func reset_all() -> void:
 
 func load_settings() -> void:
 	var loaded := _load_json_file(SETTINGS_PATH)
+	if loaded.is_empty() and FileAccess.file_exists(SETTINGS_BAK):
+		loaded = _load_json_file(SETTINGS_BAK)
+		if not loaded.is_empty():
+			# Recover primary without rotating a corrupt file into .bak.
+			_data = _defaults.duplicate(true)
+			_deep_merge(_data, loaded)
+			_migrate_v1_to_v2()
+			_write_primary_in_place(JSON.stringify(_data, "\t"))
+			settings_reloaded.emit()
+			return
 	if loaded.is_empty():
 		_data = _defaults.duplicate(true)
 	else:
@@ -72,16 +85,63 @@ func load_settings() -> void:
 
 
 func save_settings() -> bool:
-	var file := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+	var payload: String = JSON.stringify(_data, "\t")
+	var file := FileAccess.open(SETTINGS_TMP, FileAccess.WRITE)
 	if file == null:
-		push_warning("SettingsStore: cannot write %s" % SETTINGS_PATH)
+		push_warning("SettingsStore: cannot write %s" % SETTINGS_TMP)
 		return false
-	file.store_string(JSON.stringify(_data, "\t"))
+	file.store_string(payload)
+	file.close()
+
+	var abs_path: String = ProjectSettings.globalize_path(SETTINGS_PATH)
+	var abs_tmp: String = ProjectSettings.globalize_path(SETTINGS_TMP)
+	var abs_bak: String = ProjectSettings.globalize_path(SETTINGS_BAK)
+
+	if FileAccess.file_exists(SETTINGS_PATH):
+		var primary_ok: bool = typeof(_read_json_variant(SETTINGS_PATH)) == TYPE_DICTIONARY
+		if primary_ok:
+			if FileAccess.file_exists(SETTINGS_BAK):
+				DirAccess.remove_absolute(abs_bak)
+			var ren_bak: Error = DirAccess.rename_absolute(abs_path, abs_bak)
+			if ren_bak != OK:
+				var src := FileAccess.open(SETTINGS_PATH, FileAccess.READ)
+				var dst := FileAccess.open(SETTINGS_BAK, FileAccess.WRITE)
+				if src != null and dst != null:
+					dst.store_string(src.get_as_text())
+					dst.close()
+					src.close()
+					DirAccess.remove_absolute(abs_path)
+				else:
+					if src:
+						src.close()
+					if dst:
+						dst.close()
+					push_warning("SettingsStore: could not rotate settings backup.")
+		else:
+			DirAccess.remove_absolute(abs_path)
+
+	var ren: Error = DirAccess.rename_absolute(abs_tmp, abs_path)
+	if ren != OK:
+		var ok := _write_primary_in_place(payload)
+		if FileAccess.file_exists(SETTINGS_TMP):
+			DirAccess.remove_absolute(abs_tmp)
+		if not ok:
+			push_warning("SettingsStore: atomic rename failed (%s)." % ren)
+		return ok
 	return true
 
 
 func export_dict() -> Dictionary:
 	return _data.duplicate(true)
+
+
+func _write_primary_in_place(payload: String) -> bool:
+	var direct := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+	if direct == null:
+		return false
+	direct.store_string(payload)
+	direct.close()
+	return true
 
 
 func _migrate_v1_to_v2() -> void:
@@ -104,19 +164,27 @@ func _migrate_v1_to_v2() -> void:
 		if binds.has(old_k) and not binds.has(aliases[old_k]):
 			binds[aliases[old_k]] = binds[old_k]
 	_data["input_bindings"] = binds
+	if not _data.has("locale"):
+		_data["locale"] = {"code": "system"}
+	elif not (_data["locale"] as Dictionary).has("code"):
+		(_data["locale"] as Dictionary)["code"] = "system"
 	_data["version"] = 2
 
 
 func _load_json_file(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		return {}
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		return {}
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	var parsed: Variant = _read_json_variant(path)
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {}
 	return parsed
+
+
+func _read_json_variant(path: String) -> Variant:
+	if not FileAccess.file_exists(path):
+		return null
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return null
+	return JSON.parse_string(file.get_as_text())
 
 
 func _deep_merge(dst: Dictionary, src: Dictionary) -> void:
@@ -150,6 +218,9 @@ func _builtin_defaults() -> Dictionary:
 			"sfx_volume": 1.0,
 			"music_volume": 0.8,
 			"pa_volume": 1.0,
+		},
+		"locale": {
+			"code": "system",
 		},
 		"input_bindings": {
 			"move_up": ["W", "Up"],

@@ -21,6 +21,9 @@
     "music_volume": 0.8,
     "pa_volume": 1.0
   },
+  "locale": {
+    "code": "system"
+  },
   "input_bindings": {
     "move_up": ["W", "Up"],
     "move_down": ["S", "Down"],

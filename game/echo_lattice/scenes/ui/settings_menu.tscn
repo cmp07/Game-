@@ -49,9 +49,8 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="Panel/Margin/VBox"]
-unique_name_in_owner = true
 layout_mode = 2
-text = "Settings — Accessibility"
+text = "Settings"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
@@ -66,10 +65,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="A11yHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
-unique_name_in_owner = true
+[node name="LanguageHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
 layout_mode = 2
-text = "Accessibility"
+text = "Language"
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
 
@@ -77,7 +75,6 @@ theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
 layout_mode = 2
 
 [node name="LanguageLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/LanguageRow"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Language"
@@ -87,11 +84,90 @@ unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(240, 0)
 
+[node name="AudioHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+text = "Audio"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
+[node name="MasterVolRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="MasterVolLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/MasterVolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Master"
+
+[node name="MasterVolSlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/MasterVolRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SfxVolRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="SfxVolLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/SfxVolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SFX / UI"
+
+[node name="SfxVolSlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/SfxVolRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MusicVolRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="MusicVolLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/MusicVolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Music"
+
+[node name="MusicVolSlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/MusicVolRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 0.8
+
+[node name="PaVolRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="PaVolLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/PaVolRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PA"
+
+[node name="PaVolSlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/PaVolRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="A11yHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+text = "Accessibility"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
 [node name="ColorblindRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
 layout_mode = 2
 
 [node name="ColorblindLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/ColorblindRow"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Colorblind mode"
@@ -120,7 +196,6 @@ text = "Screen shake"
 layout_mode = 2
 
 [node name="ShakeIntensityLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/ShakeRow"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Shake intensity"
@@ -143,7 +218,6 @@ text = "Subtitles (PA / rewrite lines)"
 layout_mode = 2
 
 [node name="SubtitleSizeLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/SubtitleSizeRow"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Subtitle size"
@@ -152,6 +226,7 @@ text = "Subtitle size"
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(220, 0)
+
 
 [node name="SubtitleBackgroundCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
 unique_name_in_owner = true
@@ -162,7 +237,6 @@ text = "Subtitle background"
 layout_mode = 2
 
 [node name="UiScaleLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/UiScaleRow"]
-unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "UI scale"
@@ -198,7 +272,6 @@ layout_mode = 2
 text = "Hold to walk"
 
 [node name="InputHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "Input (click to rebind keyboard; gamepad preserved)"
 theme_override_font_sizes/font_size = 16
@@ -208,6 +281,23 @@ theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
+
+[node name="SupportHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+text = "Support"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
+[node name="BuildIdLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Build: —"
+theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 1)
+
+[node name="ExportCrashPackButton" type="Button" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Export crash pack"
 
 [node name="StatusLabel" type="Label" parent="Panel/Margin/VBox"]
 unique_name_in_owner = true
@@ -222,21 +312,22 @@ alignment = 1
 theme_override_constants/separation = 12
 
 [node name="ResetA11yButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "Reset accessibility"
 
 [node name="ResetInputButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "Reset input"
 
 [node name="CloseButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
-unique_name_in_owner = true
 layout_mode = 2
 text = "Close"
 
 [connection signal="item_selected" from="Panel/Margin/VBox/Scroll/Content/LanguageRow/LanguageOption" to="." method="_on_language_selected"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/MasterVolRow/MasterVolSlider" to="." method="_on_master_vol_changed"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/SfxVolRow/SfxVolSlider" to="." method="_on_sfx_vol_changed"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/MusicVolRow/MusicVolSlider" to="." method="_on_music_vol_changed"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/PaVolRow/PaVolSlider" to="." method="_on_pa_vol_changed"]
 [connection signal="item_selected" from="Panel/Margin/VBox/Scroll/Content/ColorblindRow/ColorblindOption" to="." method="_on_colorblind_selected"]
 [connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/FossilPatternsCheck" to="." method="_on_patterns_toggled"]
 [connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/ReduceFlashCheck" to="." method="_on_reduce_flash_toggled"]
@@ -249,6 +340,7 @@ text = "Close"
 [connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/GhostAssistCheck" to="." method="_on_ghost_assist_toggled"]
 [connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/ReduceMotionCheck" to="." method="_on_reduce_motion_toggled"]
 [connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/HoldToWalkCheck" to="." method="_on_hold_walk_toggled"]
+[connection signal="pressed" from="Panel/Margin/VBox/Scroll/Content/ExportCrashPackButton" to="." method="_on_export_crash_pack"]
 [connection signal="pressed" from="Panel/Margin/VBox/Buttons/ResetA11yButton" to="." method="_on_reset_accessibility"]
 [connection signal="pressed" from="Panel/Margin/VBox/Buttons/ResetInputButton" to="." method="_on_reset_bindings"]
 [connection signal="pressed" from="Panel/Margin/VBox/Buttons/CloseButton" to="." method="_on_close_pressed"]

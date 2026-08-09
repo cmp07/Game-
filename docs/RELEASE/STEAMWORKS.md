@@ -112,7 +112,10 @@ When enabling for 1.0:
 2. Set `cloud_save_enabled: true`.
 3. Map root path to Godot userdata (`%APPDATA%\Godot\app_userdata\Echo Lattice\` on Windows, or a custom `user://` override).
 4. Remote file name: `save.json` (`cloud_remote_path`).
-5. Conflict policy today: **prefer local if both differ**; pull only when local missing/empty. Revisit before marketing Cloud as a feature.
+5. **Conflict policy (Partner-facing):**
+   - Boot pull (`SteamCloudSave.pull_if_newer`) applies the remote file when local is **missing or empty**.
+   - When both exist and differ, compare schema field `updated_at` (unix seconds, written by `SaveManager` on every commit). **Strictly newer cloud wins.**
+   - If `updated_at` is missing on either side, or timestamps are equal: **prefer local** (safe default while Cloud is optional / unmarketed). Identical byte payloads are treated as already synced.
 6. **SEC-02:** Cloud pulls run `SaveManager.validate_save_text` (version bounds, allowlisted keys, size/queue caps) before atomic write to `user://save.json`. Invalid remotes are refused.
 
 Exclude: crash dumps, screenshots, `telemetry/`, editor scratch.

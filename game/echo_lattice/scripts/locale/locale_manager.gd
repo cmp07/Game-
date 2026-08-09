@@ -2,13 +2,14 @@ extends Node
 ##
 ## LocaleManager — loads CSV catalogs into TranslationServer, picks locale,
 ## and swaps ThemeDB fallback fonts when CJK coverage is required.
-## Autoload; runs before UI scenes so tr() / auto-translate see messages.
+## Autoload; runs after SettingsStore so tr() / auto-translate see messages.
+## Locale code lives in SettingsStore.locale.code (migrates legacy user://locale.cfg).
 ##
 
 signal locale_changed(locale: String)
 
 const CATALOG_PATH := "res://locale/echo_lattice.csv"
-const SETTINGS_PATH := "user://locale.cfg"
+const LEGACY_SETTINGS_PATH := "user://locale.cfg"
 
 ## Locales we ship catalogs for. `en` is the source language.
 const SUPPORTED := ["en", "zh_Hans"]
@@ -35,27 +36,37 @@ const CJK_FONT_CANDIDATES := [
 var current_locale: String = "en"
 var _cjk_font: Font = null
 var _default_fallback_font: Font = null
+var _applying: bool = false
 
 
 func _ready() -> void:
 	_default_fallback_font = ThemeDB.fallback_font
 	_load_catalog(CATALOG_PATH)
-	var chosen := _resolve_startup_locale()
-	apply_locale(chosen)
+	var store := _settings_store()
+	if store != null and store.has_signal("settings_changed"):
+		store.settings_changed.connect(_on_settings_changed)
+	var startup := _resolve_startup_locale()
+	# Apply concrete locale for TranslationServer; only persist when migrating legacy cfg.
+	apply_locale(str(startup.get("apply", "en")), false)
+	if bool(startup.get("migrate", false)):
+		_persist(str(startup.get("persist", "system")))
 
 
 func supported_locales() -> PackedStringArray:
 	return PackedStringArray(SUPPORTED)
 
 
-func apply_locale(locale: String) -> void:
+func apply_locale(locale: String, persist: bool = true) -> void:
 	var normalized := normalize_locale(locale)
 	if normalized not in SUPPORTED:
 		normalized = "en"
+	_applying = true
 	current_locale = normalized
 	TranslationServer.set_locale(normalized)
 	_apply_font_for_locale(normalized)
-	_persist(normalized)
+	if persist:
+		_persist(locale if locale.strip_edges() in ["", "system", "auto"] else normalized)
+	_applying = false
 	emit_signal("locale_changed", normalized)
 
 
@@ -110,28 +121,64 @@ func habit_label(dir_key: String) -> String:
 			return dir_key
 
 
-func _resolve_startup_locale() -> String:
-	var saved := _read_saved()
-	if saved != "":
-		return normalize_locale(saved)
-	return _from_system()
+func _resolve_startup_locale() -> Dictionary:
+	var store := _settings_store()
+	if store != null and store.has_method("get_value"):
+		var from_store := str(store.get_value("locale", "code", "system"))
+		if from_store != "" and from_store != "system" and from_store != "auto":
+			return {"apply": normalize_locale(from_store), "persist": from_store, "migrate": false}
+		var legacy := _read_legacy_cfg()
+		if legacy != "":
+			var concrete := normalize_locale(legacy)
+			return {"apply": concrete, "persist": concrete, "migrate": true}
+		return {
+			"apply": normalize_locale(from_store if from_store != "" else "system"),
+			"persist": "system",
+			"migrate": false,
+		}
+	var legacy_only := _read_legacy_cfg()
+	if legacy_only != "":
+		return {"apply": normalize_locale(legacy_only), "persist": legacy_only, "migrate": false}
+	return {"apply": _from_system(), "persist": "system", "migrate": false}
 
 
 func _from_system() -> String:
 	return normalize_locale(OS.get_locale())
 
 
-func _persist(locale: String) -> void:
+func _persist(stored_code: String) -> void:
+	var store := _settings_store()
+	if store != null and store.has_method("set_value"):
+		var code := stored_code.strip_edges()
+		if code == "" or code == "auto":
+			code = "system"
+		# Avoid re-entry write loops when applying a store-driven change.
+		var current := str(store.get_value("locale", "code", "system"))
+		if current != code:
+			store.set_value("locale", "code", code, true)
+		return
+	# Fallback when SettingsStore is unavailable (unit / tools).
 	var cfg := ConfigFile.new()
-	cfg.set_value("locale", "code", locale)
-	cfg.save(SETTINGS_PATH)
+	cfg.set_value("locale", "code", stored_code)
+	cfg.save(LEGACY_SETTINGS_PATH)
 
 
-func _read_saved() -> String:
+func _read_legacy_cfg() -> String:
 	var cfg := ConfigFile.new()
-	if cfg.load(SETTINGS_PATH) != OK:
+	if cfg.load(LEGACY_SETTINGS_PATH) != OK:
 		return ""
 	return str(cfg.get_value("locale", "code", ""))
+
+
+func _on_settings_changed(section: String, key: String, value: Variant) -> void:
+	if _applying:
+		return
+	if section == "locale" and key == "code":
+		apply_locale(str(value), false)
+
+
+func _settings_store() -> Node:
+	return get_node_or_null("/root/SettingsStore")
 
 
 func _load_catalog(path: String) -> void:

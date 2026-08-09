@@ -164,6 +164,13 @@ func pull_cloud_save() -> bool:
 	return cloud.pull_if_newer(backend, str(features.get("cloud_remote_path", "save.json")))
 
 
+func force_pull_cloud_save() -> bool:
+	## Debug / recovery: overwrite local with cloud regardless of updated_at.
+	if not bool(features.get("cloud_save_enabled", false)):
+		return false
+	return cloud.force_pull(backend, str(features.get("cloud_remote_path", "save.json")))
+
+
 ## Debug / tests: force stub overlay event.
 func debug_simulate_overlay(active: bool) -> void:
 	if backend is SteamStubBackend:

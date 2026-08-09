@@ -23,9 +23,11 @@ Fixes landed on this branch are marked **FIXED**.
 | Sev | Open | Fixed this PR |
 |---|---|---|
 | P0 | 0 | 3 |
-| P1 | 6 | 0 |
+| P1 | 1 | 5 |
 | P2 | 9 | 0 |
 | P3 | 5 | 0 |
+
+P1 fixes for atomic settings / audio apply / CrashLogHook / locale / Steam Cloud landed on `cursor/bugs-meta-p1` (META-P1-04 wishlist AppID remains open).
 
 ---
 
@@ -54,19 +56,22 @@ Fixes landed on this branch are marked **FIXED**.
 ## P1
 
 ### META-P1-01 — SettingsStore writes are not atomic
+**Status:** FIXED  
 **Where:** `scripts/a11y/settings_store.gd` `save_settings`  
-**Issue:** Direct `FileAccess.WRITE` to `user://echo_lattice_settings.json` with no tmp/rename/bak. Power loss or kill mid-write truncates the file; next boot treats it as empty and silently resets to defaults (a11y + remaps lost).  
-**Suggested:** Mirror SaveManager (`*.tmp` + rename + optional `.bak`).
+**Was:** Direct `FileAccess.WRITE` to `user://echo_lattice_settings.json` with no tmp/rename/bak. Power loss or kill mid-write truncates the file; next boot treats it as empty and silently resets to defaults (a11y + remaps lost).  
+**Fix:** Mirror SaveManager: write `*.tmp`, rotate valid primary → `.bak`, rename tmp → primary; recover from `.bak` on corrupt/empty primary.
 
 ### META-P1-02 — Audio section persisted but never applied
-**Where:** `config/default_settings.json` `audio.*`; `scripts/audio/audio_manager.gd`  
-**Issue:** `master_volume` / `sfx_volume` / `music_volume` / `pa_volume` live in SettingsStore defaults, but no boot path calls `AudioManager.set_bus_linear`, and the settings UI has no audio sliders. Values are dead weight; any future UI would still need a wire-up.  
-**Suggested:** Apply on `SettingsStore` reload + add volume rows (or drop keys until wired).
+**Status:** FIXED  
+**Where:** `config/default_settings.json` `audio.*`; `scripts/audio/audio_manager.gd`; settings menu  
+**Was:** Volume keys lived in SettingsStore but never called `AudioManager.set_bus_linear`; settings UI had no audio sliders.  
+**Fix:** `AudioManager` applies Master/SFX+UI/Music/PA from SettingsStore on boot and on `settings_changed`; settings menu exposes volume sliders.
 
 ### META-P1-03 — CrashLogHook not autoloaded; no engine/error capture
-**Where:** `scripts/ops/crash_log_hook.gd`, `project.godot.crash_log.fragment`, `project.godot`  
-**Issue:** Fragment documents `CrashLogHook=…` but it is **not** merged into `[autoload]`. No boot breadcrumb, no `report_engine_error` sink, no `mark_clean_shutdown` on quit, no Settings → Support → export pack UI. Local crash packs from the design doc cannot be produced in RC1 builds.  
-**Suggested:** Merge fragment; call `configure` / `mark_clean_shutdown` from main; add export affordance.
+**Status:** FIXED  
+**Where:** `scripts/ops/crash_log_hook.gd`, `project.godot.crash_log.fragment`, `project.godot`, settings Support row  
+**Was:** Fragment not merged into `[autoload]`; no boot breadcrumb / clean-shutdown marker / export UI.  
+**Fix:** Autoload `CrashLogHook`; `configure` + unclean prior-session breadcrumb on boot; `mark_clean_shutdown` on quit; Settings → Support → Export crash pack; softlock recovery forwards to `report_softlock`.
 
 ### META-P1-04 — Demo wishlist URL still `YOUR_APP_ID`
 **Where:** `scripts/demo_build.gd` `WISHLIST_URL`  
@@ -74,15 +79,16 @@ Fixes landed on this branch are marked **FIXED**.
 **Suggested:** Replace placeholder before any public demo build; fail selftest when placeholder remains in demo exports.
 
 ### META-P1-05 — Locale has no in-game control and is split from SettingsStore
-**Where:** `scripts/locale/locale_manager.gd` (`user://locale.cfg`); settings menu  
-**Issue:** Locale is OS/Steam-detected + `locale.cfg` only. Settings overlay cannot change language; zh_Hans users who boot with an English Steam overlay locale cannot switch without hand-editing cfg. Also duplicates persistence away from `echo_lattice_settings.json`.  
-**Suggested:** Language row in settings; optionally migrate `locale.code` into SettingsStore.
+**Status:** FIXED  
+**Where:** `scripts/locale/locale_manager.gd`; `SettingsStore.locale.code`; settings menu  
+**Was:** Locale only via OS detection + `user://locale.cfg`; no settings control; split persistence.  
+**Fix:** `locale.code` in SettingsStore (`system` / `en` / `zh_Hans`); migrate legacy `locale.cfg`; language OptionButton in settings; SettingsStore autoload runs before LocaleManager.
 
 ### META-P1-06 — Steam Cloud conflict policy keeps local forever
-**Where:** `scripts/steam/steam_cloud_save.gd` `pull_if_newer`  
-**Issue:** Comment claims mtime / last-write-wins, but any non-empty differing local file wins and cloud is ignored. A newer cloud save (other device) never overwrites. Combined with historical pre-commit pushes (P0-02), machines can diverge permanently.  
-**Suggested:** Compare timestamps or schema `updated_at`; document Partner conflict policy; force-pull path for “cloud newer”.
-
+**Status:** FIXED  
+**Where:** `scripts/steam/steam_cloud_save.gd` `pull_if_newer`; `SaveManager` `updated_at`; `docs/RELEASE/STEAMWORKS.md`  
+**Was:** Comment claimed mtime LWW, but any non-empty differing local always won.  
+**Fix:** Saves stamp `updated_at`; cloud wins only when remote `updated_at` is strictly newer; equal/missing timestamps still prefer local; `force_pull_cloud_save()` for recovery; Partner policy documented in STEAMWORKS.md.
 ---
 
 ## P2

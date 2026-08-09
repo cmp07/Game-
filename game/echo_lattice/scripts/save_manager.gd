@@ -51,6 +51,7 @@ func save_to_disk() -> bool:
 		return false
 	var data := {
 		"version": SAVE_VERSION,
+		"updated_at": Time.get_unix_time_from_system(),
 		"build_flavor": "demo" if DemoBuild.is_demo() else "full",
 		"current_chamber": GameState.current_chamber,
 		"best_moves": GameState.best_moves,

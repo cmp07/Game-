@@ -141,6 +141,19 @@ class SteamworksTests(unittest.TestCase):
         self.assertIn("rich_presence", service)
         self.assertIn("cloud", service.lower())
 
+    def test_cloud_conflict_policy_uses_updated_at(self) -> None:
+        cloud = (STEAM_SCRIPTS / "steam_cloud_save.gd").read_text(encoding="utf-8")
+        self.assertIn("updated_at", cloud)
+        self.assertIn("force_pull", cloud)
+        self.assertIn("remote_ts <= local_ts", cloud)
+        save = (ROOT / "scripts" / "save_manager.gd").read_text(encoding="utf-8")
+        self.assertIn('"updated_at"', save)
+        doc = DOC.read_text(encoding="utf-8")
+        self.assertIn("updated_at", doc)
+        self.assertIn("prefer local", doc.lower())
+        service = (STEAM_SCRIPTS / "steam_service.gd").read_text(encoding="utf-8")
+        self.assertIn("force_pull_cloud_save", service)
+
     def test_project_autoload_steam_service(self) -> None:
         project = (ROOT / "project.godot").read_text(encoding="utf-8")
         self.assertIn('SteamService="*res://scripts/steam/steam_service.gd"', project)
