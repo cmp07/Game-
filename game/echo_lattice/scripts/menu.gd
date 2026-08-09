@@ -850,7 +850,8 @@ func _draw_ambient_chalk(seal_origin: Vector2) -> void:
 	if visible < 2:
 		return
 	var fill: int = int(_demo_progress) % 31
-	if fill <= 16:
+	var fold_on: bool = fill > 16
+	if not fold_on:
 		return
 	for j in range(4):
 		var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
