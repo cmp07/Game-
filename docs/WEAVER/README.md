@@ -9,6 +9,7 @@
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Executive synthesis + glossary + conflict resolution |
 | [`ROADMAP.md`](ROADMAP.md) | Gates and build order |
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
+| [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | Safe EL → `archive/` plan (history-preserving; plan-only) |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
 
 ---
@@ -22,6 +23,7 @@
 | [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
+| [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | Archive migration plan (`game/echo_lattice` → `archive/echo_lattice`) |
 
 ### 01 — Fantasy
 
@@ -102,4 +104,4 @@
 |---|---|
 | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Echo Lattice Steam freeze |
 | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL vision (not live north star) |
-| `game/echo_lattice/` | Frozen playable — **keep** |
+| `game/echo_lattice/` | Frozen playable — **keep** until migrate execute ([`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md)) |
