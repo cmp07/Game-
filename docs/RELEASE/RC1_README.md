@@ -70,7 +70,7 @@ GodotSteam optional path: [`GODOTSTEAM.md`](GODOTSTEAM.md) — clear install doc
 
 **Still human / Partner:** real AppID + DepotIDs, legal names, capsule/screenshot/trailer **upload**, final 30s trailer encode from editor pack, survey+AI paste, live privacy HTTPS URL. **No AppIDs invented.**
 
-Python contract suite: re-run after media merge (see Ultra Audit tip note).
+Python contract suite: **22/22** green after media merge (incl. deck bindings).
 
 ---
 
