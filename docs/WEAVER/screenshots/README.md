@@ -19,3 +19,5 @@ Standalone stub (older 2-shot path):
 ```bash
 xvfb-run -a godot --path game/weaver -- --selftest --screenshot
 ```
+
+Gameplay video (loop capture): [`../media/VIDEO.md`](../media/VIDEO.md).

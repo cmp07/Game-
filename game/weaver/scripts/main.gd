@@ -1,14 +1,11 @@
 extends Control
 ## Boot composition: brand, one line, one CTA into the frayed-field stub.
 ## Headless: `-- --selftest [--screenshot]` skips the title into the field.
-## Photos: `-- --photos` captures title then staged field beats.
+## Cloud capture: `-- --gameplay-demo` (alias `--demo`) skips title into paced loop.
 
 
 func _ready() -> void:
-	if Loom.pending_photos:
-		await _run_photo_pack()
-		return
-	if Loom.pending_selftest:
+	if Loom.pending_selftest or Loom.pending_gameplay_demo:
 		call_deferred("_enter_field")
 		return
 	Loom.reset()

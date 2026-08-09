@@ -27,7 +27,7 @@ var recipes: Dictionary = {}
 var _rng := RandomNumberGenerator.new()
 var pending_selftest: bool = false
 var pending_screenshot: bool = false
-var pending_photos: bool = false
+var pending_gameplay_demo: bool = false
 var api_selftest_result: Dictionary = {}
 
 
@@ -43,6 +43,8 @@ func _ready() -> void:
 		pending_selftest = true
 		pending_screenshot = args.has("--screenshot")
 		api_selftest_result = selftest_loop(7)
+	if args.has("--gameplay-demo") or args.has("--demo"):
+		pending_gameplay_demo = true
 
 
 func load_recipes() -> void:
