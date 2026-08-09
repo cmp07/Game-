@@ -4,6 +4,7 @@
 **Status:** Craft authority (CLOUD ONLY) · **Branch:** `cursor/weaver-craft`  
 **Product:** **The Weaver** (north star)  
 **Job:** Define how players unlock literacy and pride — materials → joints → recipes → Yard jobs → gallery residue — without battle-pass chrome, XP theater, or purple loot ladders.  
+**1000× deepen:** [`1000X/06_PROGRESSION.md`](1000X/06_PROGRESSION.md) — five-phase content graph, short-session hooks, mastery without grind.  
 **Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`04_THREADS.md`](04_THREADS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`17_MVP.md`](17_MVP.md) · [`13_MONETIZATION.md`](13_MONETIZATION.md) · [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) · [`PIVOT.md`](PIVOT.md)
 
 ---
