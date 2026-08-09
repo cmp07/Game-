@@ -17,7 +17,7 @@ Structured event wiring + procedural streams lifted toward AUDIO v3 identity (mu
 | `sfx/win/*` | SFX |
 | `sfx/fail/*` | SFX (restart / recover) |
 | `music/L0…L3_*` | Music (Ledger Cell transforms) |
-| `ui/*` | UI |
+| `ui/*` | UI (`ui.select` / `ui.hover` / `ui.click` confirm) |
 
 ## Gameplay entry points
 
@@ -31,6 +31,11 @@ AudioDirector.on_rewrite("fossilize_hot_cell")
 AudioDirector.on_pa_line("pa.checkpoint.armed")
 AudioDirector.on_chamber_won() # resolve + queue-next open loop
 AudioDirector.on_fail_reset()  # chamber restart
+# Field Index feel (silence gaps + arm after grab_focus):
+AudioDirector.arm_ui_feel()
+AudioDirector.on_ui_select()
+AudioDirector.on_ui_hover()
+AudioDirector.on_ui_confirm()  # catalog ui.click stinger
 ```
 
 Replace procedural streams with authored Field Ledger material before marketing a final mix.

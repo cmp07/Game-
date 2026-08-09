@@ -59,6 +59,9 @@ func _ready() -> void:
 	var has: bool = GameState.can_continue()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.38)
+	# Arm before any grab_focus so cold boot cannot chirp (QW-2 / AUDIO_V3).
+	if has_node("/root/AudioDirector") and AudioDirector.has_method("arm_ui_feel"):
+		AudioDirector.arm_ui_feel()
 	start_button.grab_focus()
 	_last_focused = start_button
 	_focus_underline_t = 0.0
@@ -105,26 +108,12 @@ func _ready() -> void:
 	if remap != null and remap.has_signal("bindings_changed"):
 		if not remap.bindings_changed.is_connected(queue_redraw):
 			remap.bindings_changed.connect(queue_redraw)
-	# Restyle buttons as underlined type (art bible §6).
-	LedgerChrome.style_index_button(start_button, true)
-	LedgerChrome.style_index_button(continue_button, false)
-	LedgerChrome.style_index_button(daily_button, false)
-	if endless_button:
-		LedgerChrome.style_index_button(endless_button, false)
-	if hard_button:
-		LedgerChrome.style_index_button(hard_button, false)
-	if museum_button:
-		LedgerChrome.style_index_button(museum_button, false)
-	LedgerChrome.style_index_button(settings_button, false)
-	if colophon_button:
-		LedgerChrome.style_index_button(colophon_button, false)
-	LedgerChrome.style_index_button(quit_button, false)
-	if _wishlist_button != null:
-		LedgerChrome.style_index_button(_wishlist_button, false)
+	_style_index_actions()
 	_style_meta_as_ledger_lines()
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
-	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
+	_wire_index_feel()
+	# Cold boot stays silent — ui.select/hover only after arm window (QW-2).
 
 
 ## Called by Main after boot_title so the card settle continues the paper turn.
@@ -205,6 +194,27 @@ func _slot_alpha() -> float:
 	return clampf(_card_slot_t / CARD_SLOT_SEC, 0.0, 1.0)
 
 
+func _style_index_actions(compact: bool = false) -> void:
+	var scale: Dictionary = LedgerChrome.title_type_scale(720.0 if compact else 1080.0)
+	var idx_px: int = int(scale.get("index", LedgerChrome.TYPE_INDEX))
+	var primary_px: int = int(scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	LedgerChrome.style_index_button(start_button, true, primary_px)
+	LedgerChrome.style_index_button(continue_button, false, idx_px)
+	LedgerChrome.style_index_button(daily_button, false, idx_px)
+	if endless_button:
+		LedgerChrome.style_index_button(endless_button, false, idx_px)
+	if hard_button:
+		LedgerChrome.style_index_button(hard_button, false, idx_px)
+	if museum_button:
+		LedgerChrome.style_index_button(museum_button, false, idx_px)
+	LedgerChrome.style_index_button(settings_button, false, idx_px)
+	if colophon_button:
+		LedgerChrome.style_index_button(colophon_button, false, idx_px)
+	LedgerChrome.style_index_button(quit_button, false, idx_px)
+	if _wishlist_button != null:
+		LedgerChrome.style_index_button(_wishlist_button, false, idx_px)
+
+
 func _apply_index_row_metrics(compact: bool) -> void:
 	var row_h: float = 28.0 if compact else 34.0
 	var primary_h: float = 32.0 if compact else 38.0
@@ -221,12 +231,11 @@ func _apply_index_row_metrics(compact: bool) -> void:
 		btn.custom_minimum_size = Vector2(200.0, row_h)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.size_flags_vertical = shrink_top
-		btn.add_theme_font_size_override("font_size", 17 if compact else 18)
 	if start_button:
 		start_button.custom_minimum_size = Vector2(200.0, primary_h)
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		start_button.size_flags_vertical = shrink_top
-		start_button.add_theme_font_size_override("font_size", 19 if compact else 20)
+	_style_index_actions(compact)
 	_style_meta_as_ledger_lines(compact)
 
 
@@ -442,8 +451,6 @@ func _open_settings() -> void:
 				start_button.grab_focus()
 		)
 	_settings_overlay.open_menu()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
 
 
 func _open_colophon() -> void:
@@ -478,15 +485,16 @@ func _ensure_wishlist_button() -> void:
 		emit_signal("wishlist_pressed")
 		DemoBuild.open_wishlist()
 	)
-	LedgerChrome.style_index_button(_wishlist_button, false)
+	_style_index_actions()
+	_wire_index_feel()
 	_sync_field_index_layout()
 
 
-func _ensure_gamepad_focus_chain() -> void:
+func _index_action_buttons() -> Array:
 	var order: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		order.append(endless_button)
-	if hard_button and hard_button.visible and not hard_button.disabled:
+	if hard_button:
 		order.append(hard_button)
 	if museum_button:
 		order.append(museum_button)
@@ -496,7 +504,23 @@ func _ensure_gamepad_focus_chain() -> void:
 	order.append(quit_button)
 	if _wishlist_button != null:
 		order.insert(order.size() - 1, _wishlist_button)
-	LedgerChrome.wire_vertical_focus(order)
+	return order
+
+
+func _wire_index_feel() -> void:
+	LedgerChrome.wire_index_feel(_index_action_buttons())
+
+
+func _ensure_gamepad_focus_chain() -> void:
+	var order: Array = _index_action_buttons()
+	var focus_order: Array = []
+	for btn in order:
+		if btn == null:
+			continue
+		if btn == hard_button and (not hard_button.visible or hard_button.disabled):
+			continue
+		focus_order.append(btn)
+	LedgerChrome.wire_vertical_focus(focus_order)
 
 
 func _build_demo_path() -> void:
@@ -531,8 +555,7 @@ func _process(delta: float) -> void:
 		_last_focused = focused
 		if not reduce:
 			_focus_underline_t = 0.0
-		if focused != null and _index_buttons().has(focused):
-			_play_selection_tick()
+		# Audio selection tick owned by LedgerChrome.wire_index_feel / AudioDirector.
 	_demo_progress = fmod(_demo_progress + delta * 3.2, float(_demo_path.size()) + 8.0)
 	var step: int = int(_demo_progress)
 	_redraw_accum += delta
@@ -547,30 +570,8 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 
-func _play_selection_tick() -> void:
-	## Soft focus tick when cataloged by audio pass — never ui.click on move.
-	if not has_node("/root/AudioDirector"):
-		return
-	var cat: Object = AudioDirector.get_catalog() if AudioDirector.has_method("get_catalog") else null
-	if cat != null and cat.has_method("has_event") and bool(cat.call("has_event", "ui.hover")):
-		AudioDirector.fire("ui.hover")
-
-
 func _index_buttons() -> Array:
-	var buttons: Array = [continue_button, start_button, daily_button]
-	if endless_button:
-		buttons.append(endless_button)
-	if hard_button and hard_button.visible:
-		buttons.append(hard_button)
-	if museum_button:
-		buttons.append(museum_button)
-	buttons.append(settings_button)
-	if colophon_button:
-		buttons.append(colophon_button)
-	buttons.append(quit_button)
-	if _wishlist_button != null:
-		buttons.insert(buttons.size() - 1, _wishlist_button)
-	return buttons
+	return _index_action_buttons()
 
 
 func _draw() -> void:
@@ -582,7 +583,7 @@ func _draw() -> void:
 	if not TechArt.v3_enabled():
 		ArtKit.draw_desk_margin(self, vp, 3, 0.06)
 	else:
-		draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
+		ArtKit.draw_desk_margin(self, vp, 3, 0.0)
 	var page: Rect2 = _ledger_page_rect(vp)
 	ArtKit.draw_ledger_page(self, page, {
 		"shadow_off": Vector2(6, 8),
@@ -591,14 +592,25 @@ func _draw() -> void:
 		"major_cell": 32,
 		"rule_w": 2.0,
 		"double_rule": true,
+		"skip_grain": TechArt.v3_enabled(),
 	})
+
+	var scale: Dictionary = LedgerChrome.title_type_scale(page.size.y)
+	var folio_px: int = int(scale.get("folio", LedgerChrome.TYPE_FOLIO))
+	var seed_px: int = int(scale.get("seed", LedgerChrome.TYPE_SEED))
+	var brand_px: int = int(scale.get("brand", LedgerChrome.TYPE_BRAND))
+	var tag_px: int = int(scale.get("tagline", LedgerChrome.TYPE_TAGLINE))
+	var blurb_px: int = int(scale.get("blurb", LedgerChrome.TYPE_BLURB))
+	var rule_w: float = float(scale.get("rule_w", LedgerChrome.BRAND_RULE_W))
+	var rule_len: float = float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN))
+	var header_px: int = int(scale.get("card_header", LedgerChrome.TYPE_CARD_HEADER))
 
 	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
 	draw_string(
 		_type("mono"),
 		page.position + Vector2(16, 22),
 		tr("menu.folio_mark"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Palette.SLATE_TEAL
+		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
 	)
 	draw_line(
 		page.position + Vector2(16, 28),
@@ -615,74 +627,78 @@ func _draw() -> void:
 		_type("mono"),
 		page.position + Vector2(280, 54),
 		tr("menu.seed_strip"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
 	# Brand lockup — hero-level, left composition.
 	var brand_x: float = page.position.x + 48
 	var brand_y: float = page.position.y + page.size.y * 0.26
-	var brand_size: int = 56 if page.size.y < 700.0 else 64
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_size, Palette.INK_BLACK
+		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
 	# Rust rule under the title — the brand underline (never cadmium).
-	draw_rect(Rect2(brand_x, brand_y + 10, 420, 3), Palette.RUST_FOSSIL, true)
+	draw_rect(Rect2(brand_x, brand_y + 10, rule_len, rule_w), Palette.RUST_FOSSIL, true)
 
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y + 40),
 		tr("brand.tagline"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 20 if page.size.y < 700.0 else 22, Palette.SLATE_TEAL
+		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
 		_type("body"),
 		Vector2(brand_x, brand_y + 66),
 		tr("brand.blurb"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 15 if page.size.y < 700.0 else 16, Palette.INK_SOFT
+		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Surveyor seal — real visual anchor under the brand (not a floating badge).
-	var seal_origin: Vector2 = Vector2(brand_x + 8.0, brand_y + 96.0)
-	_draw_brand_seal(seal_origin, page)
-
-	# Ambient chalk path teaches the verb beside the seal — discrete stamps, no breathe.
-	_draw_ambient_chalk(seal_origin)
-
-	# Index-card plate — paper-slot settle; geometry matches CardColumn.
+	# Index-card plate first — seal placement must clear the Field Index.
 	var y_off: float = _slot_y_off()
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
+
+	# Surveyor seal + lattice glyph — real visual anchor under the brand.
+	var seal_r: float = 34.0 if page.size.y >= 700.0 else 26.0
+	var seal_c := Vector2(brand_x + seal_r + 8.0, brand_y + 118.0)
+	if seal_c.x + seal_r + 16.0 > card.position.x:
+		seal_c.x = brand_x + seal_r + 4.0
+	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
+		"rot_deg": -4.0,
+		"color": Palette.SLATE_TEAL,
+		"alpha": 0.80,
+		"seed": 42,
+		"caption": "FIELD",
+		"font": _type("display"),
+		"font_size": maxi(10, folio_px),
+	})
+	_draw_seal_lattice(seal_c, seal_r * 0.42)
+	draw_string(
+		_type("mono"),
+		Vector2(brand_x, seal_c.y + seal_r + 22.0),
+		tr("menu.seal_caption"),
+		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.INK_SOFT
+	)
+	# Ambient chalk path teaches the verb beside the seal — discrete stamps, no breathe.
+	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 24.0, seal_c.y - seal_r))
+
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
 		"shadow_off": Vector2(5, 7),
 		"binder_holes": 5,
-		"grain_seed": 23,
-		"grain_a": 0.05,
-		"folio_marks": true,
-		"ruled": true,
+		"grain_seed": 11,
+		"grain_a": 0.0 if TechArt.v3_enabled() else 0.045,
+		"header_rules": true,
+		"deep_backer": true,
+		"skip_grain": TechArt.v3_enabled(),
 	})
-	# Card header double rule + FIELD INDEX folio title.
-	var rule_y: float = card.position.y + 36.0
-	draw_line(
-		card.position + Vector2(24, rule_y - card.position.y),
-		card.position + Vector2(card.size.x - 16, rule_y - card.position.y),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot_a),
-		1.0
-	)
-	draw_line(
-		card.position + Vector2(24, rule_y - card.position.y + 4.0),
-		card.position + Vector2(card.size.x - 16, rule_y - card.position.y + 4.0),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.7 * slot_a),
-		1.0
-	)
 	draw_string(
 		_type("mono"),
 		card.position + Vector2(28, 28),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 12,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
 		Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, slot_a)
 	)
 
@@ -701,45 +717,22 @@ func _draw() -> void:
 	)
 
 
-func _draw_brand_seal(origin: Vector2, page: Rect2) -> void:
-	## Large etched surveyor seal — lattice fragment + fossil accent.
-	## Dominant visual anchor for the left brand column (ART_DIRECTION_V3 P6).
-	var cell: float = 16.0 if page.size.y >= 700.0 else 13.0
-	var ring_r: float = cell * 5.2
-	var center: Vector2 = origin + Vector2(ring_r + 4.0, ring_r + 4.0)
-	# Outer registration ring (slate enamel).
-	var ring := Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.55)
-	draw_arc(center, ring_r, 0.0, TAU, 48, ring, 1.5, true)
-	draw_arc(center, ring_r - 5.0, 0.0, TAU, 48, Color(ring.r, ring.g, ring.b, 0.35), 1.0, true)
-	# Copper plate tick marks (apparatus — rare accent, not glow).
-	for i in range(4):
-		var ang: float = float(i) * TAU * 0.25 + 0.2
-		var a: Vector2 = center + Vector2(cos(ang), sin(ang)) * (ring_r - 1.0)
-		var b: Vector2 = center + Vector2(cos(ang), sin(ang)) * (ring_r + 5.0)
-		draw_line(a, b, Color(Palette.COPPER_KEY.r, Palette.COPPER_KEY.g, Palette.COPPER_KEY.b, 0.7), 1.5)
-	# Inner lattice block — ink architecture.
+func _draw_seal_lattice(center: Vector2, half: float) -> void:
+	## Ink lattice fragment inside the surveyor seal — process-visible glyph.
+	var cell: float = maxf(6.0, half / 2.6)
 	var grid_origin: Vector2 = center - Vector2(cell * 2.5, cell * 2.0)
 	var walls: Array = [
 		Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(4, 0), Vector2i(5, 0),
 		Vector2i(0, 1), Vector2i(5, 1), Vector2i(0, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(5, 2),
 		Vector2i(0, 3), Vector2i(5, 3), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(5, 4),
 	]
-	var fossil: Array = [
-		Vector2i(3, 0), Vector2i(3, 1), Vector2i(4, 1), Vector2i(4, 2), Vector2i(4, 3),
-	]
+	var fossil: Array = [Vector2i(3, 0), Vector2i(3, 1), Vector2i(4, 1), Vector2i(4, 2)]
 	for w in walls:
-		var r := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.5, cell - 1.5))
+		var r := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
 		ArtKit.draw_letterpress_wall(self, r, false, 15)
 	for w in fossil:
-		var r2 := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.5, cell - 1.5))
+		var r2 := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
 		ArtKit.draw_letterpress_wall(self, r2, true, 15)
-	# Mono caption under seal — diegetic, quiet.
-	draw_string(
-		_type("mono"),
-		Vector2(origin.x, center.y + ring_r + 22.0),
-		tr("menu.seal_caption"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Palette.INK_SOFT
-	)
 
 
 func _draw_ambient_chalk(seal_origin: Vector2) -> void:

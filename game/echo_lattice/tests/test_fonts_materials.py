@@ -64,8 +64,28 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_desk_margin",
             "draw_ledger_page",
             "draw_index_card",
+            "draw_seal_stamp",
         ):
             self.assertIn(f"func {name}", art)
+        # Desk surface sells cooler blotter edges; seal is uneven rubber ink.
+        self.assertIn("blotter", art.lower())
+        self.assertIn("Uneven ring", art)
+        self.assertIn("binder_holes", art)
+
+    def test_ledger_chrome_title_type_scale(self) -> None:
+        chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
+        self.assertIn("func title_type_scale", chrome)
+        self.assertIn("const TYPE_BRAND := 72", chrome)
+        self.assertIn("TYPE_TAGLINE", chrome)
+        menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+        self.assertIn("ArtKit.draw_desk_margin", menu)
+        self.assertIn("ArtKit.draw_ledger_page", menu)
+        self.assertIn("ArtKit.draw_index_card", menu)
+        self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn("LedgerChrome.title_type_scale", menu)
+        # Field Index enclosure must stay on shared card geometry helpers.
+        self.assertIn("field_index_card_rect(vp, y_off)", menu)
+        self.assertIn("func verify_field_index_layout", menu)
 
 
 if __name__ == "__main__":

@@ -168,9 +168,11 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertNotIn("sin(_t * 2.0)", menu)
         self.assertIn("fold_on", menu)
         self.assertIn("binder_holes", menu)
+        self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn("LedgerChrome.title_type_scale", menu)
         # Cadmium reserved — selection is rust underline + ink tick.
         self.assertNotIn("CADMIUM_WARN", menu)
-        self.assertIn("_draw_brand_seal", menu)
+        self.assertIn("_draw_seal_lattice", menu)
         self.assertIn("begin_boot_handoff", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
 
@@ -269,7 +271,8 @@ class TestDiegeticShellMvp(unittest.TestCase):
         self.assertNotIn("CADMIUM_WARN", chrome)
         art = (ROOT / "scripts" / "art_kit.gd").read_text()
         self.assertIn('opts.get("binder_holes"', art)
-        self.assertIn('opts.get("folio_marks"', art)
+        self.assertIn('opts.get("header_rules"', art)
+        self.assertIn("func draw_seal_stamp", art)
 
     def test_field_index_card_syncs_with_card_column(self) -> None:
         """Regression: drawn Field Index plate and CardColumn must share layout."""

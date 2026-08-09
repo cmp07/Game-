@@ -63,6 +63,9 @@ func open_menu() -> void:
 	_load_from_services()
 	_refresh_binding_labels()
 	_style_folio_controls()
+	_wire_index_feel()
+	if has_node("/root/AudioDirector"):
+		AudioDirector.arm_ui_feel()
 	if _language_option:
 		_language_option.grab_focus()
 	elif _colorblind_option:
@@ -142,6 +145,21 @@ func _style_folio_controls() -> void:
 	if close_btn:
 		close_btn.text = tr("settings.close")
 		LedgerChrome.style_index_button(close_btn, true)
+	_wire_index_feel()
+
+
+func _wire_index_feel() -> void:
+	var buttons: Array = []
+	for path in [
+		"Panel/Margin/VBox/Buttons/ResetA11yButton",
+		"Panel/Margin/VBox/Buttons/ResetInputButton",
+		"Panel/Margin/VBox/Scroll/Content/ExportCrashPackButton",
+		"Panel/Margin/VBox/Buttons/CloseButton",
+	]:
+		var btn: Button = get_node_or_null(path)
+		if btn:
+			buttons.append(btn)
+	LedgerChrome.wire_index_feel(buttons)
 
 
 func close_menu() -> void:
