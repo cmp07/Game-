@@ -167,14 +167,11 @@ func load_chamber(id: int) -> void:
 	if chamber.is_empty():
 		return
 	transform_name = str(chamber.get("transform", "none"))
-<<<<<<< HEAD
 	# Endless: rising rewrite pressure may stack mirrors (softlock-guarded on commit).
 	if GameState.run_mode == "endless" and GameState.has_method("endless_transform_for"):
 		transform_name = GameState.endless_transform_for(transform_name)
-=======
 	rewrite_cap = maxi(int(chamber.get("rewrite_cap", 99)), 0)
 	rewrites_fired = 0
->>>>>>> origin/cursor/fix-content-clones
 	var rows: Array = chamber.get("map", [])
 	# Daily featured chamber applies calendar / catalog variation axes.
 	if has_node("/root/GameState") and GameState.run_mode == "daily":
