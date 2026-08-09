@@ -68,14 +68,14 @@ Fail if it reads as: spreadsheet UI, dashed preview widget, sparse Godot demo me
 
 ## 5. Acceptance checklist
 
-- [ ] No dashed / skipped-segment **circle** seal on title or boot
-- [ ] Seal is rectangular letterpress plate + habit-maze mark
-- [ ] Idle Field Index rows have **no** underlines; no dense ruled fiber under actions
-- [ ] Actions never use mono; meta mono only ≤ 13 px
-- [ ] Open folio fills 1920×1080; Field Index plate frames all actions (`verify_field_index_layout`)
-- [ ] Title stage mounts Menu only — abandon→title never leaves chamber HUD
-- [ ] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
-- [ ] Cloud-safe gates: `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
+- [x] No dashed / skipped-segment **circle** seal on title or boot
+- [x] Seal is rectangular letterpress plate + habit-maze mark
+- [x] Idle Field Index rows have **no** underlines; no dense ruled fiber under actions
+- [x] Actions never use mono; meta mono only ≤ 13 px
+- [x] Open folio fills 1920×1080; Field Index plate frames all actions (`verify_field_index_layout`)
+- [x] Title stage mounts Menu only — abandon→title never leaves chamber HUD
+- [x] Recaptured `docs/RELEASE/screenshots/02_brand_main_menu.png` @ 1920×1080
+- [x] Cloud-safe gates: `test_menu_type_system` · `test_fonts_materials` · `test_title_menu_no_hud` · `test_field_ledger_juice`
 
 ---
 
