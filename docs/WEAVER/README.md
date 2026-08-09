@@ -71,6 +71,7 @@
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
+| [`31_NAME_LOCK.md`](31_NAME_LOCK.md) | Top 5 + ship recommend (**Threadfall**) |
 
 ---
 

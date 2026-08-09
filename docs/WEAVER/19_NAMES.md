@@ -101,6 +101,8 @@ Lock a store name only when all pass:
 
 Until then, docs and branches keep **The Weaver** as the internal name.
 
+**Design rank (cloud):** Top 5 + ship recommend live in [`31_NAME_LOCK.md`](31_NAME_LOCK.md) — **Threadfall** first; human Partner checks still required.
+
 ---
 
 ## 8. Rename checklist (when locking)
