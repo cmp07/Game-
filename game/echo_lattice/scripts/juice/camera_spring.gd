@@ -2,6 +2,7 @@ class_name JuiceCameraSpring
 extends RefCounted
 ## Critically-damped spring follow + velocity lookahead + zoom-punch.
 
+const MathScript = preload("res://scripts/juice/juice_math.gd")
 
 var pos: Vector2 = Vector2.ZERO
 var vel: Vector2 = Vector2.ZERO
@@ -27,8 +28,8 @@ func snap_to(p: Vector2) -> void:
 
 func follow(target_pos: Vector2, player_vel: Vector2, dt: float) -> void:
 	target = target_pos
-	lookahead.x = JuiceMath.damp(lookahead.x, player_vel.x * lookahead_gain, lookahead_ease, dt)
-	lookahead.y = JuiceMath.damp(lookahead.y, player_vel.y * lookahead_gain, lookahead_ease, dt)
+	lookahead.x = MathScript.damp(lookahead.x, player_vel.x * lookahead_gain, lookahead_ease, dt)
+	lookahead.y = MathScript.damp(lookahead.y, player_vel.y * lookahead_gain, lookahead_ease, dt)
 	var goal: Vector2 = target + lookahead
 	var ax: float = (goal.x - pos.x) * stiffness - vel.x * damping
 	var ay: float = (goal.y - pos.y) * stiffness - vel.y * damping
@@ -36,7 +37,7 @@ func follow(target_pos: Vector2, player_vel: Vector2, dt: float) -> void:
 	vel.y += ay * dt
 	pos.x += vel.x * dt
 	pos.y += vel.y * dt
-	zoom = JuiceMath.damp(zoom, target_zoom, 6.0, dt)
+	zoom = MathScript.damp(zoom, target_zoom, 6.0, dt)
 
 
 func punch(zoom_out: float = 0.06) -> void:
@@ -44,4 +45,4 @@ func punch(zoom_out: float = 0.06) -> void:
 
 
 func recover_zoom(real_dt: float) -> void:
-	target_zoom = JuiceMath.damp(target_zoom, 1.0, 4.0, real_dt)
+	target_zoom = MathScript.damp(target_zoom, 1.0, 4.0, real_dt)

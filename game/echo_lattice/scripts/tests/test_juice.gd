@@ -1,13 +1,21 @@
 extends RefCounted
 ## Headless unit checks for JUICE v2 primitives (no scene tree required).
 
+const HitstopScript = preload("res://scripts/juice/hitstop.gd")
+const ShakeScript = preload("res://scripts/juice/screenshake.gd")
+const FlashScript = preload("res://scripts/juice/flash.gd")
+const CameraScript = preload("res://scripts/juice/camera_spring.gd")
+const ParticlesScript = preload("res://scripts/juice/particles.gd")
+const TelegraphsScript = preload("res://scripts/juice/telegraphs.gd")
+const MathScript = preload("res://scripts/juice/juice_math.gd")
+
 
 static func run() -> bool:
 	print("== Juice v2 unit checks ==")
 	var ok := true
 
 	# Hitstop never reaches zero; recovers to 1.
-	var hs := JuiceHitstop.new()
+	var hs = HitstopScript.new()
 	hs.hit(0.09, 0.06)
 	hs.update(0.0)
 	if hs.timescale > 0.07 or hs.timescale < 0.05:
@@ -22,7 +30,7 @@ static func run() -> bool:
 		ok = false
 
 	# Trauma² shake decays and produces finite offsets.
-	var sh := JuiceScreenShake.new()
+	var sh = ShakeScript.new()
 	sh.bump(0.5)
 	var off: Vector3 = sh.offset()
 	if off.length() <= 0.0:
@@ -35,7 +43,7 @@ static func run() -> bool:
 		ok = false
 
 	# Flash alpha peaks then dies.
-	var fl := JuiceFlash.new()
+	var fl = FlashScript.new()
 	fl.fire(0.28, 0.55, Color(0.63, 0.88, 1.0))
 	var a0: float = fl.current_alpha()
 	fl.update(0.14)
@@ -47,7 +55,7 @@ static func run() -> bool:
 		ok = false
 
 	# Camera spring moves toward target.
-	var cam := JuiceCameraSpring.new()
+	var cam = CameraScript.new()
 	cam.snap_to(Vector2.ZERO)
 	for i in range(60):
 		cam.follow(Vector2(100, 0), Vector2(40, 0), 1.0 / 60.0)
@@ -60,7 +68,7 @@ static func run() -> bool:
 		ok = false
 
 	# Particles pool + bursts.
-	var parts := JuiceParticles.new()
+	var parts = ParticlesScript.new()
 	parts.burst_echo(0, 0)
 	parts.burst_sparks(0, 0, 22, 280)
 	if parts.alive_count() < 20:
@@ -74,7 +82,7 @@ static func run() -> bool:
 		ok = false
 
 	# Telegraph three-phase.
-	var teles := JuiceTelegraphs.new()
+	var teles = TelegraphsScript.new()
 	teles.add(0, 0, 32, 0.2, 0.1, 12.0, {"kind": "wall_birth"})
 	var fired1: Array = teles.update(0.21)
 	if fired1.size() != 1:
@@ -86,13 +94,10 @@ static func run() -> bool:
 		ok = false
 
 	# Easings monotonic.
-	if JuiceMath.ease_out_cubic(0.0) != 0.0 or JuiceMath.ease_out_cubic(1.0) < 0.999:
+	if MathScript.ease_out_cubic(0.0) != 0.0 or MathScript.ease_out_cubic(1.0) < 0.999:
 		printerr("ease_out_cubic endpoints wrong")
 		ok = false
-	if JuiceMath.ease_out_quint(0.5) <= JuiceMath.ease_out_cubic(0.5):
-		# Not a hard requirement — just sanity that both are in (0,1).
-		pass
-	if JuiceMath.ease_out_quint(0.5) <= 0.0 or JuiceMath.ease_out_quint(0.5) >= 1.0:
+	if MathScript.ease_out_quint(0.5) <= 0.0 or MathScript.ease_out_quint(0.5) >= 1.0:
 		printerr("ease_out_quint mid out of range")
 		ok = false
 

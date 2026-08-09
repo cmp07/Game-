@@ -2,6 +2,7 @@ class_name JuiceParticles
 extends RefCounted
 ## Pooled particles: dot / ring / glyph. Port of Vite render/particles.ts.
 
+const MathScript = preload("res://scripts/juice/juice_math.gd")
 
 const POOL_SIZE: int = 800
 
@@ -132,7 +133,7 @@ func draw_on(ci: CanvasItem) -> void:
 		var p: Dictionary = _pool[i]
 		if not p["alive"]:
 			continue
-		var t: float = JuiceMath.clampf01(float(p["life"]) / maxf(0.0001, float(p["max_life"])))
+		var t: float = MathScript.clampf01(float(p["life"]) / maxf(0.0001, float(p["max_life"])))
 		var fade: float = (t / 0.2 if t < 0.2 else 1.0) * (0.85 * t + 0.15)
 		var a: float = fade * float(p["glow"])
 		var col: Color = p["color"]

@@ -9,18 +9,26 @@ extends Node
 
 signal rewrite_struck(meta: Variant)
 
+const HitstopScript = preload("res://scripts/juice/hitstop.gd")
+const ShakeScript = preload("res://scripts/juice/screenshake.gd")
+const FlashScript = preload("res://scripts/juice/flash.gd")
+const CameraScript = preload("res://scripts/juice/camera_spring.gd")
+const ParticlesScript = preload("res://scripts/juice/particles.gd")
+const TelegraphsScript = preload("res://scripts/juice/telegraphs.gd")
+const MathScript = preload("res://scripts/juice/juice_math.gd")
+
 const COLOR_REWRITE := Color(0.63, 0.88, 1.0)
 const COLOR_ECHO := Color(1.0, 0.36, 0.24)
 const COLOR_DUST := Color(0.67, 0.78, 0.94)
 const COLOR_NEAR_MISS := Color(1.0, 0.86, 0.70)
 const COLOR_HIT := Color(1.0, 0.47, 0.47)
 
-var hitstop: JuiceHitstop = JuiceHitstop.new()
-var shake: JuiceScreenShake = JuiceScreenShake.new()
-var flash: JuiceFlash = JuiceFlash.new()
-var camera: JuiceCameraSpring = JuiceCameraSpring.new()
-var particles: JuiceParticles = JuiceParticles.new()
-var telegraphs: JuiceTelegraphs = JuiceTelegraphs.new()
+var hitstop = HitstopScript.new()
+var shake = ShakeScript.new()
+var flash = FlashScript.new()
+var camera = CameraScript.new()
+var particles = ParticlesScript.new()
+var telegraphs = TelegraphsScript.new()
 
 var enabled: bool = true
 var _last_usec: int = 0
@@ -190,9 +198,9 @@ func flash_modulate() -> Color:
 
 
 func reset() -> void:
-	hitstop = JuiceHitstop.new()
-	shake = JuiceScreenShake.new()
-	flash = JuiceFlash.new()
+	hitstop = HitstopScript.new()
+	shake = ShakeScript.new()
+	flash = FlashScript.new()
 	particles.clear()
 	telegraphs.clear()
 	Engine.time_scale = 1.0

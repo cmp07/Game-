@@ -2,6 +2,7 @@ class_name JuiceHitstop
 extends RefCounted
 ## Hitstop-light: timescale floor ≈0.06, easeOutCubic recovery. Never fully zero.
 
+const MathScript = preload("res://scripts/juice/juice_math.gd")
 
 var timescale: float = 1.0
 var _t: float = 0.0
@@ -28,8 +29,8 @@ func update(real_dt: float) -> void:
 		timescale = 1.0
 		return
 	_t += real_dt
-	var p: float = JuiceMath.clampf01(_t / _duration)
-	var eased: float = JuiceMath.ease_out_cubic(p)
+	var p: float = MathScript.clampf01(_t / _duration)
+	var eased: float = MathScript.ease_out_cubic(p)
 	timescale = _floor + (1.0 - _floor) * eased
 	if p >= 1.0:
 		_duration = 0.0

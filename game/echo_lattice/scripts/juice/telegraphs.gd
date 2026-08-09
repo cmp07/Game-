@@ -2,6 +2,7 @@ class_name JuiceTelegraphs
 extends RefCounted
 ## Three-phase foreshadow zones: wind-up → strike → done.
 
+const MathScript = preload("res://scripts/juice/juice_math.gd")
 
 enum Phase { WINDUP, STRIKE, DONE }
 
@@ -60,7 +61,7 @@ func draw_on(ci: CanvasItem, now: float) -> void:
 		var base := Color.from_hsv(hue / 360.0, 0.90, 0.70)
 
 		if int(z["phase"]) == Phase.WINDUP:
-			var wp: float = JuiceMath.clampf01(age / maxf(0.0001, wind_up))
+			var wp: float = MathScript.clampf01(age / maxf(0.0001, wind_up))
 			var floor_col := base
 			floor_col.a = 0.06 + 0.18 * wp
 			ci.draw_circle(center, radius, floor_col)
@@ -89,8 +90,8 @@ func draw_on(ci: CanvasItem, now: float) -> void:
 			ci.draw_line(c2 + Vector2(-5, 0), c2 + Vector2(5, 0), cross, 1.0, true)
 			ci.draw_line(c2 + Vector2(0, -5), c2 + Vector2(0, 5), cross, 1.0, true)
 		elif int(z["phase"]) == Phase.STRIKE:
-			var sp: float = JuiceMath.clampf01((age - wind_up) / maxf(0.0001, strike))
-			var fade: float = 1.0 - JuiceMath.ease_out_quint(sp)
+			var sp: float = MathScript.clampf01((age - wind_up) / maxf(0.0001, strike))
+			var fade: float = 1.0 - MathScript.ease_out_quint(sp)
 			var disc := base
 			disc.a = 0.55 * fade
 			ci.draw_circle(center, radius * (0.85 + 0.25 * sp), disc)
