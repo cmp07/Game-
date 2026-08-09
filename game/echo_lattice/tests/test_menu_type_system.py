@@ -70,7 +70,7 @@ class TestLedgerTypeRoles(unittest.TestCase):
         self.assertIn('return "action"', src)
         self.assertIn('return "display"', src)
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
-        self.assertIn('lt.apply_to_control(btn, "action", px)', chrome)
+        self.assertIn("apply_role", chrome)
         self.assertNotIn('apply_to_control(btn, "mono"', chrome)
 
     def test_meta_mono_gate(self) -> None:
@@ -81,9 +81,11 @@ class TestLedgerTypeRoles(unittest.TestCase):
 
     def test_selection_margin_tick_baseline_not_spam(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
-        self.assertIn("SELECT_RULE_MAX := 220.0", chrome)
+        self.assertIn("SELECT_RULE_MAX := 240.0", chrome)
         self.assertIn("_selection_baseline_width", chrome)
-        self.assertIn("margin tick + baseline rule", chrome)
+        self.assertIn("_draw_selection_baseline", chrome)
+        self.assertIn("solid ink tick", chrome)
+        self.assertIn("draw_rect(Rect2(tick_p.x - 2.0", chrome)
         # Idle / disabled must not draw rules (no underline spam).
         self.assertIn("if disabled or (not focused and not hovered):", chrome)
         self.assertNotIn("minf(max_w, 280.0)", chrome)
@@ -100,6 +102,13 @@ class TestMenuWiresRoles(unittest.TestCase):
         self.assertIn('font_for_role("action"', menu)
         self.assertIn("MENU_TYPE_SYSTEM", menu)
         self.assertIn('scale.get("action"', menu)
+        self.assertIn('"sharp_edge": true', menu)
+        self.assertIn('"binder_holes": 0', menu)
+
+    def test_index_card_supports_sharp_boutique(self) -> None:
+        art = (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8")
+        self.assertIn("sharp_edge", art)
+        self.assertIn("var sharp_edge: bool", art)
 
 
 if __name__ == "__main__":

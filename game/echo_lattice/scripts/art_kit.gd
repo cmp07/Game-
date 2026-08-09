@@ -569,37 +569,37 @@ func draw_habit_silhouette(
 
 
 func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> void:
-	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
-	## Layered contact shadow + thickness + fiber stock + binder clip/holes (restore-rich).
+	## Physical Field Index plate (ART_DIRECTION_V3 §6.1 / menu-field-index-10).
+	## Boutique title default: sharp paper edge, soft shadow, subtle fiber, clip OR holes.
 	## opts: alpha, shadow_off, grain_seed, grain_a, binder_holes, header_rules, deep_backer,
-	##       skip_grain, thickness, oxide_accents, binder_clip, fiber_a, ruled_stock
-	## ruled_stock=false (title Field Index): grain + streaks only — dense 4px rules
+	##       skip_grain, thickness, oxide_accents, binder_clip, fiber_a, ruled_stock, sharp_edge
+	## ruled_stock=false (title Field Index): sparse fiber only — dense 4px rules
 	## read as spreadsheet underlines under action rows.
 	if card.size.x < 2.0 or card.size.y < 2.0:
 		return
 	var alpha: float = float(opts.get("alpha", 1.0))
-	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(7, 10))
+	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(6, 8))
 	var grain_seed: int = int(opts.get("grain_seed", 11))
-	var grain_a: float = float(opts.get("grain_a", 0.055))
+	var grain_a: float = float(opts.get("grain_a", 0.045))
 	var binder_holes: int = int(opts.get("binder_holes", 5))
 	var header_rules: bool = bool(opts.get("header_rules", true))
 	var deep_backer: bool = bool(opts.get("deep_backer", true))
 	var skip_grain: bool = bool(opts.get("skip_grain", false))
-	var thickness: float = float(opts.get("thickness", 3.5))
-	var oxide_accents: bool = bool(opts.get("oxide_accents", true))
+	var thickness: float = float(opts.get("thickness", 3.0))
+	var oxide_accents: bool = bool(opts.get("oxide_accents", false))
 	var binder_clip: bool = bool(opts.get("binder_clip", true))
-	var fiber_a: float = float(opts.get("fiber_a", 0.055))
-	var ruled_stock: bool = bool(opts.get("ruled_stock", true))
+	var fiber_a: float = float(opts.get("fiber_a", 0.04))
+	var ruled_stock: bool = bool(opts.get("ruled_stock", false))
+	var sharp_edge: bool = bool(opts.get("sharp_edge", true))
 
-	# Soft outer contact wash, then ink-soft multiply stack — card as object.
-	# Keep α modest so contact reads as lift, not a dark slab under the plate.
+	# Soft contact wash + layered shadow — lift without a dark slab.
 	var wash := Palette.PAPER_SHADOW
-	wash.a = 0.10 * alpha
-	canvas.draw_rect(Rect2(card.position + Vector2(10, 14), card.size + Vector2(6, 6)), wash, true)
+	wash.a = 0.08 * alpha
+	canvas.draw_rect(Rect2(card.position + Vector2(8, 11), card.size + Vector2(4, 4)), wash, true)
 	var shadow_layers: Array = [
-		[shadow_off + Vector2(2, 3), 0.08],
-		[shadow_off, 0.16],
-		[shadow_off * 0.55, 0.10],
+		[shadow_off + Vector2(1, 2), 0.06],
+		[shadow_off, 0.12],
+		[shadow_off * 0.5, 0.08],
 	]
 	for layer in shadow_layers:
 		var off: Vector2 = layer[0]
@@ -609,20 +609,10 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 		)
 		canvas.draw_rect(Rect2(card.position + off, card.size), shadow, true)
 	if deep_backer:
-		# Cardstock thickness: deep face peeking past the bone plate.
 		var deep := Palette.PAPER_DEEP
 		deep.a = alpha
 		var thick: float = clampf(thickness, 2.0, 5.0)
 		canvas.draw_rect(Rect2(card.position + Vector2(thick, thick), card.size), deep, true)
-		var deep2 := Palette.PAPER_DEEP.darkened(0.06)
-		deep2.a = 0.55 * alpha
-		canvas.draw_rect(
-			Rect2(card.position + Vector2(thick + 2.0, thick + 2.0), card.size - Vector2(2, 2)),
-			deep2,
-			true
-		)
-		# Right + bottom edge bevel (letterpress wall feel on chrome).
-		var edge := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35 * alpha)
 		canvas.draw_rect(
 			Rect2(card.end.x, card.position.y + thick, thick, card.size.y),
 			Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, alpha),
@@ -633,129 +623,79 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 			Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, alpha),
 			true
 		)
-		canvas.draw_line(
-			Vector2(card.end.x + thick * 0.35, card.position.y + thick),
-			Vector2(card.end.x + thick * 0.35, card.end.y + thick * 0.35),
-			edge,
-			1.0
-		)
 	var bone := Palette.PAPER_BONE
 	bone.a = alpha
 	canvas.draw_rect(card, bone, true)
-	# Warm face wash so the plate reads as stock, not clinical void.
 	var face_warm := Palette.PAPER_DEEP
-	face_warm.a = 0.18 * alpha
+	face_warm.a = 0.12 * alpha
 	canvas.draw_rect(card.grow(-2.0), face_warm, true)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, card, grain_seed, grain_a * alpha)
 	if ruled_stock:
-		# Micro fiber grid + vertical stock — only when stock should read as ruled paper.
 		var fiber: Color = Palette.INK_SOFT
 		fiber.a = fiber_a * alpha
 		var fy: float = card.position.y + 8.0
 		while fy < card.end.y - 8.0:
 			canvas.draw_line(Vector2(card.position.x + 8.0, fy), Vector2(card.end.x - 8.0, fy), fiber, 1.0)
 			fy += 4.0
-		var fiber_v: Color = Palette.INK_SOFT
-		fiber_v.a = fiber_a * 0.45 * alpha
-		var fx: float = card.position.x + 28.0
-		while fx < card.end.x - 12.0:
-			canvas.draw_line(Vector2(fx, card.position.y + 10.0), Vector2(fx, card.end.y - 10.0), fiber_v, 1.0)
-			fx += 28.0
 	else:
-		# Title Field Index: quiet stock — faint vertical only in binder gutter.
-		var gutter: Color = Palette.INK_SOFT
-		gutter.a = 0.035 * alpha
-		var gx: float = card.position.x + 26.0
-		canvas.draw_line(
-			Vector2(gx, card.position.y + 48.0),
-			Vector2(gx, card.end.y - 24.0),
-			gutter,
-			1.0
+		# Quiet boutique stock — sparse fiber streaks only (no dense rule grid).
+		draw_fiber_streaks(canvas, card.grow(-8.0), grain_seed + 3, fiber_a * alpha, 12)
+	# Sharp continuous ink edge — never torn / letterpress scribble.
+	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.88 * alpha)
+	if sharp_edge:
+		# Single clean plate edge (1 px) — no double hairline that reads as sketch tremor.
+		canvas.draw_rect(card, border, false, 1.0)
+	else:
+		canvas.draw_rect(card, border, false, 1.5)
+		draw_letterpress_rule(
+			canvas, card.position, card.position + Vector2(card.size.x, 0.0), border, 1.5, grain_seed + 11
 		)
-	draw_fiber_streaks(canvas, card.grow(-6.0), grain_seed + 3, (0.035 if not ruled_stock else 0.04) * alpha, 14 if not ruled_stock else 18)
-	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
-	# Continuous plate edge first (enclosure / screenshot QA), then letterpress tremor.
-	canvas.draw_rect(card, border, false, 1.5)
-	draw_letterpress_rule(
-		canvas, card.position, card.position + Vector2(card.size.x, 0.0), border, 1.5, grain_seed + 11
-	)
-	draw_letterpress_rule(
-		canvas, card.position + Vector2(card.size.x, 0.0), card.end, border, 1.5, grain_seed + 12
-	)
-	draw_letterpress_rule(
-		canvas, card.end, card.position + Vector2(0.0, card.size.y), border, 1.5, grain_seed + 13
-	)
-	draw_letterpress_rule(
-		canvas, card.position + Vector2(0.0, card.size.y), card.position, border, 1.5, grain_seed + 14
-	)
-	var inner_b := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * alpha)
-	var inner_card: Rect2 = card.grow(-3.0)
-	draw_letterpress_rule(
-		canvas,
-		inner_card.position,
-		inner_card.position + Vector2(inner_card.size.x, 0.0),
-		inner_b,
-		1.0,
-		grain_seed + 15
-	)
-	draw_letterpress_rule(
-		canvas, inner_card.position + Vector2(inner_card.size.x, 0.0), inner_card.end, inner_b, 1.0, grain_seed + 16
-	)
-	draw_letterpress_rule(
-		canvas, inner_card.end, inner_card.position + Vector2(0.0, inner_card.size.y), inner_b, 1.0, grain_seed + 17
-	)
-	draw_letterpress_rule(
-		canvas, inner_card.position + Vector2(0.0, inner_card.size.y), inner_card.position, inner_b, 1.0, grain_seed + 18
-	)
+		draw_letterpress_rule(
+			canvas, card.position + Vector2(card.size.x, 0.0), card.end, border, 1.5, grain_seed + 12
+		)
+		draw_letterpress_rule(
+			canvas, card.end, card.position + Vector2(0.0, card.size.y), border, 1.5, grain_seed + 13
+		)
+		draw_letterpress_rule(
+			canvas, card.position + Vector2(0.0, card.size.y), card.position, border, 1.5, grain_seed + 14
+		)
 	if oxide_accents:
 		draw_oxide_flecks(
 			canvas,
 			Rect2(card.position + Vector2(18, 8), Vector2(card.size.x - 36, 10)),
 			grain_seed + 29,
-			4,
-			0.45 * alpha
+			3,
+			0.35 * alpha
 		)
 	if binder_holes > 0:
-		var hole_step: float = maxf(48.0, (card.size.y - 64.0) / float(maxi(1, binder_holes - 1)))
+		# Quiet punched gutter — low-contrast, never hollow white row bullets.
+		var hole_step: float = maxf(56.0, (card.size.y - 80.0) / float(maxi(1, binder_holes - 1)))
 		for i in range(binder_holes):
-			var hy: float = card.position.y + 36.0 + float(i) * hole_step
-			if hy > card.end.y - 28.0:
+			var hy: float = card.position.y + 44.0 + float(i) * hole_step
+			if hy > card.end.y - 36.0:
 				break
-			# Punched hole: ink ring + paper show-through + oxide kiss.
+			var hx: float = card.position.x + 16.0
 			canvas.draw_circle(
-				Vector2(card.position.x + 14.0, hy),
-				4.2,
-				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
+				Vector2(hx, hy),
+				3.4,
+				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * alpha)
 			)
-			canvas.draw_circle(Vector2(card.position.x + 14.0, hy), 2.2, bone)
 			canvas.draw_circle(
-				Vector2(card.position.x + 14.6, hy + 0.6),
-				1.4,
-				Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.35 * alpha)
+				Vector2(hx, hy),
+				2.0,
+				Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, 0.92 * alpha)
 			)
-			if i % 2 == 0:
-				canvas.draw_circle(
-					Vector2(card.position.x + 16.5, hy + 1.2),
-					1.0,
-					Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.35 * alpha)
-				)
 	if header_rules:
-		draw_letterpress_rule(
-			canvas,
-			card.position + Vector2(26, 38),
-			card.position + Vector2(card.size.x - 18, 38),
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-			1.5,
-			grain_seed + 21
-		)
-		draw_letterpress_rule(
-			canvas,
-			card.position + Vector2(26, 43),
-			card.position + Vector2(card.size.x - 18, 43),
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-			1.0,
-			grain_seed + 22
+		var rule_c := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.75 * alpha)
+		var rx0: float = card.position.x + (34.0 if binder_holes > 0 else 22.0)
+		var rx1: float = card.end.x - 22.0
+		canvas.draw_line(Vector2(rx0, card.position.y + 38.0), Vector2(rx1, card.position.y + 38.0), rule_c, 1.5)
+		canvas.draw_line(
+			Vector2(rx0, card.position.y + 42.0),
+			Vector2(rx1, card.position.y + 42.0),
+			Color(rule_c.r, rule_c.g, rule_c.b, rule_c.a * 0.65),
+			1.0
 		)
 	if binder_clip:
 		draw_binder_clip(canvas, Vector2(card.position.x + card.size.x * 0.5, card.position.y - 2.0), alpha)
