@@ -9,6 +9,7 @@ menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc,
 menu.continue,Continue,继续
 menu.start_new,Start New Run,开始新周目
 menu.daily,Daily Challenge,每日挑战
+menu.endless,Endless,无尽
 menu.settings,Settings,设置
 menu.wishlist,Wishlist on Steam,Steam 愿望单
 menu.quit,Quit,退出
@@ -16,6 +17,7 @@ menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间�
 menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
+menu.daily_endless_meta,Daily %s  ·  best %s★ / 15  ·  Endless best depth %s,每日 %s  ·  最佳 %s★ / 15  ·  无尽最佳深度 %s
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引
 menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
@@ -29,6 +31,8 @@ hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
 hud.restart,Restart (R),重开 (R)
 hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
+hud.endless_tag, · Endless %s · pressure %s%%, · 无尽 %s · 改写压 %s%%
+hud.endless_depth,Depth %s,深度 %s
 hud.chamber_fallback,Chamber,间室
 habit.up,up,上
 habit.down,down,下
@@ -40,6 +44,7 @@ won.finish_wing,→ Finish Wing,→ 完成本翼
 won.finish_demo,→ Finish Demo,→ 完成试玩
 won.next_daily,→ Next Daily,→ 下一每日
 won.daily_complete,→ Daily Complete,→ 每日完成
+won.next_endless,→ Keep Climbing,→ 继续攀升
 
 won.replay,Replay this chamber,重玩本间室
 won.menu,Menu,菜单
@@ -57,6 +62,9 @@ Habit: %s","%s
 won.daily_line,"
 Daily %s","
 每日 %s"
+won.endless_line,"
+Endless %s  ·  depth %s  ·  rewrite pressure %s%%","
+无尽 %s  ·  深度 %s  ·  改写压 %s%%"
 won.stars_glyph,%s (%s/3),%s (%s/3)
 end.title,END OF SLICE,切片终章
 end.tagline,The lattice remembers you.,晶格记得你。
@@ -66,6 +74,7 @@ end.footer,Vertical slice · Echo Lattice · VISUAL v2 · ink on paper,可玩切
 end.header_wing,Wing complete.,本翼完成。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
+end.header_endless,Endless %s — depth %s.,无尽 %s — 深度 %s。
 end.summary,"%s
 Escaped %s / %s chambers.
 Stars this wing: %s★

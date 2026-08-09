@@ -99,6 +99,8 @@ func _summary() -> String:
 		header = tr("end.header_demo")
 	elif GameState.run_mode == "daily":
 		header = tr("end.header_daily") % GameState.daily_label
+	elif GameState.run_mode == "endless":
+		header = tr("end.header_endless") % [GameState.endless_label, GameState.endless_depth]
 	return tr("end.summary") % [
 		header, beat, ids.size(), stars, total_best, dom_label,
 		int(hp.get("up", 0)), int(hp.get("down", 0)),

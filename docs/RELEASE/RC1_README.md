@@ -6,6 +6,8 @@
 
 **Offline playable:** Campaign / Daily / Endless run entirely offline. Saves, telemetry, and crash logs are local (`user://`). Steamworks / network features are optional and must degrade gracefully when offline or unavailable.
 
+**Endless (thin vertical):** Menu → Endless starts a seeded climb through the daily chamber catalog. Depth raises rewrite pressure (higher act floor + stacked mirror transforms). Best depth persists in `user://save.json`.
+
 ---
 
 ## What RC1 is

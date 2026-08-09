@@ -135,6 +135,9 @@ func load_chamber(id: int) -> void:
 	if chamber.is_empty():
 		return
 	transform_name = str(chamber.get("transform", "none"))
+	# Endless: rising rewrite pressure may stack mirrors (softlock-guarded on commit).
+	if GameState.run_mode == "endless" and GameState.has_method("endless_transform_for"):
+		transform_name = GameState.endless_transform_for(transform_name)
 	var rows: Array = chamber.get("map", [])
 	grid.clear()
 	walked.clear()

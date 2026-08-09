@@ -2,7 +2,7 @@
   "format": 2,
   "game": "echo_lattice",
   "doc": "docs/ECHO_LATTICE/04_CONTENT_BIBLE.md",
-  "note": "Runtime variation grammar for daily / hard modes. Authored chambers stay pristine; variants are generated.",
+  "note": "Runtime variation grammar for daily / hard / endless modes. Authored chambers stay pristine; variants are generated. Endless uses the daily catalog with rising rewrite pressure (act floor + transform stack).",
   "alphabet": {
     "rotate": [0, 90, 180, 270],
     "reflect": ["none", "horizontal", "vertical"],
