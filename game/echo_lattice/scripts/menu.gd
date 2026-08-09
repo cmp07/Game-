@@ -125,7 +125,14 @@ func _ledger_page_rect(vp: Vector2) -> Rect2:
 	return Rect2(40.0, 28.0, vp.x - 80.0, vp.y - 56.0)
 
 
-## Drawn Field Index plate — right side of the ledger, clear of the brand lockup.
+## Chrome insets around CardColumn inside the Field Index plate.
+const _INDEX_PAD_L: float = 34.0
+const _INDEX_PAD_R: float = 18.0
+const _INDEX_PAD_T: float = 48.0
+const _INDEX_PAD_B: float = 22.0
+
+
+## Right-side Field Index plate — sized to the action column when available.
 func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Rect2:
 	if vp.x < 2.0:
 		vp = size
@@ -133,7 +140,6 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 		vp = get_viewport_rect().size
 	var page: Rect2 = _ledger_page_rect(vp)
 	# Brand lockup sits around page.x+48 with ~420px rust rule — keep clearance.
-	# On narrow pages, leave at least ~48% of the page for the brand column.
 	var brand_clear: float = page.position.x + minf(520.0, page.size.x * 0.48)
 	var right_pad: float = 28.0 if page.size.x < 1100.0 else 36.0
 	var card_w: float = 300.0 if page.size.x >= 1100.0 else 280.0
@@ -141,30 +147,39 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	if card_x < brand_clear:
 		card_x = brand_clear
 		card_w = maxf(220.0, page.end.x - right_pad - card_x)
-	# Below seed strip; above punchcard ribbon + controls hint.
-	# Short pages (Deck / editor) tighten margins so index rows still fit.
-	var top_pad: float = 56.0 if page.size.y < 700.0 else 70.0
+	var top_pad: float = 56.0 if page.size.y < 700.0 else 78.0
 	var bottom_pad: float = 52.0 if page.size.y < 700.0 else 72.0
 	var top: float = page.position.y + top_pad + y_off
-	var bottom: float = page.end.y - bottom_pad
-	var card_h: float = maxf(280.0, bottom - top)
-	return Rect2(card_x, top, card_w, card_h)
+	var bottom_limit: float = page.end.y - bottom_pad
+	# Prefer a physical index-card height; grow only when rows need it.
+	var card_h: float = clampf(page.size.y * 0.55, 360.0, 520.0)
+	var col: Control = get_node_or_null("CardColumn") as Control
+	if col != null and col.get_child_count() > 0:
+		# Prefer laid-out height; fall back to combined minimum while syncing.
+		var content_h: float = col.size.y
+		if content_h < 8.0:
+			content_h = col.get_combined_minimum_size().y
+		card_h = clampf(content_h + _INDEX_PAD_T + _INDEX_PAD_B, 320.0, bottom_limit - top)
+	else:
+		card_h = minf(card_h, bottom_limit - top)
+	return Rect2(card_x, top, card_w, maxf(280.0, card_h))
 
 
 ## Inner content inset: binder holes left, FIELD INDEX header top.
 func field_index_content_rect(card: Rect2) -> Rect2:
-	var head: float = 42.0 if card.size.y < 400.0 else 48.0
 	return Rect2(
-		card.position.x + 26.0,
-		card.position.y + head,
-		maxf(180.0, card.size.x - 40.0),
-		maxf(180.0, card.size.y - head - 14.0)
+		card.position.x + _INDEX_PAD_L,
+		card.position.y + _INDEX_PAD_T,
+		maxf(180.0, card.size.x - _INDEX_PAD_L - _INDEX_PAD_R),
+		maxf(180.0, card.size.y - _INDEX_PAD_T - _INDEX_PAD_B)
 	)
 
 
 func _apply_index_row_metrics(compact: bool) -> void:
 	var row_h: float = 26.0 if compact else 32.0
 	var primary_h: float = 30.0 if compact else 36.0
+	# Pack rows to the top of the Field Index plate — never vertically expand.
+	var shrink_top: int = Control.SIZE_SHRINK_BEGIN
 	var buttons: Array = [
 		continue_button, daily_button, endless_button, hard_button,
 		museum_button, settings_button, colophon_button, quit_button, _wishlist_button,
@@ -172,19 +187,24 @@ func _apply_index_row_metrics(compact: bool) -> void:
 	for b in buttons:
 		if b == null:
 			continue
-		(b as Button).custom_minimum_size = Vector2(200.0, row_h)
-		(b as Button).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var btn: Button = b as Button
+		btn.custom_minimum_size = Vector2(200.0, row_h)
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.size_flags_vertical = shrink_top
 	if start_button:
 		start_button.custom_minimum_size = Vector2(200.0, primary_h)
 		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		start_button.size_flags_vertical = shrink_top
 	if subtitle:
 		subtitle.add_theme_font_size_override("font_size", 12 if compact else 13)
 		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		subtitle.size_flags_vertical = shrink_top
 	if meta_label:
 		meta_label.add_theme_font_size_override("font_size", 11 if compact else 12)
 		meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		meta_label.size_flags_vertical = shrink_top
 
 
 func _sync_field_index_layout() -> void:
@@ -194,15 +214,22 @@ func _sync_field_index_layout() -> void:
 	var vp: Vector2 = size
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
-	# Controls track the settled card (slot settle is draw-only polish).
+	var page: Rect2 = _ledger_page_rect(vp)
+	var compact: bool = page.size.y < 700.0
+	_apply_index_row_metrics(compact)
+	col.add_theme_constant_override("separation", 3 if compact else 6)
+	# Place column using the shared card geometry (content-driven height).
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
 	var inset: Rect2 = field_index_content_rect(card)
-	var compact: bool = inset.size.y < 420.0
-	_apply_index_row_metrics(compact)
 	col.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
 	col.position = inset.position
-	col.size = inset.size
-	col.add_theme_constant_override("separation", 3 if compact else 6)
+	var needed: float = col.get_combined_minimum_size().y
+	col.size = Vector2(inset.size.x, maxf(needed, 1.0))
+	# Second pass: card height may shrink/grow once column min size is known.
+	card = field_index_card_rect(vp, 0.0)
+	inset = field_index_content_rect(card)
+	col.position = inset.position
+	col.size = Vector2(inset.size.x, maxf(col.get_combined_minimum_size().y, 1.0))
 
 
 ## Regression helper — every visible index action must sit inside the plate.

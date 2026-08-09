@@ -307,7 +307,9 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 		show_end_screen()
 	else:
 		show_menu()
-	for _f in range(6):
+	# Menu paper-slot settle is ≤180 ms — wait enough frames at 60 Hz.
+	var settle_frames: int = 16 if kind == "menu" or kind == "daily" else 6
+	for _f in range(settle_frames):
 		await get_tree().process_frame
 	var img: Image = get_viewport().get_texture().get_image()
 	var safe_name: String = _safe_screenshot_filename(kind)
