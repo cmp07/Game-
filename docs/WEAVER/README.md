@@ -63,7 +63,7 @@
 | [`14_TECH.md`](14_TECH.md) | Godot 4 offline stack |
 | [`15_MARKET.md`](15_MARKET.md) | Shelf / discovery *(align store sentence to MASTER)* |
 
-### 16–19 — MVP pack
+### 16–20 — MVP pack & elevations
 
 | Doc | Topic |
 |---|---|
@@ -71,6 +71,7 @@
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
+| [`20_ELEVATIONS_V2.md`](20_ELEVATIONS_V2.md) | 25 concrete elevations (feel / discovery / anti-wiki / anti-purple / solo-first) |
 
 ---
 
