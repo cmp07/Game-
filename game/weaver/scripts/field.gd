@@ -40,6 +40,8 @@ func _ready() -> void:
 		zone.body_exited.connect(_on_void_exited)
 	if Loom.pending_selftest:
 		await _run_field_selftest()
+	elif Loom.pending_gameplay_demo:
+		await _run_gameplay_demo()
 
 
 func _spawn_fragments() -> void:
@@ -234,3 +236,99 @@ func _capture_screenshot(filename: String) -> void:
 		printerr("weaver-screenshot: save failed %s (%s)" % [path, err])
 		return
 	print("weaver-screenshot: wrote %s" % path)
+
+
+## Paced gather→combine→weave for cloud / xvfb ffmpeg capture (`-- --gameplay-demo`).
+## Does not quit — external recorder stops the process.
+func _run_gameplay_demo() -> void:
+	print("weaver-gameplay-demo: begin")
+	_player.set_physics_process(false)
+	_player.velocity = Vector2.ZERO
+	for i in 20:
+		await get_tree().process_frame
+	await get_tree().create_timer(1.4).timeout
+
+	Loom.prompt_changed.emit("DEMO · gather Anchor")
+	await _demo_walk_to(Vector2(280, 360), 1.35)
+	await _demo_collect_near(Vector2(280, 360))
+	await get_tree().create_timer(0.7).timeout
+
+	Loom.prompt_changed.emit("DEMO · gather Span")
+	await _demo_walk_to(Vector2(360, 480), 1.2)
+	await _demo_collect_near(Vector2(360, 480))
+	await get_tree().create_timer(0.8).timeout
+
+	Loom.prompt_changed.emit("DEMO · combine into Brace Thread")
+	Loom.request_combine_ui()
+	await get_tree().create_timer(1.1).timeout
+	var i_a := Loom.fragment_inventory.find("Anchor")
+	var i_s := Loom.fragment_inventory.find("Span")
+	var combo: Dictionary = {}
+	if i_a >= 0 and i_s >= 0:
+		combo = Loom.combine_indices(i_a, i_s)
+	elif Loom.fragment_inventory.size() >= 2:
+		combo = Loom.combine_indices(0, 1)
+	if not bool(combo.get("ok", false)):
+		printerr("weaver-gameplay-demo: combine failed")
+	if _combine_panel != null and _combine_panel.has_method("hide_panel"):
+		await get_tree().create_timer(1.0).timeout
+		_combine_panel.hide_panel()
+	await get_tree().create_timer(0.6).timeout
+
+	Loom.prompt_changed.emit("DEMO · weave at the void")
+	await _demo_walk_to(Vector2(620, 360), 1.6)
+	_near_void = true
+	await get_tree().create_timer(0.45).timeout
+	var woven := false
+	if Loom.can_weave() and _near_void:
+		woven = Loom.seat_structure()
+		if woven:
+			_flash_thread_bind()
+	if not woven:
+		# Fallback if proximity gate races the Area2D signals.
+		woven = debug_force_weave_at_anchor()
+	if not woven:
+		printerr("weaver-gameplay-demo: weave failed")
+	await get_tree().create_timer(2.2).timeout
+	Loom.prompt_changed.emit("Structure seated — gather→combine→weave complete.")
+	await _demo_walk_to(Vector2(520, 360), 0.9)
+	await get_tree().create_timer(0.5).timeout
+	await _demo_walk_to(Vector2(700, 360), 1.1)
+	print("weaver-gameplay-demo: loop complete (holding for recorder)")
+	# Hold for the rest of a ~25–30s capture window.
+	await get_tree().create_timer(8.0).timeout
+	Loom.pending_gameplay_demo = false
+	print("weaver-gameplay-demo: done")
+
+
+func _demo_walk_to(target: Vector2, duration: float) -> void:
+	var tw := create_tween()
+	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(_player, "global_position", target, duration)
+	var face: Vector2 = target - _player.global_position
+	if face.length_squared() > 1.0 and _player.has_node("Body"):
+		(_player.get_node("Body") as Node2D).rotation = face.angle() + PI * 0.5
+	await tw.finished
+	for i in 4:
+		await get_tree().physics_frame
+
+
+func _demo_collect_near(at: Vector2) -> void:
+	# Prefer the nearest loose Fragment (walking often auto-collects via Area2D).
+	var best: Node2D = null
+	var best_d := 999999.0
+	for child in _spawn_root.get_children():
+		if not is_instance_valid(child) or not (child is Node2D):
+			continue
+		if bool(child.get("_taken")):
+			continue
+		var d: float = (child as Node2D).global_position.distance_squared_to(at)
+		if d < best_d:
+			best_d = d
+			best = child as Node2D
+	if best == null:
+		await get_tree().create_timer(0.2).timeout
+		return
+	if best.has_method("_try_collect"):
+		best.call("_try_collect")
+	await get_tree().create_timer(0.35).timeout

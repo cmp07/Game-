@@ -26,9 +26,13 @@ Juice feel demo: open / set main to `scenes/demo_field.tscn`.
 ```bash
 godot --path game/weaver
 godot --path game/weaver --quit-after 1
+godot --path game/weaver -- --selftest
+godot --path game/weaver -- --gameplay-demo   # paced gather→combine→weave (cloud / xvfb capture)
 python3 game/weaver/tests/test_weaver_juice.py
 python3 game/weaver/tests/test_prototype_loop.py
 ```
+
+Gameplay MP4: [`docs/WEAVER/media/VIDEO.md`](../../docs/WEAVER/media/VIDEO.md).
 
 ## Playable surfaces
 

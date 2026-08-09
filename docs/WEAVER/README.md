@@ -15,6 +15,7 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
+| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave) + GitHub links |
 
 ---
 

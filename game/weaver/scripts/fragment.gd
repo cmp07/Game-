@@ -53,7 +53,7 @@ func _try_collect() -> void:
 	if not Loom.add_fragment(family):
 		return
 	_taken = true
-	monitoring = false
+	set_deferred("monitoring", false)
 	var tw := create_tween()
 	tw.set_parallel(true)
 	tw.tween_property(self, "scale", Vector2(0.05, 0.05), 0.2)
