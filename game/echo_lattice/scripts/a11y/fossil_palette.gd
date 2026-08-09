@@ -78,7 +78,7 @@ static func all_mode_ids() -> PackedStringArray:
 
 
 static func display_name(mode: Mode) -> String:
-	# Static context: use TranslationServer (tr() is instance-only).
+	## Static helper — use TranslationServer (Object.tr is instance-only).
 	match mode:
 		Mode.PROTANOPIA:
 			return TranslationServer.translate("colorblind.protanopia")

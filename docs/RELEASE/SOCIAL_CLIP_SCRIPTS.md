@@ -1,7 +1,8 @@
 # Echo Lattice — Social clip scripts (rewrite slam)
 
 Visual authority: origami slam in `Chamber._draw_rewrite_slam()` — heartbeat → creases → lift → slot → rust bleed (`REWRITE_DURATION = 0.90s`).  
-Frame packs: `presskit/images/gif_sequences/01_rewrite_slam/`.
+Frame packs: `presskit/images/gif_sequences/01_rewrite_slam/`.  
+**Gate A 30s editor pack** (beat sheet, timing, VO/cards, capture): [`trailer/`](trailer/).
 
 Voice: dry cartographer, not hype-bro. On-screen type in ink/rust on paper. **No neon purple.**
 
