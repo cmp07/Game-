@@ -9,11 +9,13 @@ Integration hub for Steam ship / RC packs. See also [`RC1_README.md`](RC1_README
 | [`PLATFORMS.md`](PLATFORMS.md) | Multi-platform release strategy + macOS/Linux stubs |
 | [`CI_BUILDS.md`](CI_BUILDS.md) | CI / export build notes |
 
-## Compliance
+## Compliance / Gate A Partner legal
 
 | Doc | Purpose |
 |---|---|
-| [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Final Steam compliance pack |
+| [`legal/`](legal/) | **Gate A paste pack** — Content Survey, AI disclosure, privacy page, ratings notes |
+| [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) | Full Steam compliance pack (credits, depot notices, C1–C12) |
+| [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md) | No fake AppID / DepotID policy |
 
 
 ## Steam store / Steamworks / Deck / Demo

@@ -62,6 +62,7 @@ SEC-01 / SEC-02 / SEC-03 from [`../AUDIT/SECURITY.md`](../AUDIT/SECURITY.md) —
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
 | CI / exports | [`CI_BUILDS.md`](CI_BUILDS.md) |
 | Compliance (Content Survey, privacy, credits) | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) |
+| Gate A Partner legal paste pack | [`legal/`](legal/) |
 | Launch marketing | [`LAUNCH_PLAYBOOK.md`](LAUNCH_PLAYBOOK.md) · [`presskit/`](presskit/) |
 | Post-launch / live ops | [`POSTLAUNCH.md`](POSTLAUNCH.md) · [`ROADMAP.md`](ROADMAP.md) · [`SUPPORT_FAQ.md`](SUPPORT_FAQ.md) |
 | Crash / logs | [`CRASH_LOG_HOOK.md`](CRASH_LOG_HOOK.md) |
