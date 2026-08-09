@@ -49,16 +49,18 @@ Echo Lattice Steam resume gates in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/RO
 
 ### W1 — Prototype spike (playable truth)
 
+**Beat script:** [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) (Structure ≤3:40; clear ≤4:30).
+
 | Task | Notes |
 |---|---|
 | Create `game/weaver/` Godot 4 project | Empty EL tree alone; copy **patterns**, not scenes |
 | Pick sim fence (G1) | Verlet/beam budget sheet day one |
-| Implement six-beat loop on **one** field | No hub meta, no gallery yet |
-| Fragment ×4 + Thread ×2 + Structure ×1 | Prefer Span/Anchor + Brace/Feed |
+| Implement six-beat loop on **one** field | Timed to first-five; no hub meta, no gallery yet |
+| Fragment ×2 + Thread ×1 + Structure ×1 for spike | Anchor + Span + Brace only in first five; expand after juice |
 | Collapse readability | Culprit highlight + undo tension |
 | Python/GDScript contracts | Determinism + softlock smoke |
 
-**Exit:** Internal clip of Tension seat that passes still test.
+**Exit:** Internal clip of Tension seat that passes still test; cold clear inside five minutes per `32_FIRST_FIVE`.
 
 ### W2 — Vertical slice (first thirty)
 

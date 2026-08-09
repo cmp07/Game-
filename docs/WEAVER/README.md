@@ -63,7 +63,7 @@
 | [`14_TECH.md`](14_TECH.md) | Godot 4 offline stack |
 | [`15_MARKET.md`](15_MARKET.md) | Shelf / discovery *(align store sentence to MASTER)* |
 
-### 16–20 — MVP pack & elevations
+### 16–19 — MVP pack
 
 | Doc | Topic |
 |---|---|
@@ -71,13 +71,12 @@
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
-| [`20_ELEVATIONS_V2.md`](20_ELEVATIONS_V2.md) | 25 concrete elevations (feel / discovery / anti-wiki / anti-purple / solo-first) |
 
-### 20+ — Follow-on locks
+### 32 — Prototype timing
 
 | Doc | Topic |
 |---|---|
-| [`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md) | Combination literacy + hint ecology (no spoiler wiki) |
+| [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) | Ultra-tight first-five beat script (W1 spike) |
 
 ---
 
@@ -93,7 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-discovery` | Discovery UX (`22_DISCOVERY_UX`) |
+| `cursor/weaver-first-five` | [#175](https://github.com/cmp07/Game-/pull/175) |
 
 ---
 
