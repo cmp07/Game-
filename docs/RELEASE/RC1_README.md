@@ -34,6 +34,17 @@ Playable product root: `game/echo_lattice/` (Godot 4.3, GDScript).
 
 All requested `cursor/release-*` packs present at integration time are merged above.
 
+### Ultra Audit P0 code landed (2026-08-09)
+
+| Source | PR | Landed |
+|---|---|---|
+| SaveManager bak recovery / cloud-after-commit | [#82](https://github.com/cmp07/Game-/pull/82) `audit-bugs-meta` | Yes |
+| Continue / `run_cleared` lifetime-skip fix | [#87](https://github.com/cmp07/Game-/pull/87) `audit-bugs-core` | Yes |
+| Demo clamp, focus/pad, locale refresh + tests | [#88](https://github.com/cmp07/Game-/pull/88) `audit-adversarial` | Yes |
+| Full audit corpus under [`docs/AUDIT/`](../AUDIT/) | [#75](https://github.com/cmp07/Game-/pull/75)–[#81](https://github.com/cmp07/Game-/pull/81), [#83](https://github.com/cmp07/Game-/pull/83)–[#86](https://github.com/cmp07/Game-/pull/86), [#89](https://github.com/cmp07/Game-/pull/89) | Yes |
+
+Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **54/100**; Gate A still blocked on AppID / capsules / trailer).
+
 ---
 
 ## Doc map
@@ -41,6 +52,7 @@ All requested `cursor/release-*` packs present at integration time are merged ab
 | Area | Entry |
 |---|---|
 | Release index | [`README.md`](README.md) |
+| Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
 | CI / exports | [`CI_BUILDS.md`](CI_BUILDS.md) |
 | Compliance (Content Survey, privacy, credits) | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) |
@@ -64,6 +76,8 @@ Quick contract check (no Godot binary required):
 
 ```bash
 python3 game/echo_lattice/tests/test_release_liveops.py
+python3 game/echo_lattice/tests/test_rc_polish.py
+python3 game/echo_lattice/tests/test_adversarial_qa.py
 ```
 
 Editor play:

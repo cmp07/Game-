@@ -7,7 +7,8 @@
 | **Synthesis branch** | `cursor/audit-ultra-synthesis` |
 | **Date** | 2026-08-09 |
 | **Mode** | Cloud-only merge of sibling `cursor/audit-*` findings + RC1 tree spot-checks |
-| **Ship-readiness score** | **54 / 100** |
+| **Ship-readiness score** | **54 / 100** (pre–P0 land; Partner/assets still dominate) |
+| **P0 code landed** | **Yes — 2026-08-09** on `cursor/echo-lattice-rc1` (#82 / #87 / #88 + full `docs/AUDIT/`) |
 
 ---
 
@@ -15,9 +16,11 @@
 
 RC1 is a **real offline playable Steam candidate**, not a paper prototype. The habit→geometry loop (walk → checkpoint → authored transform → origami slam → stars → next), Act I → **Mirror Birth** demo spine, Field Ledger visual language, atomic local saves, and offline Steam stub are coherent and largely gated by Python validators that already pass on this tree.
 
+**P0 code landed (2026-08-09):** SaveManager bak recovery / post-commit cloud push (#82), Continue/`run_cleared` lifetime-skip fix (#87), and adversarial session integrity (build_flavor + book sanitize, focus/pad hold clear, locale HUD refresh + tests) (#88) are merged into this RC1 tip. Full audit set `#75–#89` docs live under [`docs/AUDIT/`](.).
+
 It is **not** Partner-ready and **not** thesis-complete. Steam Partner readiness sits at **~38%** (placeholders, Windows-only depots, no CI workflows, stamped capsules). Habit archetypes, rewrite-score bias, DailyCalendar/seeds, Endless, hard-variant UI, and CrashLogHook autoload are **documented or authored but unwired**. RELEASE “✅ ship” language overstates a11y/l10n end-to-end (CJK font missing; settings/subtitles largely unkeyed). Production audio/art are still procedural placeholders.
 
-**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**, provided Partner identity + final store assets land first. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. Merge sibling **P0 code fixes** (`audit-bugs-core`, `audit-bugs-meta`, `audit-adversarial`) into RC1 before any public build.
+**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**, provided Partner identity + final store assets land first. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. Code P0s from the ultra audit are on RC1; Gate A is now blocked on AppID / capsules / trailer / Partner paste.
 
 ---
 
@@ -51,7 +54,7 @@ It is **not** Partner-ready and **not** thesis-complete. Steam Partner readiness
 | Hardware Deck / Win / mac device farm | **Gap** — all audits cloud-static; Verified / notarization unproven |
 | Partner console (live AppID, surveys, depots) | **Gap** — correctly not invented |
 | Godot `--selftest` in this environment | **Gap** — no Godot binary; Python gates used as proxy |
-| Sibling P0 **code** fixes | Landed on #82 / #87 / #88 — **not yet merged into RC1** at synthesis time |
+| Sibling P0 **code** fixes | **Merged into RC1** (2026-08-09) — #82 / #87 / #88 + SaveManager union |
 
 ---
 
@@ -59,7 +62,7 @@ It is **not** Partner-ready and **not** thesis-complete. Steam Partner readiness
 
 | Pillar | Weight | Score | Evidence |
 |---|---:|---:|---|
-| Offline playable loop & softlock bar | 20 | **16** | BUGBASH FIXED set + validators green; Continue/save P0s fixed on sibling PRs |
+| Offline playable loop & softlock bar | 20 | **16** | BUGBASH FIXED set + validators green; Continue/save P0s **landed on RC1** |
 | Demo / content spine (Act I → Mirror Birth) | 15 | **11** | Demo preset + filter solid; map clones + unwired daily hurt depth |
 | Thesis reactivity (habit → authorship) | 10 | **4** | Path→geometry yes; archetype/bias/adaptation mostly sidecar |
 | Store & Steam Partner | 20 | **8** | Partner readiness **38%**; placeholders dominate |
@@ -81,7 +84,7 @@ Ranked by ship damage × likelihood for Coming Soon → Next Fest → 1.0.
 | 1 | **Partner identity still placeholders** (`YOUR_APP_ID`, studio/legal, demo wishlist URL) — public CTA / depots cannot go live | P0 | Steam #80, Meta #82, Product #79 |
 | 2 | **No export CI / Godot workflows** — every build is manual; checksum/pinning guidance missing | P0 | Architecture #86, Steam #80, Security #76 |
 | 3 | **Daily Challenge authority orphaned** — FAQ/calendar claim UTC friend-code ritual; runtime Fisher–Yates ignores `DailyCalendar` / `DailySeeds` | P0 | Bugs-core #87, Adversarial #88, Design #83 |
-| 4 | **Continue / save P0s exist on RC1 until sibling merges** — lifetime `completed` skip, wing-complete park, bak destruction, cloud-before-commit, demo↔full queue bleed | P0 | #87, #82, #88 |
+| 4 | ~~**Continue / save P0s on RC1**~~ — **LANDING NOTE:** lifetime `completed` skip, bak destruction, cloud-before-commit, demo↔full queue bleed **mitigated on RC1** via #82/#87/#88 merge | ~~P0~~ → closed | #87, #82, #88 |
 | 5 | **Spacewar `480` fallback** if Steam enabled without real AppID | High | Security SEC-01 |
 | 6 | **Steam Cloud pull writes unvalidated remote bytes** once flag flips | High | Security SEC-02, Meta P1-06 |
 | 7 | **Linux depot + demo depot missing** — Deck Verified / Next Fest upload blocked | High | Compat platforms #75, Steam #80 |
@@ -111,7 +114,7 @@ Merged from Product #79, Audio/art upgrade list #84, Content #85, Design #83, Pe
 | 2 | **Final capsules + 1920×1080 screenshot slate** (no PLACEHOLDER) | Coming Soon | Browse CTR neck |
 | 3 | **30s announce trailer** (slam mid-point, muted-safe open) + 15s vertical | Coming Soon | Funnel watch-through |
 | 4 | **Live Coming Soon page** (surveys, sysreqs, price band, AI = No) | Coming Soon | Calendar gate |
-| 5 | **Merge audit P0 code** (#82 / #87 / #88) into RC1 + re-run BUGBASH | Pre-demo | Session integrity |
+| 5 | ~~**Merge audit P0 code** (#82 / #87 / #88) into RC1~~ — **done 2026-08-09**; re-run BUGBASH on device | Pre-demo | Session integrity |
 | 6 | **Wire DailyCalendar / DailySeeds / `daily_eligible`** | Next Fest | Honest daily + friend-code |
 | 7 | **Author rewrite SFX + L0–L3 stems**; map transforms → stingers | Next Fest | Premium feel / trailer audio |
 | 8 | **Demo minutes 0–3 → Mirror Birth** cold-player polish | Next Fest | Fest conversion |
@@ -179,7 +182,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - [ ] **Trailer** (30s) encoded; muted-safe first 5s; AI disclosure **No** submitted
 - [ ] Content Survey draft pasted into Partner; privacy URL live
 - [ ] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK
-- [ ] Merge **audit P0 save/Continue/demo** fixes into RC1
+- [x] Merge **audit P0 save/Continue/demo** fixes into RC1 (**done 2026-08-09**)
 - [ ] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md`); no horror/AI/loot lead
 
 **Coming Soon readiness estimate after Gate A only:** ~70 partner-page / ~60 overall.
@@ -230,8 +233,8 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ## 9. Recommended studio sequence (next actions)
 
 ```text
-1. Merge #87 + #82 + #88 into RC1 → re-run python gates + BUGBASH
-2. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A)
+1. ✅ Merge #87 + #82 + #88 into RC1 → re-run python gates (device BUGBASH still open)
+2. Partner: AppID / legal / capsules / trailer / Coming Soon page (Gate A — blocks public)
 3. Wire Daily calendar; autoload CrashLogHook; fail-closed AppID
 4. Audio identity + grain/dirty-draw perf; demo cold-path polish (Gate B)
 5. Content de-clone + habit bias + META Museum (Gate C)
@@ -243,6 +246,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ## 10. Method notes
 
 - Synthesized **2026-08-09** from remote branches listed in §1 after poll/fetch; adversarial (#88) and bugs-core (#87) arrived in the same wave as architecture/content.
-- Python gates re-run on synthesis workspace: `validate_chambers.py`, `test_rc_polish.py`, `test_balance_v2.py`, `test_release_liveops.py` → **OK** (RC1 tip; does not include sibling code fixes until merged).
+- Python gates re-run on synthesis workspace: `validate_chambers.py`, `test_rc_polish.py`, `test_balance_v2.py`, `test_release_liveops.py` → **OK** (pre-merge tip).
+- **P0 landing note (2026-08-09):** #82 / #87 / #88 code + #75–#81 / #83–#86 / #89 audit docs merged into `cursor/echo-lattice-rc1`; SaveManager conflicts resolved to keep bak recovery + `run_cleared` + book sanitize. Re-run full `game/echo_lattice/tests/` on the landed tip.
 - This document is executive-only; detail, repros, and file citations live in the linked sibling audit markdown files on their PRs.
-- Re-synthesize if Partner AppID lands or after P0 merges change the Continue/Daily/security posture.
+- Re-synthesize if Partner AppID lands or DailyCalendar wiring closes AQ-DAILY-01.
