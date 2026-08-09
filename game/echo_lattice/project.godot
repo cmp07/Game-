@@ -24,6 +24,7 @@ buses/default_bus_layout="res://default_bus_layout.tres"
 
 [autoload]
 
+LocaleManager="*res://scripts/locale/locale_manager.gd"
 Palette="*res://scripts/palette.gd"
 ArtKit="*res://scripts/art_kit.gd"
 GameState="*res://scripts/game_state.gd"
@@ -37,6 +38,13 @@ PaAnnouncer="*res://scripts/audio/pa_announcer.gd"
 AudioDirector="*res://scripts/audio/audio_director.gd"
 InputGlyphs="*res://scripts/input_glyphs.gd"
 DeckProfile="*res://scripts/deck_profile.gd"
+
+[internationalization]
+
+; CSV catalogs are loaded at runtime by LocaleManager (res://locale/echo_lattice.csv).
+; Prefer that path over editor-imported .translation binaries so headless/CI stays credential-free.
+locale/locale_filter_mode=0
+locale/fallbacks=PackedStringArray("en")
 
 [display]
 

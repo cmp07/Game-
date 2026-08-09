@@ -58,3 +58,11 @@ game/**/builds/
 
 __pycache__/
 *.py[cod]
+
+# Large CJK font binaries — vendor locally per fonts/README.md; keep OFL + .gitkeep
+game/echo_lattice/fonts/cjk/*.otf
+game/echo_lattice/fonts/cjk/*.ttf
+game/echo_lattice/fonts/cjk/*.ttc
+game/echo_lattice/fonts/cjk/*.otc
+game/echo_lattice/fonts/latin/*.otf
+game/echo_lattice/fonts/latin/*.ttf

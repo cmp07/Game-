@@ -21,7 +21,10 @@ python3 game/echo_lattice/tests/validate_chambers.py
 python3 game/echo_lattice/tests/author_chambers_v2.py   # regenerate from roster
 python3 game/echo_lattice/tests/test_release_liveops.py
 python3 tools/release/generate_calendar_90.py           # regenerate calendar_90.json
+python3 game/echo_lattice/tests/validate_locale.py      # EN + zh_Hans catalog parity
 ```
+
+Chamber `title` / `caption` stay English in JSON; localized display strings live in [`locale/echo_lattice.csv`](../locale/echo_lattice.csv) (`chamber.<id>.title` / `.caption`). See [`docs/RELEASE/LOCALIZATION.md`](../../../docs/RELEASE/LOCALIZATION.md).
 
 ## Acts
 
