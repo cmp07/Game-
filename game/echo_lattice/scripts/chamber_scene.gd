@@ -69,6 +69,26 @@ func _ready() -> void:
 	if remap != null and remap.has_signal("bindings_changed"):
 		if not remap.bindings_changed.is_connected(_refresh_glyph_labels):
 			remap.bindings_changed.connect(_refresh_glyph_labels)
+	_sync_tech_art_grain()
+	var store := get_node_or_null("/root/SettingsStore")
+	if store != null and store.has_signal("settings_changed"):
+		if not store.settings_changed.is_connected(_on_tech_art_settings_changed):
+			store.settings_changed.connect(_on_tech_art_settings_changed)
+
+
+func _on_tech_art_settings_changed(section: String, key: String, _value: Variant) -> void:
+	if section == "graphics" and key == TechArt.SETTINGS_KEY:
+		_sync_tech_art_grain()
+	elif section == "accessibility" and key == "reduce_motion":
+		_sync_tech_art_grain()
+
+
+func _sync_tech_art_grain() -> void:
+	## One fullscreen paper-grain pass when tech_art_v3 (TECH_ART_V3 §2 / §7A).
+	if TechArt.v3_enabled():
+		PaperGrainLayer.attach_to(self, 42, 0.07, Vector2.ZERO, false)
+	else:
+		PaperGrainLayer.set_visible_for(self, false)
 
 
 func _on_locale_changed(_locale: String) -> void:

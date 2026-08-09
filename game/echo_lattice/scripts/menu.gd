@@ -75,6 +75,11 @@ func _ready() -> void:
 
 	_build_demo_path()
 	set_process(true)
+	_sync_tech_art_grain()
+	var store := get_node_or_null("/root/SettingsStore")
+	if store != null and store.has_signal("settings_changed"):
+		if not store.settings_changed.is_connected(_on_tech_art_settings_changed):
+			store.settings_changed.connect(_on_tech_art_settings_changed)
 	var remap := get_node_or_null("/root/ActionRemap")
 	if remap != null and remap.has_signal("bindings_changed"):
 		if not remap.bindings_changed.is_connected(queue_redraw):
@@ -96,6 +101,26 @@ func _ready() -> void:
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
 	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
+
+
+func _on_tech_art_settings_changed(section: String, key: String, _value: Variant) -> void:
+	if section == "graphics" and key == TechArt.SETTINGS_KEY:
+		_sync_tech_art_grain()
+		queue_redraw()
+	elif section == "accessibility" and key == "reduce_motion":
+		_sync_tech_art_grain()
+
+
+func _sync_tech_art_grain() -> void:
+	if TechArt.v3_enabled():
+		# Menu seed offset differs from chamber page (TECH_ART_V3 §2.3).
+		PaperGrainLayer.attach_to(self, 19, 0.06, Vector2(19, 7), true)
+		# Keep chrome (CardColumn) above the grain pass.
+		var chrome: Node = get_node_or_null("CardColumn")
+		if chrome != null:
+			move_child(chrome, get_child_count() - 1)
+	else:
+		PaperGrainLayer.set_visible_for(self, false)
 
 
 func _localize_chrome() -> void:
@@ -279,14 +304,16 @@ func _draw() -> void:
 
 	# Lightbox paper.
 	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
-	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 3, 0.06)
+	if not TechArt.v3_enabled():
+		ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 3, 0.06)
 
 	# Large ledger page.
 	var page := Rect2(40, 28, vp.x - 80, vp.y - 56)
 	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), Palette.PAPER_SHADOW, true)
 	draw_rect(page, Palette.PAPER_BONE, true)
 	ArtKit.draw_ledger_grid(self, page, 32)
-	ArtKit.draw_paper_grain(self, page, 19, 0.07)
+	if not TechArt.v3_enabled():
+		ArtKit.draw_paper_grain(self, page, 19, 0.07)
 	draw_rect(page, Palette.INK_SOFT, false, 2.0)
 
 	# Seed header strip along top margin.
