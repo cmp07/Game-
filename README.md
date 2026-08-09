@@ -16,9 +16,13 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
+- `docs/RELEASE/` — Steamworks readiness, achievements table, release notes
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
+- `steam/echo_lattice/` — SteamPipe VDF templates (placeholder AppID)
+
+Steamworks (offline stub by default): [`docs/RELEASE/STEAMWORKS.md`](docs/RELEASE/STEAMWORKS.md) · [`docs/RELEASE/ACHIEVEMENTS.json`](docs/RELEASE/ACHIEVEMENTS.json)
 
 ## Stack
 

@@ -1,0 +1,130 @@
+{
+	"schema_version": 1,
+	"product": "Echo Lattice",
+	"steamworks": {
+		"app_id": "YOUR_APP_ID",
+		"notes": "Create these under Steamworks → Stats & Achievements. API names are stable; display names may localize later. Icons: 64×64 + 256×256 PNG per achievement. Runtime catalog mirror: game/echo_lattice/config/achievements_steam.json."
+	},
+	"achievements": [
+		{
+			"api_name": "EL_FIRST_STEPS",
+			"display_name": "First Steps",
+			"description": "Enter the lattice — clear your first chamber.",
+			"icon": "first_steps",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "first_steps",
+			"unlock": { "kind": "chambers_completed_at_least", "value": 1 }
+		},
+		{
+			"api_name": "EL_HABIT_SEEN",
+			"display_name": "It Noticed",
+			"description": "Clear three chambers — the lattice has a sample of you.",
+			"icon": "habit_seen",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "habit_seen",
+			"unlock": { "kind": "chambers_completed_at_least", "value": 3 }
+		},
+		{
+			"api_name": "EL_WING_ONE",
+			"display_name": "Clear Air",
+			"description": "Escape Act I.",
+			"icon": "wing_one",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "wing_one",
+			"unlock": { "kind": "act_cleared", "act": 1 }
+		},
+		{
+			"api_name": "EL_WING_TWO",
+			"display_name": "Deeper Ink",
+			"description": "Escape Act II.",
+			"icon": "wing_two",
+			"hidden": false,
+			"mvp": false,
+			"local_id": "wing_two",
+			"unlock": { "kind": "act_cleared", "act": 2 }
+		},
+		{
+			"api_name": "EL_WING_THREE",
+			"display_name": "Pressure Fold",
+			"description": "Escape Act III.",
+			"icon": "wing_three",
+			"hidden": false,
+			"mvp": false,
+			"local_id": "wing_three",
+			"unlock": { "kind": "act_cleared", "act": 3 }
+		},
+		{
+			"api_name": "EL_WING_FOUR",
+			"display_name": "Nameplate",
+			"description": "Escape Act IV.",
+			"icon": "wing_four",
+			"hidden": false,
+			"mvp": false,
+			"local_id": "wing_four",
+			"unlock": { "kind": "act_cleared", "act": 4 }
+		},
+		{
+			"api_name": "EL_CLEAN_SIGNAL",
+			"display_name": "Clean Signal",
+			"description": "Earn a 3-star clear on any chamber.",
+			"icon": "clean_signal",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "clean_signal",
+			"unlock": { "kind": "any_stars_at_least", "value": 3 }
+		},
+		{
+			"api_name": "EL_CONSTELLATION",
+			"display_name": "Constellation",
+			"description": "Hold 21 total best stars.",
+			"icon": "constellation",
+			"hidden": false,
+			"mvp": false,
+			"local_id": "constellation",
+			"unlock": { "kind": "total_stars_at_least", "value": 21 }
+		},
+		{
+			"api_name": "EL_FULL_LATTICE",
+			"display_name": "Full Lattice",
+			"description": "Clear every chamber in the book.",
+			"icon": "full_lattice",
+			"hidden": false,
+			"mvp": false,
+			"local_id": "full_lattice",
+			"unlock": { "kind": "all_chambers_completed" }
+		},
+		{
+			"api_name": "EL_DAILY_SEED",
+			"display_name": "Same Seed, New You",
+			"description": "Complete a daily-seed run.",
+			"icon": "daily_seed",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "daily_seed",
+			"unlock": { "kind": "daily_cleared" }
+		},
+		{
+			"api_name": "EL_BOOT_CLEARED",
+			"display_name": "Lattice Online",
+			"description": "Clear chamber 0 — Quiet Span.",
+			"icon": "boot",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "boot_cleared",
+			"unlock": { "kind": "chamber_completed", "chamber_id": 0 }
+		},
+		{
+			"api_name": "EL_STAR_NINE",
+			"display_name": "Nine Points of Light",
+			"description": "Hold 9 total best stars.",
+			"icon": "star_nine",
+			"hidden": false,
+			"mvp": true,
+			"local_id": "star_nine",
+			"unlock": { "kind": "total_stars_at_least", "value": 9 }
+		}
+	]
+}

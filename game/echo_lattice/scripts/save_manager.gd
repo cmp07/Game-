@@ -27,6 +27,14 @@ func save_to_disk() -> void:
 		return
 	file.store_string(JSON.stringify(data, "\t"))
 	file.close()
+	if Engine.get_main_loop() is SceneTree:
+		var root: Node = (Engine.get_main_loop() as SceneTree).root
+		if root != null and root.has_node("SteamService"):
+			var steam: Node = root.get_node("SteamService")
+			var feats: Variant = steam.get("features")
+			if steam.has_method("push_cloud_save") and typeof(feats) == TYPE_DICTIONARY \
+					and bool(feats.get("cloud_save_enabled", false)):
+				steam.push_cloud_save()
 
 
 func load_from_disk() -> void:
