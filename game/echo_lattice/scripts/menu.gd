@@ -22,7 +22,7 @@ var _demo_progress: float = 0.0
 
 
 func _ready() -> void:
-	var has: bool = GameState.has_progress()
+	var has: bool = GameState.can_continue()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.40)
 	var stars: int = GameState.total_stars_earned()
@@ -32,6 +32,8 @@ func _ready() -> void:
 			GameState.chambers_in_run(),
 			stars,
 		]
+	elif GameState.is_run_complete():
+		subtitle.text = "Wing complete  ·  %d★ earned — start a new run" % stars
 	else:
 		subtitle.text = "Four Acts — %d chambers. Ink on paper." % ChamberBook.chamber_count()
 	var today: String = GameState._today_label()
@@ -42,7 +44,7 @@ func _ready() -> void:
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
 	continue_button.pressed.connect(func():
-		if has:
+		if GameState.can_continue():
 			emit_signal("continue_pressed")
 	)
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
@@ -170,11 +172,11 @@ func _draw() -> void:
 	# Bottom punch-card ribbon.
 	_draw_punchcard_ribbon(page)
 
-	# Footer controls hint.
+	# Footer controls hint — keyboard + gamepad (RC input pass).
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(page.position.x + 16, page.end.y - 14),
-		"Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc",
+		"Move  WASD / Arrows / D-Pad     Restart  R / Y     Undo  Z / X     Menu  Esc / B",
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
 	)
 

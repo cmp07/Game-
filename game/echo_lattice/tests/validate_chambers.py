@@ -16,7 +16,13 @@ CONTENT = ROOT / "content"
 CHAMBERS_DIR = CONTENT / "chambers"
 GRID_W, GRID_H = 24, 14
 TRANSFORMS = {
-    "none", "mirror_v", "mirror_h", "rotate_180", "thicken", "mirror_v_then_h"
+    "none",
+    "mirror_v",
+    "mirror_h",
+    "rotate_180",
+    "thicken",
+    "mirror_v_then_h",
+    "invert",
 }
 ACTS = {"induction", "reflection", "pressure", "mastery"}
 
@@ -68,6 +74,13 @@ def apply_transform(name, path):
         for x, y in path:
             out.append((GRID_W - 1 - x, y))
             out.append((x, GRID_H - 1 - y))
+    elif name == "invert":
+        on_path = set(path)
+        for x, y in path:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                n = (x + dx, y + dy)
+                if n not in on_path:
+                    out.append(n)
     return out
 
 
