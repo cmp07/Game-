@@ -68,6 +68,34 @@ func start_daily_run() -> void:
 
 func continue_run() -> void:
 	run_started = true
+	if run_queue.is_empty():
+		if run_mode == "daily" and daily_seed != 0:
+			run_queue = ChamberBook.daily_chamber_indices(daily_seed, 5)
+		else:
+			run_mode = "standard"
+			for i in range(ChamberBook.chamber_count()):
+				run_queue.append(i)
+	# Skip chambers already cleared so Continue never soft-loops a finished room.
+	while queue_pos < run_queue.size() and completed.has(int(run_queue[queue_pos])):
+		queue_pos += 1
+	if queue_pos >= run_queue.size():
+		# Wing already finished — park on last chamber; UI should disable Continue.
+		queue_pos = maxi(0, run_queue.size() - 1)
+		current_chamber = int(run_queue[queue_pos]) if run_queue.size() > 0 else current_chamber
+	else:
+		current_chamber = int(run_queue[queue_pos])
+	SaveManager.save_to_disk()
+
+
+func is_run_complete() -> bool:
+	## True only after Advance walks past the end of the active wing queue.
+	return run_queue.size() > 0 and queue_pos >= run_queue.size()
+
+
+func can_continue() -> bool:
+	if is_run_complete():
+		return false
+	return run_started or completed.size() > 0 or queue_pos > 0 or current_chamber > 0
 
 
 func record_direction(dir: Vector2i) -> void:
@@ -128,7 +156,8 @@ func run_progress_index() -> int:
 
 
 func has_progress() -> bool:
-	return completed.size() > 0 or queue_pos > 0 or current_chamber > 0
+	## Menu "Continue" affordance — false when the wing is already finished.
+	return can_continue()
 
 
 func total_stars_earned() -> int:

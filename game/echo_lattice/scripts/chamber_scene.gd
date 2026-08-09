@@ -75,7 +75,13 @@ func _on_caption_changed(text: String) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.is_echo():
+		return
 	if event.is_action_pressed("pause_menu"):
+		# Flush any mid-slam fossils before leaving so Continue cannot softlock.
+		if chamber_node != null and chamber_node.has_method("is_rewrite_locking"):
+			if chamber_node.is_rewrite_locking() and chamber_node.has_method("_flush_pending_echoes"):
+				chamber_node._flush_pending_echoes()
 		emit_signal("menu_requested")
 
 

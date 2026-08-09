@@ -296,13 +296,46 @@ func _run_self_test() -> bool:
 	GameState.best_moves[0] = 42
 	GameState.best_stars[0] = maxi(1, int(GameState.best_stars.get(0, 1)))
 
-	# Save/load round-trip.
+	# Save/load round-trip (atomic path + bak).
 	SaveManager.save_to_disk()
+	if not FileAccess.file_exists(SaveManager.SAVE_PATH):
+		printerr("save.json missing after save_to_disk"); ok = false
 	GameState.best_moves.clear()
 	GameState.best_stars.clear()
 	SaveManager.load_from_disk()
 	if int(GameState.best_moves.get(0, -1)) != 42:
 		printerr("best_moves lost through save/load: %s" % str(GameState.best_moves))
+		ok = false
+	# Corrupt primary, ensure .bak recovery keeps progress.
+	SaveManager.save_to_disk()
+	var corrupt := FileAccess.open(SaveManager.SAVE_PATH, FileAccess.WRITE)
+	if corrupt:
+		corrupt.store_string("{not-json")
+		corrupt.close()
+	GameState.best_moves.clear()
+	if not SaveManager.load_from_disk():
+		printerr("bak recovery failed after corrupt primary"); ok = false
+	elif int(GameState.best_moves.get(0, -1)) != 42:
+		printerr("bak recovery lost best_moves"); ok = false
+
+	# Continue UX — finished wing disables Continue; mid-run skips cleared rooms.
+	GameState.start_new_run()
+	GameState.completed.clear()
+	GameState.best_moves.clear()
+	GameState.best_stars.clear()
+	for i in range(GameState.run_queue.size()):
+		GameState.completed[int(GameState.run_queue[i])] = true
+	GameState.queue_pos = GameState.run_queue.size()
+	if GameState.can_continue():
+		printerr("can_continue should be false after wing complete"); ok = false
+	GameState.completed.clear()
+	GameState.best_moves.clear()
+	GameState.best_stars.clear()
+	GameState.start_new_run()
+	GameState.record_chamber_win(int(GameState.run_queue[0]), 10, 8)
+	GameState.continue_run()
+	if GameState.queue_pos != 1:
+		printerr("continue_run should skip cleared chamber 0, queue_pos=%d" % GameState.queue_pos)
 		ok = false
 
 	# Chamber scene runtime — instantiate and drive one move on chamber 0.
@@ -324,6 +357,17 @@ func _run_self_test() -> bool:
 				printerr("player did not move right in chamber 0"); ok = false
 			if chamber.move_count != 1:
 				printerr("move_count expected 1 got %d" % chamber.move_count); ok = false
+			# Softlock guard: while rewrite is pending, movement must not apply.
+			chamber.pending_echoes = [Vector2i(1, 1)]
+			chamber.pending_echo_timer = 0.0
+			var locked_pos: Vector2i = chamber.player_pos
+			var locked_moves: int = chamber.move_count
+			chamber._try_move(Vector2i(1, 0))
+			if chamber.player_pos != locked_pos or chamber.move_count != locked_moves:
+				printerr("movement leaked during rewrite lock"); ok = false
+			if not chamber.is_rewrite_locking():
+				printerr("is_rewrite_locking false with pending echoes"); ok = false
+			chamber.pending_echoes.clear()
 		inst.queue_free()
 
 	# Static solvability check for every chamber (BFS ignoring rewrites).

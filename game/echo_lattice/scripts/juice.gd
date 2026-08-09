@@ -3,6 +3,7 @@ extends Node
 ## Juice — Godot port of the juice pillars (shake, hitstop, flash, particles).
 ## Vite juice from PR #46 is intentionally not used; this is the in-engine feel layer.
 ## Real-time systems advance on wall-clock so hitstop never freezes VFX.
+## Palette-aligned colors keep rewrite / wall / win punches visually consistent.
 ##
 
 signal hitstop_ended()
@@ -13,6 +14,7 @@ var shake_seed: float = 0.0
 var shake_t: float = 0.0
 
 var hitstop_left: float = 0.0
+var hitstop_duration: float = 0.09
 var hitstop_floor: float = 0.06
 var _pre_hitstop_scale: float = 1.0
 
@@ -66,16 +68,18 @@ func hitstop(duration: float = 0.09, floor_scale: float = 0.06) -> void:
 		_pre_hitstop_scale = Engine.time_scale
 		if _pre_hitstop_scale <= 0.001:
 			_pre_hitstop_scale = 1.0
+	hitstop_duration = maxf(duration, 0.001)
 	hitstop_left = maxf(hitstop_left, duration)
 	hitstop_floor = floor_scale
 	Engine.time_scale = maxf(floor_scale, 0.05)
 
 
-func flash(duration: float = 0.22, peak: float = 0.45, color: Color = Color("#D6432B")) -> void:
+func flash(duration: float = 0.22, peak: float = 0.45, color: Color = Color(0, 0, 0, 0)) -> void:
 	flash_duration = maxf(duration, 0.001)
 	flash_left = flash_duration
 	flash_peak = peak
-	flash_color = color
+	# Transparent default → cadmium warn (matches Palette.CADMIUM_WARN; no autoload in default args).
+	flash_color = Color("#D6432B") if color.a <= 0.0 else color
 
 
 func rewrite_punch(segment_count: int = 1) -> void:
@@ -114,7 +118,7 @@ func _update_hitstop(real_dt: float) -> void:
 		Engine.time_scale = _pre_hitstop_scale
 		emit_signal("hitstop_ended")
 	else:
-		var t: float = clampf(hitstop_left / 0.09, 0.0, 1.0)
+		var t: float = clampf(hitstop_left / hitstop_duration, 0.0, 1.0)
 		Engine.time_scale = lerpf(_pre_hitstop_scale, hitstop_floor, t)
 
 
