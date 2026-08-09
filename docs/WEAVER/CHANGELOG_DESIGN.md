@@ -6,15 +6,13 @@
 
 ---
 
-## 2026-08-09 — Weaver 1000× Fragments
+## 2026-08-09 — 1000× Narrative (diegetic mythos)
 
-**Branch:** `cursor/weaver-1000x-fragments` · **Base:** `cursor/echo-lattice-rc1`
+**Branch:** `cursor/weaver-1000x-narrative` · **Base:** `cursor/echo-lattice-rc1`
 
-### Corpus
-
-- [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) — expand Fragment families to the 1.0 twelve, plain size×temper **grades**, authored field **mutations**, and full greyscale **silhouette grammar**
-- Hard ban reaffirmed: no purple Time / chronoshards / rarity rainbow
-- MVP locks unchanged: [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`21_FRAGMENT_FEEL.md`](21_FRAGMENT_FEEL.md) · caps in [`17_MVP.md`](17_MVP.md)
+- Added [`1000X/11_NARRATIVE.md`](1000X/11_NARRATIVE.md) — yard-learns-your-hand mythos via chalk / coach stamps / gallery / ending
+- Hard ban on cutscene dumps, RPG lore, and Echo Lattice plot-noun bleed
+- Indexed under README 1000× vision
 
 ---
 
