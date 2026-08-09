@@ -6,33 +6,48 @@ class_name LedgerChrome
 ## Cadmium is reserved for rewrite warn — never used for focus / selection chrome.
 ##
 
-## ART_DIRECTION_V3 §3.2 — published title-page type scale (px @ ~1080p).
-## Partners menu-restore-rich composition: brand owns the left plane; index 18–24.
+## ART_DIRECTION_V3 §3.2 + MENU_TYPE_SYSTEM — published title-page type @ ~1080p.
+## Partners menu-premium-v1 composition: brand owns the left plane; actions 20–24 display.
 const TYPE_BRAND := 92
 const TYPE_TAGLINE := 24
 const TYPE_BLURB := 17
+const TYPE_DECK := 17
 const TYPE_INDEX_PRIMARY := 24
 const TYPE_INDEX := 20
+const TYPE_ACTION := 20
+const TYPE_ACTION_PRIMARY := 24
 const TYPE_META := 13
 const TYPE_FOLIO := 12
+const TYPE_MICRO := 12
 const TYPE_SEED := 13
 const TYPE_CARD_HEADER := 14
 const BRAND_RULE_W := 4.0
 const BRAND_RULE_LEN := 560.0
+## Selection baseline budget — text advance, not full-row chrome (MENU_TYPE_SYSTEM §4).
+const SELECT_RULE_PAD := 8.0
+const SELECT_RULE_MAX := 220.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
-	## Compact (Deck / short page) vs full published title-card scale.
+	## Prefer LedgerType role scale; keep local fallback for early boot / tests.
+	var lt = _ledger_type()
+	if lt != null and lt.has_method("title_role_scale"):
+		return lt.title_role_scale(page_h)
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
 			"brand": 56,
 			"tagline": 18,
 			"blurb": 14,
+			"deck": 14,
 			"index_primary": 17,
 			"index": 15,
+			"action": 15,
+			"action_primary": 17,
+			"action_disabled": 15,
 			"meta": 11,
 			"folio": 10,
+			"micro": 10,
 			"seed": 11,
 			"card_header": 11,
 			"rule_w": 2.5,
@@ -42,10 +57,15 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"brand": TYPE_BRAND,
 		"tagline": TYPE_TAGLINE,
 		"blurb": TYPE_BLURB,
+		"deck": TYPE_DECK,
 		"index_primary": TYPE_INDEX_PRIMARY,
 		"index": TYPE_INDEX,
+		"action": TYPE_ACTION,
+		"action_primary": TYPE_ACTION_PRIMARY,
+		"action_disabled": TYPE_ACTION,
 		"meta": TYPE_META,
 		"folio": TYPE_FOLIO,
+		"micro": TYPE_MICRO,
 		"seed": TYPE_SEED,
 		"card_header": TYPE_CARD_HEADER,
 		"rule_w": BRAND_RULE_W,
@@ -73,14 +93,23 @@ static func style_index_button(btn: Button, primary: bool = false, font_size: in
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
-	var px: int = font_size
-	if px < 0:
-		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
 	var lt = _ledger_type()
+	var role := "action_disabled" if btn.disabled else "action"
+	var px: int = font_size
+	if px < 0 and lt != null and lt.has_method("role_size"):
+		px = int(lt.role_size(role, 1080.0, primary))
+	elif px < 0:
+		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
+	## Actions must NOT use mono — always display face (MENU_TYPE_SYSTEM §1).
 	if lt != null and lt.has_method("apply_to_control"):
 		lt.apply_to_control(btn, "display", px)
 	else:
 		btn.add_theme_font_size_override("font_size", px)
+	if lt != null and lt.has_method("role_tracking"):
+		btn.add_theme_constant_override(
+			"letter_spacing",
+			int(round(float(lt.role_tracking(role, 1080.0))))
+		)
 
 
 static func _ledger_type() -> Node:
@@ -117,8 +146,16 @@ static func style_ink_label(lbl: Label, color: Color = Palette.INK_BLACK, size: 
 	lbl.add_theme_color_override("font_color", color)
 	lbl.add_theme_font_size_override("font_size", size)
 	var lt = _ledger_type()
-	if lt != null and lt.has_method("apply_to_control"):
-		lt.apply_to_control(lbl, "mono" if size <= 12 else "body", size)
+	## Meta may use mono at ≤13 px; Micro band ≤12 stays mono (MENU_TYPE_SYSTEM §1).
+	if lt != null and lt.has_method("apply_role") and size <= 13:
+		var role := "micro" if size <= 12 else "meta"
+		if lt.has_method("role_face"):
+			var face: String = lt.role_face(role, size)
+			lt.apply_to_control(lbl, face, size)
+		else:
+			lt.apply_to_control(lbl, "mono", size)
+	elif lt != null and lt.has_method("apply_to_control"):
+		lt.apply_to_control(lbl, "mono" if size <= 13 else "body", size)
 
 
 static func style_folio_slider(slider: HSlider) -> void:
@@ -174,8 +211,9 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = rust ink craft (uneven letterpress rule + stamp tick). Hover = slate.
-	## Idle = soft hairline. Cadmium reserved — never used here. No filled pills / chrome.
+	## Selection = margin tick + baseline rule under label advance (MENU_TYPE_SYSTEM §4).
+	## Idle / disabled = no rule (no full-width underline spam). Hover = slate baseline only.
+	## Cadmium reserved — never used here. No filled pills / chrome.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -189,11 +227,12 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		# Wide Field Index rows need long ink rules — postage-stamp caps read as sparse chrome.
-		var max_w: float = minf(r.size.x - 8.0, 420.0)
+		if disabled or (not focused and not hovered):
+			continue
+		var baseline_w: float = _selection_baseline_width(c, r.size.x)
 		var y: float = local_pos.y + r.size.y - 4.0
-		if focused and not disabled:
-			var w: float = max_w * eased
+		if focused:
+			var w: float = baseline_w * eased
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
@@ -204,40 +243,36 @@ static func draw_index_underlines(
 			)
 			if eased > 0.55:
 				var tick_a: float = clampf((eased - 0.55) / 0.45, 0.0, 1.0)
-				# Imperfect rubber-ink selection tick — not a UI bullet chrome.
+				# Imperfect rubber-ink selection tick — margin mark, not a UI bullet.
 				var tick_c := Color(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
 				var tick_p := Vector2(local_pos.x - 11.0, local_pos.y + r.size.y * 0.55)
 				host.draw_circle(tick_p, 2.4, tick_c)
 				host.draw_circle(tick_p + Vector2(1.2, 0.6), 1.1, Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55))
-		elif hovered and not disabled:
+		elif hovered:
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
-				max_w,
+				baseline_w,
 				2.0,
 				Palette.SLATE_TEAL,
 				hash(c.get_instance_id()) ^ 0x51A7E
 			)
-		elif disabled:
-			_draw_ink_rule(
-				host,
-				Vector2(local_pos.x, y + 1.0),
-				minf(max_w, 120.0),
-				1.0,
-				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
-				11
-			)
-		else:
-			_draw_ink_rule(
-				host,
-				Vector2(local_pos.x, y),
-				minf(max_w, 280.0),
-				1.2,
-				Palette.INK_SOFT,
-				hash(c.get_instance_id()) ^ 0x1D1E
-			)
+
+
+static func _selection_baseline_width(control: Control, row_w: float) -> float:
+	## Baseline follows label advance — never a full-row chrome bar.
+	var text_w: float = 0.0
+	if control is BaseButton:
+		var label: String = (control as BaseButton).text
+		var font: Font = control.get_theme_font("font")
+		var fsize: int = control.get_theme_font_size("font_size")
+		if font != null and label != "":
+			text_w = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize).x
+	if text_w < 8.0:
+		text_w = minf(row_w * 0.45, SELECT_RULE_MAX)
+	return clampf(text_w + SELECT_RULE_PAD, 24.0, minf(row_w - 8.0, SELECT_RULE_MAX))
 
 
 static func _draw_ink_rule(
