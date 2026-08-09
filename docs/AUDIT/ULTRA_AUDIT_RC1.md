@@ -9,7 +9,7 @@
 | **Mode** | Cloud-only merge of sibling `cursor/audit-*` findings + RC1 tree spot-checks |
 | **Ship-readiness score** | **68 / 100** (post–fix-* integration wave; Partner/assets still dominate Gate A) |
 | **P0 code landed** | **Yes — 2026-08-09** on `cursor/echo-lattice-rc1` (#82 / #87 / #88 + full `docs/AUDIT/`) |
-| **Fix wave landed** | **Yes — 2026-08-09** `cursor/fix-*` + meta/identity/ci category lanes on RC1 tip `c61dcea` |
+| **Fix wave landed** | **Yes — 2026-08-09** `cursor/fix-*` + meta/identity/ci category lanes on RC1 tip `b01219f` |
 
 ---
 
@@ -252,4 +252,4 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - Python gates re-run on synthesis workspace: `validate_chambers.py`, `test_rc_polish.py`, `test_balance_v2.py`, `test_release_liveops.py` → **OK** (pre-merge tip).
 - **P0 landing note (2026-08-09):** #82 / #87 / #88 code + #75–#81 / #83–#86 / #89 audit docs merged into `cursor/echo-lattice-rc1`; SaveManager conflicts resolved to keep bak recovery + `run_cleared` + book sanitize. Re-run full `game/echo_lattice/tests/` on the landed tip.
 - This document is executive-only; detail, repros, and file citations live in the linked sibling audit markdown files on their PRs.
-- **Fix-wave note (2026-08-09):** Integrated `cursor/fix-*` plus category lanes `bugs-meta-p1` / `form-identity-ledger` / `steam-ci-depots` into `cursor/echo-lattice-rc1` @ `c61dcea`. Python suite green. Score **54 → 68**. Re-synthesize when Partner AppID / capsules land.
+- **Fix-wave note (2026-08-09):** Integrated `cursor/fix-*` plus category lanes `bugs-meta-p1` / `form-identity-ledger` / `steam-ci-depots` into `cursor/echo-lattice-rc1` @ `b01219f`. Python suite green (17/17). Score **54 → 68**. Re-synthesize when Partner AppID / capsules land.
