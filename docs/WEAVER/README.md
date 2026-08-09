@@ -72,11 +72,11 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
-### 20+ — Systems expansions
+### 20+ — Deepen wave
 
 | Doc | Topic |
 |---|---|
-| [`24_STRUCTURE_ECOLOGY.md`](24_STRUCTURE_ECOLOGY.md) | Beacon / Recorder / Gateway classes + adaptation rules |
+| [`28_LEGACY_V2.md`](28_LEGACY_V2.md) | Offline Structure evolution (no always-online) |
 
 ---
 
@@ -92,7 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
-| `cursor/weaver-ecology` | Structure ecology (`24`) |
+| `cursor/weaver-legacy-v2` | [`28_LEGACY_V2.md`](28_LEGACY_V2.md) — offline Structure evolution |
 
 ---
 
