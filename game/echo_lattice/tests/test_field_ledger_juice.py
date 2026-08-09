@@ -255,6 +255,23 @@ class TestDiegeticShellMvp(unittest.TestCase):
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
         self.assertIn("class_name LedgerChrome", chrome)
 
+    def test_field_index_card_syncs_with_card_column(self) -> None:
+        """Regression: drawn Field Index plate and CardColumn must share layout."""
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        tscn = (ROOT / "scenes" / "menu.tscn").read_text()
+        main = (ROOT / "scripts" / "main.gd").read_text()
+        self.assertIn("func field_index_card_rect", menu)
+        self.assertIn("func field_index_content_rect", menu)
+        self.assertIn("func _sync_field_index_layout", menu)
+        self.assertIn("func verify_field_index_layout", menu)
+        self.assertIn("field_index_card_rect(vp, y_off)", menu)
+        self.assertIn("_sync_field_index_layout()", menu)
+        # Broken float used right-center anchors + fixed 280×400 card — ban that pairing.
+        self.assertNotIn("offset_left = -340.0", tscn)
+        self.assertNotIn("anchor_left = 1.0", tscn)
+        self.assertIn("func _selftest_field_index_layout", main)
+        self.assertIn("_verify_menu_field_index_layout", main)
+
     def test_locale_shell_keys(self) -> None:
         csv = (ROOT / "locale" / "echo_lattice.csv").read_text()
         for key in (

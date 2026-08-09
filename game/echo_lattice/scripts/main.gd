@@ -360,6 +360,10 @@ func _run_deck_layout_check() -> bool:
 			if line.to_lower().find("wasd") >= 0:
 				printerr("  menu still showing WASD while gamepad preferred")
 				ok = false
+		## Field Index plate must frame index actions (not float empty / clip brand).
+		if str(entry["name"]) == "menu":
+			if not _verify_menu_field_index_layout():
+				ok = false
 
 	## No on-screen keyboard requirement: project must not instantiate text fields.
 	if _tree_has_text_entry(self):
@@ -379,6 +383,25 @@ func _run_deck_layout_check() -> bool:
 		printerr("  DeckProfile Verified defaults must be 60 FPS @ 7W")
 		ok = false
 	print("result: %s" % ("OK" if ok else "FAIL"))
+	return ok
+
+
+func _verify_menu_field_index_layout() -> bool:
+	## Assert CardColumn actions sit inside the drawn Field Index plate.
+	var menu_node: Node = null
+	if stage != null:
+		for child in stage.get_children():
+			if child != null and child.has_method("verify_field_index_layout"):
+				menu_node = child
+				break
+	if menu_node == null:
+		printerr("  menu Field Index: menu node missing verify_field_index_layout")
+		return false
+	var ok: bool = bool(menu_node.call("verify_field_index_layout"))
+	if ok:
+		print("  menu Field Index: actions framed inside card")
+	else:
+		printerr("  menu Field Index: layout failed (card vs CardColumn)")
 	return ok
 
 
@@ -789,6 +812,9 @@ func _run_self_test() -> bool:
 	# V3-T0/T1: latin type stack vendored + wired (no Godot-default brand path).
 	ok = _selftest_type_kit() and ok
 
+	# Field Index plate must frame CardColumn actions at design viewports.
+	ok = await _selftest_field_index_layout() and ok
+
 	# Static solvability check for every chamber (BFS ignoring rewrites).
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
@@ -808,6 +834,39 @@ func _run_self_test() -> bool:
 			print("  playthrough chamber %d OK" % i)
 
 	print("result: %s" % ("OK" if ok else "FAIL"))
+	return ok
+
+
+func _selftest_field_index_layout() -> bool:
+	## Brand menu: Field Index card frames index actions at 16:9, Deck 16:10, editor.
+	var ok := true
+	var sizes: Array = [Vector2i(1920, 1080), Vector2i(1280, 800), Vector2i(960, 560)]
+	for sz in sizes:
+		show_menu()
+		for _f in range(4):
+			await get_tree().process_frame
+		var menu_node: Control = null
+		if stage != null:
+			for child in stage.get_children():
+				if child is Control and child.has_method("verify_field_index_layout"):
+					menu_node = child as Control
+					break
+		if menu_node == null:
+			printerr("Field Index selftest: menu Control missing")
+			return false
+		# Force logical size so headless CI matches Partner / Deck viewports.
+		menu_node.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		menu_node.position = Vector2.ZERO
+		menu_node.size = Vector2(sz)
+		if menu_node.has_method("_sync_field_index_layout"):
+			menu_node.call("_sync_field_index_layout")
+		for _f2 in range(6):
+			await get_tree().process_frame
+		if not bool(menu_node.call("verify_field_index_layout")):
+			printerr("Field Index selftest failed at %dx%d" % [sz.x, sz.y])
+			ok = false
+		else:
+			print("  Field Index layout OK @ %dx%d" % [sz.x, sz.y])
 	return ok
 
 

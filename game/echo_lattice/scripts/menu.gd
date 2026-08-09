@@ -82,6 +82,8 @@ func _ready() -> void:
 	_build_demo_path()
 	_card_slot_t = 0.0
 	set_process(true)
+	_sync_field_index_layout()
+	call_deferred("_sync_field_index_layout")
 	_sync_tech_art_grain()
 	var store := get_node_or_null("/root/SettingsStore")
 	if store != null and store.has_signal("settings_changed"):
@@ -110,6 +112,147 @@ func _ready() -> void:
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
 	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_sync_field_index_layout()
+		queue_redraw()
+
+
+## Shared page frame used by draw + Control layout (keeps Field Index diegetic).
+func _ledger_page_rect(vp: Vector2) -> Rect2:
+	return Rect2(40.0, 28.0, vp.x - 80.0, vp.y - 56.0)
+
+
+## Drawn Field Index plate — right side of the ledger, clear of the brand lockup.
+func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Rect2:
+	if vp.x < 2.0:
+		vp = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	var page: Rect2 = _ledger_page_rect(vp)
+	# Brand lockup sits around page.x+48 with ~420px rust rule — keep clearance.
+	# On narrow pages, leave at least ~48% of the page for the brand column.
+	var brand_clear: float = page.position.x + minf(520.0, page.size.x * 0.48)
+	var right_pad: float = 28.0 if page.size.x < 1100.0 else 36.0
+	var card_w: float = 300.0 if page.size.x >= 1100.0 else 280.0
+	var card_x: float = page.end.x - right_pad - card_w
+	if card_x < brand_clear:
+		card_x = brand_clear
+		card_w = maxf(220.0, page.end.x - right_pad - card_x)
+	# Below seed strip; above punchcard ribbon + controls hint.
+	# Short pages (Deck / editor) tighten margins so index rows still fit.
+	var top_pad: float = 56.0 if page.size.y < 700.0 else 70.0
+	var bottom_pad: float = 52.0 if page.size.y < 700.0 else 72.0
+	var top: float = page.position.y + top_pad + y_off
+	var bottom: float = page.end.y - bottom_pad
+	var card_h: float = maxf(280.0, bottom - top)
+	return Rect2(card_x, top, card_w, card_h)
+
+
+## Inner content inset: binder holes left, FIELD INDEX header top.
+func field_index_content_rect(card: Rect2) -> Rect2:
+	var head: float = 42.0 if card.size.y < 400.0 else 48.0
+	return Rect2(
+		card.position.x + 26.0,
+		card.position.y + head,
+		maxf(180.0, card.size.x - 40.0),
+		maxf(180.0, card.size.y - head - 14.0)
+	)
+
+
+func _apply_index_row_metrics(compact: bool) -> void:
+	var row_h: float = 26.0 if compact else 32.0
+	var primary_h: float = 30.0 if compact else 36.0
+	var buttons: Array = [
+		continue_button, daily_button, endless_button, hard_button,
+		museum_button, settings_button, colophon_button, quit_button, _wishlist_button,
+	]
+	for b in buttons:
+		if b == null:
+			continue
+		(b as Button).custom_minimum_size = Vector2(200.0, row_h)
+		(b as Button).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if start_button:
+		start_button.custom_minimum_size = Vector2(200.0, primary_h)
+		start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if subtitle:
+		subtitle.add_theme_font_size_override("font_size", 12 if compact else 13)
+		subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if meta_label:
+		meta_label.add_theme_font_size_override("font_size", 11 if compact else 12)
+		meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		meta_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+
+func _sync_field_index_layout() -> void:
+	var col: Control = get_node_or_null("CardColumn") as Control
+	if col == null:
+		return
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	# Controls track the settled card (slot settle is draw-only polish).
+	var card: Rect2 = field_index_card_rect(vp, 0.0)
+	var inset: Rect2 = field_index_content_rect(card)
+	var compact: bool = inset.size.y < 420.0
+	_apply_index_row_metrics(compact)
+	col.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	col.position = inset.position
+	col.size = inset.size
+	col.add_theme_constant_override("separation", 3 if compact else 6)
+
+
+## Regression helper — every visible index action must sit inside the plate.
+func verify_field_index_layout() -> bool:
+	_sync_field_index_layout()
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+	var card: Rect2 = field_index_card_rect(vp, 0.0)
+	# Grow slightly so hairline underlines / rounding do not false-fail.
+	var pad: Rect2 = card.grow(2.0)
+	var nodes: Array = [subtitle, meta_label, continue_button, start_button, daily_button]
+	if endless_button:
+		nodes.append(endless_button)
+	if hard_button and hard_button.visible:
+		nodes.append(hard_button)
+	if museum_button:
+		nodes.append(museum_button)
+	nodes.append(settings_button)
+	if colophon_button:
+		nodes.append(colophon_button)
+	nodes.append(quit_button)
+	if _wishlist_button != null and _wishlist_button.visible:
+		nodes.append(_wishlist_button)
+	var ok := true
+	for n in nodes:
+		if n == null or not (n is Control):
+			continue
+		var c: Control = n
+		if not c.visible:
+			continue
+		var r: Rect2 = c.get_global_rect()
+		var host: Vector2 = global_position
+		var local := Rect2(r.position - host, r.size)
+		if not pad.encloses(local):
+			printerr(
+				"Field Index layout: %s at %s outside card %s" % [c.name, str(local), str(card)]
+			)
+			ok = false
+	# Brand lockup must stay clear of the plate (no left-side clip).
+	var page: Rect2 = _ledger_page_rect(vp)
+	var brand_right: float = page.position.x + minf(500.0, page.size.x * 0.46)
+	if card.position.x < brand_right - 0.5:
+		printerr(
+			"Field Index layout: card overlaps brand column (card.x=%.1f brand_right=%.1f)" % [
+				card.position.x, brand_right
+			]
+		)
+		ok = false
+	return ok
 
 
 func _on_tech_art_settings_changed(section: String, key: String, _value: Variant) -> void:
@@ -236,7 +379,8 @@ func _ensure_wishlist_button() -> void:
 	_wishlist_button = Button.new()
 	_wishlist_button.name = "WishlistButton"
 	_wishlist_button.unique_name_in_owner = true
-	_wishlist_button.custom_minimum_size = Vector2(240, 34)
+	_wishlist_button.custom_minimum_size = Vector2(220, 32)
+	_wishlist_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_wishlist_button.text = tr("menu.wishlist")
 	_wishlist_button.flat = true
 	_wishlist_button.add_theme_font_size_override("font_size", 18)
@@ -249,6 +393,7 @@ func _ensure_wishlist_button() -> void:
 		DemoBuild.open_wishlist()
 	)
 	LedgerChrome.style_index_button(_wishlist_button, false)
+	_sync_field_index_layout()
 
 
 func _ensure_gamepad_focus_chain() -> void:
@@ -307,7 +452,7 @@ func _draw() -> void:
 		ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 3, 0.06)
 
 	# Large ledger page.
-	var page := Rect2(40, 28, vp.x - 80, vp.y - 56)
+	var page: Rect2 = _ledger_page_rect(vp)
 	draw_rect(Rect2(page.position + Vector2(6, 8), page.size), Palette.PAPER_SHADOW, true)
 	draw_rect(page, Palette.PAPER_BONE, true)
 	ArtKit.draw_ledger_grid(self, page, 32)
@@ -369,9 +514,10 @@ func _draw() -> void:
 	)
 
 	# Index-card plate behind the button column (right side) — paper-slot settle.
+	# Card geometry matches CardColumn via field_index_card_rect / _sync_field_index_layout.
 	var slot: float = clampf(_card_slot_t / 0.16, 0.0, 1.0)
 	var y_off: float = (1.0 - slot) * 6.0
-	var card := Rect2(page.end.x - 340, page.position.y + 80 + y_off, 280, 400)
+	var card: Rect2 = field_index_card_rect(vp, y_off)
 	var shadow := Palette.PAPER_SHADOW
 	shadow.a *= slot
 	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), shadow, true)
@@ -385,8 +531,9 @@ func _draw() -> void:
 	draw_rect(card, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot), false, 1.5)
 	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * slot), false, 1.0)
 	# Binder holes — diegetic Field Index chrome (QW-2).
+	var hole_step: float = maxf(56.0, (card.size.y - 52.0) / 5.0)
 	for i in range(5):
-		var hy: float = card.position.y + 28.0 + float(i) * 70.0
+		var hy: float = card.position.y + 28.0 + float(i) * hole_step
 		if hy > card.end.y - 24.0:
 			break
 		draw_circle(Vector2(card.position.x + 12.0, hy), 3.5, Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, slot))
