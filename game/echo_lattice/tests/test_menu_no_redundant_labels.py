@@ -77,10 +77,13 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
         self.assertNotIn('tr("menu.seal_caption")', body)
         self.assertNotIn('tr("menu.habit_silhouette")', body)
         self.assertIn("SPECIMEN_GAP", MENU)
+        self.assertIn("SEAL_MAZE_GAP", MENU)
         gap = re.search(r"const SPECIMEN_GAP: float = ([0-9.]+)", MENU)
         self.assertIsNotNone(gap)
-        self.assertLessEqual(float(gap.group(1)), 40.0)
-        self.assertGreaterEqual(float(gap.group(1)), 24.0)
+        self.assertLessEqual(float(gap.group(1)), 16.0)
+        maze_gap = re.search(r"const SEAL_MAZE_GAP: float = ([0-9.]+)", MENU)
+        self.assertIsNotNone(maze_gap)
+        self.assertLessEqual(float(maze_gap.group(1)), 16.0)
 
     def test_quiet_meta_is_single_date_line(self) -> None:
         refresh = _refresh_body()

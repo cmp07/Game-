@@ -2,10 +2,10 @@ extends Control
 ##
 ## Main menu — dense Field Ledger craft (boutique title shell).
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + one mid-page specimen)
+## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + letterpress seal + dense maze)
 ## | spine | recto ~42% (Field Index, compact action block). Explicit anchors — never hope.
 ## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
-## One habit specimen with integrated letterpress seal — NO dual seals / dashed circles.
+## ONE rectangular letterpress seal ABOVE a dense habit maze — NO circles / dual seals.
 ##
 
 signal start_new_pressed()
@@ -143,10 +143,16 @@ const RECTO_FRAC: float = 0.435
 const BRAND_MIN_PX: int = 72
 const PAGE_MARGIN_X: float = 20.0
 const PAGE_MARGIN_Y: float = 14.0
-## Max empty (no ink/ui layout mass) fraction of the inner page at 1920×1080.
+## Max empty (no ink/ui layout mass) fraction of the full inner page at 1920×1080.
 const MAX_EMPTY_FRAC: float = 0.28
-## Blurb → specimen air — dense ledger packing (never a mid-leaf cream band).
-const SPECIMEN_GAP: float = 24.0
+## Left-leaf (verso) pixel empty mass must stay under this (PNG CI gate).
+const MAX_VERSO_EMPTY_FRAC: float = 0.22
+## Blurb → seal plate air — dense ledger packing (never a mid-leaf cream band).
+const SPECIMEN_GAP: float = 12.0
+## Seal plate → habit maze air — hard ≤16px.
+const SEAL_MAZE_GAP: float = 12.0
+## Wide letterpress seal plate height on the verso (not a tiny corner die).
+const SEAL_PLATE_H: float = 78.0
 ## Field Index action pitch @ 1080p — compact block, not stretched leading.
 const INDEX_ROW_H: float = 38.0
 const INDEX_PRIMARY_H: float = 42.0
@@ -234,6 +240,7 @@ func field_index_content_rect(card: Rect2) -> Rect2:
 
 ## Explicit layout rects for draw + CI density (test_menu_composition_density).
 ## Returns ink/ui masses so measured empty region can stay under MAX_EMPTY_FRAC.
+## Verso stack (top→bottom): micro header · brand · tag · blurb · seal plate · dense maze.
 func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	if vp.x < 2.0:
 		vp = size
@@ -246,8 +253,8 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 	var scale: Dictionary = LedgerChrome.title_type_scale(outer.size.y)
 	var brand_px: int = maxi(BRAND_MIN_PX, int(scale.get("brand", LedgerChrome.TYPE_BRAND)))
 	var brand_x: float = left.position.x + 36.0
-	# Compact brand stack — tight under folio/seed chrome (12–20px rhythm, no mid void).
-	var brand_top: float = left.position.y + 88.0
+	# Compact brand stack — tight under the one-line micro header (no mid void).
+	var brand_top: float = left.position.y + 56.0
 	var brand_y: float = brand_top + float(brand_px)
 	# Brand rule spans most of the verso — kills the cream column beside the lockup.
 	var brand_w: float = minf(
@@ -261,33 +268,34 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		brand_w,
 		float(brand_px) + 62.0
 	)
-	# ONE mid-page habit specimen under blurb — fills remaining verso (no void band).
-	var sil_top: float = brand_block.end.y + SPECIMEN_GAP
+	var plate_x: float = brand_x - 4.0
+	var plate_w: float = maxf(200.0, left.end.x - plate_x - 20.0)
+	# ONE wide rectangular letterpress seal at the top of the specimen stack.
+	var seal_top: float = brand_block.end.y + SPECIMEN_GAP
+	var seal_h: float = SEAL_PLATE_H if left.size.y >= 700.0 else 84.0
+	var seal_plate := Rect2(plate_x, seal_top, plate_w, seal_h)
+	# Dense habit maze immediately under the seal — fills remaining verso height.
+	var sil_top: float = seal_plate.end.y + SEAL_MAZE_GAP
 	var sil := Rect2(
-		brand_x - 4.0,
+		plate_x,
 		sil_top,
-		maxf(200.0, left.end.x - (brand_x - 4.0) - 20.0),
-		maxf(160.0, left.end.y - sil_top - 16.0)
-	)
-	# Small letterpress seal inset on the specimen (integrated mark — not a second maze).
-	var seal_half: float = 38.0 if left.size.y >= 700.0 else 28.0
-	seal_half = minf(seal_half, sil.size.x * 0.10)
-	var seal_plate := Rect2(
-		sil.position.x + 12.0,
-		sil.position.y + 12.0,
-		seal_half * 2.0,
-		seal_half * 2.0
+		plate_w,
+		maxf(200.0, left.end.y - sil_top - 14.0)
 	)
 	var card: Rect2 = field_index_card_rect(vp, 0.0)
-	# Seal lives inside specimen — do not double-count its area.
 	var occupied: float = (
 		brand_block.get_area()
+		+ seal_plate.get_area()
 		+ sil.get_area()
 		+ card.get_area()
 		+ float(leaves["spine"].get_area()) * 0.35
 	)
 	var page_a: float = maxf(1.0, outer.get_area())
 	var empty_frac: float = clampf(1.0 - occupied / page_a, 0.0, 1.0)
+	# Layout verso empty — brand stack is sparse type; seal+maze must dominate the leaf.
+	var verso_a: float = maxf(1.0, left.get_area())
+	var verso_occupied: float = brand_block.get_area() + seal_plate.get_area() + sil.get_area()
+	var verso_empty_frac: float = clampf(1.0 - verso_occupied / verso_a, 0.0, 1.0)
 	return {
 		"outer": outer,
 		"left": left,
@@ -301,6 +309,7 @@ func composition_layout(vp: Vector2 = Vector2.ZERO) -> Dictionary:
 		"brand_x": brand_x,
 		"brand_y": brand_y,
 		"empty_frac": empty_frac,
+		"verso_empty_frac": verso_empty_frac,
 		"verso_frac": left.size.x / maxf(1.0, outer.size.x),
 		"recto_frac": right.size.x / maxf(1.0, outer.size.x),
 		"index_width_frac": card.size.x / maxf(1.0, vp.x),
@@ -562,6 +571,12 @@ func verify_field_index_layout() -> bool:
 	var empty: float = float(layout.get("empty_frac", 1.0))
 	if empty > MAX_EMPTY_FRAC:
 		printerr("Composition: empty_frac=%.3f > %.2f" % [empty, MAX_EMPTY_FRAC])
+		ok = false
+	var verso_empty: float = float(layout.get("verso_empty_frac", 1.0))
+	if verso_empty > MAX_VERSO_EMPTY_FRAC:
+		printerr(
+			"Composition: verso_empty_frac=%.3f > %.2f" % [verso_empty, MAX_VERSO_EMPTY_FRAC]
+		)
 		ok = false
 	return ok
 
@@ -853,29 +868,34 @@ func _draw() -> void:
 	var seal_plate: Rect2 = layout["seal_plate"]
 	var sil: Rect2 = layout["silhouette"]
 
-	# Quiet verso folio mark — never competes with brand.
-	draw_string(
-		_type("micro"),
-		left.position + Vector2(28, 22),
-		tr("menu.folio_mark"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
-	)
-	draw_line(
-		left.position + Vector2(28, 28),
-		Vector2(left.end.x - 24.0, left.position.y + 28.0),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
-		1.0
-	)
-	var seed_tex: Texture2D = ArtKit.tex("res://art/ui/seed_header_256x24.png")
-	if seed_tex != null:
-		draw_texture_rect(seed_tex, Rect2(left.position + Vector2(28, 34), Vector2(220, 18)), false)
+	# ONE quiet micro header line — FIELD LEDGER · WING I · seed. Never competes with brand.
+	var micro_line: String = "%s  ·  %s" % [tr("menu.folio_mark"), tr("menu.seed_strip")]
 	draw_string(
 		_type("meta"),
-		left.position + Vector2(28, 68),
-		tr("menu.seed_strip"),
-		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
+		left.position + Vector2(28, 26),
+		micro_line,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, mini(folio_px, seed_px), Palette.SLATE_TEAL_SOFT
+	)
+	draw_line(
+		left.position + Vector2(28, 34),
+		Vector2(left.end.x - 24.0, left.position.y + 34.0),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45),
+		1.0
 	)
 
+	# Quiet ledger grid behind the brand stack — kills sterile cream without competing type.
+	ArtKit.draw_page_fiber_grid(
+		self,
+		Rect2(left.position + Vector2(16, 40), Vector2(left.size.x - 36.0, brand_block.end.y - left.position.y - 28.0)),
+		28
+	)
+	ArtKit.draw_fiber_streaks(
+		self,
+		Rect2(left.position + Vector2(16, 40), Vector2(left.size.x - 36.0, maxf(40.0, brand_block.size.y))),
+		29,
+		0.045,
+		14
+	)
 	# Brand lockup — ECHO LATTICE owns the plane (Condensed Bold ≥ BRAND_MIN_PX).
 	draw_string(
 		_type("brand"),
@@ -910,21 +930,13 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# ONE mid-page habit specimen under blurb — fills remaining verso (no void band).
-	# Small letterpress seal is inset on the specimen; never a second framed maze below.
-	if sil.size.y >= 100.0:
-		ArtKit.draw_habit_silhouette(self, sil, {
-			"seed": 61,
-			"progress": _demo_progress,
-			"cell": 14.0 if left.size.y >= 700.0 else 11.0,
-		})
-		# Letterpress die stamped into the specimen corner — one plane, no floating gap.
-		var seal_r: float = seal_plate.size.x * 0.5
-		var seal_c: Vector2 = seal_plate.get_center()
-		ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-			"rot_deg": -2.5,
+	# Specimen stack: wide rectangular letterpress seal, then dense habit maze under it.
+	# Never a circle die, never a watermark caption, never a second competing seal.
+	if seal_plate.size.y >= 48.0 and seal_plate.size.x >= 80.0:
+		ArtKit.draw_seal_stamp(self, seal_plate.get_center(), seal_plate.size.y * 0.5, {
+			"rot_deg": -1.2,
 			"color": Palette.SLATE_TEAL,
-			"alpha": 0.92,
+			"alpha": 0.94,
 			"seed": 42,
 			"hero": true,
 			"maze": true,
@@ -932,6 +944,13 @@ func _draw() -> void:
 			"plate_w": seal_plate.size.x,
 			"plate_h": seal_plate.size.y,
 			"caption": "",
+		})
+	if sil.size.y >= 120.0:
+		ArtKit.draw_habit_silhouette(self, sil, {
+			"seed": 61,
+			"progress": _demo_progress,
+			"cell": 12.0 if left.size.y >= 700.0 else 10.0,
+			"dense": true,
 		})
 
 	# Recto Field Index — fills ~42% width, full readable height.

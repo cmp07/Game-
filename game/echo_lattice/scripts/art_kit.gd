@@ -468,107 +468,134 @@ func draw_habit_silhouette(
 	plate: Rect2,
 	opts: Dictionary = {}
 ) -> void:
-	## Authored habit→geometry specimen — real corridor silhouette, never an empty dashed box.
-	## Chalk trail + fossil fold answer inside letterpress walls.
+	## Authored habit→geometry specimen — dense ink walls, never a hollow cream frame.
+	## Chalk trail + fossil fold answer inside letterpress walls. Optical weight is mandatory.
 	if plate.size.x < 40.0 or plate.size.y < 40.0:
 		return
 	var seed: int = int(opts.get("seed", 61))
 	var progress: float = float(opts.get("progress", 24.0))
+	var dense: bool = bool(opts.get("dense", true))
 	var cell: float = float(opts.get("cell", 0.0))
 	if cell < 4.0:
-		cell = clampf(minf(plate.size.x, plate.size.y) / 14.0, 14.0, 28.0)
+		cell = 12.0 if dense else clampf(minf(plate.size.x, plate.size.y) / 14.0, 14.0, 28.0)
 
 	# Stock plate under the specimen — filled object, not a void preview.
 	var back := Palette.PAPER_DEEP
-	back.a = 0.50
+	back.a = 0.55
 	canvas.draw_rect(Rect2(plate.position + Vector2(3, 4), plate.size), back, true)
-	var face := Palette.PAPER_BONE
-	face.a = 0.96
+	# Warm slate wash so open corridors still read as inked stock, not blank cream.
+	var face := Palette.PAPER_BONE if not dense else Color(
+		Palette.PAPER_DEEP.r * 0.42 + Palette.PAPER_BONE.r * 0.58,
+		Palette.PAPER_DEEP.g * 0.42 + Palette.PAPER_BONE.g * 0.58,
+		Palette.PAPER_DEEP.b * 0.42 + Palette.PAPER_BONE.b * 0.58,
+		0.98
+	)
 	canvas.draw_rect(plate, face, true)
-	draw_paper_grain(canvas, plate, seed, 0.045)
-	draw_fiber_streaks(canvas, plate, seed + 2, 0.035, 18)
+	draw_paper_grain(canvas, plate, seed, 0.05)
+	draw_fiber_streaks(canvas, plate, seed + 2, 0.04, 22)
 	draw_letterpress_rule(
 		canvas, plate.position, plate.position + Vector2(plate.size.x, 0.0),
-		Palette.INK_SOFT, 1.6, seed
+		Palette.INK_SOFT, 1.8, seed
 	)
 	draw_letterpress_rule(
 		canvas, plate.position + Vector2(plate.size.x, 0.0), plate.end,
-		Palette.INK_SOFT, 1.6, seed + 1
+		Palette.INK_SOFT, 1.8, seed + 1
 	)
 	draw_letterpress_rule(
 		canvas, plate.end, plate.position + Vector2(0.0, plate.size.y),
-		Palette.INK_SOFT, 1.6, seed + 2
+		Palette.INK_SOFT, 1.8, seed + 2
 	)
 	draw_letterpress_rule(
 		canvas, plate.position + Vector2(0.0, plate.size.y), plate.position,
-		Palette.INK_SOFT, 1.6, seed + 3
+		Palette.INK_SOFT, 1.8, seed + 3
 	)
 
-	# Fill the plate edge-to-edge — never a postage-stamp maze floating in cream.
-	# Prefer denser cells over empty band when the leaf is tall.
-	var pad: float = 14.0
-	var cols: int = maxi(12, int((plate.size.x - pad * 2.0) / cell))
-	var rows: int = maxi(10, int((plate.size.y - pad * 2.0) / cell))
-	# Soft caps only — still fill ≥85% of the plate so tall leaves stay dense.
-	cols = mini(cols, 36)
-	rows = mini(rows, 28)
-	var grid_w: float = float(cols) * cell
-	var grid_h: float = float(rows) * cell
-	if grid_h < plate.size.y - pad * 2.0:
-		cell = maxf(10.0, (plate.size.y - pad * 2.0) / float(maxi(rows, 1)))
-		cols = maxi(12, int((plate.size.x - pad * 2.0) / cell))
-		rows = maxi(10, int((plate.size.y - pad * 2.0) / cell))
+	# Edge-to-edge grid — no soft caps that leave a cream band on tall leaves.
+	var pad: float = 10.0 if dense else 14.0
+	var cols: int = maxi(14, int((plate.size.x - pad * 2.0) / cell))
+	var rows: int = maxi(12, int((plate.size.y - pad * 2.0) / cell))
+	if dense:
+		cols = mini(cols, 64)
+		rows = mini(rows, 52)
+	else:
 		cols = mini(cols, 36)
 		rows = mini(rows, 28)
-		grid_w = float(cols) * cell
-		grid_h = float(rows) * cell
+	# Stretch cell so the grid occupies the full plate interior.
+	cell = minf(
+		(plate.size.x - pad * 2.0) / float(maxi(cols, 1)),
+		(plate.size.y - pad * 2.0) / float(maxi(rows, 1))
+	)
+	cell = maxf(8.0, cell)
+	cols = maxi(14, int((plate.size.x - pad * 2.0) / cell))
+	rows = maxi(12, int((plate.size.y - pad * 2.0) / cell))
+	var grid_w: float = float(cols) * cell
+	var grid_h: float = float(rows) * cell
 	var origin := Vector2(
 		plate.position.x + (plate.size.x - grid_w) * 0.5,
-		plate.position.y + pad + maxf(0.0, (plate.size.y - pad * 2.0 - grid_h) * 0.15)
+		plate.position.y + (plate.size.y - grid_h) * 0.5
 	)
-	# Perimeter walls + authored corridor ribs (scales with cols/rows).
-	var walls: Array = []
-	for x in range(cols):
-		walls.append(Vector2i(x, 0))
-		walls.append(Vector2i(x, rows - 1))
-	for y in range(1, rows - 1):
-		walls.append(Vector2i(0, y))
-		walls.append(Vector2i(cols - 1, y))
-	# Inner ribs — leave a winding corridor open for the chalk path.
+
+	# Dense wall field: fill most cells, carve a winding corridor for the chalk path.
 	var mid_y: int = int(rows / 2)
 	var mid_x: int = int(cols / 2)
 	var third_x: int = int(cols / 3)
 	var two_third_x: int = int((cols * 2) / 3)
-	for x in range(2, cols - 3):
-		if x == mid_x or x == mid_x + 1:
-			continue
-		walls.append(Vector2i(x, mid_y - 1))
-	for x in range(3, cols - 2):
-		if x == third_x:
-			continue
-		walls.append(Vector2i(x, mid_y + 1))
-	for y in range(2, mid_y - 1):
-		walls.append(Vector2i(third_x, y))
-	for y in range(mid_y + 2, rows - 2):
-		walls.append(Vector2i(two_third_x, y))
-	# Extra blocking masses so the plate never reads empty.
-	for x in range(2, mini(5, cols - 2)):
-		walls.append(Vector2i(x, 2))
-	for x in range(maxi(2, cols - 5), cols - 2):
-		walls.append(Vector2i(x, rows - 3))
-
-	var fossils: Array = [
-		Vector2i(mid_x, 1), Vector2i(mid_x, 2), Vector2i(mid_x + 1, 2),
-		Vector2i(mid_x + 1, mid_y), Vector2i(mid_x + 2, mid_y),
-		Vector2i(two_third_x - 1, mid_y + 2), Vector2i(two_third_x - 1, mid_y + 3),
+	var path: Array = [
+		Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1),
+		Vector2i(4, 2), Vector2i(4, 3), Vector2i(5, 3), Vector2i(6, 3),
+		Vector2i(7, mid_y), Vector2i(8, mid_y), Vector2i(9, mid_y),
+		Vector2i(maxi(9, mid_x), mid_y), Vector2i(maxi(9, mid_x), mid_y + 1),
+		Vector2i(maxi(9, mid_x), mid_y + 2), Vector2i(maxi(8, mid_x - 1), mid_y + 2),
+		Vector2i(two_third_x, mid_y + 2), Vector2i(two_third_x, mid_y + 3),
+		Vector2i(two_third_x, rows - 2), Vector2i(mini(cols - 2, two_third_x + 2), rows - 2),
+		Vector2i(cols - 2, rows - 2),
 	]
+	var open := {}
+	for p in path:
+		open[p] = true
+		# One-cell breathing room around the corridor so the chalk reads.
+		for d in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = p + d
+			if n.x > 0 and n.y > 0 and n.x < cols - 1 and n.y < rows - 1:
+				open[n] = true
+	# A few chamber pockets so density isn't a solid black slab.
+	for pocket in [
+		Vector2i(third_x, 3), Vector2i(third_x + 1, 3), Vector2i(third_x, 4),
+		Vector2i(mid_x, rows - 4), Vector2i(mid_x + 1, rows - 4),
+		Vector2i(two_third_x - 2, mid_y - 2), Vector2i(two_third_x - 1, mid_y - 2),
+	]:
+		if pocket.x > 0 and pocket.y > 0 and pocket.x < cols - 1 and pocket.y < rows - 1:
+			open[pocket] = true
+
+	var walls: Array = []
+	var fossils: Array = []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	for y in range(rows):
+		for x in range(cols):
+			var c := Vector2i(x, y)
+			var perimeter: bool = x == 0 or y == 0 or x == cols - 1 or y == rows - 1
+			if perimeter or not open.has(c):
+				# Sparse diamond skips inside the mass keep letterpress texture without cream voids.
+				if dense and not perimeter and (x + y * 3) % 11 == 0 and rng.randf() < 0.35:
+					continue
+				walls.append(c)
+				if dense and rng.randf() < 0.08:
+					fossils.append(c)
+	# Guaranteed fossil accents along the habit answer.
+	fossils.append(Vector2i(mid_x, 1))
+	fossils.append(Vector2i(mid_x + 1, 2))
+	fossils.append(Vector2i(mid_x + 1, mid_y))
+	fossils.append(Vector2i(two_third_x - 1, mid_y + 2))
+	fossils.append(Vector2i(two_third_x - 1, mid_y + 3))
+
 	for w in walls:
-		var r := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.4, cell - 1.4))
+		var r := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.1, cell - 1.1))
 		draw_letterpress_wall(canvas, r, false, 15)
 	var fold_on: bool = int(progress) % 31 > 14
 	for w in fossils:
-		var r2 := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.4, cell - 1.4))
-		if fold_on:
+		var r2 := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.1, cell - 1.1))
+		if fold_on or dense:
 			draw_letterpress_wall(canvas, r2, true, 15)
 		else:
 			# Telegraph — slate tick, not an empty dashed preview box.
@@ -577,15 +604,6 @@ func draw_habit_silhouette(
 			canvas.draw_rect(r2, tick, false, 1.5)
 
 	# Habit chalk path through the corridor — the game's verb as silhouette.
-	var path: Array = [
-		Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1),
-		Vector2i(4, 2), Vector2i(4, 3), Vector2i(5, 3), Vector2i(6, 3),
-		Vector2i(7, mid_y), Vector2i(8, mid_y), Vector2i(9, mid_y),
-		Vector2i(9, mid_y + 1), Vector2i(9, mid_y + 2), Vector2i(8, mid_y + 2),
-		Vector2i(7, mid_y + 2), Vector2i(6, mid_y + 2), Vector2i(5, mid_y + 2),
-		Vector2i(5, mid_y + 3), Vector2i(5, rows - 2), Vector2i(6, rows - 2),
-		Vector2i(7, rows - 2), Vector2i(8, rows - 2), Vector2i(cols - 2, rows - 2),
-	]
 	var visible: int = mini(path.size(), maxi(3, int(progress) % (path.size() + 4)))
 	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.90)
 	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.40)
@@ -596,7 +614,7 @@ func draw_habit_silhouette(
 		var pb: Vector2 = origin + Vector2((b.x + 0.5) * cell, (b.y + 0.5) * cell)
 		canvas.draw_line(pa, pb, ink_trail, 2.2, true)
 		draw_dashed_line(canvas, pa, pb, chalk, 2.6, 5.0, 2.4)
-	# Surveyor stamp at the live tip.
+	# Surveyor stamp at the live tip (playable grammar — not a seal ring).
 	if visible > 0:
 		var tip: Vector2i = path[visible - 1]
 		var tip_c: Vector2 = origin + Vector2((tip.x + 0.5) * cell, (tip.y + 0.5) * cell)
@@ -799,7 +817,7 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 		Palette.PAPER_SHADOW.r,
 		Palette.PAPER_SHADOW.g,
 		Palette.PAPER_SHADOW.b,
-		0.20 * alpha
+		0.22 * alpha
 	)
 	_draw_seal_plate_fill(
 		canvas,
@@ -809,6 +827,29 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 		rot,
 		shadow
 	)
+	# Opaque rectangular plate face — inked letterpress stock, never a hollow cream ring.
+	var plate_face := Color(
+		Palette.PAPER_DEEP.r * 0.55 + Palette.SLATE_TEAL.r * 0.20 + Palette.PAPER_BONE.r * 0.25,
+		Palette.PAPER_DEEP.g * 0.55 + Palette.SLATE_TEAL.g * 0.20 + Palette.PAPER_BONE.g * 0.25,
+		Palette.PAPER_DEEP.b * 0.55 + Palette.SLATE_TEAL.b * 0.20 + Palette.PAPER_BONE.b * 0.25,
+		0.96 * alpha
+	)
+	_draw_seal_plate_fill(canvas, center, hw, hh, rot, plate_face)
+	# Hairline ledger rules across the die face — optical weight without a second maze plane.
+	if hero and hw > hh * 1.6:
+		var rule_c := Color(ink.r, ink.g, ink.b, alpha * 0.28)
+		for k in range(-2, 3):
+			var yy: float = float(k) * (hh * 0.28)
+			_draw_rotated_ink_run(
+				canvas,
+				center,
+				Vector2(-hw * 0.92, yy),
+				Vector2(hw * 0.92, yy),
+				rot,
+				rule_c,
+				1.1,
+				rng
+			)
 	# Faint rectangular ink wash on the plate face — sparse blotches, never a ring.
 	if hero:
 		for k in range(3):

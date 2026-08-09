@@ -4,13 +4,15 @@
 Fails if:
   - Brand column / Field Index anchors drift off the 52/42 hard spec
   - Measured empty (no ink/ui layout mass) ≥ 28% of the inner page
-  - Dashed concentric circle seal / FIELD watermark code paths return
+  - LEFT (verso) pixel empty mass ≥ 22%
+  - Circle geometry / FIELD watermark / SURVEY SEAL caption return on the seal
   - Field Index rows stretch with sparse leading
-  - Store slate 02_brand_main_menu.png lacks brand + full Field Index
+  - Store slate 02_brand_main_menu.png lacks brand + dense left specimen + Field Index
 """
 
 from __future__ import annotations
 
+import math
 import re
 import struct
 import unittest
@@ -21,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MENU = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
 ART = (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8")
 BOOT = (ROOT / "scripts" / "boot_title.gd").read_text(encoding="utf-8")
+LOCALE = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
 SHOT = ROOT.parents[1] / "docs" / "RELEASE" / "screenshots" / "02_brand_main_menu.png"
 
 VP_W, VP_H = 1920.0, 1080.0
@@ -46,6 +49,8 @@ def _layout_rects() -> dict:
     mx = _const_float("PAGE_MARGIN_X")
     my = _const_float("PAGE_MARGIN_Y")
     specimen_gap = _const_float("SPECIMEN_GAP")
+    seal_maze_gap = _const_float("SEAL_MAZE_GAP")
+    seal_h = _const_float("SEAL_PLATE_H")
     outer = (mx, my, VP_W - 2 * mx, VP_H - 2 * my)
     left_w = outer[2] * verso
     right_w = outer[2] * recto
@@ -54,22 +59,19 @@ def _layout_rects() -> dict:
     right = (outer[0] + outer[2] - right_w, outer[1], right_w, outer[3])
     brand_px = max(brand_min, 92)
     brand_x = left[0] + 36.0
-    brand_top = left[1] + 88.0
+    brand_top = left[1] + 56.0
     brand_w = min(560.0, left[2] - 72.0)
     brand_block = (brand_x, brand_top, brand_w, float(brand_px) + 62.0)
-    sil_top = brand_block[1] + brand_block[3] + specimen_gap
+    plate_x = brand_x - 4.0
+    plate_w = max(200.0, left[0] + left[2] - plate_x - 20.0)
+    seal_top = brand_block[1] + brand_block[3] + specimen_gap
+    seal = (plate_x, seal_top, plate_w, seal_h)
+    sil_top = seal[1] + seal[3] + seal_maze_gap
     sil = (
-        brand_x - 4.0,
+        plate_x,
         sil_top,
-        max(200.0, left[0] + left[2] - (brand_x - 4.0) - 20.0),
-        max(160.0, left[1] + left[3] - sil_top - 16.0),
-    )
-    seal_half = min(38.0, sil[2] * 0.10)
-    seal = (
-        sil[0] + 12.0,
-        sil[1] + 12.0,
-        seal_half * 2.0,
-        seal_half * 2.0,
+        plate_w,
+        max(200.0, left[1] + left[3] - sil_top - 14.0),
     )
     side_pad, top_pad, bot_pad = 16.0, 20.0, 18.0
     card = (
@@ -82,9 +84,9 @@ def _layout_rects() -> dict:
     def area(r: tuple[float, float, float, float]) -> float:
         return r[2] * r[3]
 
-    # Seal lives inside specimen — do not double-count.
-    occupied = area(brand_block) + area(sil) + area(card) + gutter * outer[3] * 0.35
+    occupied = area(brand_block) + area(seal) + area(sil) + area(card) + gutter * outer[3] * 0.35
     empty = 1.0 - occupied / max(1.0, area(outer))
+    verso_empty = 1.0 - (area(brand_block) + area(seal) + area(sil)) / max(1.0, area(left))
     return {
         "outer": outer,
         "left": left,
@@ -98,7 +100,9 @@ def _layout_rects() -> dict:
         "recto_frac": right_w / outer[2],
         "index_width_frac": card[2] / VP_W,
         "empty_frac": empty,
+        "verso_empty_frac": verso_empty,
         "specimen_gap": specimen_gap,
+        "seal_maze_gap": seal_maze_gap,
     }
 
 
@@ -154,6 +158,12 @@ def _read_png_luma(path: Path) -> tuple[int, int, list[bytearray], int]:
     return w, h, rows, bpp
 
 
+def _seal_fn_body() -> str:
+    m = re.search(r"func draw_seal_stamp\([\s\S]*?\nfunc ", ART)
+    assert m, "draw_seal_stamp missing"
+    return m.group(0)
+
+
 class TestMenuCompositionDensity(unittest.TestCase):
     def test_hard_anchors_present(self) -> None:
         for token in (
@@ -161,19 +171,26 @@ class TestMenuCompositionDensity(unittest.TestCase):
             "const RECTO_FRAC",
             "const BRAND_MIN_PX",
             "const MAX_EMPTY_FRAC",
+            "const MAX_VERSO_EMPTY_FRAC",
             "const SPECIMEN_GAP",
+            "const SEAL_MAZE_GAP",
+            "const SEAL_PLATE_H",
             "const INDEX_ROW_H",
             "func composition_layout",
             'tr("brand.title")',
             'tr("brand.tagline")',
             '"caption": ""',
             '"sharp_edge": true',
+            '"dense": true',
         ):
             self.assertIn(token, MENU, msg=token)
         self.assertLessEqual(_const_float("MAX_EMPTY_FRAC"), 0.28)
+        self.assertLessEqual(_const_float("MAX_VERSO_EMPTY_FRAC"), 0.22)
         self.assertGreaterEqual(_const_int("BRAND_MIN_PX"), 72)
         self.assertGreaterEqual(_const_float("INDEX_ROW_H"), 36.0)
         self.assertLessEqual(_const_float("INDEX_ROW_H"), 44.0)
+        self.assertLessEqual(_const_float("SPECIMEN_GAP"), 16.0)
+        self.assertLessEqual(_const_float("SEAL_MAZE_GAP"), 16.0)
         verso = _const_float("VERSO_FRAC")
         recto = _const_float("RECTO_FRAC")
         self.assertGreaterEqual(verso, 0.48)
@@ -195,16 +212,22 @@ class TestMenuCompositionDensity(unittest.TestCase):
             _const_float("MAX_EMPTY_FRAC"),
             msg=f"empty_frac={lay['empty_frac']:.3f} — title still a cream void",
         )
-        self.assertLessEqual(lay["specimen_gap"], 40.0)
-        self.assertGreaterEqual(lay["specimen_gap"], 24.0)
-        # Specimen fills remaining verso — no mid-leaf void band after brand.
-        sil = lay["silhouette"]
-        self.assertGreaterEqual(sil[3], 420.0, msg="specimen too short — cream band remains")
-        # Integrated seal is a small letterpress inset, not a second maze plane.
+        self.assertLess(
+            lay["verso_empty_frac"],
+            _const_float("MAX_VERSO_EMPTY_FRAC"),
+            msg=f"verso_empty_frac={lay['verso_empty_frac']:.3f} — left leaf still empty",
+        )
+        self.assertLessEqual(lay["specimen_gap"], 16.0)
+        self.assertLessEqual(lay["seal_maze_gap"], 16.0)
+        # Wide seal plate at top of specimen stack — not a tiny corner die.
         seal = lay["seal"]
-        self.assertLessEqual(seal[2], 100.0)
-        self.assertLessEqual(seal[3], 100.0)
-        self.assertGreaterEqual(seal[2], 48.0)
+        self.assertGreaterEqual(seal[2], 700.0, msg="seal plate too narrow")
+        self.assertGreaterEqual(seal[3], 72.0, msg="seal plate too short")
+        # Dense maze fills remaining verso.
+        sil = lay["silhouette"]
+        self.assertGreaterEqual(sil[3], 520.0, msg="maze too short — cream band remains")
+        # Seal sits above maze with ≤16px gap.
+        self.assertLessEqual(sil[1] - (seal[1] + seal[3]), 16.0)
         # Field Index full readable height.
         card = lay["field_index"]
         self.assertGreaterEqual(card[3], 900.0)
@@ -214,7 +237,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertIn("Control.SIZE_SHRINK_BEGIN", MENU)
         self.assertIn("INDEX_ROW_H", MENU)
         self.assertIn("_field_index_block_height", MENU)
-        # Stretch path must stay gone on the title shell.
         self.assertNotIn("SIZE_EXPAND_FILL if compact else Control.SIZE_EXPAND_FILL", MENU)
         apply = re.search(
             r"func _apply_index_row_metrics\([\s\S]*?\nfunc ",
@@ -222,46 +244,48 @@ class TestMenuCompositionDensity(unittest.TestCase):
         )
         self.assertIsNotNone(apply)
         body = apply.group(0)
-        # Horizontal fill is fine; vertical stretch is the sparse-list failure mode.
         self.assertNotIn("size_flags_vertical = Control.SIZE_EXPAND_FILL", body)
         self.assertIn("SIZE_SHRINK_BEGIN", body)
         self.assertNotIn("clampf(even,", body)
 
     def test_no_circle_seal_code_paths(self) -> None:
-        """Dashed concentric circle seal + FIELD watermark must stay eradicated."""
-        # Extract draw_seal_stamp body only.
-        m = re.search(
-            r"func draw_seal_stamp\([\s\S]*?\nfunc ",
-            ART,
-        )
-        self.assertIsNotNone(m)
-        body = m.group(0)
-        # Old circle seal used TAU ring segments — ban that grammar in the seal.
+        """Circle seal geometry + FIELD / SURVEY SEAL captions must stay eradicated."""
+        body = _seal_fn_body()
         self.assertNotIn("TAU * float(i)", body)
         self.assertNotIn("inner_ring", body)
         self.assertNotIn("ring_w", body)
+        self.assertNotIn("draw_circle", body)
+        self.assertNotIn("draw_arc", body)
         self.assertIn("rectangular", body.lower())
         self.assertIn('caption.to_upper() == "FIELD"', body)
-        # Call sites must never pass FIELD watermark.
         for src, label in ((MENU, "menu"), (BOOT, "boot")):
             self.assertNotIn('"caption": "FIELD"', src, msg=label)
             self.assertNotIn('"caption": "field"', src, msg=label)
-        # Title / boot must call the rectangular plate path.
+            self.assertNotIn("SURVEY SEAL", src, msg=label)
+            self.assertNotIn('tr("menu.seal_caption")', src, msg=label)
+        self.assertNotIn("SURVEY SEAL", LOCALE)
         self.assertIn("ArtKit.draw_seal_stamp", MENU)
         self.assertIn("ArtKit.draw_seal_stamp", BOOT)
         self.assertIn("plate_w", MENU)
         self.assertIn("plate_h", MENU)
+        # Seal is drawn as its own plate above the maze — not a corner inset.
+        self.assertIn("SEAL_PLATE_H", MENU)
+        self.assertIn("SEAL_MAZE_GAP", MENU)
 
-    def test_brand_slate_shows_brand_and_field_index(self) -> None:
+    def test_brand_slate_shows_brand_dense_verso_and_field_index(self) -> None:
         if not SHOT.is_file():
             self.skipTest("02_brand_main_menu.png missing — capture before merge")
         w, h, rows, bpp = _read_png_luma(SHOT)
         self.assertEqual((w, h), (1920, 1080))
 
-        def lum(x: int, y: int) -> int:
+        def rgb(x: int, y: int) -> tuple[int, int, int]:
             r = rows[y]
             j = x * bpp
-            return (r[j] + r[j + 1] + r[j + 2]) // 3
+            return r[j], r[j + 1], r[j + 2]
+
+        def lum(x: int, y: int) -> int:
+            r, g, b = rgb(x, y)
+            return (r + g + b) // 3
 
         # Brand ink on the left leaf (ECHO LATTICE zone — largest type, upper verso).
         brand = sum(
@@ -271,6 +295,87 @@ class TestMenuCompositionDensity(unittest.TestCase):
             if lum(x, y) < 150
         )
         self.assertGreater(brand, 400, msg="ECHO LATTICE brand ink missing on left")
+
+        # LEFT RECT empty mass: fraction of 20×20 tiles that are uniform cream (no ink).
+        # Brand type sits on paper by design; this catches hollow specimen bands, not glyph air.
+        paper_ref = (239, 230, 209)
+        tile = 20
+        empty_tiles = 0
+        total_tiles = 0
+        for y0 in range(14, 1060, tile):
+            for x0 in range(20, 960, tile):
+                total_tiles += 1
+                samples: list[int] = []
+                near_paper = 0
+                n = 0
+                for y in range(y0, min(y0 + tile, 1066), 2):
+                    for x in range(x0, min(x0 + tile, 980), 2):
+                        n += 1
+                        samples.append(lum(x, y))
+                        r, g, b = rgb(x, y)
+                        dist = (
+                            abs(r - paper_ref[0])
+                            + abs(g - paper_ref[1])
+                            + abs(b - paper_ref[2])
+                        )
+                        if dist < 50 and lum(x, y) > 195:
+                            near_paper += 1
+                if not samples:
+                    continue
+                spread = max(samples) - min(samples)
+                if near_paper / max(1, n) > 0.85 and spread < 40:
+                    empty_tiles += 1
+        empty_frac = empty_tiles / max(1, total_tiles)
+        self.assertLess(
+            empty_frac,
+            _const_float("MAX_VERSO_EMPTY_FRAC"),
+            msg=f"verso tile empty_mass={empty_frac:.3f} ≥ 0.22 — left page still hollow",
+        )
+
+        # Specimen/maze zone (lower ~60%) must itself stay ink-heavy.
+        maze_empty = 0
+        maze_total = 0
+        for y in range(400, 1040, 2):
+            for x in range(60, 940, 2):
+                maze_total += 1
+                r, g, b = rgb(x, y)
+                dist = abs(r - paper_ref[0]) + abs(g - paper_ref[1]) + abs(b - paper_ref[2])
+                if dist < 45 and lum(x, y) > 190:
+                    maze_empty += 1
+        self.assertLess(
+            maze_empty / max(1, maze_total),
+            0.18,
+            msg="habit maze zone still cream-hollow",
+        )
+        maze_ink = sum(
+            1
+            for y in range(420, 1020, 3)
+            for x in range(80, 900, 3)
+            if lum(x, y) < 120
+        )
+        self.assertGreater(maze_ink, 3500, msg="habit maze optical weight missing on verso")
+
+        # No concentric dashed-circle seal on the letterpress seal band (above the maze).
+        # Sample only the seal plate mid-band — maze tip/goal copper dots are playable grammar.
+        lay = _layout_rects()
+        seal_cx = int(lay["seal"][0] + lay["seal"][2] * 0.5)
+        seal_cy = int(lay["seal"][1] + lay["seal"][3] * 0.5)
+        ring_scores = []
+        for radius in (28, 44, 60, 80):
+            dark = 0
+            total_r = 0
+            for deg in range(0, 360, 5):
+                x = int(seal_cx + math.cos(math.radians(deg)) * radius)
+                y = int(seal_cy + math.sin(math.radians(deg)) * radius)
+                if 0 <= x < w and 0 <= y < h:
+                    total_r += 1
+                    if lum(x, y) < 140:
+                        dark += 1
+            if total_r:
+                ring_scores.append(dark / total_r)
+        # A dashed double-ring seal lights ≥2 radii heavily and evenly; a rectangular die does not.
+        hot = sum(1 for s in ring_scores if s > 0.55)
+        self.assertLess(hot, 2, msg=f"concentric circle seal returned (scores={ring_scores})")
 
         # Field Index left edge in the right ~42% column — skip spine trough ink.
         left = None
@@ -282,7 +387,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
         self.assertLess(left, 1180, msg="Field Index crammed to far corner")
         self.assertGreaterEqual(left, 1040, msg="Field Index spilled into brand leaf")
 
-        # Full-height plate edge.
         runs: list[tuple[int, int]] = []
         run_a: int | None = None
         for y in range(40, 1050):
@@ -298,7 +402,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
         top, bottom = max(runs, key=lambda r: r[1] - r[0])
         self.assertGreater(bottom - top, 780, msg="Field Index plate too short")
 
-        # Action ink inside the plate — Condensed Medium strokes are thin; sample densely.
         text_hits = sum(
             1
             for y in range(top + 40, bottom - 40, 2)
@@ -306,7 +409,6 @@ class TestMenuCompositionDensity(unittest.TestCase):
             if lum(x, y) < 100
         )
         self.assertGreater(text_hits, 700, msg="Field Index actions missing / off-screen")
-        # Compact block in upper 2/3 — not stretched top-to-bottom with sparse air.
         ink_ys = [
             y
             for y in range(top + 40, bottom - 40, 2)
@@ -316,33 +418,10 @@ class TestMenuCompositionDensity(unittest.TestCase):
         span = (max(ink_ys) - min(ink_ys)) if ink_ys else 0
         self.assertGreaterEqual(span, 240, msg="Field Index actions collapsed")
         self.assertLessEqual(span, 560, msg="Field Index actions still stretched with air")
-        # Bottom fifth of the plate should be quieter than the action block.
         mid = top + int((bottom - top) * 0.55)
         lower = sum(1 for y in ink_ys if y > mid)
         upper = sum(1 for y in ink_ys if y <= mid)
         self.assertGreater(upper, lower, msg="actions not packed into upper 2/3")
-
-        # No concentric dashed-circle seal: polar ring score around brand seal zone.
-        # Rectangular plate has ink on flats; a circle seal spikes at constant radius.
-        cx, cy = 170, 360
-        ring_scores = []
-        for radius in (70, 95, 120):
-            dark = 0
-            total = 0
-            for deg in range(0, 360, 6):
-                import math
-
-                x = int(cx + math.cos(math.radians(deg)) * radius)
-                y = int(cy + math.sin(math.radians(deg)) * radius)
-                if 0 <= x < w and 0 <= y < h:
-                    total += 1
-                    if lum(x, y) < 140:
-                        dark += 1
-            if total:
-                ring_scores.append(dark / total)
-        # A dashed double-ring seal lights ≥2 radii heavily; rectangular die does not.
-        hot = sum(1 for s in ring_scores if s > 0.42)
-        self.assertLess(hot, 2, msg=f"concentric circle seal returned (scores={ring_scores})")
 
 
 if __name__ == "__main__":
