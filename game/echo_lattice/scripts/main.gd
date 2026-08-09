@@ -2,11 +2,13 @@ extends Node
 ##
 ## Main — the root router.
 ##
-## Owns a single container child which we swap between menu, chamber, chamber win,
-## and wing-colophon screens. Keeps scene loads explicit and Godot-project-simple.
+## Primary experience: The Weaver field (gather → combine → weave → emit).
+## Echo Lattice chambers remain reachable as an archive / debug wing.
+## Owns a single Stage child swapped between menu, weaver field, chamber, etc.
 ##
 
 const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
+const WEAVER_FIELD_SCENE: PackedScene = preload("res://scenes/weaver/field.tscn")
 const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
 const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
 const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
@@ -27,6 +29,11 @@ func _ready() -> void:
 		all_args.append(a)
 	if all_args.has("--battery"):
 		DeckProfile.set_battery_mode(true)
+	# Weaver loop self-test — `-- --weaver-selftest` (gather→combine→weave→emit).
+	if all_args.has("--weaver-selftest"):
+		var weaver_ok: bool = await _run_weaver_self_test()
+		get_tree().quit(0 if weaver_ok else 1)
+		return
 	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
 		var ok: bool = await _run_self_test()
@@ -96,6 +103,8 @@ func _connect_menu_signals(m: Node) -> void:
 		return
 	if m.has_signal("start_new_pressed") and not m.is_connected("start_new_pressed", Callable(self, "_on_menu_start_new")):
 		m.connect("start_new_pressed", Callable(self, "_on_menu_start_new"))
+	if m.has_signal("archive_chambers_pressed") and not m.is_connected("archive_chambers_pressed", Callable(self, "_on_menu_archive_chambers")):
+		m.connect("archive_chambers_pressed", Callable(self, "_on_menu_archive_chambers"))
 	if m.has_signal("continue_pressed") and not m.is_connected("continue_pressed", Callable(self, "_on_menu_continue")):
 		m.connect("continue_pressed", Callable(self, "_on_menu_continue"))
 	if m.has_signal("quit_pressed") and not m.is_connected("quit_pressed", Callable(self, "_on_menu_quit")):
@@ -1361,6 +1370,65 @@ func show_menu() -> void:
 	_connect_menu_signals(m)
 
 
+func show_weaver_field() -> void:
+	## Primary product path — Shed Yard teaching field (FIRST_FIVE fence).
+	_clear_stage()
+	if has_node("/root/Loom") and Loom.has_method("reset"):
+		Loom.reset()
+	var field: Node = WEAVER_FIELD_SCENE.instantiate()
+	stage.add_child(field)
+	if field.has_signal("menu_requested"):
+		field.connect("menu_requested", Callable(self, "_on_weaver_menu_requested"))
+	if has_node("/root/SteamService") and SteamService.has_method("set_menu_presence"):
+		SteamService.set_menu_presence()
+
+
+func _run_weaver_self_test() -> bool:
+	print("== The Weaver on Lattice — loop self-test ==")
+	if not has_node("/root/Loom"):
+		printerr("Loom autoload missing")
+		return false
+	var api: Dictionary = Loom.selftest_loop(7)
+	if not bool(api.get("ok", false)):
+		printerr("Loom.selftest_loop failed: %s" % str(api))
+		return false
+	show_weaver_field()
+	for _i in range(8):
+		await get_tree().process_frame
+	var field: Node = null
+	if stage.get_child_count() > 0:
+		field = stage.get_child(0)
+	if field == null or not field.has_method("debug_force_weave_at_anchor"):
+		printerr("weaver field missing debug_force_weave_at_anchor")
+		return false
+	Loom.reset()
+	if not Loom.add_fragment("Anchor") or not Loom.add_fragment("Span"):
+		printerr("gather failed on host field")
+		return false
+	var combo: Dictionary = Loom.combine_indices(0, 1)
+	if not bool(combo.get("ok", false)):
+		printerr("combine failed on host field")
+		return false
+	if not bool(field.call("debug_force_weave_at_anchor")):
+		printerr("weave failed on host field")
+		return false
+	for _j in range(12):
+		await get_tree().process_frame
+	if get_tree().get_nodes_in_group("structures").is_empty():
+		printerr("structure node missing after weave")
+		return false
+	var emitted: String = Loom.emit_from_structure(Vector2(640, 360))
+	if emitted == "":
+		printerr("emit failed")
+		return false
+	print("weaver-on-lattice: PASS phase=%s structures=%d emitted=%s" % [
+		str(api.get("phase", "?")),
+		int(api.get("structures", 0)),
+		emitted,
+	])
+	return true
+
+
 func show_museum() -> void:
 	_clear_stage()
 	var m: Node = MUSEUM_SCENE.instantiate()
@@ -1417,8 +1485,18 @@ func show_end_screen() -> void:
 # ---------- menu callbacks ----------
 
 func _on_menu_start_new() -> void:
+	## Primary CTA — enter The Weaver teaching field.
+	show_weaver_field()
+
+
+func _on_menu_archive_chambers() -> void:
+	## Echo Lattice archive wing — chambers kept, not deleted.
 	GameState.start_new_run()
 	show_chamber()
+
+
+func _on_weaver_menu_requested() -> void:
+	show_menu()
 
 
 func _on_menu_continue() -> void:

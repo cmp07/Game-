@@ -4,7 +4,7 @@ Offline craft vignette for **The Weaver** (north-star product after Echo Lattice
 
 Design authority: [`docs/WEAVER/MASTER_GDD.md`](../../docs/WEAVER/MASTER_GDD.md) · [`docs/WEAVER/17_MVP.md`](../../docs/WEAVER/17_MVP.md) · [`docs/WEAVER/32_FIRST_FIVE.md`](../../docs/WEAVER/32_FIRST_FIVE.md) · [`docs/WEAVER/35_JUICE.md`](../../docs/WEAVER/35_JUICE.md).
 
-**Echo Lattice is untouched.** This project lives beside `game/echo_lattice/` and must not replace it.
+**Product launch path is now the Lattice host:** open [`../echo_lattice/`](../echo_lattice/) (see [`docs/WEAVER/BUILD_ON_LATTICE.md`](../../docs/WEAVER/BUILD_ON_LATTICE.md)). This `game/weaver/` tree remains a temporary standalone spike twin — do not treat it as the forever parallel product.
 
 ## Stack
 

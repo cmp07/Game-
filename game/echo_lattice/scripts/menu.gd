@@ -1,14 +1,16 @@
 extends Control
 ##
-## Main menu — dense Field Ledger craft (boutique title shell).
+## Main menu — The Weaver title shell hosted on the Echo Lattice folio layout.
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio @ 1920×1080: verso ~52% (ECHO LATTICE hero + gameplay film plate)
-## | spine | recto ~42% (Field Index, compact action block). Explicit anchors — never hope.
+## Open folio @ 1920×1080: verso ~52% (THE WEAVER hero + gameplay film plate)
+## | spine | recto ~42% (Yard Index, compact action block). Explicit anchors — never hope.
+## Primary CTA enters the Weaver field; Lattice chambers stay under Archive.
 ## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
 ## Left visual anchor = diegetic gameplay preview (not a static empty maze).
 ##
 
 signal start_new_pressed()
+signal archive_chambers_pressed()
 signal continue_pressed()
 signal daily_pressed()
 signal endless_pressed()
@@ -75,7 +77,8 @@ func _ready() -> void:
 	)
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
 	if endless_button:
-		endless_button.pressed.connect(func(): emit_signal("endless_pressed"))
+		# Relabeled Archive · Chambers — fresh Lattice campaign (history kept).
+		endless_button.pressed.connect(func(): emit_signal("archive_chambers_pressed"))
 	if hard_button:
 		hard_button.pressed.connect(func():
 			if GameState.can_start_hard_run():
@@ -656,7 +659,7 @@ func _localize_chrome() -> void:
 	start_button.text = tr("menu.start_new")
 	daily_button.text = tr("menu.daily")
 	if endless_button:
-		endless_button.text = tr("menu.endless")
+		endless_button.text = tr("menu.archive_chambers")
 	if hard_button:
 		hard_button.text = tr("menu.hard")
 	if museum_button:
@@ -690,9 +693,9 @@ func _refresh_progress_copy() -> void:
 		subtitle.visible = true
 		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
-		# Fresh title: wing lives once on the verso folio mark — do not restate here.
-		subtitle.visible = false
-		subtitle.text = ""
+		# Fresh title: Weaver job line under the brand.
+		subtitle.visible = true
+		subtitle.text = tr("menu.subtitle_weaver")
 	_refresh_hard_button()
 	var entry: Dictionary = GameState.today_daily_entry()
 	var today: String = str(entry.get("date", GameState._today_label()))
@@ -884,7 +887,7 @@ func _draw() -> void:
 	var scale: Dictionary = LedgerChrome.title_type_scale(outer.size.y)
 	var folio_px: int = int(scale.get("folio", LedgerChrome.TYPE_FOLIO))
 	var seed_px: int = int(scale.get("seed", LedgerChrome.TYPE_SEED))
-	# ECHO LATTICE is the largest type on the title — never secondary to the tagline.
+	# THE WEAVER is the largest type on the title — never secondary to the tagline.
 	var brand_px: int = int(layout["brand_px"])
 	var tag_px: int = int(scale.get("tagline", LedgerChrome.TYPE_TAGLINE))
 	tag_px = mini(tag_px, maxi(14, int(float(brand_px) * 0.30)))
@@ -925,7 +928,7 @@ func _draw() -> void:
 		0.045,
 		14
 	)
-	# Brand lockup — ECHO LATTICE owns the plane (Condensed Bold ≥ BRAND_MIN_PX).
+	# Brand lockup — THE WEAVER owns the plane (Condensed Bold ≥ BRAND_MIN_PX).
 	draw_string(
 		_type("brand"),
 		Vector2(brand_x, brand_y),

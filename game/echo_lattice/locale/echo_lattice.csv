@@ -1,14 +1,15 @@
 keys,en,zh_Hans
-brand.title,ECHO LATTICE,回声晶格
-brand.tagline,IT LEARNED YOU,它学会了你
-brand.blurb,A labyrinth that rebuilds from your last thirty moves.,一座根据你最近三十步重建的迷宫。
-boot.wing_line,FIELD LEDGER · WING I,现场账本 · 第一翼
-menu.field_index,FIELD INDEX,现场索引
+brand.title,THE WEAVER,织者
+brand.tagline,STITCH THE FRAYED GAP,缝合开裂的缺口
+brand.blurb,Recover Fragments. Spin a Thread. Tension a Structure.,拾取碎片。纺出丝线。张紧结构。
+boot.wing_line,SHED YARD · TEACHING FIELD,工棚院 · 教学场
+menu.field_index,YARD INDEX,院落索引
 menu.buffer,BUFFER,缓冲
 menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
 menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Pause  Esc,移动  WASD / 方向键     重开  R     撤销  Z     暂停  Esc
-menu.continue,Continue,继续
-menu.start_new,Open new survey,开启新勘测
+menu.continue,Continue archive,继续归档
+menu.start_new,Enter the Yard,进入工棚院
+menu.archive_chambers,Archive · Chambers,归档 · 间室
 menu.daily,Daily sheet,每日页
 menu.endless,Endless corridor,无尽廊道
 menu.hard,Hard binding,高难装订
@@ -17,14 +18,15 @@ menu.settings,Instruments,仪器
 menu.wishlist,Wishlist on Steam,Steam 愿望单
 menu.quit,Close ledger,合上账本
 menu.colophon,Colophon,版权页
-menu.folio_mark,FIELD LEDGER · WING I,现场账本 · 第一翼
+menu.folio_mark,THE WEAVER · SHED YARD,织者 · 工棚院
 menu.seal_caption,LETTERPRESS PLATE · RETIRED,凸版印版 · 已退役
 menu.habit_silhouette,HABIT SILHOUETTE · THIRTY MOVES,习惯剪影 · 三十步
-menu.recto_mark,FIELD INDEX · RECTO,现场索引 · 右页
-menu.card_foot,Ink on paper  ·  last thirty moves rewrite the page,墨于纸上  ·  最近三十步改写此页
+menu.recto_mark,YARD INDEX · RECTO,院落索引 · 右页
+menu.card_foot,Fiber and timber  ·  physics judges your stitches,纤维与木材  ·  物理裁定你的针脚
 menu.subtitle_fresh,Wing I — %s chambers on file.,第一翼 — 已归档 %s 间室。
-menu.subtitle_progress,Survey open  ·  chamber %s of %s  ·  %s★,勘测进行中  ·  第 %s / %s 间  ·  %s★
-menu.subtitle_wing_complete,Wing filed  ·  %s★ — open a new survey,本翼已归档  ·  %s★ — 开启新勘测
+menu.subtitle_weaver,Gather · combine · weave — East Post Gap awaits.,拾取 · 组合 · 编织 — 东桩缺口在等待。
+menu.subtitle_progress,Archive open  ·  chamber %s of %s  ·  %s★,归档进行中  ·  第 %s / %s 间  ·  %s★
+menu.subtitle_wing_complete,Archive filed  ·  %s★ — enter the Yard,归档已封存  ·  %s★ — 进入工棚院
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
 menu.daily_endless_meta,Sheet %s  ·  daily best %s★  ·  corridor %s,页 %s  ·  每日最佳 %s★  ·  廊道 %s
 menu.daily_meta_quiet,%s,%s

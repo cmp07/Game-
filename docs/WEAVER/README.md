@@ -3,11 +3,13 @@
 **North star product docs** for **The Weaver** (working title).  
 **Pivot:** Echo Lattice is frozen; Weaver is active — see [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md).  
 **Do not delete** `game/echo_lattice/` or the Steam pack freeze under [`../BACKUP/`](../BACKUP/).  
-**Playable stub:** [`../../game/weaver/`](../../game/weaver/) (beside EL).
+**Playable launch:** [`../../game/echo_lattice/`](../../game/echo_lattice/) (Weaver on Lattice) · twin spike [`../../game/weaver/`](../../game/weaver/).  
+**Hybrid contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md).
 
 | Start here | Role |
 |---|---|
 | [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
+| [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) | Lattice hosts Weaver loop — how to run |
 | [`ROADMAP.md`](ROADMAP.md) | Gates, scaffold status, build order |
 | [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) | Design corpus changelog |
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |

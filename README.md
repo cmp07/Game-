@@ -22,8 +22,8 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 - `docs/RELEASE/ACHIEVEMENTS.json` — Steam achievement catalog
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/echo_lattice/` — Godot 4.3 project (Echo Lattice — frozen archive, kept)
-- `game/weaver/` — Godot 4.3 GDScript MVP stub (The Weaver north star; see [`game/weaver/README.md`](game/weaver/README.md))
+- `game/echo_lattice/` — **Launch path:** Godot 4.3 host for **The Weaver** (Lattice shell + Weaver field; chambers as Archive) — see [`game/echo_lattice/README.md`](game/echo_lattice/README.md) · [`docs/WEAVER/BUILD_ON_LATTICE.md`](docs/WEAVER/BUILD_ON_LATTICE.md)
+- `game/weaver/` — Temporary standalone Weaver spike (loop/juice twin; not the product launch path)
 - `steam/echo_lattice/` — SteamPipe VDF templates (placeholder AppID)
 
 ## Stack

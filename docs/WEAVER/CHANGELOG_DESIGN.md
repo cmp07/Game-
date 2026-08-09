@@ -6,6 +6,21 @@
 
 ---
 
+## 2026-08-09 — Weaver on Lattice (hybrid launch)
+
+**Branch:** `cursor/weaver-on-lattice-3a1d` · **Base:** `cursor/echo-lattice-rc1`  
+**Absorbs:** master wave `#180` (`cursor/weaver-master-v2`)
+
+### Product
+
+- **Launch path:** `game/echo_lattice/` hosts Weaver gather→combine→weave as primary CTA
+- **Contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md)
+- **`game/weaver/`:** temporary spike twin (not forever-parallel product)
+- **Chambers:** kept under Archive · Chambers / Continue / Daily / Hard / Museum
+- **No archive `git mv`** — migrate gates still unmet
+
+---
+
 ## 2026-08-09 — Master GDD v2 (product replace Lattice)
 
 **Branch:** `cursor/weaver-master-v2` · **Base:** `cursor/echo-lattice-rc1`  
@@ -15,7 +30,7 @@
 
 - **Ship identity:** The Weaver (not Echo Lattice forever side-project) — [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md)
 - **Echo Lattice:** frozen & **kept** at `game/echo_lattice/`; migrate is **plan only** — [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md)
-- **Playable root:** `game/weaver/` Godot 4.3 MVP stub landed (placeholder loop)
+- **Playable root:** `game/weaver/` Godot 4.3 MVP stub landed (placeholder loop); superseded as launch path by hybrid above
 
 ### Corpus
 
