@@ -1,0 +1,5 @@
+; Merged into project.godot [autoload] (META-P1-03).
+; Local-only by default — leave upload URL empty in configure().
+;
+; [autoload]
+CrashLogHook="*res://scripts/ops/crash_log_hook.gd"

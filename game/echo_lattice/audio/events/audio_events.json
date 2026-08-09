@@ -1,7 +1,7 @@
 {
-  "version": 2,
+  "version": 3,
   "product": "Echo Lattice",
-  "notes": "Structured audio events for Godot AudioDirector. Paths are res:// relative to the echo_lattice project root. Prefer .ogg; AudioManager falls back to .wav.",
+  "notes": "Structured audio events for Godot AudioDirector (AUDIO v3 earprint lift). Paths are res:// relative to the echo_lattice project root. Prefer .ogg; AudioManager falls back to .wav. Rewrite streams are multi-stage ~0.90s slam phrases; music stems are Ledger Cell motif transforms. Still procedural until authored 1.0 assets land.",
   "buses": ["Master", "SFX", "Music", "UI", "PA"],
   "operators": [
     "fossilize_hot_cell",
@@ -14,6 +14,12 @@
     "thicken",
     "invert"
   ],
+  "operator_aliases": {
+    "mirror_v": "mirror",
+    "mirror_h": "mirror",
+    "mirror_v_then_h": "mirror",
+    "rotate_180": "rotate"
+  },
   "events": {
     "sfx.footstep": {
       "bus": "SFX",
@@ -170,10 +176,32 @@
       "category": "win",
       "music_hook": "on_chamber_win"
     },
+    "fail.reset": {
+      "bus": "SFX",
+      "stream": "res://audio/sfx/fail/reset.ogg",
+      "category": "fail",
+      "duck_music_db": -2.5,
+      "duck_ms": 350,
+      "music_hook": "on_death_reset"
+    },
+    "ui.select": {
+      "bus": "UI",
+      "stream": "res://audio/ui/ui_select_placeholder.ogg",
+      "category": "ui",
+      "pitch_jitter": 0.03,
+      "notes": "Field Index selection tick — paper/ink; silence gaps owned by AudioDirector.on_ui_select"
+    },
+    "ui.hover": {
+      "bus": "UI",
+      "stream": "res://audio/ui/ui_hover_placeholder.ogg",
+      "category": "ui",
+      "notes": "Extremely soft mouse-hover fiber; skipped when focused or during silence gaps"
+    },
     "ui.click": {
       "bus": "UI",
       "stream": "res://audio/ui/ui_click_placeholder.ogg",
-      "category": "ui"
+      "category": "ui",
+      "notes": "Confirm stinger — soft ledger stamp on IndexAction activate (not boot)"
     },
     "music.layer.L0": {
       "bus": "Music",

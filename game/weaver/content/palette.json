@@ -1,0 +1,50 @@
+{
+  "name": "The Weaver — Shed Loom",
+  "version": "0.1.0",
+  "notes": "Diegetic workshop palette for the W1 juice spike. Fiber, dust, timber, kiln copper. Never purple void.",
+  "swatches": {
+    "cloth_bone":      { "hex": "#E8DFC8", "role": "field substrate — warm bone paper / raw canvas" },
+    "cloth_deep":      { "hex": "#D4C7A8", "role": "worn cloth, gap shadow underlay" },
+    "ink_seat":        { "hex": "#2C2620", "role": "seated seams, Fragment silhouettes" },
+    "ink_soft":        { "hex": "#4A4238", "role": "secondary line, chalk under-ink" },
+    "chalk_dust":      { "hex": "#C4B8A0", "role": "fragment suck wisps, provisional fiber" },
+    "chalk_bright":    { "hex": "#F0E8D4", "role": "combine flash peak — paper press, not neon" },
+    "timber":          { "hex": "#6B5344", "role": "Span / Anchor body" },
+    "kiln_copper":     { "hex": "#B8784A", "role": "weave pulse crest, stress accent ≤10%" },
+    "kiln_rust":       { "hex": "#8B4A2A", "role": "overload creep along Thread" },
+    "gap_void":        { "hex": "#3A342C", "role": "frayed physical gap — torn edge, never chroma purple" },
+    "shed_lamp":       { "hex": "#E8D2A8", "role": "single practical light wash" }
+  },
+  "banlist": {
+    "notes": "Hard ban — see docs/WEAVER/09_VISUAL.md §1 and docs/WEAVER/35_JUICE.md.",
+    "colors": [
+      "#7F00FF", "#B026FF", "#8A2BE2", "#9B59B6",
+      "any mystical saturated purple / violet bloom",
+      "neon magenta, cyberpunk cyan, rainbow rarity"
+    ],
+    "effects": [
+      "full-screen purple energy flash",
+      "magnet catch beam / Pokémon suck",
+      "additive bloom halos on Fragments",
+      "idle UI breathe/pulse chrome",
+      "confetti / portal swallow on Structure seat"
+    ]
+  },
+  "juice": {
+    "fragment_suck": {
+      "duration_ms": 320,
+      "wisp_count": 6,
+      "material": "chalk_dust + fiber strand toward hand"
+    },
+    "combine_flash": {
+      "duration_ms": 140,
+      "peak": 0.55,
+      "material": "chalk_bright paper press at seam — local, not full-screen"
+    },
+    "weave_pulse": {
+      "duration_ms": 480,
+      "cycles": 2,
+      "material": "kiln_copper crest along taut Thread body"
+    }
+  }
+}

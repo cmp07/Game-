@@ -3,7 +3,9 @@
 **Doc:** `06_AUDIO_BIBLE`  
 **Product:** Echo Lattice (Game 1)  
 **Engine:** Godot 4.3+  
-**Status:** AUDIO v2 — adaptive habit layers, operator stingers, diegetic PA, silence policy, structured events  
+**Status:** AUDIO v2 wiring + AUDIO v3 procedural earprint lift (catalog v3)  
+**Identity vision:** [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md)  
+**Production debt:** [`../AUDIT/PRODUCTION_AUDIO_DEBT.md`](../AUDIT/PRODUCTION_AUDIO_DEBT.md)  
 **Companion assets:** [`game/echo_lattice/audio/`](../../game/echo_lattice/audio/)  
 **Tone companion:** [`12_TONE_AND_TUTORIAL.md`](12_TONE_AND_TUTORIAL.md) (PA copy; this doc owns PA *sound*)
 
@@ -173,17 +175,19 @@ Each operator in the habit engine / transform pack has a dedicated one-shot. Pla
 
 | Operator | Event id | Sonic identity |
 |---|---|---|
-| `fossilize_hot_cell` | `sfx.rewrite.fossilize_hot_cell` | Descending lock → cold plate |
-| `place_deflector` | `sfx.rewrite.place_deflector` | Lateral shove + metallic edge |
-| `carve_shortcut` | `sfx.rewrite.carve_shortcut` | Air rush → bright gate click |
-| `grow_wall_far_from_path` | `sfx.rewrite.grow_wall_far_from_path` | Stacked rising fifths (accretion) |
-| `widen_hot_corridor` | `sfx.rewrite.widen_hot_corridor` | Detuned open / lateral bloom |
-| `mirror` | `sfx.rewrite.mirror` | Motif then exact reverse |
-| `rotate` | `sfx.rewrite.rotate` | Pivot around a center tone |
-| `thicken` | `sfx.rewrite.thicken` | Low stack grows harmonics |
-| `invert` | `sfx.rewrite.invert` | High tick → submerged inverse |
+| `fossilize_hot_cell` | `sfx.rewrite.fossilize_hot_cell` | Shared slam grammar + descending lock → cold plate |
+| `place_deflector` | `sfx.rewrite.place_deflector` | Shared slam + lateral shove (M2) + metallic edge |
+| `carve_shortcut` | `sfx.rewrite.carve_shortcut` | Shared slam + air gate → bright click (shortest bleed) |
+| `grow_wall_far_from_path` | `sfx.rewrite.grow_wall_far_from_path` | Shared slam + stacked rising fifths |
+| `widen_hot_corridor` | `sfx.rewrite.widen_hot_corridor` | Shared slam + detuned open fifth bloom |
+| `mirror` | `sfx.rewrite.mirror` | Shared slam + motif then exact reverse |
+| `rotate` | `sfx.rewrite.rotate` | Shared slam + pivot around a center tone |
+| `thicken` | `sfx.rewrite.thicken` | Shared slam + low stack grows harmonics |
+| `invert` | `sfx.rewrite.invert` | Shared slam + high tick → submerged inverse |
 
-Unknown operator → `sfx.rewrite` generic. Always call `AdaptiveMusic.pulse_rewrite()` alongside the stinger (`AudioDirector.on_rewrite` does this).
+Each operator stream is a **~0.90s multi-stage phrase** (heartbeat → rest → crease → lift → slot → bleed), not a short one-shot blob. Unknown operator → `sfx.rewrite` generic phrase. Always call `AdaptiveMusic.pulse_rewrite()` alongside (`AudioDirector.on_rewrite` does this).
+
+**Content-transform aliases** (campaign chamber `transform` strings → catalog operators): `mirror_v` / `mirror_h` / `mirror_v_then_h` → `mirror`; `rotate_180` → `rotate`; `thicken` / `invert` pass through. Implemented in `AudioEvents.rewrite_event_id` + `operator_aliases` in `audio_events.json`.
 
 Warn telegraph remains shared: `sfx.rewrite_warn` when habit tension crosses threshold (footstep pitch still rises with tension — §8).
 
@@ -226,19 +230,24 @@ When `habit_tension ≥ 0.7` for 2+ steps, layer a thin metallic overtone (same 
 
 | Event | Role |
 |---|---|
-| `win.chamber` | Short major resolve (satisfaction) |
+| `win.chamber` | Short resolve via Ledger Cell 1→5 (satisfaction) |
 | `win.queue_next` | Unresolved rising fourth → sharp leading tone that **cuts early** |
 | `win.fanfare` | Concatenated resolve + queue-next (single file / v1 compat path) |
 | `win.wing` | Longer wing clear |
+| `fail.reset` | Dry institutional restart / recover (not cartoon or horror) |
 
-`AudioDirector.on_chamber_won()` fires `win.chamber`, which **follow_up**s `win.queue_next` (~80 ms). The open loop is intentional: dopamine for “one more chamber,” not a fully closed cadence.
+`AudioDirector.on_chamber_won()` fires `win.chamber`, which **follow_up**s `win.queue_next` (~80 ms). The open loop is intentional: dopamine for “one more chamber,” not a fully closed cadence. `AudioDirector.on_fail_reset()` fires `fail.reset` (chamber restart).
 
 ### 8.3 UI
 
 | Event | Bus | Notes |
 |---|---|---|
-| `ui.click` | UI | Soft ticks; never compete with rewrite/PA |
+| `ui.select` | UI | Focus move — paper/ink selection tick; `AudioDirector.on_ui_select` enforces silence gaps |
+| `ui.hover` | UI | Extremely soft mouse-hover fiber; skipped when focused / noisy |
+| `ui.click` | UI | Confirm stinger on IndexAction activate (`on_ui_confirm`); never on shell `_ready` |
 | Pause | — | Music ducks −8 dB; SFX/PA unchanged |
+
+Shell wiring: `LedgerChrome.wire_index_feel` + `AudioDirector.arm_ui_feel()` after `grab_focus` so open stays silent (AUDIO_V3 §6.4).
 
 ---
 
@@ -327,6 +336,7 @@ Test on: laptop speakers, cheap earbuds, one reference headset.
 |---|---|
 | **v1** | Buses, generic placeholders, intensity stub |
 | **v2** | Habit-solidify layers, per-operator stingers, PA bus + tones, silence policy, structured events, queue-next win fanfare |
+| **v3** | Identity vision (authored mix) — slam as musical event, habit as motif, silence as tool: [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) + [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md) |
 
 ---
 
@@ -336,3 +346,4 @@ Test on: laptop speakers, cheap earbuds, one reference headset.
 - Art material notes (paper-crease, chalk-scuff): [`05_ART_BIBLE.md`](05_ART_BIBLE.md)
 - Operators: habit engine `rewrite_operators.gd` + systems transform packs
 - Risk note: cold/abstract → audio identity is load-bearing for Steam page and demo feel
+- **1.0 identity / cue sheet:** [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md), [`../VISION/AUDIO_1_0_CUE_SHEET.md`](../VISION/AUDIO_1_0_CUE_SHEET.md)

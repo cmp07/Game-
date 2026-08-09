@@ -1,11 +1,16 @@
 extends Control
 ##
-## Chamber-won screen — stars + habit beat between chambers.
+## Clear Stamp — chamber-won ledger leaf between chambers.
+## Stars + habit beat + Museum archive note as a stamped page.
+## Identity bosses / Mirror Birth moments also print a ledger portrait stamp.
 ##
 
 signal next_pressed()
 signal replay_pressed()
 signal menu_pressed()
+
+const STAMP_CARD_SCRIPT: Script = preload("res://scripts/identity_stamp_card.gd")
+const VIGNETTE_SCRIPT: Script = preload("res://scripts/habit_replay_vignette.gd")
 
 @onready var title_label: Label = %Title
 @onready var subtitle_label: Label = %Subtitle
@@ -14,45 +19,348 @@ signal menu_pressed()
 @onready var replay_button: Button = %ReplayButton
 @onready var menu_button: Button = %MenuButton
 
+var _stamp_card: Control = null
+var _stamp_label: Label = null
+var _museum_label: Label = null
+var _vignette: Control = null
+var _folio_label: Label = null
+
 
 func _ready() -> void:
+	_ensure_folio_mark()
+	replay_button.text = tr("won.replay")
+	menu_button.text = tr("won.menu")
 	next_button.pressed.connect(func(): emit_signal("next_pressed"))
 	replay_button.pressed.connect(func(): emit_signal("replay_pressed"))
 	menu_button.pressed.connect(func(): emit_signal("menu_pressed"))
+	next_button.focus_mode = Control.FOCUS_ALL
+	replay_button.focus_mode = Control.FOCUS_ALL
+	menu_button.focus_mode = Control.FOCUS_ALL
+	_style_index_actions()
 	next_button.grab_focus()
+	set_process(true)
+	set_process_unhandled_input(true)
+	_ensure_stamp_widgets()
+	_ensure_museum_widgets()
+	queue_redraw()
+
+
+func _process(_delta: float) -> void:
+	queue_redraw()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	## B / Start returns to menu without needing the on-screen keyboard.
+	if event.is_action_pressed("pause_menu"):
+		emit_signal("menu_pressed")
+		get_viewport().set_input_as_handled()
 
 
 func configure(chamber_id: int, moves: int) -> void:
 	var data: Dictionary = ChamberBook.get_chamber(chamber_id)
-	title_label.text = "Chamber Cleared"
-	subtitle_label.text = str(data.get("title", ""))
+	title_label.text = tr("won.title")
+	var cid: String = str(data.get("content_id", data.get("id", "")))
+	var title_fallback: String = str(data.get("title", ""))
+	if has_node("/root/LocaleManager") and cid != "":
+		subtitle_label.text = LocaleManager.translate_chamber_title(cid, title_fallback)
+	else:
+		subtitle_label.text = title_fallback
 	var best: int = int(GameState.best_moves.get(chamber_id, moves))
 	var stars: int = GameState.last_clear_stars
 	var best_stars: int = int(GameState.best_stars.get(chamber_id, stars))
 	var star_str: String = _stars_glyph(stars)
 	var is_last: bool = GameState.run_progress_index() + 1 >= GameState.chambers_in_run()
-	var next_text: String = "→ Next Chamber" if not is_last else "→ Finish Wing"
-	if GameState.run_mode == "daily":
-		next_text = "→ Next Daily" if not is_last else "→ Daily Complete"
+	var next_text: String = tr("won.next_chamber") if not is_last else tr("won.finish_wing")
+	if DemoBuild.is_demo():
+		next_text = tr("won.next_chamber") if not is_last else tr("won.finish_demo")
+	elif GameState.run_mode == "daily":
+		next_text = tr("won.next_daily") if not is_last else tr("won.daily_complete")
+	elif GameState.run_mode == "endless":
+		next_text = tr("won.next_endless")
+		is_last = false
+	elif GameState.run_mode == "ghost":
+		next_text = tr("won.back_museum")
+		is_last = true
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
-		mode_line = "\nDaily %s" % GameState.daily_label
-	stats_label.text = "%s\nMoves: %d  (best %d)\nBest stars: %d★\nPar path: %d%s\n\nHabit: %s" % [
-		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_summary()
-	]
+		if GameState.daily_friend_code != "":
+			mode_line = tr("won.daily_line_code") % [GameState.daily_label, GameState.daily_friend_code]
+		else:
+			mode_line = tr("won.daily_line") % GameState.daily_label
+	elif GameState.run_mode == "endless":
+		var pct: int = int(round(GameState.rewrite_pressure() * 100.0))
+		mode_line = tr("won.endless_line") % [GameState.endless_label, GameState.endless_depth, pct]
+	elif GameState.run_mode == "ghost":
+		var raced: Dictionary = GameState.raced_museum_self() if GameState.has_method("raced_museum_self") else {}
+		mode_line = tr("won.ghost_line") % str(raced.get("title", tr("museum.title")))
+	var stamp: Dictionary = GameState.last_identity_stamp
+	var stamp_line: String = ""
+	if not stamp.is_empty():
+		stamp_line = "\n" + _stamp_summary(stamp)
+	var museum_row: Dictionary = GameState.last_museum_self
+	var museum_line: String = ""
+	if not museum_row.is_empty():
+		museum_line = "\n" + _museum_summary(museum_row)
+	stats_label.text = (tr("won.stats") % [
+		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_answer_line(data)
+	]) + stamp_line + museum_line
+	_show_stamp(stamp)
+	_show_museum(museum_row)
+	queue_redraw()
+
+
+func _ensure_folio_mark() -> void:
+	if _folio_label != null:
+		return
+	_folio_label = Label.new()
+	_folio_label.name = "FolioMark"
+	_folio_label.text = tr("won.folio_mark")
+	_folio_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_folio_label.add_theme_font_size_override("font_size", 12)
+	_folio_label.add_theme_color_override("font_color", Palette.SLATE_TEAL)
+	_folio_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_folio_label.offset_left = 56.0
+	_folio_label.offset_top = 36.0
+	_folio_label.offset_right = -56.0
+	_folio_label.offset_bottom = 56.0
+	_folio_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_folio_label)
+	move_child(_folio_label, 0)
+
+
+func _style_index_actions() -> void:
+	for btn in [next_button, replay_button, menu_button]:
+		if btn == null:
+			continue
+		btn.flat = true
+		btn.add_theme_color_override("font_color", Palette.INK_BLACK)
+		btn.add_theme_color_override("font_hover_color", Palette.SLATE_TEAL)
+		btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
+		btn.add_theme_color_override("font_pressed_color", Palette.RUST_FOSSIL)
+	next_button.add_theme_color_override("font_color", Palette.RUST_FOSSIL)
+	next_button.add_theme_font_size_override("font_size", 22)
+	if has_node("/root/LedgerType"):
+		LedgerType.apply_to_control(title_label, "display", 44)
+		LedgerType.apply_to_control(subtitle_label, "body", 20)
+		LedgerType.apply_to_control(stats_label, "body", 15)
+		LedgerType.apply_to_control(next_button, "display", 22)
+		LedgerType.apply_to_control(replay_button, "body", 16)
+		LedgerType.apply_to_control(menu_button, "body", 16)
+		if _folio_label:
+			LedgerType.apply_to_control(_folio_label, "mono", 12)
+
+
+func _ensure_stamp_widgets() -> void:
+	if _stamp_card != null:
+		return
+	var vbox: Node = next_button.get_parent()
+	if vbox == null:
+		return
+	_stamp_card = Control.new()
+	_stamp_card.name = "StampCard"
+	_stamp_card.set_script(STAMP_CARD_SCRIPT)
+	_stamp_card.custom_minimum_size = Vector2(220, 140)
+	_stamp_card.visible = false
+	vbox.add_child(_stamp_card)
+	vbox.move_child(_stamp_card, stats_label.get_index() + 1)
+	_stamp_label = Label.new()
+	_stamp_label.name = "StampCaption"
+	_stamp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_stamp_label.add_theme_font_size_override("font_size", 14)
+	_stamp_label.add_theme_color_override("font_color", Palette.SLATE_TEAL)
+	_stamp_label.visible = false
+	vbox.add_child(_stamp_label)
+	vbox.move_child(_stamp_label, _stamp_card.get_index() + 1)
+
+
+func _show_stamp(stamp: Dictionary) -> void:
+	_ensure_stamp_widgets()
+	if _stamp_card == null:
+		return
+	if stamp.is_empty():
+		_stamp_card.visible = false
+		if _stamp_label:
+			_stamp_label.visible = false
+		return
+	if _stamp_card.has_method("set_stamp"):
+		_stamp_card.call("set_stamp", stamp)
+	_stamp_card.visible = true
+	if _stamp_label:
+		_stamp_label.text = _stamp_summary(stamp)
+		_stamp_label.visible = true
+
+
+func _stamp_summary(stamp: Dictionary) -> String:
+	var grade: String = str(stamp.get("grade", "scribble"))
+	var grade_key := "won.stamp_grade_%s" % grade
+	var grade_label: String = tr(grade_key)
+	if grade_label == grade_key:
+		grade_label = grade
+	var pct: int = int(round(float(stamp.get("portrait", 0.0)) * 100.0))
+	if bool(stamp.get("identity_boss", false)):
+		return tr("won.stamp_boss") % [grade_label, pct]
+	return tr("won.stamp_birth") % [grade_label, pct]
+
+
+func _ensure_museum_widgets() -> void:
+	if _museum_label != null:
+		return
+	var vbox: Node = next_button.get_parent()
+	if vbox == null:
+		return
+	_museum_label = Label.new()
+	_museum_label.name = "MuseumCaption"
+	_museum_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_museum_label.add_theme_font_size_override("font_size", 14)
+	_museum_label.add_theme_color_override("font_color", Palette.RUST_FOSSIL)
+	_museum_label.visible = false
+	vbox.add_child(_museum_label)
+	var insert_at: int = stats_label.get_index() + 1
+	if _stamp_label != null:
+		insert_at = _stamp_label.get_index() + 1
+	elif _stamp_card != null:
+		insert_at = _stamp_card.get_index() + 1
+	vbox.move_child(_museum_label, insert_at)
+	_vignette = Control.new()
+	_vignette.name = "HabitReplayVignette"
+	_vignette.set_script(VIGNETTE_SCRIPT)
+	_vignette.custom_minimum_size = Vector2(280, 120)
+	_vignette.visible = false
+	vbox.add_child(_vignette)
+	vbox.move_child(_vignette, _museum_label.get_index() + 1)
+
+
+func _show_museum(row: Dictionary) -> void:
+	_ensure_museum_widgets()
+	if _museum_label == null:
+		return
+	if row.is_empty():
+		_museum_label.visible = false
+		if _vignette:
+			_vignette.visible = false
+		return
+	_museum_label.text = _museum_summary(row)
+	_museum_label.visible = true
+	if _vignette and _vignette.has_method("set_self_row"):
+		_vignette.call("set_self_row", row)
+		_vignette.visible = true
+
+
+func _museum_summary(row: Dictionary) -> String:
+	var habit: Dictionary = row.get("habit", {}) if typeof(row.get("habit", null)) == TYPE_DICTIONARY else {}
+	var arch: String = str(habit.get("archetype", "balanced"))
+	var bias_pct: int = int(round(float(habit.get("dominant_bias", 0.0)) * 100.0))
+	var count: int = GameState.museum_count()
+	return tr("won.museum_archive") % [str(row.get("title", "")), arch, bias_pct, count]
+
+
+func _habit_answer_line(data: Dictionary) -> String:
+	## Remix / Daily / Endless: plain-speech habit answer over HUD jargon.
+	if not GameState.is_habit_identity_visible():
+		return tr("hud.habit_sealed")
+	var answer: Dictionary = GameState.last_habit_answer
+	var role: String = str(data.get("role", ""))
+	var wants_answer: bool = role in ["remix", "hard", "daily_showcase"] or GameState.run_mode in ["daily", "endless"]
+	if wants_answer and not answer.is_empty():
+		var arch: String = str(answer.get("archetype", "balanced"))
+		var read_key := "habit.read.%s" % arch
+		var read_line: String = tr(read_key)
+		if read_line == read_key:
+			read_line = arch
+		var op: String = str(answer.get("op", ""))
+		var counter_line: String = ""
+		if op != "":
+			var op_key := "habit.op.%s" % op
+			var op_label: String = tr(op_key)
+			if op_label == op_key:
+				op_label = op.replace("_", " ")
+			counter_line = tr("habit.answer.counter") % op_label
+		else:
+			counter_line = tr("won.habit_quiet")
+		return tr("won.habit_answer") % [read_line, counter_line]
+	return _habit_summary()
 
 
 func _habit_summary() -> String:
+	if not GameState.is_habit_identity_visible():
+		return tr("hud.habit_sealed")
 	var hp: Dictionary = GameState.habit_profile
 	var total: int = int(hp.get("up", 0)) + int(hp.get("down", 0)) + int(hp.get("left", 0)) + int(hp.get("right", 0))
 	if total <= 0:
-		return "unwritten"
-	return "%s-leaning" % GameState.dominant_habit()
+		return tr("hud.habit_unwritten")
+	var dom: String = GameState.dominant_habit()
+	var dom_label: String = dom
+	if has_node("/root/LocaleManager"):
+		dom_label = LocaleManager.habit_label(dom)
+	var hand: String = _habit_hand_label(GameState.habit_hand_id())
+	return tr("hud.habit_identity") % [dom_label, hand]
+
+
+func _habit_hand_label(hand_id: String) -> String:
+	var key := "habit.hand_%s" % hand_id
+	var t: String = tr(key)
+	if t == key:
+		return hand_id
+	return t
 
 
 func _stars_glyph(n: int) -> String:
-	var out := ""
-	for i in range(3):
-		out += "*" if i < n else "-"
-	return out + " (%d/3)" % n
+	## Ink stamp marks — never ASCII * / - scaffolding.
+	var clamped: int = clampi(n, 0, 3)
+	var out: String = ""
+	if has_node("/root/LedgerType"):
+		out = LedgerType.stars_ink(clamped)
+	else:
+		for i in range(3):
+			out += "★" if i < clamped else "☆"
+	return tr("won.stars_glyph") % [out, clamped]
+
+
+func _draw() -> void:
+	var vp: Vector2 = size
+	if vp.x < 2.0:
+		vp = get_viewport_rect().size
+
+	draw_rect(Rect2(Vector2.ZERO, vp), Palette.PAPER_MARGIN, true)
+	ArtKit.draw_paper_grain(self, Rect2(Vector2.ZERO, vp), 5, 0.05)
+
+	var page := Rect2(48, 28, vp.x - 96, vp.y - 56)
+	draw_rect(Rect2(page.position + Vector2(5, 7), page.size), Palette.PAPER_SHADOW, true)
+	draw_rect(page, Palette.PAPER_BONE, true)
+	ArtKit.draw_ledger_grid(self, page, 24)
+	ArtKit.draw_paper_grain(self, page, 17, 0.06)
+	draw_rect(page, Palette.INK_SOFT, false, 2.0)
+	draw_rect(page.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45), false, 1.0)
+
+	# Binder holes — Clear Stamp leaf chrome.
+	for i in range(5):
+		var hy: float = page.position.y + 40.0 + float(i) * ((page.size.y - 80.0) / 4.0)
+		draw_circle(Vector2(page.position.x + 16.0, hy), 4.0, Palette.INK_SOFT)
+		draw_circle(Vector2(page.position.x + 16.0, hy), 2.2, Palette.PAPER_BONE)
+
+	# Folio header double rule under FIELD LEDGER · CLEAR STAMP.
+	var rule_y: float = page.position.y + 44.0
+	draw_line(Vector2(page.position.x + 36.0, rule_y), Vector2(page.end.x - 24.0, rule_y), Palette.INK_SOFT, 1.0)
+	draw_line(Vector2(page.position.x + 36.0, rule_y + 4.0), Vector2(page.end.x - 24.0, rule_y + 4.0), Palette.INK_SOFT, 1.0)
+
+	# Rust seal tick — ceremony punctuation, not a badge overlay.
+	draw_rect(Rect2(page.end.x - 40.0, page.position.y + 18.0, 18.0, 3.0), Palette.RUST_FOSSIL, true)
+
+	_draw_button_underlines()
+
+
+func _draw_button_underlines() -> void:
+	for btn in [next_button, replay_button, menu_button]:
+		if btn == null or not is_instance_valid(btn):
+			continue
+		var r: Rect2 = btn.get_global_rect()
+		var local_pos: Vector2 = r.position - global_position
+		var focused: bool = btn.has_focus()
+		var hovered: bool = btn.is_hovered()
+		if focused:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 220.0), 2.0), Palette.RUST_FOSSIL, true)
+		elif hovered and not btn.disabled:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 200.0), 2.0), Palette.SLATE_TEAL, true)
+		elif not btn.disabled:
+			draw_rect(Rect2(local_pos.x, local_pos.y + r.size.y - 4, minf(r.size.x, 160.0), 1.0), Palette.INK_SOFT, true)

@@ -69,28 +69,34 @@ Same idea, mirrored across the horizontal axis. The path along the top of the ma
 1. Install [Godot 4.3](https://godotengine.org/download/archive/4.3-stable/) (Standard, not .NET). The project is single-language GDScript and does not need Mono.
 2. In the editor's project manager, **Import** `game/echo_lattice/project.godot`.
 3. Press **F5** (Run Project). Main scene is `res://scenes/main.tscn`.
-4. `Debug > Run Project` uses the built-in Forward+ renderer path automatically since we ship with `renderer/rendering_method="gl_compatibility"` — no additional configuration is needed.
+4. `Debug > Run Project` uses the Compatibility renderer (`renderer/rendering_method="gl_compatibility"`, `config/features` includes `"GL Compatibility"`) — no additional configuration is needed.
 
 ### Controls
 
-| Action | Keys |
-|---|---|
-| Move | `WASD` or arrow keys |
-| Undo last move | `Z` |
-| Restart chamber | `R` |
-| Menu | `Esc` |
-| Confirm (menus) | `Enter` or `Space` |
+| Action | Keys | Gamepad (Deck / Xbox) |
+|---|---|---|
+| Move | `WASD` or arrow keys | D-Pad or Left Stick |
+| Undo last move | `Z` | **X** |
+| Restart chamber | `R` | **Y** |
+| Menu / Back | `Esc` | **B** or **Start** |
+| Confirm (menus) | `Enter` or `Space` | **A** |
 
-Movement is grid-locked and step-based; every keypress is one tile. The undo stack rewinds one move at a time, including reverting an echo-wall rewrite if you undo across a checkpoint.
+Movement is grid-locked and step-based; every press is one tile. The undo stack rewinds one move at a time, including reverting an echo-wall rewrite if you undo across a checkpoint.
+
+Steam Deck Verified prep (glyphs, 16:10 layout check, TDP targets, native Linux notes): [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md).
 
 ---
 
 ## Building
 
-The project ships with two working export presets (`game/echo_lattice/export_presets.cfg`):
+The project ships with export presets (`game/echo_lattice/export_presets.cfg`):
 
 - `Windows Desktop` → `builds/windows/EchoLattice.exe` (x86_64, PCK not embedded)
-- `Linux/X11` → `builds/linux/EchoLattice.x86_64` (x86_64, PCK not embedded)
+- `Linux/X11` → `builds/linux/EchoLattice.x86_64` (x86_64, PCK not embedded) — Steam Linux / Deck path
+- `macOS` → `builds/macos/EchoLattice.zip` (universal; **unsigned stub** — notarize before public mac builds)
+- `Windows Demo` → `builds/windows_demo/EchoLatticeDemo.exe` (`custom_features=demo`, Act I only — see [`docs/RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md))
+
+Store matrix and CI sketch: [`docs/RELEASE/PLATFORMS.md`](../RELEASE/PLATFORMS.md) · [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md).
 
 To build headlessly (no editor UI required):
 
@@ -98,6 +104,8 @@ To build headlessly (no editor UI required):
 cd game/echo_lattice
 godot --headless --export-release "Windows Desktop" builds/windows/EchoLattice.exe
 godot --headless --export-release "Linux/X11"       builds/linux/EchoLattice.x86_64
+godot --headless --export-release "macOS"           builds/macos/EchoLattice.zip
+godot --headless --export-release "Windows Demo"    builds/windows_demo/EchoLatticeDemo.exe
 ```
 
 You need the matching Godot 4.3 export templates installed. Install them via the editor (`Editor > Manage Export Templates > Download and Install`) or, if you are automating a CI job, drop the extracted `templates/` folder into:
@@ -109,14 +117,9 @@ The templates archive is `Godot_v4.3-stable_export_templates.tpz` from the [Godo
 
 We deliberately set `application/modify_resources=false` in the Windows preset so the export does **not** require `rcedit.exe` on the build machine. If you want the produced `.exe` to embed the Windows resource metadata (icon, product name), install rcedit and flip that option back on.
 
-### macOS export (not automated in this slice)
+### macOS signing
 
-We did not author a macOS preset because signing/notarisation requires developer credentials that are out of scope for a vertical slice. To add one manually:
-
-1. Editor → Project → Export → Add… → macOS.
-2. Set `binary_format/architecture = "universal"`.
-3. Ship the `.zip` (Godot writes a .app inside).
-4. Sign / notarise before distributing.
+The committed `macOS` preset leaves codesign and notarization **disabled** so CI can export without Apple credentials. Before distributing to players: enable signing/notarization (or set `GODOT_MACOS_*` env vars — see [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md)).
 
 ---
 
@@ -128,12 +131,17 @@ The project has a self-test entry point that runs the same rewrite math, save/lo
 cd game/echo_lattice
 godot --headless --path . -- --selftest
 # expected: "result: OK" and exit code 0
+
+# Next Fest demo scope (Act I + Mirror Birth, no late-act spoilers):
+godot --headless --path . -- --selftest --demo
 ```
 
 Content v2 expands the campaign to **35 playable chambers across 4 Acts** (+ 4 hard variants) loaded from `content/chambers/*.json`. Python validation (no Godot required):
 
 ```bash
 python3 game/echo_lattice/tests/validate_chambers.py
+# expected: "result: OK"
+python3 game/echo_lattice/tests/test_demo_spec.py
 # expected: "result: OK"
 ```
 
@@ -156,9 +164,9 @@ This has been run against both the editor-driven project and the exported Linux 
 
 ```
 game/echo_lattice/
-├── project.godot                # Autoloads, input map, Forward+/GLES3 setup
+├── project.godot                # Autoloads, input map, gl_compatibility setup
 ├── icon.svg                     # Boot / window icon (lattice mark)
-├── export_presets.cfg           # Windows Desktop + Linux/X11 presets
+├── export_presets.cfg           # Windows + Linux/X11 + macOS stub + Windows Demo
 ├── content/
 │   ├── chambers/*.json          # 39 authored chambers (source of truth)
 │   ├── acts.json                # 4 Acts — Induction→Mastery
@@ -226,12 +234,12 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 | Ghost path replay | Ghost of your previous solve visible in-scene | Ghost trail exists **only since the last checkpoint** — no cross-run ghost yet |
 | Undo | Present in MVP | ✅ Undo works (stack, reverts across rewrites) |
 | Audio | Footstep material pitch-shift + rewrite sting (identity beat) | **No audio yet** — silent build |
-| Accessibility | Colorblind lattice palette, hold-to-walk, controller glyphs | Grid tile parity + one accent color (already colorblind-safe); **no controller glyphs**, **no hold-to-walk repeat** |
+| Accessibility | Colorblind lattice palette, hold-to-walk, controller glyphs | Grid tile parity + one accent color (already colorblind-safe); **controller glyphs + full gamepad path shipped** (Deck prep); **no hold-to-walk repeat** |
 | Habit profile UI | Full readout (dash-heavy / loopy / hesitant), biases transform packs | **HUD readout only** (`Habit: right-leaning 64%`) — profile does **not** yet bias content |
 | Save format | Cloud sync + daily seed history | Local JSON save; **daily seed catalog shipped** (`content/daily/seeds.json`) — menu wiring still pending |
 | Steam integration | Achievements, Cloud, Workshop, leaderboards for ghost races | **None** — slice is store-agnostic |
 | Level editor / Workshop | Post-MVP goal | **Not present** |
-| Localisation | Selected via Steam locale | **English only** |
+| Localisation | Selected via Steam locale | **EN + zh-Hans** via `TranslationServer` / `LocaleManager` — see [`docs/RELEASE/LOCALIZATION.md`](../RELEASE/LOCALIZATION.md) |
 | Presentation | Optional fake-3D parallax later | **Pure top-down 2D** |
 | Trailer / capsule art | Required for wishlist push | **Not authored** — see design bible for trailer beats |
 
@@ -247,7 +255,7 @@ The design bible calls for a 15–40 minute session that clears "a wing of 6–1
 
 **Add audio identity:** wire an `AudioStreamPlayer` per material (floor / wall / checkpoint) in `chamber.tscn` and call it from `_try_move`. The design bible's identity beat is footstep pitch-shifting when a rewrite is about to punish a habit — for that, watch the move ring in `GameState` and pitch by the dominant-direction ratio.
 
-**Add a controller preset:** the `move_up|down|left|right`, `undo`, `restart`, `pause_menu`, `confirm` actions in `project.godot` currently only bind keys. Add `InputEventJoypadButton` entries under each action.
+**Controller / Deck:** joypad bindings, `InputGlyphs`, and `DeckProfile` are in place — see [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md). Run `python3 game/echo_lattice/tests/check_deck_bindings.py` and (with Godot) `godot --path game/echo_lattice -- --deck-layout-check`.
 
 ---
 

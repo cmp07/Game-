@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cg6mpkfqpbcwy"
+
+[deps]
+
+files=["res://locale/echo_lattice.en.translation", "res://locale/echo_lattice.zh_Hans.translation"]
+
+source_file="res://locale/echo_lattice.csv"
+dest_files=["res://locale/echo_lattice.en.translation", "res://locale/echo_lattice.zh_Hans.translation"]
+
+[params]
+
+compress=true
+delimiter=0

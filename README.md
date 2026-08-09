@@ -16,9 +16,15 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
+- `docs/RELEASE/` — RC1 / multi-platform store strategy + CI build sketch ([`RC1_README.md`](docs/RELEASE/RC1_README.md))
+- `docs/RELEASE/STEAM_DECK.md` — Echo Lattice Steam Deck Verified prep
+- `docs/RELEASE/STEAMWORKS.md` — Steamworks readiness (offline stub by default)
+- `docs/RELEASE/ACHIEVEMENTS.json` — Steam achievement catalog
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/` — Godot 4 project (after a lane is locked)
+- `game/echo_lattice/` — **Launch path:** Godot 4.3 host for **The Weaver** (Lattice shell + Weaver field; chambers as Archive) — see [`game/echo_lattice/README.md`](game/echo_lattice/README.md) · [`docs/WEAVER/BUILD_ON_LATTICE.md`](docs/WEAVER/BUILD_ON_LATTICE.md)
+- `game/weaver/` — Temporary standalone Weaver spike (loop/juice twin; not the product launch path)
+- `steam/echo_lattice/` — SteamPipe VDF templates (placeholder AppID)
 
 ## Stack
 

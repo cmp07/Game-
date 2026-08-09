@@ -1,0 +1,13 @@
+{
+  "note": "FIRST_FIVE / MVP stub fragment families — authored data for loom pipeline.",
+  "families": [
+    { "id": "span", "label": "Span", "role": "soft / tensile length" },
+    { "id": "anchor", "label": "Anchor", "role": "stiff ground peg" }
+  ],
+  "combine_rule": {
+    "inputs": 2,
+    "output": "thread",
+    "thread_type": "Brace"
+  },
+  "recipes_path": "res://content/recipes.json"
+}

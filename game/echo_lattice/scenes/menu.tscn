@@ -13,33 +13,34 @@ script = ExtResource("1_menu")
 
 [node name="CardColumn" type="VBoxContainer" parent="."]
 anchors_preset = 0
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -120.0
-offset_right = -80.0
-offset_bottom = 200.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 256.0
+offset_bottom = 420.0
 grow_horizontal = 0
-grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="Subtitle" type="Label" parent="CardColumn"]
-unique_name_in_owner = true
-text = "Four Acts. Ink on paper."
-theme_override_font_sizes/font_size = 13
-theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 1)
+grow_vertical = 0
+theme_override_constants/separation = 6
 
 [node name="MetaLabel" type="Label" parent="CardColumn"]
 unique_name_in_owner = true
+size_flags_horizontal = 3
 text = "Daily"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 0.85)
+
+[node name="Subtitle" type="Label" parent="CardColumn"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+text = "Wing I on file."
+autowrap_mode = 3
 theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.29, 0.42, 0.467, 1)
+theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 0.78)
 
 [node name="ContinueButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 34)
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
 text = "Continue"
 flat = true
 theme_override_font_sizes/font_size = 20
@@ -47,7 +48,8 @@ alignment = 0
 
 [node name="StartButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 38)
+custom_minimum_size = Vector2(220, 36)
+size_flags_horizontal = 3
 text = "Start New Run"
 flat = true
 theme_override_font_sizes/font_size = 22
@@ -55,16 +57,63 @@ alignment = 0
 
 [node name="DailyButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 34)
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
 text = "Daily Challenge"
 flat = true
 theme_override_font_sizes/font_size = 20
 alignment = 0
 
+[node name="EndlessButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Endless"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
+[node name="HardButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Hard Variants"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
+[node name="MuseumButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Museum of Selves"
+flat = true
+theme_override_font_sizes/font_size = 20
+alignment = 0
+
+[node name="SettingsButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Instruments"
+flat = true
+theme_override_font_sizes/font_size = 18
+alignment = 0
+
+[node name="ColophonButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Colophon"
+flat = true
+theme_override_font_sizes/font_size = 18
+alignment = 0
+
 [node name="QuitButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 34)
-text = "Quit"
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Close ledger"
 flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0

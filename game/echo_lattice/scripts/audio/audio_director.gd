@@ -1,14 +1,24 @@
 extends Node
-## High-level AUDIO v2 facade for gameplay.
+## High-level AUDIO v3 facade for gameplay.
 ## Fire structured events; wires AdaptiveMusic, SilenceDirector, and PA.
+## Rewrite events play multi-stage slam phrases (~0.90s); see AUDIO_V3.md.
 
 signal event_fired(event_id: String, payload: Dictionary)
 
 @export var catalog_path: String = AudioEvents.CATALOG_PATH
 
+## Premium menu feel — authored rests between UI ticks (AUDIO_V3 P3 / §6.4).
+const UI_ARM_DELAY_MS: int = 120
+const UI_SELECT_GAP_MS: int = 95
+const UI_HOVER_GAP_MS: int = 160
+const UI_HOVER_AFTER_SELECT_MS: int = 200
+
 var _events: AudioEvents = AudioEvents.new()
 var _rng := RandomNumberGenerator.new()
 var _follow_up_timer: SceneTreeTimer
+var _ui_feel_armed_msec: int = 0
+var _last_ui_feel_msec: int = 0
+var _last_ui_feel_kind: String = ""
 
 
 func _ready() -> void:
@@ -77,6 +87,45 @@ func on_wing_clear() -> void:
 	var music := _adaptive_music()
 	if music:
 		music.on_chamber_win()
+
+
+func on_fail_reset() -> void:
+	## Chamber restart / habit-death recovery — dry institutional cue, not cartoon.
+	fire("fail.reset")
+
+
+## Arm after shell open / grab_focus so cold boot and overlay open stay silent.
+func arm_ui_feel(delay_ms: int = UI_ARM_DELAY_MS) -> void:
+	_ui_feel_armed_msec = Time.get_ticks_msec() + maxi(0, delay_ms)
+
+
+func on_ui_select() -> void:
+	## Focus move — paper/ink selection tick; silence between navigations.
+	if not _ui_feel_ready():
+		return
+	if not _ui_gap_ok(UI_SELECT_GAP_MS):
+		return
+	fire("ui.select")
+	_mark_ui_feel("select")
+
+
+func on_ui_hover() -> void:
+	## Mouse hover whisper — skip when noisy (recent select/confirm or gap).
+	if not _ui_feel_ready():
+		return
+	if not _ui_gap_ok(UI_HOVER_GAP_MS):
+		return
+	if _last_ui_feel_kind == "select":
+		if Time.get_ticks_msec() - _last_ui_feel_msec < UI_HOVER_AFTER_SELECT_MS:
+			return
+	fire("ui.hover")
+	_mark_ui_feel("hover")
+
+
+func on_ui_confirm() -> void:
+	## IndexAction activate — soft ledger confirm stinger (catalog ui.click).
+	fire("ui.click")
+	_mark_ui_feel("confirm")
 
 
 func on_pa_line(line_id: String) -> void:
@@ -182,6 +231,21 @@ func _habit_tension() -> float:
 	if music:
 		return music.get_habit_tension()
 	return 0.0
+
+
+func _ui_feel_ready() -> bool:
+	return Time.get_ticks_msec() >= _ui_feel_armed_msec
+
+
+func _ui_gap_ok(min_gap_ms: int) -> bool:
+	if _last_ui_feel_msec <= 0:
+		return true
+	return Time.get_ticks_msec() - _last_ui_feel_msec >= min_gap_ms
+
+
+func _mark_ui_feel(kind: String) -> void:
+	_last_ui_feel_msec = Time.get_ticks_msec()
+	_last_ui_feel_kind = kind
 
 
 func _audio_manager() -> Node:

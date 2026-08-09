@@ -1,0 +1,9 @@
+# Git LFS for font binaries. Latin IBM Plex faces are committed (V3-T0);
+# CJK faces stay gitignored until the team opts in (see fonts/cjk/README.md).
+# Fetch helpers: tools/fonts/fetch_ibm_plex_latin.py, fetch_noto_sans_sc.py.
+game/echo_lattice/fonts/cjk/*.otf filter=lfs diff=lfs merge=lfs -text
+game/echo_lattice/fonts/cjk/*.ttf filter=lfs diff=lfs merge=lfs -text
+game/echo_lattice/fonts/cjk/*.ttc filter=lfs diff=lfs merge=lfs -text
+game/echo_lattice/fonts/cjk/*.otc filter=lfs diff=lfs merge=lfs -text
+game/echo_lattice/fonts/latin/*.otf filter=lfs diff=lfs merge=lfs -text
+game/echo_lattice/fonts/latin/*.ttf filter=lfs diff=lfs merge=lfs -text

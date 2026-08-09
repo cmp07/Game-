@@ -1,0 +1,164 @@
+[gd_scene load_steps=4 format=3 uid="uid://weaver_field_0001"]
+
+[ext_resource type="Script" path="res://scripts/field.gd" id="1_field"]
+[ext_resource type="PackedScene" uid="uid://weaver_player_001" path="res://scenes/player.tscn" id="2_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_void"]
+size = Vector2(220, 420)
+
+[node name="Field" type="Node2D"]
+script = ExtResource("1_field")
+
+[node name="Ground" type="Polygon2D" parent="."]
+color = Color(0.9, 0.84, 0.72, 1)
+polygon = PackedVector2Array(0, 0, 1280, 0, 1280, 720, 0, 720)
+
+[node name="LeftDeck" type="Polygon2D" parent="."]
+color = Color(0.78, 0.7, 0.55, 1)
+polygon = PackedVector2Array(40, 80, 520, 80, 500, 640, 60, 640)
+
+[node name="RightDeck" type="Polygon2D" parent="."]
+color = Color(0.76, 0.68, 0.54, 1)
+polygon = PackedVector2Array(760, 80, 1240, 80, 1220, 640, 780, 640)
+
+[node name="VoidGap" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(640, 360)
+
+[node name="VoidFill" type="Polygon2D" parent="VoidGap"]
+unique_name_in_owner = true
+color = Color(0.62, 0.55, 0.42, 1)
+polygon = PackedVector2Array(-90, -220, 90, -210, 110, 220, -100, 230)
+
+[node name="TornEdgeL" type="Line2D" parent="VoidGap"]
+points = PackedVector2Array(-90, -220, -70, -120, -95, -20, -80, 80, -100, 230)
+width = 3.0
+default_color = Color(0.35, 0.28, 0.2, 0.9)
+
+[node name="TornEdgeR" type="Line2D" parent="VoidGap"]
+points = PackedVector2Array(90, -210, 105, -100, 85, 10, 110, 120, 110, 220)
+width = 3.0
+default_color = Color(0.35, 0.28, 0.2, 0.9)
+
+[node name="VoidLabel" type="Label" parent="VoidGap"]
+offset_left = -70.0
+offset_top = -20.0
+offset_right = 70.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.32, 0.26, 0.18, 0.85)
+theme_override_font_sizes/font_size = 14
+text = "void gap"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ThreadPreview" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PackedVector2Array(500, 360, 780, 360)
+width = 3.0
+default_color = Color(0.42, 0.28, 0.18, 0.45)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="StructureAnchor" type="Marker2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(640, 360)
+
+[node name="FragmentSpawns" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="VoidZone" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(640, 360)
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VoidZone"]
+shape = SubResource("RectangleShape2D_void")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+unique_name_in_owner = true
+position = Vector2(220, 400)
+
+[node name="Dust" type="CPUParticles2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(640, 360)
+emitting = false
+amount = 24
+lifetime = 1.2
+one_shot = true
+explosiveness = 0.7
+direction = Vector2(0, -1)
+spread = 80.0
+gravity = Vector2(0, 40)
+initial_velocity_min = 20.0
+initial_velocity_max = 70.0
+scale_amount_min = 1.5
+scale_amount_max = 3.0
+color = Color(0.55, 0.45, 0.3, 0.7)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+enabled = true
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Hud" type="MarginContainer" parent="UI"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 96.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+
+[node name="VBox" type="VBoxContainer" parent="UI/Hud"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TitleRow" type="HBoxContainer" parent="UI/Hud/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Yard" type="Label" parent="UI/Hud/VBox/TitleRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.28, 0.22, 0.15, 1)
+theme_override_font_sizes/font_size = 20
+text = "Shed Yard · Teaching Field"
+
+[node name="HudFragments" type="Label" parent="UI/Hud/VBox/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.28, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "Fragments: 0"
+
+[node name="HudThreads" type="Label" parent="UI/Hud/VBox/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.28, 0.2, 1)
+theme_override_font_sizes/font_size = 16
+text = "Threads: 0"
+
+[node name="Prompt" type="Label" parent="UI/Hud/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.32, 0.26, 0.18, 0.95)
+theme_override_font_sizes/font_size = 15
+text = "Walk the frayed field. Collect Fragments near the void."
+autowrap_mode = 2
+
+[node name="Controls" type="Label" parent="UI"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -40.0
+offset_right = -20.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.35, 0.28, 0.2, 0.75)
+theme_override_font_sizes/font_size = 13
+text = "WASD move · E gather · C combine UI · Space weave at void · Esc title"

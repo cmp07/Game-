@@ -123,15 +123,53 @@ static func _normalize(raw: Dictionary) -> Dictionary:
 		"seed": int(raw.get("seed", 0)),
 		"daily_eligible": bool(raw.get("daily_eligible", false)),
 		"identity": raw.get("identity", null),
+		"rewrite": raw.get("rewrite", {}),
 		"hard_variant_of": raw.get("hard_variant_of", null),
 		"par_moves": int(raw.get("par_moves", 0)),
+		"hints": raw.get("hints", []) if typeof(raw.get("hints", [])) == TYPE_ARRAY else [],
+		"onboarding": bool(raw.get("onboarding", false)),
+		"spectacle": bool(raw.get("spectacle", false)),
 		"map": rows,
 		"raw": raw,
 	}
 
 
+static func _soft_hard_from_record(rec: Dictionary) -> float:
+	## Authored dial lives on rewrite{} (content bible); identity{} is optional.
+	for key in ["rewrite", "identity"]:
+		var block = rec.get(key, null)
+		if typeof(block) == TYPE_DICTIONARY and block.has("soft_hard_bias"):
+			return float(block.get("soft_hard_bias"))
+	var raw = rec.get("raw", null)
+	if typeof(raw) == TYPE_DICTIONARY:
+		for key2 in ["rewrite", "identity"]:
+			var block2 = raw.get(key2, null)
+			if typeof(block2) == TYPE_DICTIONARY and block2.has("soft_hard_bias"):
+				return float(block2.get("soft_hard_bias"))
+	return -1.0
+
+
 static func to_playable(rec: Dictionary) -> Dictionary:
 	## Shape expected by chamber.gd / GameState (PR #48).
+	var raw: Dictionary = rec.get("raw", {}) if typeof(rec.get("raw", {})) == TYPE_DICTIONARY else {}
+	var rewrite: Dictionary = raw.get("rewrite", {}) if typeof(raw.get("rewrite", {})) == TYPE_DICTIONARY else {}
+	var rewrite_cap: int = int(rewrite.get("cap", -1))
+	if rewrite_cap < 0:
+		# Fallback: allow every authored checkpoint to fire.
+		var rows: Array = rec.get("map", [])
+		var cps := 0
+		for row in rows:
+			var s := str(row)
+			for i in range(s.length()):
+				if s.substr(i, 1) == "C":
+					cps += 1
+		rewrite_cap = maxi(cps, 1)
+	var soft_hard := _soft_hard_from_record(rec)
+	var hints: Array = []
+	if typeof(rec.get("hints", null)) == TYPE_ARRAY:
+		hints = (rec.get("hints") as Array).duplicate()
+	elif typeof(raw.get("hints", null)) == TYPE_ARRAY:
+		hints = (raw.get("hints") as Array).duplicate()
 	return {
 		"id": int(rec.get("id", 0)),
 		"title": str(rec.get("title", "")),
@@ -141,5 +179,16 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"act": str(rec.get("act", "")),
 		"role": str(rec.get("role", "")),
 		"content_id": str(rec.get("content_id", "")),
+		"slug": str(rec.get("slug", "")),
+		"teaches": str(rec.get("teaches", "")),
+		"identity": rec.get("identity", null),
 		"seed": int(rec.get("seed", 0)),
+		"daily_eligible": bool(rec.get("daily_eligible", false)),
+		"rewrite_cap": rewrite_cap,
+		"soft_hard_bias": soft_hard,
+		"act_index": int(rec.get("act_index", 0)),
+		"hints": hints,
+		"onboarding": bool(rec.get("onboarding", raw.get("onboarding", false))),
+		"spectacle": bool(rec.get("spectacle", raw.get("spectacle", false))),
+		"hard_variant_of": str(rec.get("hard_variant_of", "")) if rec.get("hard_variant_of", null) != null else "",
 	}

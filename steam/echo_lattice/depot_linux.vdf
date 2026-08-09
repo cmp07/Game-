@@ -1,0 +1,22 @@
+// Linux / Steam Deck content depot for Echo Lattice.
+// Staging folder should contain EchoLattice.x86_64 + EchoLattice.pck
+// (+ libsteam_api.so when GodotSteam redistrib is required).
+// Do NOT include steam_appid.txt in retail uploads.
+// Replace YOUR_DEPOT_ID_LINUX after Steamworks depot creation.
+// Docs: docs/RELEASE/STEAMWORKS.md · docs/RELEASE/APPID_PLACEHOLDER_GATES.md
+
+"DepotBuildConfig"
+{
+	"DepotID" "YOUR_DEPOT_ID_LINUX"
+	"ContentRoot" "depot_build/linux"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"recursive" "1"
+	}
+	"FileExclusion" "*.pdb"
+	"FileExclusion" "steam_appid.txt"
+	"FileExclusion" "*.tmp"
+	"FileExclusion" "*.log"
+}

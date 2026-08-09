@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "note": "W1 / FIRST_FIVE fence: Anchor + Span → Brace → Span Structure. Emit closes the gather loop.",
+  "fragment_kinds": [
+    { "id": "Anchor", "family": "anchor", "label": "Anchor", "role": "stiff ground peg" },
+    { "id": "Span", "family": "span", "label": "Span", "role": "soft / tensile length" }
+  ],
+  "thread_types": [
+    { "id": "Brace", "label": "Brace Thread", "failure": "overload tear" }
+  ],
+  "combine_recipes": [
+    {
+      "id": "east_post_brace",
+      "inputs": ["Anchor", "Span"],
+      "output_thread": "Brace",
+      "label": "Brace Thread"
+    },
+    {
+      "id": "span_cord",
+      "inputs": ["Span", "Span"],
+      "output_thread": "Brace",
+      "label": "Fiber brace"
+    },
+    {
+      "id": "anchor_pin",
+      "inputs": ["Anchor", "Anchor"],
+      "output_thread": "Brace",
+      "label": "Pin brace"
+    }
+  ],
+  "structure": {
+    "id": "span_structure",
+    "label": "Span Structure",
+    "thread_cost": 1,
+    "emit_interval_sec": 3.5,
+    "emit_kinds": ["Anchor", "Span"],
+    "channel": "topology"
+  },
+  "caps": {
+    "fragment_slots": 4,
+    "thread_budget": 3,
+    "field_seed_fragments": 4
+  }
+}

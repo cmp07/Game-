@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "accessibility": {
+    "colorblind_mode": "default",
+    "fossil_use_patterns": true,
+    "reduce_flash": false,
+    "flash_max_intensity": 1.0,
+    "screen_shake_enabled": false,
+    "screen_shake_intensity": 0.35,
+    "subtitles_enabled": true,
+    "subtitle_size": "medium",
+    "subtitle_background": true,
+    "ui_scale": 1.0,
+    "show_ghost_path_once": false,
+    "hold_to_walk": false,
+    "reduce_motion": false
+  },
+  "audio": {
+    "master_volume": 1.0,
+    "sfx_volume": 1.0,
+    "music_volume": 0.8,
+    "pa_volume": 1.0
+  },
+  "locale": {
+    "code": "system"
+  },
+  "graphics": {
+    "tech_art_v3": false
+  },
+  "input_bindings": {
+    "move_up": ["W", "Up"],
+    "move_down": ["S", "Down"],
+    "move_left": ["A", "Left"],
+    "move_right": ["D", "Right"],
+    "undo": ["Z"],
+    "restart": ["R"],
+    "pause_menu": ["Escape"],
+    "confirm": ["Enter", "Space"],
+    "ghost_assist": ["G"]
+  }
+}

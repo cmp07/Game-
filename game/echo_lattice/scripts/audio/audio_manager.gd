@@ -40,6 +40,48 @@ func _ready() -> void:
 	var music_idx := AudioServer.get_bus_index("Music")
 	if music_idx >= 0:
 		_base_music_bus_db = AudioServer.get_bus_volume_db(music_idx)
+	var store := get_node_or_null("/root/SettingsStore")
+	if store != null:
+		if store.has_signal("settings_reloaded") and not store.settings_reloaded.is_connected(apply_settings_volumes):
+			store.settings_reloaded.connect(apply_settings_volumes)
+		if store.has_signal("settings_changed") and not store.settings_changed.is_connected(_on_settings_changed):
+			store.settings_changed.connect(_on_settings_changed)
+	apply_settings_volumes()
+
+
+func apply_settings_volumes() -> void:
+	var store := get_node_or_null("/root/SettingsStore")
+	var master := 1.0
+	var sfx := 1.0
+	var music := 0.8
+	var pa := 1.0
+	if store != null and store.has_method("get_value"):
+		master = float(store.get_value("audio", "master_volume", master))
+		sfx = float(store.get_value("audio", "sfx_volume", sfx))
+		music = float(store.get_value("audio", "music_volume", music))
+		pa = float(store.get_value("audio", "pa_volume", pa))
+	set_bus_linear("Master", master)
+	set_bus_linear("SFX", sfx)
+	set_bus_linear("UI", sfx)
+	set_bus_linear("Music", music)
+	set_bus_linear("PA", pa)
+
+
+func _on_settings_changed(section: String, key: String, value: Variant) -> void:
+	if section != "audio":
+		return
+	match key:
+		"master_volume":
+			set_bus_linear("Master", float(value))
+		"sfx_volume":
+			set_bus_linear("SFX", float(value))
+			set_bus_linear("UI", float(value))
+		"music_volume":
+			set_bus_linear("Music", float(value))
+		"pa_volume":
+			set_bus_linear("PA", float(value))
+		_:
+			apply_settings_volumes()
 
 
 func _process(delta: float) -> void:

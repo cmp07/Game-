@@ -47,6 +47,18 @@ $RECYCLE.BIN/
 *.temp
 .import/
 
+# Steam / Steamworks local artifacts
+steam_appid.txt
+steam/**/depot_build/**
+!steam/**/depot_build/**/
+!steam/**/depot_build/**/.gitkeep
+steam/**/steam_build_output/
+dist/
+
+# Optional GodotSteam GDExtension binaries (install locally; see docs/RELEASE/GODOTSTEAM.md)
+game/echo_lattice/addons/godotsteam/*
+!game/echo_lattice/addons/godotsteam/README.md
+
 # Godot 4 imports & editor artifacts
 game/**/.godot/
 # Keep global class cache so headless CI / selftest can resolve class_name without an editor pass.
@@ -55,6 +67,16 @@ game/echo_lattice/.godot/*
 !game/echo_lattice/.godot/global_script_class_cache.cfg
 game/**/.import/
 game/**/builds/
+game/**/.capture_staging/
+# Godot runtime override used by capture_steam_store.sh (never commit).
+game/**/override.cfg
 
 __pycache__/
 *.py[cod]
+
+# Large CJK font binaries — vendor locally per fonts/README.md; keep OFL + .gitkeep
+# Latin IBM Plex OFL faces are committed under fonts/latin/ (see fonts/README.md).
+game/echo_lattice/fonts/cjk/*.otf
+game/echo_lattice/fonts/cjk/*.ttf
+game/echo_lattice/fonts/cjk/*.ttc
+game/echo_lattice/fonts/cjk/*.otc

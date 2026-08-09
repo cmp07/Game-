@@ -44,10 +44,17 @@ cd game/echo_lattice
 godot --headless --path . -- --selftest
 python3 tests/validate_chambers.py
 python3 tests/test_balance_v2.py
+python3 tests/check_deck_bindings.py
 python3 ../../tools/audio/validate_audio_events.py
 ./tools/capture_v2_complete.sh
+# With a display / Godot window:
+godot --path . -- --deck-layout-check
 ```
+
+## Steam Deck prep
+
+See [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md) — controller glyphs, 16:10 / 1280×800 layout check, TDP/FPS defaults, native Linux preferred over Proton.
 
 ## Known gaps (unchanged / deferred)
 
-Steam Cloud/achievements, Workshop editor, full VO, cross-run ghost replay, controller glyphs, localisation.
+Steam Cloud/achievements, Workshop editor, full VO, cross-run ghost replay, localisation.

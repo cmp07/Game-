@@ -1,0 +1,25 @@
+{
+  "engine": "Godot",
+  "version": "4.3-stable",
+  "templates_dir_name": "4.3.stable",
+  "ci_container": {
+    "image": "barichello/godot-ci",
+    "tag": "4.3",
+    "digest": "sha256:8d3a9fc683fcaa5b7d8b1c90fa94318402ebb00edeb5f6e2df4bac46665b98ff",
+    "note": "amd64 digest from Docker Hub tag 4.3 (last pushed 2024-10-22). Pin by digest in CI."
+  },
+  "official_downloads": {
+    "linux_editor_x86_64": {
+      "url": "https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip",
+      "sha256": "7de56444b130b10af84d19c7e0cf63cf9e9937ee4ba94364c3b7dd114253ca21",
+      "size_bytes": 50276070
+    },
+    "export_templates_tpz": {
+      "url": "https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz",
+      "size_bytes": 1073228327,
+      "sha256_note": "Verify after download with sha256sum; record the digest in the release notes for that cut. Do not trust floating mirrors without a hash check."
+    }
+  },
+  "product_version": "0.2.1",
+  "windows_file_version": "0.2.1.0"
+}

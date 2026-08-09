@@ -1,0 +1,85 @@
+{
+  "title": "Echo Lattice Gate A — 30s rewrite slam trailer",
+  "engine": "Godot 4.3",
+  "project": "game/echo_lattice",
+  "capture_script": "game/echo_lattice/tools/capture_gate_a_trailer.sh",
+  "viewport": {"w": 1152, "h": 672},
+  "master": {"w": 1920, "h": 1080, "fps": 30, "duration_s": 30},
+  "palette": {
+    "paper_bone": "#EFE6D2",
+    "ink_black": "#141210",
+    "rust_fossil": "#8B3A1F",
+    "slate_teal": "#2D4A55",
+    "cadmium_warn": "#E0A100"
+  },
+  "sequences": [
+    {
+      "id": "01_open_corridor",
+      "out_dir": "frame_packs/01_open_corridor",
+      "shots": [
+        {"kind": "chamber:0", "file": "01_clean_ledger.png", "beat_in_s": 0.0}
+      ]
+    },
+    {
+      "id": "02_habit_trail",
+      "out_dir": "frame_packs/02_habit_trail",
+      "shots": [
+        {"kind": "walk_only:2:14", "file": "01_far.png", "beat_in_s": 2.0},
+        {"kind": "walk_only:2:9", "file": "02_mid.png", "beat_in_s": 3.0},
+        {"kind": "walk_only:2:5", "file": "03_near.png", "beat_in_s": 4.0},
+        {"kind": "walk_only:2:2", "file": "04_approach.png", "beat_in_s": 5.0}
+      ]
+    },
+    {
+      "id": "03_rewrite_slam",
+      "out_dir": "frame_packs/03_rewrite_slam",
+      "shots": [
+        {"kind": "rewrite:12:0.05", "file": "01_heartbeat.png", "slam_t": 0.05},
+        {"kind": "rewrite:12:0.20", "file": "02_creases.png", "slam_t": 0.2},
+        {"kind": "rewrite:12:0.40", "file": "03_lift.png", "slam_t": 0.4},
+        {"kind": "rewrite:12:0.55", "file": "04_slot.png", "slam_t": 0.55, "poster": true},
+        {"kind": "rewrite:12:0.70", "file": "05_overshoot.png", "slam_t": 0.7},
+        {"kind": "rewrite:12:0.90", "file": "06_rust_bleed.png", "slam_t": 0.9}
+      ]
+    },
+    {
+      "id": "04_after_fossil",
+      "out_dir": "frame_packs/04_after_fossil",
+      "shots": [
+        {"kind": "walk_only:12:3", "file": "01_before_trail.png"},
+        {"kind": "rewrite:12:0.55", "file": "02_mid_slam.png"},
+        {"kind": "rewrite_done:12", "file": "03_after_fossil.png"}
+      ]
+    },
+    {
+      "id": "05_prove_depth",
+      "out_dir": "frame_packs/05_prove_depth",
+      "shots": [
+        {"kind": "chamber:18", "file": "01_mid_act.png", "beat_in_s": 15.0},
+        {"kind": "won:2", "file": "02_stars_clear.png", "beat_in_s": 18.0},
+        {"kind": "daily", "file": "03_daily_select.png", "beat_in_s": 21.0}
+      ]
+    },
+    {
+      "id": "06_title_cta",
+      "out_dir": "frame_packs/06_title_cta",
+      "shots": [
+        {"kind": "menu", "file": "01_main_menu.png", "beat_in_s": 25.0},
+        {"kind": "end", "file": "02_wing_clear.png"}
+      ]
+    }
+  ],
+  "text_cards": [
+    {"id": "C01", "file": "text_cards/card_deterministic.png", "text": "Deterministic."},
+    {"id": "C02", "file": "text_cards/card_footsteps_draft.png", "text": "Your footsteps are a draft."},
+    {"id": "C03", "file": "text_cards/card_same_seed.png", "text": "Same seed. Different you."},
+    {"id": "C04", "file": "text_cards/card_hit_checkpoint.png", "text": "Hit a checkpoint…"},
+    {"id": "C05", "file": "text_cards/card_it_learned_you.png", "text": "IT LEARNED YOU"},
+    {"id": "C06", "file": "text_cards/card_maze_wears_you.png", "text": "The maze wears you."},
+    {"id": "C07", "file": "text_cards/card_thirty_five.png", "text": "Thirty-five chambers."},
+    {"id": "C08", "file": "text_cards/card_four_acts.png", "text": "Four acts."},
+    {"id": "C09", "file": "text_cards/card_daily_seed.png", "text": "Daily seed."},
+    {"id": "C10", "file": "text_cards/card_title_lockup.png", "text": "ECHO LATTICE"},
+    {"id": "C11", "file": "text_cards/card_wishlist_cta.png", "text": "Wishlist / Coming Soon"}
+  ]
+}
