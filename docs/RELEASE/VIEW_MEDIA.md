@@ -1,9 +1,9 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at left-page final:** `cursor/menu-left-page-final` → RC1 — dense verso seal+maze after [#161](https://github.com/cmp07/Game-/pull/161) hollow specimen (USER: own the left page).  
+**Tip:** `f517141` on [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1) — [#162](https://github.com/cmp07/Game-/pull/162) left-page final merged (dense verso seal+maze; not `main`).  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu left-page final:** one quiet micro header, ECHO LATTICE hero, wide rectangular letterpress seal above dense habit maze (gap ≤16px), LEFT tile empty mass <22%, Field Index dense craft preserved; [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py`.  
+**Menu left-page final (#162):** one quiet micro header, ECHO LATTICE hero, wide rectangular letterpress seal above dense habit maze (gap ≤16px), LEFT tile empty mass <22%, Field Index dense craft preserved; [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py`.  
 **Menu dense craft (#161):** Field Index compact block (superseded hollow left specimen).  
 **Menu hard-reset (#160):** explicit 52/42 anchors, ECHO LATTICE ≥72px, rectangular letterpress seal only.  
 **Menu 10/10 (superseded soft tip):** letterpress seal + Field Index (`menu-10-of-10` / #158).  
@@ -11,7 +11,9 @@
 **Menu premium / type / no-hud:** #155 · #153 · #154.  
 
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw) unless noted. Brand slate raw on this tip:  
-`https://github.com/cmp07/Game-/raw/cursor/menu-left-page-final/docs/RELEASE/screenshots/02_brand_main_menu.png`
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu.png`  
+Left-page crop:  
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu_left.png`
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
 
