@@ -50,6 +50,8 @@ var rewrites_fired: int = 0
 
 var walked: Dictionary = {}  ## Vector2i -> true — paper darkens under footprints
 var traverse_count: Dictionary = {}  ## Vector2i -> int — rust colonization intensity
+var trail_path: Array = []  ## ordered Vector2i trail for Museum replay vignette
+var undo_count: int = 0
 
 var chamber: Dictionary = {}
 var transform_name: String = "none"
@@ -210,6 +212,8 @@ func load_chamber(id: int) -> void:
 					row.append(Tile.FLOOR)
 		grid.append(row)
 	walked[player_pos] = true
+	trail_path = [player_pos]
+	undo_count = 0
 	move_count = 0
 	moves_since_checkpoint.clear()
 	undo_stack.clear()
@@ -370,6 +374,7 @@ func _try_move(dir: Vector2i) -> void:
 	move_count += 1
 	moves_since_checkpoint.append(target)
 	walked[target] = true
+	trail_path.append(target)
 	traverse_count[target] = int(traverse_count.get(target, 0)) + 1
 	GameState.record_direction(dir)
 	emit_signal("moves_changed", move_count)
@@ -405,6 +410,9 @@ func _undo() -> void:
 	var had_walked: bool = bool(frame.get("walked_had_target", true))
 	player_pos = frame["prev_pos"]
 	move_count = max(0, move_count - 1)
+	undo_count += 1
+	if trail_path.size() > 1:
+		trail_path.pop_back()
 	while moves_since_checkpoint.size() > int(frame["moves_since_cp_len"]):
 		moves_since_checkpoint.pop_back()
 	if not had_walked and walked.has(walked_target):
@@ -822,7 +830,7 @@ func _on_win() -> void:
 			move_count,
 			chamber
 		)
-	GameState.record_chamber_win(cid, move_count, bfs_par, stamp)
+	GameState.record_chamber_win(cid, move_count, bfs_par, stamp, trail_path.duplicate(), undo_count)
 	if has_node("/root/Juice"):
 		Juice.bump(0.25)
 		Juice.hitstop(0.07, 0.08)

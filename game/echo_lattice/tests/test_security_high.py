@@ -39,6 +39,7 @@ SAVE_MAX_CHAMBER_INDEX = 1023
 SAVE_MAX_STRING_LEN = 256
 SAVE_ALLOWED_KEYS = {
     "version",
+    "updated_at",
     "build_flavor",
     "current_chamber",
     "best_moves",
@@ -51,8 +52,19 @@ SAVE_ALLOWED_KEYS = {
     "queue_pos",
     "daily_seed",
     "daily_label",
+    "daily_friend_code",
+    "daily_chamber_id",
+    "daily_source",
+    "daily_variation",
     "daily_best_stars",
+    "endless_seed",
+    "endless_depth",
+    "endless_best_depth",
+    "endless_label",
     "run_started",
+    "habit_identity_unlocked",
+    "identity_stamps",
+    "museum",
 }
 
 
@@ -90,7 +102,7 @@ def validate_save_dict(data: dict) -> dict:
         mode = str(data.get("run_mode", ""))
         if len(mode) > SAVE_MAX_STRING_LEN:
             return {"ok": False, "reason": "run_mode_too_long"}
-        if mode and mode not in ("standard", "daily"):
+        if mode and mode not in ("standard", "daily", "endless"):
             return {"ok": False, "reason": "run_mode_invalid"}
     if "daily_label" in data and len(str(data.get("daily_label", ""))) > SAVE_MAX_STRING_LEN:
         return {"ok": False, "reason": "daily_label_too_long"}
@@ -133,6 +145,18 @@ def validate_save_dict(data: dict) -> dict:
             qi = int(idx_v)
             if qi < 0 or qi > SAVE_MAX_CHAMBER_INDEX:
                 return {"ok": False, "reason": "run_queue_index_out_of_range"}
+    if "museum" in data:
+        museum = data["museum"]
+        if not isinstance(museum, dict):
+            return {"ok": False, "reason": "museum_not_object"}
+        for mk in museum:
+            if str(mk) not in ("selves", "cap"):
+                return {"ok": False, "reason": "museum_unknown_key"}
+        if "selves" in museum:
+            if not isinstance(museum["selves"], list):
+                return {"ok": False, "reason": "museum_selves_not_array"}
+            if len(museum["selves"]) > 128:
+                return {"ok": False, "reason": "museum_selves_too_many"}
     return {"ok": True, "data": data, "reason": ""}
 
 
@@ -229,6 +253,17 @@ class TestSec02CloudSaveSchema(unittest.TestCase):
                 "best_moves": {"0": 12},
                 "habit_profile": {"up": 1, "down": 0, "left": 0, "right": 2},
                 "run_started": True,
+                "museum": {
+                    "cap": 48,
+                    "selves": [
+                        {
+                            "id": "self_20260809_0001",
+                            "outcome": "clear",
+                            "title": "The Balanced Echo of Quiet Span",
+                            "ghost": {"stride": 2, "path": [[1, 1], [2, 1]]},
+                        }
+                    ],
+                },
             }
         )
         self.assertTrue(ok["ok"], ok)

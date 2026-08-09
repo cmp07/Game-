@@ -10,6 +10,7 @@ const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
 const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
 const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
 const END_SCENE:      PackedScene = preload("res://scenes/end_screen.tscn")
+const MUSEUM_SCENE:   PackedScene = preload("res://scenes/museum_screen.tscn")
 const SUBTITLE_SCENE: PackedScene = preload("res://scenes/ui/subtitle_overlay.tscn")
 
 @onready var stage: Node = $Stage
@@ -460,6 +461,7 @@ func _run_self_test() -> bool:
 	GameState.identity_stamps.clear()
 	GameState.last_identity_stamp = {}
 	GameState.habit_identity_unlocked = false
+	GameState.clear_museum()
 	GameState.start_new_run()
 	if DemoBuild.is_demo():
 		var expect_n: int = DemoBuild.allowed_campaign_ids().size()
@@ -486,7 +488,7 @@ func _run_self_test() -> bool:
 	# Habit rewrite wire — signature → archetype bias → soft/hard gated cells.
 	ok = _selftest_habit_rewrite_wire() and ok
 
-	GameState.record_chamber_win(0, 42, 20)
+	GameState.record_chamber_win(0, 42, 20, {}, [Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)], 0)
 	if not GameState.completed.has(0):
 		printerr("record_chamber_win did not mark completed"); ok = false
 	if int(GameState.best_moves.get(0, -1)) != 42:
@@ -495,6 +497,27 @@ func _run_self_test() -> bool:
 		printerr("stars not awarded"); ok = false
 	if GameState.is_habit_identity_visible():
 		printerr("habit identity should stay sealed before Mirror Birth"); ok = false
+	if GameState.museum_count() != 1:
+		printerr("museum archive expected 1 self after clear, got %d" % GameState.museum_count()); ok = false
+	if GameState.last_museum_self.is_empty():
+		printerr("last_museum_self empty after clear"); ok = false
+	elif str(GameState.last_museum_self.get("outcome", "")) != "clear":
+		printerr("museum self outcome must be clear"); ok = false
+	# Cap ring buffer — 49th clear drops oldest.
+	for i in range(MuseumOfSelves.DEFAULT_CAP):
+		GameState.record_chamber_win(0, 40, 20, {}, [Vector2i(i % 8, 1), Vector2i((i + 1) % 8, 1)], 0)
+	if GameState.museum_count() > MuseumOfSelves.DEFAULT_CAP:
+		printerr("museum cap exceeded: %d" % GameState.museum_count()); ok = false
+	SaveManager.save_to_disk()
+	var museum_snapshot: int = GameState.museum_count()
+	GameState.clear_museum()
+	if not SaveManager.load_from_disk():
+		printerr("museum save reload failed"); ok = false
+	elif GameState.museum_count() != museum_snapshot:
+		printerr("museum did not persist across save/load (%d vs %d)" % [
+			GameState.museum_count(), museum_snapshot
+		])
+		ok = false
 
 	# Identity ledger stamp — intentional silhouette outranks thrash scribble.
 	var face: Array = [
@@ -1054,6 +1077,18 @@ func show_menu() -> void:
 		m.connect("daily_pressed", Callable(self, "_on_menu_daily"))
 	if m.has_signal("endless_pressed"):
 		m.connect("endless_pressed", Callable(self, "_on_menu_endless"))
+	if m.has_signal("museum_pressed"):
+		m.connect("museum_pressed", Callable(self, "_on_menu_museum"))
+	if has_node("/root/SteamService"):
+		SteamService.set_menu_presence()
+
+
+func show_museum() -> void:
+	_clear_stage()
+	var m: Node = MUSEUM_SCENE.instantiate()
+	stage.add_child(m)
+	if m.has_signal("back_pressed"):
+		m.connect("back_pressed", Callable(self, "show_menu"))
 	if has_node("/root/SteamService"):
 		SteamService.set_menu_presence()
 
@@ -1122,6 +1157,10 @@ func _on_menu_daily() -> void:
 func _on_menu_endless() -> void:
 	GameState.start_endless_run()
 	show_chamber()
+
+
+func _on_menu_museum() -> void:
+	show_museum()
 
 
 func _on_menu_quit() -> void:
