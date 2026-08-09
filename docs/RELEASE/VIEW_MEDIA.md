@@ -1,9 +1,9 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `e9eb4dbf9fc3ff54fa26bd16e2f56d6a30ed7b48` (post–menu-1000x Field Ledger shell; brand menu slate recaptured)  
+**Tip at index authoring:** `83a79f3cdab57d6abb4d50aeed30fe481122eb48` (RC1 after menu-1000x merge; brand + focus-row recapture on `menu-1000x-shots`)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu 1000×:** premium Field Ledger title shell (`menu-1000x` / #149) with integrated art materials (#148) + feel audio (#147).  
+**Menu 1000×:** premium Field Ledger title shell (`menu-1000x` / #149) with integrated art materials (#148) + feel audio (#147). Brand menu + focused Index rows recaptured at 1920×1080 (`menu-1000x-shots`).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
@@ -33,7 +33,7 @@ Presskit copy of the poster (same pixels):
 
 ## Steam screenshots (`docs/RELEASE/screenshots/`)
 
-1920×1080 Partner slate (**G1 recapture** from `execute-g1` @ `26ae974` — diegetic UI / habit beats). Captions: [`TOUR.md`](screenshots/TOUR.md).
+1920×1080 Partner slate. Slots **02** / **07** refreshed after `menu-1000x` (premium Field Ledger title shell + Field Index). Other slots remain G1 (`execute-g1` @ `26ae974`). Captions: [`TOUR.md`](screenshots/TOUR.md).
 
 | # | File | Preview |
 |---|---|---|
@@ -46,7 +46,17 @@ Presskit copy of the poster (same pixels):
 | 07 | [07_daily_select.png](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/07_daily_select.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/07_daily_select.png) | ![07](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/07_daily_select.png) |
 | 08 | [08_wing_clear.png](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/08_wing_clear.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/08_wing_clear.png) | ![08](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/08_wing_clear.png) |
 
-Docs only (no image): [`README.md`](screenshots/README.md), [`TOUR.md`](screenshots/TOUR.md).
+### Menu 1000× focused Index rows (`screenshots/menu_1000x/`)
+
+Supplemental 1920×1080 focus variants (rust underline on the active Field Index row). Partner upload still uses numbered slate files above; `focus_start` / `focus_daily` match slots **02** / **07**.
+
+| Focus | File | Preview |
+|---|---|---|
+| Open new survey | [focus_start.png](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_start.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_start.png) | ![focus_start](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_start.png) |
+| Daily sheet | [focus_daily.png](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_daily.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_daily.png) | ![focus_daily](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_daily.png) |
+| Endless corridor | [focus_endless.png](https://github.com/cmp07/Game-/blob/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_endless.png) · [raw](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_endless.png) | ![focus_endless](https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/menu_1000x/focus_endless.png) |
+
+Docs: [`screenshots/README.md`](screenshots/README.md), [`screenshots/TOUR.md`](screenshots/TOUR.md), [`screenshots/menu_1000x/README.md`](screenshots/menu_1000x/README.md).
 
 ---
 
@@ -244,7 +254,7 @@ Placeholders only (READMEs, no image binaries yet):
 
 | Folder | Image / video binaries | Notes |
 |---|---:|---|
-| `docs/RELEASE/screenshots/` | 8 PNG | G1 slate + README, TOUR |
+| `docs/RELEASE/screenshots/` | 8 PNG + 3 focus PNG | Partner slate; `menu_1000x/` focus rows after menu-1000x |
 | `docs/RELEASE/capsules/` | 8 PNG | G1 Plex capsules + README |
 | `docs/RELEASE/trailer/` | 1 GIF + 20 frame PNGs + 1 poster + 11 text-card PNGs | G1 recapture; encode via `tools/release/encode_trailer_mp4.py` |
 | `docs/RELEASE/presskit/trailers/` | 1 PNG poster + **2 MP4** | 30s master + 15s vertical; store loop optional |
