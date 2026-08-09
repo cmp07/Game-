@@ -2,7 +2,7 @@
 
 **Purpose:** Working-title ledger, collision notes, and a shortlist for Steam Partner.  
 **Status:** **The Weaver** is the design-wave working title — not a locked store name.  
-**Companions:** [`01_CONCEPT.md`](01_CONCEPT.md) · [`17_MVP.md`](17_MVP.md) · [`18_RISKS.md`](18_RISKS.md) · [`PIVOT.md`](PIVOT.md)
+**Companions:** [`01_CONCEPT.md`](01_CONCEPT.md) · [`17_MVP.md`](17_MVP.md) · [`18_RISKS.md`](18_RISKS.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md)
 
 ---
 
@@ -108,10 +108,10 @@ Until then, docs and branches keep **The Weaver** as the internal name.
 ## 8. Rename checklist (when locking)
 
 - [ ] `docs/WEAVER/` headers / MASTER_GDD title line  
-- [ ] Future `game/weaver/` project name & `project.godot`  
-- [ ] Steam depot / capsule filenames  
-- [ ] Pivot + README north-star sentence  
-- [ ] Do **not** rename `game/echo_lattice/` as part of this
+- [ ] `game/weaver/` project name & `project.godot`  
+- [ ] Steam depot / capsule filenames (Weaver pack / Partner rename — [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) §4)  
+- [ ] Pivot + PRODUCT_IDENTITY + README north-star sentence  
+- [ ] Do **not** overwrite `game/echo_lattice/` as Weaver; archive move to `game/_archive/echo_lattice/` is a separate allowed PR
 
 ---
 

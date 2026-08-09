@@ -1,14 +1,15 @@
 # The Weaver — docs index
 
-**North star product docs** for **The Weaver** (working title).  
-**Pivot:** Echo Lattice is frozen; Weaver is active — see [`PIVOT.md`](PIVOT.md).  
-**Do not delete** `game/echo_lattice/` or the Steam pack freeze under [`../BACKUP/`](../BACKUP/).
+**North star product docs** for **The Weaver** (shipping identity — not a forever side project).  
+**Pivot:** Echo Lattice is frozen; Weaver ships — see [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md).  
+**Do not delete** Echo Lattice (today `game/echo_lattice/`; later may archive to `game/_archive/echo_lattice/`) or the Steam pack freeze under [`../BACKUP/`](../BACKUP/). New playable root: `game/weaver/`.
 
 | Start here | Role |
 |---|---|
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Executive synthesis + glossary + conflict resolution |
+| [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship as The Weaver · archive path · Steam rename plan |
 | [`ROADMAP.md`](ROADMAP.md) | Gates and build order |
-| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
+| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver ships · archive-capable) |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
 
 ---
@@ -20,6 +21,7 @@
 | Doc | Topic |
 |---|---|
 | [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
+| [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Rename / archive / Steam page plan |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
 
@@ -102,4 +104,5 @@
 |---|---|
 | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) | Echo Lattice Steam freeze |
 | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) | Historical EL vision (not live north star) |
-| `game/echo_lattice/` | Frozen playable — **keep** |
+| `game/echo_lattice/` | Frozen playable — **keep** (later → `game/_archive/echo_lattice/`) |
+| `game/weaver/` | Canonical new playable root |

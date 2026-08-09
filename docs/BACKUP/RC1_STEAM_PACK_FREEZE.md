@@ -1,7 +1,7 @@
 # RC1 Steam pack — freeze / resume
 
-**Status:** Steam pack frozen. **Product-line pivot:** Echo Lattice is frozen; **Weaver** is the north star — see [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md).  
-**Policy:** Do **not** delete Steam / RELEASE / AUDIT work, and do **not** delete `game/echo_lattice/`. Resume Partner + store upload from this freeze **only after** depth gates G1–G4 in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8 *if* Echo Lattice shipping is explicitly reopened.  
+**Status:** Steam pack frozen. **Product-line pivot:** Echo Lattice is frozen; **The Weaver** is the shipping north star — see [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md) · [`../WEAVER/PRODUCT_IDENTITY.md`](../WEAVER/PRODUCT_IDENTITY.md).  
+**Policy:** Do **not** delete Steam / RELEASE / AUDIT work, and do **not** delete Echo Lattice (`game/echo_lattice/` today; later may move to `game/_archive/echo_lattice/`). Resume Partner + store upload from this freeze **only after** depth gates G1–G4 in [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) §8 *if* Echo Lattice shipping is explicitly reopened. Public page rename toward Weaver is planned in PRODUCT_IDENTITY (human Partner; no AppID invention here).  
 **Vision lock (historical EL):** [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) — game-feel **41/100** vs pack ship-readiness **78/100**. **Live north star:** [`../WEAVER/PIVOT.md`](../WEAVER/PIVOT.md).
 
 | Field | Value |

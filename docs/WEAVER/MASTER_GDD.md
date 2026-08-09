@@ -7,7 +7,7 @@
 **Date:** 2026-08-09  
 **Mode:** Cloud-only. **No AppID invention. No Echo Lattice code edits.**
 
-**Companions:** [`ROADMAP.md`](ROADMAP.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`17_MVP.md`](17_MVP.md)
+**Companions:** [`ROADMAP.md`](ROADMAP.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`17_MVP.md`](17_MVP.md)
 
 ---
 
@@ -15,18 +15,18 @@
 
 | Field | Lock |
 |---|---|
-| **North star** | **The Weaver** — offline craft / physics-puzzle toy |
-| **Echo Lattice** | **Frozen** product line; `game/echo_lattice/` **kept**; Steam pack freeze stands |
+| **North star** | **The Weaver** — offline craft / physics-puzzle toy we **ship** (not a forever side project) |
+| **Echo Lattice** | **Frozen** product line; keep today at `game/echo_lattice/`; later may archive to `game/_archive/echo_lattice/`; Steam pack freeze stands |
 | **Core verb** | Recover **Fragments** → draw **Threads** → tension **Structures** → inhabit what you wove |
 | **Hub** | One **Shed Yard** + authored fields/jobs (not open-world, not MMO) |
 | **Economy** | Craft scarcity only — **no player trade** at MVP or 1.0 |
 | **Multiplayer** | **None** at MVP; social residue (seeds/ghosts) only as post fence |
 | **Monetization** | Paid premium **$4.99–$8.99** (plan **$6.99**); no F2P / battle pass / gacha |
-| **Tech** | Godot 4 · offline-first · future `game/weaver/` · do not overwrite EL |
+| **Tech** | Godot 4 · offline-first · playable root `game/weaver/` · do not overwrite EL |
 | **Look / ear** | Fiber, dust, timber, wire, chalk, kiln copper — **ban purple-void AI look** and chronomancy |
-| **Coming Soon** | Blocked until vertical slice passes MVP exit criteria |
+| **Coming Soon** | Blocked until vertical slice passes MVP exit criteria; Steam rename plan in [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) |
 
-**One line:** Echo Lattice stays a frozen archive; Weaver is what we design and prototype next — a fair loom where physics judges your stitches.
+**One line:** Echo Lattice freezes into an archive path; **The Weaver** is what we ship from `game/weaver/` — a fair loom where physics judges your stitches.
 
 ---
 
@@ -35,19 +35,20 @@
 Sibling docs arrived in parallel. When they disagree, win order is:
 
 1. [`PIVOT.md`](PIVOT.md) — product-line decision  
-2. [`17_MVP.md`](17_MVP.md) — honest cut list  
-3. Systems core [`02`](02_CORE_LOOP.md)–[`08`](08_LEGACY.md) — verb grammar  
-4. Craft [`09`](09_VISUAL.md)–[`11`](11_PROGRESSION.md) — feel / ear / unlock voice  
-5. Biz/tech [`12`](12_MULTIPLAYER.md)–[`15`](15_MARKET.md) — fences  
-6. [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`18_RISKS.md`](18_RISKS.md) · [`19_NAMES.md`](19_NAMES.md)  
-7. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–3**
+2. [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) — ship-as-Weaver · archive · Steam rename  
+3. [`17_MVP.md`](17_MVP.md) — honest cut list  
+4. Systems core [`02`](02_CORE_LOOP.md)–[`08`](08_LEGACY.md) — verb grammar  
+5. Craft [`09`](09_VISUAL.md)–[`11`](11_PROGRESSION.md) — feel / ear / unlock voice  
+6. Biz/tech [`12`](12_MULTIPLAYER.md)–[`15`](15_MARKET.md) — fences  
+7. [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`18_RISKS.md`](18_RISKS.md) · [`19_NAMES.md`](19_NAMES.md)  
+8. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–4**
 
 ### Resolved conflict — what Weaver *is*
 
 | Claim | Source | Verdict |
 |---|---|---|
-| Weaver elevates Echo Lattice habit→geometry; no second SKU | `01_CONCEPT` (and parts of `15_MARKET`) | **Superseded** as product identity |
-| Weaver is separate north-star SKU; EL frozen & kept | `PIVOT`, `17_MVP`, systems + craft packs | **Wins** |
+| Weaver elevates Echo Lattice habit→geometry; no second SKU | `01_CONCEPT` (and parts of `15_MARKET`) | **Superseded** as fantasy framing — see identity |
+| Weaver is the shipping product; EL frozen, kept, archive-capable | `PIVOT`, `PRODUCT_IDENTITY`, `17_MVP`, systems + craft packs | **Wins** |
 | Shared taste OK (authorship, readable failure, short sessions, offline) | All packs | **Keep** |
 | Shared store copy / maze chrome / habit archetypes as Weaver meta | EL bleed | **Out** |
 
@@ -106,7 +107,7 @@ Brace · Feed · Oppose · Echo
 - Realtime multiplayer at MVP  
 - F2P, battle pass, gacha, energy meters  
 - Besiege-scale part encyclopedia before jobs exist  
-- Deleting or rebranding `game/echo_lattice/` as Weaver  
+- Deleting Echo Lattice, or renaming/overwriting `game/echo_lattice/` into Weaver (archive move to `game/_archive/echo_lattice/` is OK per [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md))  
 - LLM runtime / “AI worldbuilder” marketing  
 
 ---
@@ -184,14 +185,14 @@ Brace · Feed · Oppose · Echo
 | Echo Lattice | The Weaver |
 |---|---|
 | Habit → geometry Field Ledger maze | Fragment → Thread → Structure yard craft |
-| Steam pack frozen (~78 ship-ready) | Design north star; Coming Soon blocked on slice |
-| `game/echo_lattice/` **kept** | Future `game/weaver/` (or successor) |
+| Steam pack frozen (~78 ship-ready) | Shipping identity; Coming Soon blocked on slice; rename plan in PRODUCT_IDENTITY |
+| `game/echo_lattice/` **kept** (later → `game/_archive/echo_lattice/`) | Playable root `game/weaver/` |
 | `docs/VISION/*` historical | `docs/WEAVER/*` live |
-| Do not delete RELEASE / AUDIT / BACKUP | Separate store pack when ready |
+| Do not delete RELEASE / AUDIT / BACKUP | Weaver store pack / Partner rename when ready |
 
 Borrow **craft lessons** (determinism, fail-closed Steam, Python contracts, ceremony scarcity). Do **not** mash store pages, trailers, or chamber UI.
 
-Freeze / pivot pointers: [`PIVOT.md`](PIVOT.md) · [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md)
+Freeze / pivot / identity: [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md)
 
 ---
 
@@ -243,4 +244,4 @@ From [`18_RISKS.md`](18_RISKS.md):
 
 ## 13. Lock line
 
-**The Weaver** is a fair, offline shed-loom toy: recover Fragments, stitch Threads, seat Structures, inhabit your seams, and leave a local cloth panel worth keeping — while Echo Lattice remains frozen and intact as archive.
+**The Weaver** is a fair, offline shed-loom toy we ship: recover Fragments, stitch Threads, seat Structures, inhabit your seams, and leave a local cloth panel worth keeping — while Echo Lattice remains frozen and intact as an archive path.
