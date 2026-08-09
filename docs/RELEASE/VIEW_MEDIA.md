@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `a155835d5a66eb4d24c157b52e2058d5bdb77d28`  
+**Tip at index authoring:** `2ac98d25450f579d6a70cfdb1402ef3f8895d504`  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
