@@ -15,7 +15,7 @@ config/description="Offline craft vignette: recover Fragments, spin Threads, ten
 run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
-config/version="0.0.1"
+config/version="0.1.0-proto"
 boot_splash/bg_color=Color(0.91, 0.86, 0.76, 1)
 
 [autoload]

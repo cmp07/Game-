@@ -1,8 +1,9 @@
 extends Node2D
-## Playable MVP stub field: void gap → collect Fragments → combine → weave Structure.
+## Playable field: void gap → gather Fragments → combine UI → weave Structure → emit.
 
 const FragmentScene := preload("res://scenes/fragment.tscn")
 const StructureScene := preload("res://scenes/structure.tscn")
+const CombinePanelScene := preload("res://scenes/ui/combine_panel.tscn")
 
 @onready var _prompt: Label = %Prompt
 @onready var _hud_fragments: Label = %HudFragments
@@ -17,6 +18,7 @@ const StructureScene := preload("res://scenes/structure.tscn")
 
 var _near_void: bool = false
 var _structure_node: Node2D = null
+var _combine_panel: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -27,55 +29,67 @@ func _ready() -> void:
 	Loom.structure_seated.connect(_on_structure_seated)
 	_on_fragments_changed(0)
 	_on_threads_changed(0)
-	_on_prompt_changed("Walk the frayed field. Collect Fragments near the void.")
+	_on_prompt_changed("East Post Gap — gather Anchor + Span (E / walk over).")
 	_spawn_fragments()
 	_thread_preview.visible = false
+	_combine_panel = CombinePanelScene.instantiate()
+	add_child(_combine_panel)
 	if has_node("%VoidZone"):
 		var zone: Area2D = %VoidZone
 		zone.body_entered.connect(_on_void_entered)
 		zone.body_exited.connect(_on_void_exited)
+	if Loom.pending_selftest:
+		await _run_field_selftest()
 
 
 func _spawn_fragments() -> void:
+	# FIRST_FIVE fence: Anchor + Span only (two of each for a short retry).
 	var specs: Array = [
-		{"family": "Span", "accent": Color(0.45, 0.36, 0.24), "pos": Vector2(280, 360)},
-		{"family": "Anchor", "accent": Color(0.28, 0.26, 0.22), "pos": Vector2(360, 480)},
-		{"family": "Channel", "accent": Color(0.35, 0.45, 0.42), "pos": Vector2(980, 340)},
-		{"family": "Charge", "accent": Color(0.72, 0.38, 0.18), "pos": Vector2(1040, 500)},
+		{"family": "Anchor", "accent": Color(0.28, 0.26, 0.22), "pos": Vector2(280, 360)},
+		{"family": "Span", "accent": Color(0.45, 0.36, 0.24), "pos": Vector2(360, 480)},
+		{"family": "Anchor", "accent": Color(0.28, 0.26, 0.22), "pos": Vector2(980, 340)},
+		{"family": "Span", "accent": Color(0.45, 0.36, 0.24), "pos": Vector2(1040, 500)},
 	]
 	for spec in specs:
-		var frag: Area2D = FragmentScene.instantiate()
-		frag.family = spec["family"]
-		frag.accent = spec["accent"]
-		frag.position = spec["pos"]
-		_spawn_root.add_child(frag)
+		spawn_fragment(str(spec["family"]), spec["pos"], spec["accent"])
+
+
+func spawn_fragment(family: String, at: Vector2, accent: Color = Color(0.42, 0.33, 0.22, 1)) -> void:
+	var frag: Area2D = FragmentScene.instantiate()
+	frag.family = family
+	frag.accent = accent
+	_spawn_root.add_child(frag)
+	frag.position = at
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("combine"):
-		if Loom.combine_two_into_thread():
-			_flash_thread_bind()
-		_refresh_thread_preview()
+		if _combine_panel != null and _combine_panel.visible:
+			return
+		Loom.request_combine_ui()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("weave"):
 		_try_weave()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("ui_cancel"):
+		if _combine_panel != null and _combine_panel.visible:
+			return
 		get_tree().change_scene_to_file("res://scenes/main.tscn")
 		get_viewport().set_input_as_handled()
 
 
 func _try_weave() -> void:
 	if not Loom.can_weave():
-		if Loom.structure_built:
-			Loom.prompt_changed.emit("Structure already seated. Esc returns to title.")
+		if Loom.structure_built and Loom.thread_count <= 0:
+			Loom.prompt_changed.emit("Structure stands and sheds Fragments. Esc returns to title.")
 		elif Loom.thread_count <= 0:
 			Loom.prompt_changed.emit("Spin a Thread first (collect 2 Fragments, press C).")
 		return
 	if not _near_void:
 		Loom.prompt_changed.emit("Step closer to the void gap, then press Space to weave.")
 		return
-	Loom.seat_structure()
+	if Loom.seat_structure():
+		_flash_thread_bind()
 
 
 func _on_void_entered(body: Node2D) -> void:
@@ -114,7 +128,6 @@ func _refresh_thread_preview() -> void:
 
 
 func _flash_thread_bind() -> void:
-	## Chalk provisional Thread draw from player toward the void — motion budget beat.
 	var chalk := Line2D.new()
 	chalk.width = 2.0
 	chalk.default_color = Color(0.55, 0.5, 0.4, 0.9)
@@ -128,14 +141,96 @@ func _flash_thread_bind() -> void:
 
 func _on_structure_seated() -> void:
 	_thread_preview.visible = false
-	# Fade the frayed void fill — gap is stitched.
 	var tw := create_tween()
 	tw.set_parallel(true)
 	tw.tween_property(_void_fill, "modulate:a", 0.15, 0.6)
 	tw.tween_property(_void_root, "modulate", Color(0.95, 0.9, 0.8, 1), 0.6)
 	_dust.emitting = true
+	if _structure_node != null and is_instance_valid(_structure_node):
+		return
 	_structure_node = StructureScene.instantiate()
 	_structure_node.position = _structure_anchor.position
 	add_child(_structure_node)
+	if _structure_node.has_signal("request_spawn_fragment"):
+		_structure_node.request_spawn_fragment.connect(_on_structure_emit)
 	if _structure_node.has_method("play_seat"):
 		_structure_node.play_seat()
+
+
+func _on_structure_emit(kind: String, at: Vector2) -> void:
+	var accent := Color(0.28, 0.26, 0.22) if kind == "Anchor" else Color(0.45, 0.36, 0.24)
+	spawn_fragment(kind, at, accent)
+
+
+## Headless / screenshot helper: force weave without void proximity.
+func debug_force_weave_at_anchor() -> bool:
+	if not Loom.can_weave():
+		if Loom.fragment_inventory.size() >= 2:
+			Loom.combine_indices(0, 1)
+		else:
+			return false
+	return Loom.seat_structure()
+
+
+func _run_field_selftest() -> void:
+	print("weaver-selftest: begin")
+	var api: Dictionary = Loom.api_selftest_result
+	if not bool(api.get("ok", false)):
+		printerr("weaver-selftest: loom API failed")
+		get_tree().quit(1)
+		return
+	for i in 8:
+		await get_tree().process_frame
+	if Loom.pending_screenshot:
+		await _capture_screenshot("01_void_field.png")
+	Loom.reset()
+	if not Loom.add_fragment("Anchor") or not Loom.add_fragment("Span"):
+		printerr("weaver-selftest: gather failed")
+		get_tree().quit(1)
+		return
+	var combo := Loom.combine_indices(0, 1)
+	if not combo.get("ok", false):
+		printerr("weaver-selftest: combine failed")
+		get_tree().quit(1)
+		return
+	if not debug_force_weave_at_anchor():
+		printerr("weaver-selftest: weave failed")
+		get_tree().quit(1)
+		return
+	for i in 12:
+		await get_tree().process_frame
+	if get_tree().get_nodes_in_group("structures").is_empty():
+		printerr("weaver-selftest: structure node missing")
+		get_tree().quit(1)
+		return
+	if Loom.pending_screenshot:
+		await _capture_screenshot("02_structure_standing.png")
+	var emitted := Loom.emit_from_structure(global_position)
+	if emitted == "":
+		printerr("weaver-selftest: emit failed")
+		get_tree().quit(1)
+		return
+	print("weaver-selftest: PASS phase=%s structures=%d log=%s" % [
+		api.get("phase", "?"),
+		api.get("structures", 0),
+		str(api.get("log", [])),
+	])
+	Loom.pending_selftest = false
+	get_tree().quit(0)
+
+
+func _capture_screenshot(filename: String) -> void:
+	for i in 4:
+		await get_tree().process_frame
+	var img: Image = get_viewport().get_texture().get_image()
+	if img == null:
+		printerr("weaver-screenshot: no image for %s" % filename)
+		return
+	var out_dir := ProjectSettings.globalize_path("res://").path_join("../../docs/WEAVER/screenshots")
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	var path := out_dir.path_join(filename)
+	var err := img.save_png(path)
+	if err != OK:
+		printerr("weaver-screenshot: save failed %s (%s)" % [path, err])
+		return
+	print("weaver-screenshot: wrote %s" % path)

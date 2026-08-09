@@ -1,58 +1,76 @@
-# The Weaver — Godot MVP stub
+# The Weaver — prototype loop (W1)
 
-Offline craft vignette scaffold for **The Weaver** (north-star product after Echo Lattice freeze).
+Extends the Godot **4.3** MVP scaffold with a playable **gather → combine → weave → emit** vertical.
 
-Design authority: [`docs/WEAVER/17_MVP.md`](../../docs/WEAVER/17_MVP.md) · [`docs/WEAVER/MASTER_GDD.md`](../../docs/WEAVER/MASTER_GDD.md) · [`docs/WEAVER/14_TECH.md`](../../docs/WEAVER/14_TECH.md).
+Design authority:
 
-**Echo Lattice is untouched.** This project lives beside `game/echo_lattice/` and must not replace it.
+- [`docs/WEAVER/32_FIRST_FIVE.md`](../../docs/WEAVER/32_FIRST_FIVE.md) — spike clocks
+- [`docs/WEAVER/17_MVP.md`](../../docs/WEAVER/17_MVP.md) · [`02_CORE_LOOP.md`](../../docs/WEAVER/02_CORE_LOOP.md)
+
+**Echo Lattice is untouched** under `game/echo_lattice/`.
+
+## Loop
+
+1. **Gather** — move in the East Post Gap void field; collect **Anchor** / **Span** (walk over or `E`)
+2. **Combine** — press `C` for the combine UI; bind two Fragments into a **Brace Thread**
+3. **Weave** — stand in the void, press `Space` to seat a **Span Structure**
+4. **Emit** — standing Structure sheds Fragments on a timer (loop closes)
 
 ## Stack
 
 | Lock | Choice |
 |---|---|
-| Engine | **Godot 4.3** (GL Compatibility) |
-| Language | **GDScript** (matches repo + TECH: GDScript first; C# only if a hire already lives there) |
-| Network | None — offline stub |
-| Sim | 2D placeholder (void gap → collect → combine → weave) |
+| Engine | Godot 4.3 (GL Compatibility) |
+| Language | GDScript |
+| Sim fence | **2D** placeholder (no dual-stack 3D) |
+| Network | None |
 
 ## Open / run
 
-1. Install [Godot 4.3](https://godotengine.org/download/archive/4.3-stable/) (standard build; GDScript — not .NET required).
-2. Open Godot → **Import** → select `game/weaver/project.godot`.
-3. Press **F5** (or Play). Main scene: `scenes/main.tscn`.
-
-Headless smoke (optional, if `godot` is on `PATH`):
-
 ```bash
-godot --path game/weaver --quit-after 1
+godot --path game/weaver
 ```
 
-## Playable stub loop
+Or Godot → Import → `game/weaver/project.godot` → F5.
 
-Teaching field proves the vertical-slice verbs without full physics:
+## Headless selftest
 
-1. **Void** — frayed gap in the Shed Yard field (physical missing span, not cosmic purple).
-2. **Recover** — walk into Fragments (Span / Anchor / Channel / Charge) to collect them.
-3. **Bind** — press **C** with two Fragments to spin one **Brace Thread**.
-4. **Tension / weave** — stand in the void zone, press **Space** to seat a placeholder **Span Structure** across the gap.
+```bash
+godot --headless --path game/weaver -- --selftest
+```
 
-Controls: **WASD** move · **E** collect · **C** combine · **Space** weave · **Esc** title.
+## Screenshots
+
+```bash
+xvfb-run -a godot --path game/weaver -- --selftest --screenshot
+# → docs/WEAVER/screenshots/01_void_field.png
+# → docs/WEAVER/screenshots/02_structure_standing.png
+```
+
+## Python contracts
+
+```bash
+python3 game/weaver/tests/test_prototype_loop.py
+```
+
+## Controls
+
+| Input | Action |
+|---|---|
+| WASD / arrows | Move |
+| E / walk-over | Gather Fragment |
+| C | Open combine UI |
+| Space | Weave Structure (in void) |
+| Esc | Close UI / return to title |
 
 ## Layout
 
 ```
 game/weaver/
   project.godot
-  README.md
-  icon.svg
-  content/           # authored fragment data (JSON seed)
-  scenes/            # main, field, player, fragment, structure
-  scripts/
-    loom/            # session state (combine → thread → seat)
+  content/recipes.json      # Anchor+Span → Brace → emit
+  scenes/field.tscn         # void gap playfield
+  scenes/ui/combine_panel.tscn
+  scripts/loom/loom_state.gd
+  tests/test_prototype_loop.py
 ```
-
-## Non-goals (this PR)
-
-- No Steam AppID, no online, no trade, no Echo Lattice renames.
-- No full soft-body / verlet loom — placeholder Structure seat only.
-- Art is procedural polygons for legibility; visual identity follows workshop / fiber language from `09_VISUAL.md`.

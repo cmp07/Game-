@@ -161,4 +161,4 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.35, 0.28, 0.2, 0.75)
 theme_override_font_sizes/font_size = 13
-text = "WASD move · E collect · C combine two Fragments → Thread · Space weave at void · Esc title"
+text = "WASD move · E gather · C combine UI · Space weave at void · Esc title"
