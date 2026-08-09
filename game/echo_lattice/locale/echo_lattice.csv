@@ -16,7 +16,9 @@ menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间�
 menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
 menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
+menu.daily_meta_code,Daily %s  ·  %s  ·  best %s★ / 15,每日 %s  ·  %s  ·  最佳 %s★ / 15
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+menu.demo_daily_meta_code,Next Fest demo  ·  Daily %s  ·  %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引
 menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
 menu.daily_placeholder,Daily,每日
@@ -29,6 +31,7 @@ hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
 hud.restart,Restart (R),重开 (R)
 hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s
+hud.daily_tag_code, · Daily %s · %s, · 每日 %s · %s
 hud.chamber_fallback,Chamber,间室
 habit.up,up,上
 habit.down,down,下
@@ -57,6 +60,9 @@ Habit: %s","%s
 won.daily_line,"
 Daily %s","
 每日 %s"
+won.daily_line_code,"
+Daily %s · %s","
+每日 %s · %s"
 won.stars_glyph,%s (%s/3),%s (%s/3)
 end.title,END OF SLICE,切片终章
 end.tagline,The lattice remembers you.,晶格记得你。
@@ -66,6 +72,7 @@ end.footer,Vertical slice · Echo Lattice · VISUAL v2 · ink on paper,可玩切
 end.header_wing,Wing complete.,本翼完成。
 end.header_demo,Act I complete — Mirror Birth remembered.,第一幕完成 — 已铭记镜像诞生。
 end.header_daily,Daily %s complete.,每日 %s 完成。
+end.header_daily_code,Daily %s · %s complete.,每日 %s · %s 完成。
 end.summary,"%s
 Escaped %s / %s chambers.
 Stars this wing: %s★

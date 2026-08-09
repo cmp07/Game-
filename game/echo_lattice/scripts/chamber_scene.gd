@@ -107,7 +107,10 @@ func _refresh_title() -> void:
 	var data: Dictionary = ChamberBook.get_chamber(idx)
 	var mode_tag: String = ""
 	if GameState.run_mode == "daily":
-		mode_tag = tr("hud.daily_tag") % GameState.daily_label
+		if GameState.daily_friend_code != "":
+			mode_tag = tr("hud.daily_tag_code") % [GameState.daily_label, GameState.daily_friend_code]
+		else:
+			mode_tag = tr("hud.daily_tag") % GameState.daily_label
 	title_label.text = "%s / %s — %s%s" % [
 		GameState.run_progress_index() + 1,
 		GameState.chambers_in_run(),

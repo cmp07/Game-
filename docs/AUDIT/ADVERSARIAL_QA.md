@@ -9,11 +9,11 @@
 
 ## Verdict
 
-Ship-blocking product drift remains on **Daily Challenge authority** (FAQ / calendar vs live `GameState`). Several session-integrity edges (cloud push-before-commit, demo↔full save bleed, sticky hold after alt-tab / pad unplug, mid-run locale HUD stale) are **mitigated on this branch**. Remaining items need manual GUI / Deck / dual-install verification.
+**Daily Challenge authority** (FAQ / `calendar_90` / friend codes) is **mitigated** via `DailyCalendar` → `DailySeeds` wiring in `GameState.start_daily_run`. Several session-integrity edges (cloud push-before-commit, demo↔full save bleed, sticky hold after alt-tab / pad unplug, mid-run locale HUD stale) remain mitigated. Remaining items need manual GUI / Deck / dual-install verification.
 
-| Severity | Open | Mitigated this PR |
+| Severity | Open | Mitigated |
 |---|---|---|
-| P0 | 1 | 2 |
+| P0 | 0 | 3 |
 | P1 | 3 | 3 |
 | P2 | 4 | 0 |
 
@@ -27,7 +27,7 @@ Ship-blocking product drift remains on **Daily Challenge authority** (FAQ / cale
 | Alt-tab mid-rewrite | AQ-FOCUS-01 | P1 | **Mitigated** — clear hold on focus-out; slam timer resumes on focus-in |
 | Corrupt save | AQ-SAVE-01 | P1 | Bak recovery OK; **mitigated** type-coercion + OOB clamp; dual-corrupt still wipes to fresh |
 | Demo ↔ full confusion | AQ-DEMO-01 | P0 | **Mitigated** — `build_flavor` + queue/score clamp; dual-install userdata still platform-dependent |
-| Daily timezone | AQ-DAILY-01 | P0 | **OPEN** — UTC labels exist, but calendar / friend-code authority is orphaned |
+| Daily timezone | AQ-DAILY-01 | P0 | **Mitigated** — `DailyCalendar.today_utc()` + friend code on Daily card; eligible wing |
 | Locale switch mid-run | AQ-L10N-01 | P1 | **Mitigated** — chamber HUD listens to `locale_changed`; subtitles still English stubs |
 | Gamepad disconnect | AQ-PAD-01 | P1 | **Mitigated** — glyph fallback + hold clear; menu focus restore still manual |
 | Window resize | AQ-VIEW-01 | P2 | Stretch `canvas_items`/`expand` OK; extreme UI-scale + tiny window = Deck checklist |
@@ -37,27 +37,15 @@ Ship-blocking product drift remains on **Daily Challenge authority** (FAQ / cale
 
 ## Findings
 
-### AQ-DAILY-01 — Daily calendar is not the live Daily Challenge (P0 · OPEN)
+### AQ-DAILY-01 — Daily calendar is not the live Daily Challenge (P0 · mitigated)
 
 **Claimed:** [`SUPPORT_FAQ.md`](../RELEASE/SUPPORT_FAQ.md) C1–C4 and [`POSTLAUNCH.md`](../RELEASE/POSTLAUNCH.md) say dailies are UTC, friend-code comparable, and driven by `calendar_90.json` via `DailyCalendar.pick_for_date`.
 
-**Actual:** `GameState.start_daily_run()` ignores `DailyCalendar` / `DailySeeds`. It sets:
+**Mitigation:** `GameState.start_daily_run()` calls `DailyCalendar.today_utc()` (calendar hit → else `DailySeeds` `catalog_hash`). It stores `daily_seed` / `daily_friend_code` / `daily_chamber_id` / `daily_variation`, builds a five-chamber wing via `ChamberBook.daily_wing_for_entry` (featured chamber first, fillers from `daily_eligible` only), and surfaces the friend code on the Daily card / HUD. YYYYMMDD Fisher–Yates is no longer the sole playable path.
 
-- `daily_seed = YYYYMMDD` (int from `Time.get_datetime_dict_from_system(true)`)
-- `run_queue = ChamberBook.daily_chamber_indices(daily_seed, 5)` (Fisher–Yates over the **whole campaign book**)
+**Still manual:** Demo days whose calendar chamber is outside Act I fall back to the eligible demo pool (friend code still from catalog/calendar row). Palette variation is stored; geometry axes apply on the featured chamber.
 
-So:
-
-1. Two players on the same UTC date get the same *wing shuffle*, but **not** the authored calendar chamber / `friend_code` / variation.
-2. FAQ “compare friend code on the Daily card” has **no runtime surface** wired to this path.
-3. After day-90 “catalog hash fallback” never runs in play — only in unused helpers.
-4. Demo Daily is Act-I-scoped only because the book is filtered, not because the calendar tags soft-launch days.
-
-**Repro (cloud):** read `game_state.gd` `start_daily_run` vs `daily_calendar.gd`; `rg DailyCalendar game/echo_lattice/scripts` → only the calendar module itself.
-
-**Fix direction (not in this PR — product decision):** either wire `DailyCalendar.today_utc()` into `start_daily_run` (and define how a single `chamber_id` becomes a five-chamber wing), or rewrite FAQ/liveops to match the YYYYMMDD shuffle and drop friend-code promises for 1.0.
-
-**Timezone note:** date math *is* UTC (`true` on `get_datetime_dict_from_system`). Local-midnight confusion is documented correctly; the bug is authority, not tz.
+**Timezone note:** date math remains UTC (`true` on `get_datetime_dict_from_system`).
 
 ---
 
@@ -196,7 +184,7 @@ If `save.json` **and** `save.json.bak` both fail JSON parse → load returns fal
 3. **Unplug Xbox pad** mid-corridor with stick held — no autopilot walk; glyphs flip to WASD.
 4. **Install Demo + Full on same Windows machine** — confirm separate `%APPDATA%` folders; copy full `save.json` into demo folder and Continue.
 5. **Settings → language** mid-chamber — HUD + subtitles (expect subtitle EN gap).
-6. **Daily at 23:59 UTC → 00:01 UTC** — Continue yesterday vs Start Daily today; note friend-code absence (AQ-DAILY-01).
+6. **Daily at 23:59 UTC → 00:01 UTC** — Continue yesterday vs Start Daily today; friend codes must differ across the UTC roll (AQ-DAILY-01).
 7. **Resize** while settings open at UI scale 1.5; Steam Deck 1280×800 path.
 8. **Corrupt both save + bak** — boot reaches menu; no crash loop.
 
@@ -206,6 +194,7 @@ If `save.json` **and** `save.json.bak` both fail JSON parse → load returns fal
 
 ```bash
 python3 game/echo_lattice/tests/test_adversarial_qa.py
+python3 game/echo_lattice/tests/test_daily_calendar_wire.py
 python3 game/echo_lattice/tests/test_rc_polish.py
 python3 game/echo_lattice/tests/test_demo_spec.py
 python3 game/echo_lattice/tests/test_release_liveops.py

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Adversarial QA contract tests (stdlib only, no Godot).
 
-Locks mitigations from docs/AUDIT/ADVERSARIAL_QA.md and characterizes
-the open Daily-calendar orphan so it cannot disappear silently.
+Locks mitigations from docs/AUDIT/ADVERSARIAL_QA.md, including the
+DailyCalendar wiring (AQ-DAILY-01).
 """
 
 from __future__ import annotations
@@ -171,22 +171,17 @@ class TestLocaleMidRun(unittest.TestCase):
         self.assertIn("_refresh_title()", gd)
 
 
-class TestDailyCalendarOrphan(unittest.TestCase):
-    """AQ-DAILY-01 characterization — fails closed if someone deletes the calendar
-    without wiring it, and records that GameState still owns a parallel path.
-    """
+class TestDailyCalendarWired(unittest.TestCase):
+    """AQ-DAILY-01 — Daily Challenge authority is calendar / catalog, not YYYYMMDD-only."""
 
     def test_calendar_module_exists(self) -> None:
         self.assertTrue((SCRIPTS / "daily_calendar.gd").is_file())
         self.assertTrue((ROOT / "content" / "daily" / "calendar_90.json").is_file())
 
-    def test_gamestate_daily_uses_system_utc_seed(self) -> None:
+    def test_gamestate_daily_uses_calendar(self) -> None:
         gs = _read(SCRIPTS / "game_state.gd")
         self.assertIn("func start_daily_run", gs)
-        self.assertIn("_today_seed()", gs)
         self.assertIn("get_datetime_dict_from_system(true)", gs)
-        # Orphan: start_daily_run must not yet call DailyCalendar (open finding).
-        # When product wires the calendar, invert this assertion and update the audit.
         m = re.search(
             r"func start_daily_run\(\) -> void:(.*?)(?=\nfunc |\Z)",
             gs,
@@ -194,11 +189,10 @@ class TestDailyCalendarOrphan(unittest.TestCase):
         )
         self.assertIsNotNone(m)
         body = m.group(1)
-        self.assertNotIn(
-            "DailyCalendar",
-            body,
-            "AQ-DAILY-01 appears fixed — update ADVERSARIAL_QA.md and this test",
-        )
+        self.assertIn("DailyCalendar", body)
+        self.assertIn("daily_wing_for_entry", body)
+        self.assertNotIn("daily_chamber_indices", body)
+        self.assertNotIn("_today_seed()", body)
 
     def test_faq_still_promises_friend_code_calendar(self) -> None:
         faq = _read(REPO / "docs" / "RELEASE" / "SUPPORT_FAQ.md")
@@ -207,14 +201,13 @@ class TestDailyCalendarOrphan(unittest.TestCase):
         self.assertIn("calendar_90", faq)
 
     def test_calendar_seed_differs_from_yyyymmdd_shuffle_model(self) -> None:
-        """Authored calendar rows carry friend_code; GameState seed is YYYYMMDD int."""
+        """Authored calendar rows carry friend_code; catalog seed ≠ YYYYMMDD int."""
         cal = json.loads(
             (ROOT / "content" / "daily" / "calendar_90.json").read_text(encoding="utf-8")
         )
         day0 = cal["days"][0]
         self.assertIn("friend_code", day0)
         self.assertIn("chamber_id", day0)
-        # YYYYMMDD int for that date is not the catalog seed field.
         y, m, d = (int(x) for x in day0["date"].split("-"))
         yyyymmdd = y * 10000 + m * 100 + d
         self.assertNotEqual(
@@ -222,6 +215,11 @@ class TestDailyCalendarOrphan(unittest.TestCase):
             yyyymmdd,
             "calendar seed unexpectedly equals YYYYMMDD — revisit AQ-DAILY-01",
         )
+
+    def test_menu_exposes_friend_code(self) -> None:
+        menu = _read(SCRIPTS / "menu.gd")
+        self.assertIn("friend_code", menu)
+        self.assertIn("today_daily_entry", menu)
 
 
 class TestHeadlessGuardsPresent(unittest.TestCase):

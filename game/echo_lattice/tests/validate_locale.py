@@ -34,6 +34,7 @@ REQUIRED_UI_KEYS = {
     "menu.subtitle_fresh",
     "menu.subtitle_progress",
     "menu.daily_meta",
+    "menu.daily_meta_code",
     "hud.moves",
     "hud.habit",
     "hud.habit_unwritten",

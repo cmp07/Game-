@@ -136,6 +136,11 @@ func load_chamber(id: int) -> void:
 		return
 	transform_name = str(chamber.get("transform", "none"))
 	var rows: Array = chamber.get("map", [])
+	# Daily featured chamber applies calendar / catalog variation axes.
+	if has_node("/root/GameState") and GameState.run_mode == "daily":
+		var cid: String = str(chamber.get("content_id", ""))
+		if cid != "" and cid == GameState.daily_chamber_id and not GameState.daily_variation.is_empty():
+			rows = DailyVariation.apply_to_map(rows, GameState.daily_variation)
 	grid.clear()
 	walked.clear()
 	traverse_count.clear()

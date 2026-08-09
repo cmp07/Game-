@@ -142,4 +142,5 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"role": str(rec.get("role", "")),
 		"content_id": str(rec.get("content_id", "")),
 		"seed": int(rec.get("seed", 0)),
+		"daily_eligible": bool(rec.get("daily_eligible", false)),
 	}

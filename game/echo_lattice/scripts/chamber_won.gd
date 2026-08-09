@@ -57,7 +57,10 @@ func configure(chamber_id: int, moves: int) -> void:
 	next_button.text = next_text
 	var mode_line: String = ""
 	if GameState.run_mode == "daily":
-		mode_line = tr("won.daily_line") % GameState.daily_label
+		if GameState.daily_friend_code != "":
+			mode_line = tr("won.daily_line_code") % [GameState.daily_label, GameState.daily_friend_code]
+		else:
+			mode_line = tr("won.daily_line") % GameState.daily_label
 	stats_label.text = tr("won.stats") % [
 		star_str, moves, best, best_stars, GameState.last_clear_bfs_par, mode_line, _habit_summary()
 	]

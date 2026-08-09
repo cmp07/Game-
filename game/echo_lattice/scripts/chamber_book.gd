@@ -106,15 +106,31 @@ func get_chamber(idx: int) -> Dictionary:
 	if not _loaded:
 		reload()
 	# Campaign progression uses non-hard chambers so hard variants stay optional.
-	if idx < 0 or idx >= _campaign.size():
-		return {}
-	return _campaign[idx]
+	if idx >= 0 and idx < _campaign.size():
+		return _campaign[idx]
+	# Daily can address authored hard variants by content index (id).
+	for play in _playable:
+		if int(play.get("id", -1)) == idx:
+			return play
+	return {}
 
 
 func get_chamber_by_content_id(content_id: String) -> Dictionary:
 	if not _loaded:
 		reload()
 	return _by_content_id.get(content_id, {})
+
+
+func index_for_content_id(content_id: String) -> int:
+	## Authored chamber index (campaign slot or hard-variant id), or -1.
+	var play: Dictionary = get_chamber_by_content_id(content_id)
+	if play.is_empty():
+		return -1
+	return int(play.get("id", -1))
+
+
+func is_addressable_chamber(idx: int) -> bool:
+	return not get_chamber(idx).is_empty()
 
 
 func get_all_records() -> Array:
@@ -142,14 +158,76 @@ func act_for_chamber(idx: int) -> int:
 	return int(data.get("act", 1))
 
 
-## Daily wing: five chamber indices derived from YYYYMMDD seed.
+func daily_eligible_indices() -> Array:
+	## Authored indices flagged daily_eligible and present in the active book.
+	if not _loaded:
+		reload()
+	var out: Array = []
+	var seen: Dictionary = {}
+	for play in _playable:
+		if not bool(play.get("daily_eligible", false)):
+			continue
+		var idx: int = int(play.get("id", -1))
+		if idx < 0 or seen.has(idx):
+			continue
+		seen[idx] = true
+		out.append(idx)
+	out.sort()
+	return out
+
+
+## Legacy helper — whole-book Fisher–Yates. Prefer daily_wing_for_entry.
 func daily_chamber_indices(seed_int: int, count: int = 5) -> Array:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = seed_int
+	return _shuffle_pick(_all_campaign_indices(), seed_int, count, -1)
+
+
+## Calendar / catalog entry → five-chamber daily wing.
+## Featured chamber_id leads; remaining slots come from daily_eligible only.
+func daily_wing_for_entry(entry: Dictionary, count: int = 5) -> Array:
+	if not _loaded:
+		reload()
+	var seed_int: int = int(entry.get("seed", 0))
+	var featured_cid: String = str(entry.get("chamber_id", ""))
+	var featured_idx: int = index_for_content_id(featured_cid)
+	var pool: Array = daily_eligible_indices()
+	# Calendar is authoritative: ensure featured is in the pool when loaded.
+	if featured_idx >= 0 and not pool.has(featured_idx):
+		pool.append(featured_idx)
+		pool.sort()
+	if pool.is_empty():
+		# Last resort (empty catalog / broken book): campaign shuffle.
+		return _shuffle_pick(_all_campaign_indices(), seed_int if seed_int != 0 else 1, count, -1)
+	if featured_idx < 0:
+		# Demo / missing content — eligible-only wing from catalog seed.
+		return _shuffle_pick(pool, seed_int if seed_int != 0 else 1, count, -1)
+	var out: Array = [featured_idx]
+	var rest: Array = _shuffle_pick(pool, seed_int if seed_int != 0 else 1, count, featured_idx)
+	for idx in rest:
+		if out.size() >= count:
+			break
+		if not out.has(idx):
+			out.append(idx)
+	return out
+
+
+func _all_campaign_indices() -> Array:
 	var pool: Array = []
 	for i in range(chamber_count()):
 		pool.append(i)
-	# Fisher–Yates
+	return pool
+
+
+func _shuffle_pick(pool_in: Array, seed_int: int, count: int, exclude_idx: int) -> Array:
+	var pool: Array = []
+	for v in pool_in:
+		var idx: int = int(v)
+		if exclude_idx >= 0 and idx == exclude_idx:
+			continue
+		pool.append(idx)
+	if pool.is_empty():
+		return []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_int
 	for i in range(pool.size() - 1, 0, -1):
 		var j: int = rng.randi_range(0, i)
 		var tmp = pool[i]
@@ -158,7 +236,6 @@ func daily_chamber_indices(seed_int: int, count: int = 5) -> Array:
 	var out: Array = []
 	for i in range(mini(count, pool.size())):
 		out.append(pool[i])
-	out.sort()
 	return out
 
 

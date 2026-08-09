@@ -39,6 +39,10 @@ func save_to_disk() -> bool:
 		"queue_pos": GameState.queue_pos,
 		"daily_seed": GameState.daily_seed,
 		"daily_label": GameState.daily_label,
+		"daily_friend_code": GameState.daily_friend_code,
+		"daily_chamber_id": GameState.daily_chamber_id,
+		"daily_source": GameState.daily_source,
+		"daily_variation": GameState.daily_variation,
 		"daily_best_stars": GameState.daily_best_stars,
 		"run_started": GameState.run_started,
 	}
@@ -185,6 +189,14 @@ func _apply_save(parsed: Dictionary) -> void:
 	GameState.queue_pos = int(parsed.get("queue_pos", 0))
 	GameState.daily_seed = int(parsed.get("daily_seed", 0))
 	GameState.daily_label = str(parsed.get("daily_label", ""))
+	GameState.daily_friend_code = str(parsed.get("daily_friend_code", ""))
+	GameState.daily_chamber_id = str(parsed.get("daily_chamber_id", ""))
+	GameState.daily_source = str(parsed.get("daily_source", ""))
+	var dvar = parsed.get("daily_variation", {})
+	if typeof(dvar) == TYPE_DICTIONARY:
+		GameState.daily_variation = (dvar as Dictionary).duplicate(true)
+	else:
+		GameState.daily_variation = {}
 	GameState.run_started = bool(parsed.get("run_started", false))
 	var rq = parsed.get("run_queue", [])
 	if typeof(rq) == TYPE_ARRAY:
@@ -222,7 +234,10 @@ func _sanitize_queue_against_book() -> void:
 	var filtered: Array = []
 	for idx in GameState.run_queue:
 		var i: int = int(idx)
-		if i >= 0 and i < n:
+		# Daily wings may address hard-variant authored ids beyond campaign size.
+		if ChamberBook.is_addressable_chamber(i):
+			filtered.append(i)
+		elif i >= 0 and i < n:
 			filtered.append(i)
 	if filtered.size() != GameState.run_queue.size():
 		push_warning(
@@ -230,11 +245,13 @@ func _sanitize_queue_against_book() -> void:
 			% n
 		)
 	GameState.run_queue = filtered
-	# Prune score tables that point past the active book (demo load of full save).
+	# Prune score tables the active book cannot address (demo↔full / corrupt).
+	# Daily hard-variant ids stay when `get_chamber` can resolve them.
 	for table in [GameState.best_moves, GameState.best_stars, GameState.completed, GameState.run_cleared]:
 		var drop: Array = []
 		for k in table.keys():
-			if int(k) < 0 or int(k) >= n:
+			var ik: int = int(k)
+			if ik < 0 or not ChamberBook.is_addressable_chamber(ik):
 				drop.append(k)
 		for k2 in drop:
 			table.erase(k2)
