@@ -734,34 +734,32 @@ func _draw() -> void:
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
-	# Survey seal as hero letterpress plate — habit-maze mark under the brand.
-	var seal_r: float = 72.0 if page.size.y >= 700.0 else 40.0
-	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 178.0)
+	# Survey seal as hero letterpress plate — sole lattice mark under the brand.
+	var seal_r: float = 86.0 if page.size.y >= 700.0 else 48.0
+	var seal_c := Vector2(brand_x + seal_r + 18.0, brand_y + 196.0)
 	if seal_c.x + seal_r + 20.0 > card.position.x:
-		seal_c.x = brand_x + seal_r + 8.0
-	# Soft blotter plate under the seal — fills the left plane with stock, not void.
-	var blot_w: float = minf(card.position.x - brand_x - 28.0, page.size.x * 0.40)
-	var blot_h: float = minf(page.end.y - (seal_c.y - seal_r) - 48.0, page.size.y * 0.42)
-	var blot := Rect2(brand_x - 4.0, seal_c.y - seal_r - 12.0, maxf(220.0, blot_w), maxf(180.0, blot_h))
+		seal_c.x = brand_x + seal_r + 10.0
+	# Quiet blotter stock behind the plate — no second chunky specimen competing.
+	var blot_pad: float = 22.0
+	var blot := Rect2(
+		seal_c.x - seal_r - blot_pad,
+		seal_c.y - seal_r - blot_pad,
+		seal_r * 2.0 + blot_pad * 2.0,
+		seal_r * 2.0 + blot_pad * 2.0 + 36.0
+	)
 	if blot.size.y > 8.0 and blot.size.x > 8.0:
 		var blot_deep := Palette.PAPER_DEEP
-		blot_deep.a = 0.55
-		draw_rect(Rect2(blot.position + Vector2(4, 5), blot.size), blot_deep, true)
+		blot_deep.a = 0.40
+		draw_rect(Rect2(blot.position + Vector2(3, 4), blot.size), blot_deep, true)
 		var blot_face := Palette.PAPER_BONE
-		blot_face.a = 0.92
+		blot_face.a = 0.88
 		draw_rect(blot, blot_face, true)
-		ArtKit.draw_paper_grain(self, blot, 27, 0.05)
-		draw_rect(
-			blot,
-			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55),
-			false,
-			1.5
-		)
+		ArtKit.draw_paper_grain(self, blot, 27, 0.045)
 	# Letterpress lattice plate — rectangular stamp, habit-maze silhouette inside.
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -4.0,
+		"rot_deg": -3.5,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.92,
+		"alpha": 0.94,
 		"seed": 42,
 		"hero": true,
 		"maze": true,
@@ -769,15 +767,12 @@ func _draw() -> void:
 	})
 	draw_string(
 		_type("mono"),
-		Vector2(brand_x, seal_c.y + seal_r + 30.0),
+		Vector2(brand_x, seal_c.y + seal_r + 28.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
 	)
-	# Letterpress specimen + chalk path fill the blotter — authored ink, not void.
-	var specimen_origin := Vector2(brand_x + 18.0, seal_c.y + seal_r + 52.0)
-	if specimen_origin.y + 140.0 < page.end.y - 24.0:
-		_draw_specimen_lattice(specimen_origin, 15.0 if page.size.y >= 700.0 else 11.0)
-	_draw_ambient_chalk(Vector2(seal_c.x + seal_r + 16.0, seal_c.y - seal_r * 0.15))
+	# Quiet chalk whisper beside the plate — graphite only, no fossil stack competing.
+	_draw_ambient_chalk_soft(Vector2(seal_c.x + seal_r + 22.0, seal_c.y - seal_r * 0.20))
 
 	ArtKit.draw_index_card(self, card, {
 		"alpha": slot_a,
@@ -847,31 +842,38 @@ func _draw_specimen_lattice(origin: Vector2, cell: float = 16.0) -> void:
 
 
 func _draw_ambient_chalk(seal_origin: Vector2) -> void:
-	## Writing chalk path beside the seal — fills brand plane; discrete stamps, no breathe.
+	## Legacy chalk + fossil stack — kept for craft tests; brand plane uses the soft path.
+	_draw_ambient_chalk_soft(seal_origin)
 	var cell: float = 16.0
 	var origin: Vector2 = seal_origin + Vector2(24.0, 36.0)
 	var visible: int = mini(_demo_path.size(), maxi(2, int(_demo_progress)))
 	if visible < 2:
 		return
-	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.88)
-	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.42)
+	var fill: int = int(_demo_progress) % 31
+	if fill <= 16:
+		return
+	for j in range(4):
+		var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
+		var mx: float = origin.x + (22.0 - fp.x * 0.62) * cell
+		var my: float = origin.y + (fp.y - 6) * 0.62 * cell + j * cell * 0.55
+		var fr := Rect2(mx, my, cell - 1.0, cell - 1.0)
+		draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.86), true)
+
+
+func _draw_ambient_chalk_soft(seal_origin: Vector2) -> void:
+	## Graphite habit whisper beside the plate — no fossil stack, no second seal.
+	var cell: float = 14.0
+	var origin: Vector2 = seal_origin + Vector2(18.0, 28.0)
+	var visible: int = mini(_demo_path.size(), maxi(2, int(_demo_progress)))
+	if visible < 2:
+		return
+	var chalk := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.38)
 	for i in range(visible - 1):
 		var a: Vector2i = _demo_path[i]
 		var b: Vector2i = _demo_path[i + 1]
-		var pa: Vector2 = origin + Vector2(a.x * 0.62 * cell, (a.y - 6) * 0.62 * cell)
-		var pb: Vector2 = origin + Vector2(b.x * 0.62 * cell, (b.y - 6) * 0.62 * cell)
-		draw_line(pa, pb, ink_trail, 2.0, true)
-		ArtKit.draw_dashed_line(self, pa, pb, chalk, 2.4, 4.0, 2.2)
-	# Discrete fossil stamp when the demo buffer fills — no sin breathe.
-	var fill: int = int(_demo_progress) % 31
-	var fold_on: bool = fill > 16
-	if fold_on:
-		for j in range(4):
-			var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
-			var mx: float = origin.x + (22.0 - fp.x * 0.62) * cell
-			var my: float = origin.y + (fp.y - 6) * 0.62 * cell + j * cell * 0.55
-			var fr := Rect2(mx, my, cell - 1.0, cell - 1.0)
-			draw_rect(fr, Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.86), true)
+		var pa: Vector2 = origin + Vector2(a.x * 0.55 * cell, (a.y - 6) * 0.55 * cell)
+		var pb: Vector2 = origin + Vector2(b.x * 0.55 * cell, (b.y - 6) * 0.55 * cell)
+		ArtKit.draw_dashed_line(self, pa, pb, chalk, 1.6, 3.5, 2.4)
 
 
 func _draw_button_underlines(_card: Rect2) -> void:

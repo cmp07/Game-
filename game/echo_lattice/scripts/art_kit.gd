@@ -617,18 +617,24 @@ func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, 
 		1.15 if hero else 1.0,
 		rng
 	)
-	# Corner registration marks — surveyor plate grammar (tight ticks, not ring spokes).
-	var tick: float = 5.0 if hero else 3.5
+	# Corner registration marks — small ticks outside the plate (surveyor die grammar).
+	var tick_out: float = 7.0 if hero else 4.5
+	var tick_in: float = 3.0 if hero else 2.0
 	var corners: Array = [
 		Vector2(-hw, -hh), Vector2(hw, -hh), Vector2(-hw, hh), Vector2(hw, hh),
 	]
 	for corner in corners:
 		var c0: Vector2 = center + (corner as Vector2).rotated(rot)
-		var inward: Vector2 = (-(corner as Vector2).sign()) * tick
-		var j: Vector2 = Vector2(rng.randf_range(-0.4, 0.4), rng.randf_range(-0.4, 0.4))
-		var tc := Color(ink.r, ink.g, ink.b, alpha * 0.78)
-		canvas.draw_line(c0 + j, c0 + Vector2(inward.x, 0.0) + j, tc, 1.2, true)
-		canvas.draw_line(c0 + j, c0 + Vector2(0.0, inward.y) + j, tc, 1.2, true)
+		var outward: Vector2 = (corner as Vector2).sign() * tick_out
+		var inward: Vector2 = (-(corner as Vector2).sign()) * tick_in
+		var j: Vector2 = Vector2(rng.randf_range(-0.35, 0.35), rng.randf_range(-0.35, 0.35))
+		var tc := Color(ink.r, ink.g, ink.b, alpha * 0.80)
+		# Outboard crop marks.
+		canvas.draw_line(c0 + j, c0 + Vector2(outward.x, 0.0) + j, tc, 1.15, true)
+		canvas.draw_line(c0 + j, c0 + Vector2(0.0, outward.y) + j, tc, 1.15, true)
+		# Short inboard bites so the die corner registers.
+		canvas.draw_line(c0 + j, c0 + Vector2(inward.x, 0.0) + j, tc, 1.0, true)
+		canvas.draw_line(c0 + j, c0 + Vector2(0.0, inward.y) + j, tc, 1.0, true)
 	if maze:
 		draw_habit_maze_mark(canvas, center, minf(hw, hh) * 0.78, {
 			"rot_deg": rot_deg,
@@ -668,21 +674,19 @@ func draw_habit_maze_mark(canvas: CanvasItem, center: Vector2, half: float, opts
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var rot: float = deg_to_rad(rot_deg)
-	# 6-unit lattice — continuous wall segments so the silhouette reads as a maze, not dots.
+	# 6-unit lattice — interior walls only (plate frame is the die edge; no triple border).
 	var n: float = 6.0
 	var cell: float = (half * 2.0) / n
 	var origin: Vector2 = Vector2(-half, -half)
-	var stroke: float = maxf(1.6, cell * (0.22 if hero else 0.26))
-	var ink_c := Color(ink.r, ink.g, ink.b, alpha * 0.94)
-	# Horizontal wall runs: [x0, x1, y] in grid units (inclusive line along cell edges).
+	var stroke: float = maxf(1.35, cell * (0.14 if hero else 0.18))
+	var ink_c := Color(ink.r, ink.g, ink.b, alpha * 0.96)
+	# Horizontal wall runs: [x0, x1, y] — interior only.
 	var h_runs: Array = [
-		Vector3(0, 6, 0), Vector3(0, 6, 6),
-		Vector3(2, 5, 2), Vector3(0, 2, 4), Vector3(4, 6, 4),
+		Vector3(1, 5, 2), Vector3(0, 2, 4), Vector3(4, 6, 4), Vector3(2, 4, 5),
 	]
 	# Vertical wall runs: [y0, y1, x]
 	var v_runs: Array = [
-		Vector3(0, 6, 0), Vector3(0, 6, 6),
-		Vector3(0, 3, 2), Vector3(3, 6, 4), Vector3(1, 3, 5),
+		Vector3(1, 4, 2), Vector3(2, 6, 4), Vector3(0, 3, 5), Vector3(4, 6, 3),
 	]
 	for run in h_runs:
 		var a_local := origin + Vector2(run.x * cell, run.z * cell)
@@ -744,15 +748,15 @@ func _draw_rotated_ink_run(
 	var dir: Vector2 = delta / length
 	var segs: int = maxi(3, int(length / 6.0))
 	for i in range(segs):
-		if rng.randf() < 0.10:
+		if rng.randf() < 0.05:
 			continue
 		var pressure: float = 1.0
-		if rng.randf() < 0.18:
-			pressure = rng.randf_range(0.35, 0.70)
+		if rng.randf() < 0.14:
+			pressure = rng.randf_range(0.55, 0.85)
 		var t0: float = length * float(i) / float(segs)
 		var t1: float = length * float(i + 1) / float(segs)
 		var c := Color(ink.r, ink.g, ink.b, ink.a * pressure)
-		canvas.draw_line(a + dir * t0, a + dir * t1, c, width * rng.randf_range(0.88, 1.15), true)
+		canvas.draw_line(a + dir * t0, a + dir * t1, c, width * rng.randf_range(0.92, 1.12), true)
 
 
 func _draw_seal_plate_fill(
@@ -778,7 +782,7 @@ func _draw_seal_plate_frame(
 	width: float,
 	rng: RandomNumberGenerator
 ) -> void:
-	## Segmented rectangle — ~15–20% of edges print light / skip (ink pressure).
+	## Continuous plate edge with sparse ink-pressure fades — letterpress, not a dashed UI ring.
 	var edges: Array = [
 		[Vector2(-hw, -hh), Vector2(hw, -hh)],
 		[Vector2(hw, -hh), Vector2(hw, hh)],
@@ -793,19 +797,20 @@ func _draw_seal_plate_frame(
 		if length < 0.001:
 			continue
 		var dir: Vector2 = delta / length
-		var segs: int = maxi(6, int(length / 7.0))
+		var segs: int = maxi(8, int(length / 5.0))
 		for i in range(segs):
-			if rng.randf() < 0.14:
+			# Rare skips only — plate must read as a solid stamp die, not dashes.
+			if rng.randf() < 0.04:
 				continue
 			var pressure: float = 1.0
-			if rng.randf() < 0.22:
-				pressure = rng.randf_range(0.22, 0.55)
+			if rng.randf() < 0.12:
+				pressure = rng.randf_range(0.55, 0.82)
 			var t0: float = length * float(i) / float(segs)
 			var t1: float = length * float(i + 1) / float(segs)
 			var p0: Vector2 = center + (a + dir * t0).rotated(rot)
 			var p1: Vector2 = center + (a + dir * t1).rotated(rot)
 			var c := Color(ink.r, ink.g, ink.b, alpha * pressure)
-			canvas.draw_line(p0, p1, c, width * rng.randf_range(0.85, 1.2), true)
+			canvas.draw_line(p0, p1, c, width * rng.randf_range(0.92, 1.12), true)
 
 
 func _draw_rotated_rect(
