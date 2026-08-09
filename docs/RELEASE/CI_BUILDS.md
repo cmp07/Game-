@@ -1,19 +1,21 @@
 # CI builds (Godot desktop)
 
-Automates the matrix in [`PLATFORMS.md`](PLATFORMS.md).
+Automates the matrix in [`PLATFORMS.md`](PLATFORMS.md).  
+**Windows (+ Demo) deep dive:** [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) · script [`tools/release/export_windows.sh`](../../tools/release/export_windows.sh)
 
 **Committed workflow:** [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
 
 | Job | Required? | Notes |
 |---|---|---|
-| `validate` | **Yes** | Chamber validate + Python gates (Steamworks, demo, Deck, locale, a11y) |
-| `export-linux` / `export-windows` / `export-windows-demo` | Sketch | Godot **4.3** via `barichello/godot-ci:4.3` container; `continue-on-error` until templates/image are pinned for merge-blocking |
+| `validate` | **Yes** | Chamber validate + Python gates (Steamworks, demo, Windows export contract, Deck, locale, a11y) |
+| `export-linux` / `export-windows` / `export-windows-demo` | Soft gate | Godot **4.3** via digest-pinned `barichello/godot-ci:4.3@sha256:8d3a9fc…`; Windows jobs stamp `BUILD_STAMP.json` + `SHA256SUMS.txt` + `ARTIFACTS.md`. `continue-on-error` until trusted as merge-blocking |
 
 macOS notarization / SteamCMD / itch butler publish remain manual (secrets checklist below). AppID / depot placeholders: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md).
 
 **Engine:** Godot **4.3-stable**  
 **Project:** `game/echo_lattice`  
-**Presets:** `Windows Desktop` · `Linux/X11` · `macOS` · `Windows Demo`
+**Presets:** `Windows Desktop` · `Linux/X11` · `macOS` · `Windows Demo`  
+**Toolchain pin:** [`tools/release/godot_toolchain.json`](../../tools/release/godot_toolchain.json)
 
 ---
 
@@ -139,7 +141,8 @@ export-macos:
 
 | Preset | Artifact name | Consumers |
 |---|---|---|
-| Windows Desktop | `echo-lattice-windows-x86_64` | Steam depot 1, itch channel `windows` |
+| Windows Desktop | `echo-lattice-windows-x86_64` | Steam depot 1, itch channel `windows` (+ stamp/sums) |
+| Windows Demo | `echo-lattice-windows-demo-x86_64` | Demo depot / Next Fest |
 | Linux/X11 | `echo-lattice-linux-x86_64` | Steam depot 2, Deck QA, itch `linux` |
 | macOS | `echo-lattice-macos-universal` | Steam depot 3 (after notarize), itch `osx` |
 
@@ -203,13 +206,14 @@ Never commit certificates or Steam Guard ma-files.
 Developers should be able to run the same commands as CI:
 
 ```bash
-cd game/echo_lattice
-python3 tests/validate_chambers.py
-godot --headless --path . -- --selftest
-godot --headless --export-release "Linux/X11" builds/linux/EchoLattice.x86_64
+python3 game/echo_lattice/tests/validate_chambers.py
+python3 game/echo_lattice/tests/test_windows_export.py
+godot --headless --path game/echo_lattice -- --selftest
+./tools/release/export_windows.sh --all
+godot --headless --path game/echo_lattice --export-release "Linux/X11" builds/linux/EchoLattice.x86_64
 ```
 
-See also [`docs/ECHO_LATTICE/13_VERTICAL_SLICE_README.md`](../ECHO_LATTICE/13_VERTICAL_SLICE_README.md) § Building.
+See [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) and [`docs/ECHO_LATTICE/13_VERTICAL_SLICE_README.md`](../ECHO_LATTICE/13_VERTICAL_SLICE_README.md) § Building.
 
 ---
 

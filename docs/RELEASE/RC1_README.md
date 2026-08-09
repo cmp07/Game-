@@ -62,6 +62,7 @@ GodotSteam optional path: [`GODOTSTEAM.md`](GODOTSTEAM.md) — clear install doc
 | Release index | [`README.md`](README.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
+| Windows (+ Demo) export | [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) |
 | CI / exports | [`CI_BUILDS.md`](CI_BUILDS.md) |
 | Compliance (Content Survey, privacy, credits) | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) |
 | Gate A Partner legal paste pack | [`legal/`](legal/) |

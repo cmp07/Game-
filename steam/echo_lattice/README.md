@@ -35,9 +35,9 @@ steam/echo_lattice/
 
 ## Full game (Windows + Linux)
 
-1. Export Godot presets **Windows Desktop** and **Linux/X11** (or CI artifacts from `.github/workflows/ci.yml`).
+1. Export Windows via [`tools/release/export_windows.sh`](../../tools/release/export_windows.sh) (or CI artifacts from `.github/workflows/ci.yml`). Linux: preset **Linux/X11**. Guide: [`docs/RELEASE/BUILD_WINDOWS.md`](../../docs/RELEASE/BUILD_WINDOWS.md).
 2. Copy into `depot_build/windows/` and `depot_build/linux/`.
-3. Strip `steam_appid.txt` for retail (also listed in each depot `FileExclusion`), then:
+3. Strip `steam_appid.txt` for retail (also listed in each depot `FileExclusion`). Verify `SHA256SUMS.txt` before upload, then:
    ```bash
    python3 steam/echo_lattice/verify_retail_staging.py
    ```
@@ -51,7 +51,7 @@ steam/echo_lattice/
 
 ## Demo stub
 
-1. Export preset **Windows Demo** → `builds/windows_demo/EchoLatticeDemo.exe`.
+1. `./tools/release/export_windows.sh --demo` (or CI artifact `echo-lattice-windows-demo-x86_64`) → `builds/windows_demo/EchoLatticeDemo.exe`.
 2. Stage into `depot_build/windows_demo/`.
 3. `export STEAM_DEMO_APP_ID=… STEAM_DEMO_DEPOT_ID=…` then  
    `python3 steam/echo_lattice/render_vdf_from_env.py --write --demo`.
@@ -60,4 +60,4 @@ steam/echo_lattice/
 
 Full Steamworks readiness guide: [`docs/RELEASE/STEAMWORKS.md`](../../docs/RELEASE/STEAMWORKS.md).  
 Achievement API names: [`docs/RELEASE/ACHIEVEMENTS.json`](../../docs/RELEASE/ACHIEVEMENTS.json).  
-CI sketch (committed): [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+CI workflow: [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).

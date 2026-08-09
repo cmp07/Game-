@@ -4,7 +4,7 @@
 **Engine:** Godot 4.3 desktop exports  
 **Bar:** Top-publisher quality on store presentation, build hygiene, and honest scope — not “ship everywhere day one.”
 
-Companion: [`CI_BUILDS.md`](CI_BUILDS.md) · Export presets: [`game/echo_lattice/export_presets.cfg`](../../game/echo_lattice/export_presets.cfg)
+Companion: [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) · [`CI_BUILDS.md`](CI_BUILDS.md) · Export presets: [`game/echo_lattice/export_presets.cfg`](../../game/echo_lattice/export_presets.cfg)
 
 ---
 

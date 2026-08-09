@@ -89,11 +89,16 @@ Do not tease Reflection / Pressure / Mastery names or transforms beyond what Act
 ### Export (Godot 4.3 + Windows templates)
 
 ```bash
+# Preferred (stamps BUILD_STAMP.json + SHA256SUMS.txt + ARTIFACTS.md)
+./tools/release/export_windows.sh --demo
+
+# Or raw headless:
 cd game/echo_lattice
 godot --headless --path . --export-release "Windows Demo" builds/windows_demo/EchoLatticeDemo.exe
 ```
 
-Preset sets `custom_features="demo"`, product name **Echo Lattice Demo**, path `builds/windows_demo/EchoLatticeDemo.exe`.
+Preset sets `custom_features="demo"`, product name **Echo Lattice Demo**, path `builds/windows_demo/EchoLatticeDemo.exe`.  
+Full Windows export notes: [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md).
 
 ### Godot self-test
 
