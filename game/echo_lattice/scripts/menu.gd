@@ -1,6 +1,7 @@
 extends Control
 ##
 ## Main menu — premium Field Ledger title shell (UI_DIEGETIC_V3 · ART_DIRECTION_V3).
+## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (coordinates with menu-premium-v1).
 ## Left: brand hero + surveyor seal. Right: physical Field Index card (all actions + meta).
 ## No glass, no glow, no purple, no cadmium on chrome (cadmium reserved for rewrite).
 ##
@@ -203,10 +204,12 @@ func _slot_alpha() -> float:
 
 
 func _style_index_actions(compact: bool = false) -> void:
-	# title_type_scale treats page_h < 700 as compact — do not pass 720 here.
+	# title_type_scale / LedgerType roles: page_h < 700 = Deck compact — do not pass 720 here.
 	var scale: Dictionary = LedgerChrome.title_type_scale(560.0 if compact else 1080.0)
-	var idx_px: int = int(scale.get("index", LedgerChrome.TYPE_INDEX))
-	var primary_px: int = int(scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	var idx_px: int = int(scale.get("action", scale.get("index", LedgerChrome.TYPE_INDEX)))
+	var primary_px: int = int(
+		scale.get("action_primary", scale.get("index_primary", LedgerChrome.TYPE_INDEX_PRIMARY))
+	)
 	LedgerChrome.style_index_button(start_button, true, primary_px)
 	LedgerChrome.style_index_button(continue_button, false, idx_px)
 	LedgerChrome.style_index_button(daily_button, false, idx_px)
@@ -228,10 +231,13 @@ func _style_index_actions(compact: bool = false) -> void:
 
 
 func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
-	## Short pages: Regular face + zeroed StyleBox margins so rows stay Deck-safe.
+	## Short pages: Action display face (never mono) + zeroed StyleBox margins.
 	var face: Font = null
 	if has_node("/root/LedgerType"):
-		face = LedgerType.font_or_fallback("display")
+		if LedgerType.has_method("font_for_role"):
+			face = LedgerType.font_for_role("action", idx_px)
+		else:
+			face = LedgerType.font_or_fallback("display")
 	var buttons: Array = _index_action_buttons()
 	for b in buttons:
 		if b == null:
@@ -277,12 +283,16 @@ func _apply_index_row_metrics(compact: bool) -> void:
 
 
 func _style_meta_as_ledger_lines(compact: bool = false) -> void:
-	## Quiet ledger lines inside the card header — never compete with brand.
+	## Quiet Meta role lines (mono ≤13) inside the card header — never compete with brand.
+	var page_h: float = 560.0 if compact else 1080.0
+	var meta_px: int = 11 if compact else 13
+	if has_node("/root/LedgerType") and LedgerType.has_method("role_size"):
+		meta_px = int(LedgerType.role_size("meta", page_h))
 	if subtitle:
 		LedgerChrome.style_ink_label(
 			subtitle,
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.72),
-			11 if compact else 13
+			meta_px
 		)
 		# Prefer single quiet lines — wrapping balloons the plate past Deck budget.
 		subtitle.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -294,7 +304,7 @@ func _style_meta_as_ledger_lines(compact: bool = false) -> void:
 		LedgerChrome.style_ink_label(
 			meta_label,
 			Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.80),
-			11 if compact else 13
+			meta_px
 		)
 		meta_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 		meta_label.clip_text = true
@@ -662,9 +672,9 @@ func _draw() -> void:
 	var rule_len: float = float(scale.get("rule_len", LedgerChrome.BRAND_RULE_LEN))
 	var header_px: int = int(scale.get("card_header", LedgerChrome.TYPE_CARD_HEADER))
 
-	# Folio mark — small FIELD LEDGER band so the shell stays on-world.
+	# Folio mark — Micro role so the shell stays on-world.
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		page.position + Vector2(20, 26),
 		tr("menu.folio_mark"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px, Palette.SLATE_TEAL
@@ -683,17 +693,17 @@ func _draw() -> void:
 	if seed_tex != null:
 		draw_texture_rect(seed_tex, Rect2(page.position + Vector2(20, 42), Vector2(256, 24)), false)
 	draw_string(
-		_type("mono"),
+		_type("meta"),
 		page.position + Vector2(290, 60),
 		tr("menu.seed_strip"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, seed_px, Palette.SLATE_TEAL_SOFT
 	)
 
-	# Brand lockup — hero-level left plane (~55%).
+	# Brand lockup — hero-level left plane (~55%). Face via display role helper.
 	var brand_x: float = page.position.x + 56
 	var brand_y: float = page.position.y + page.size.y * 0.22
 	draw_string(
-		_type("display"),
+		_type("brand"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
@@ -717,13 +727,13 @@ func _draw() -> void:
 	)
 
 	draw_string(
-		_type("display"),
+		_type("tagline"),
 		Vector2(brand_x, brand_y + 52),
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, Palette.SLATE_TEAL
 	)
 	draw_string(
-		_type("body"),
+		_type("deck"),
 		Vector2(brand_x, brand_y + 84),
 		tr("brand.blurb"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
@@ -776,7 +786,7 @@ func _draw() -> void:
 	})
 	_draw_seal_lattice(seal_c, seal_r * 0.50)
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		Vector2(brand_x, seal_c.y + seal_r + 30.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px + 1, Palette.INK_SOFT
@@ -802,7 +812,7 @@ func _draw() -> void:
 		"skip_grain": false,
 	})
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		card.position + Vector2(32, 30),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, header_px,
@@ -810,14 +820,14 @@ func _draw() -> void:
 	)
 	# Quiet foot line inside the plate — fills the card object without chamber HUD.
 	draw_string(
-		_type("mono"),
+		_type("micro"),
 		Vector2(card.position.x + 32.0, card.end.y - 18.0),
 		tr("menu.card_foot"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, folio_px),
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * slot_a)
 	)
 
-	# Focus underlines — rust ink craft + selection tick (cadmium reserved).
+	# Selection — margin tick + baseline rule only (MENU_TYPE_SYSTEM §4; cadmium reserved).
 	_draw_button_underlines(card)
 
 	# Title shell is NOT a paused chamber — never draw / instance chamber HUD
@@ -896,6 +906,13 @@ func _draw_button_underlines(_card: Rect2) -> void:
 
 
 func _type(role: String = "display") -> Font:
+	## Face or MENU_TYPE_SYSTEM role → Font (tracked when role has spacing).
 	if has_node("/root/LedgerType"):
+		match role:
+			"brand", "tagline", "deck", "action", "action_disabled", "meta", "micro":
+				if LedgerType.has_method("tracked_font_for_role"):
+					return LedgerType.tracked_font_for_role(role, size.y if size.y > 2.0 else 1080.0)
+				if LedgerType.has_method("font_for_role"):
+					return LedgerType.font_for_role(role)
 		return LedgerType.font_or_fallback(role)
 	return ThemeDB.fallback_font
