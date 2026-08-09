@@ -79,6 +79,8 @@ Python contract suite: **22/22** green after media merge (incl. deck bindings).
 | Area | Entry |
 |---|---|
 | Release index | [`README.md`](README.md) |
+| **Vision 1000× (pause Steam, deepen game)** | [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) · [`../VISION/ROADMAP_EXECUTE.md`](../VISION/ROADMAP_EXECUTE.md) |
+| **Steam pack freeze** | [`../BACKUP/RC1_STEAM_PACK_FREEZE.md`](../BACKUP/RC1_STEAM_PACK_FREEZE.md) |
 | Ultra audit (ship score / gates) | [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) |
 | Platforms / stores | [`PLATFORMS.md`](PLATFORMS.md) |
 | Windows (+ Demo) export | [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) |
