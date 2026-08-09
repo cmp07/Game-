@@ -16,7 +16,7 @@
 | [`docs/RELEASE/STEAM_DECK.md`](../RELEASE/STEAM_DECK.md) | `deck_profile.gd`, `input_glyphs.gd`, `check_deck_bindings.py`, `project.godot` |
 | [`docs/RELEASE/STEAMWORKS.md`](../RELEASE/STEAMWORKS.md) | `config/steam_features.json`, `scripts/steam/*`, `steam/echo_lattice/*.vdf` |
 | [`docs/RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | `demo_build.gd`, Windows Demo preset, `test_demo_spec.py` |
-| [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md) | No committed `.github/workflows/export.yml` |
+| [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md) | Committed `.github/workflows/ci.yml` (validate + Godot container export sketch) |
 | [`docs/RELEASE/STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md) | Feature checkboxes vs runtime flags |
 | [`docs/RELEASE/LOCALIZATION.md`](../RELEASE/LOCALIZATION.md) | `locale_manager.gd`, `locale/echo_lattice.csv`, `fonts/cjk/` |
 | [`docs/RELEASE/SUPPORT_FAQ.md`](../RELEASE/SUPPORT_FAQ.md) · [`ROADMAP.md`](../RELEASE/ROADMAP.md) | Doc drift vs Deck / glyph code |

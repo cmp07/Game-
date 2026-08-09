@@ -230,11 +230,12 @@ Verified pixel sizes (IHDR) against Steam slots in `docs/RELEASE/capsules/`:
 | [`docs/RELEASE/STEAM_STORE_FINAL.md`](../RELEASE/STEAM_STORE_FINAL.md) | Store copy, capsules upload list, AI line, Coming Soon |
 | [`docs/RELEASE/COMPLIANCE_FINAL.md`](../RELEASE/COMPLIANCE_FINAL.md) | Content Survey + privacy + legal gates |
 | [`docs/RELEASE/ACHIEVEMENTS.json`](../RELEASE/ACHIEVEMENTS.json) | Partner achievement table |
-| [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md) | Export CI sketch (not committed workflow) |
+| [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md) | CI builds — workflow at `.github/workflows/ci.yml` |
+| [`docs/RELEASE/APPID_PLACEHOLDER_GATES.md`](../RELEASE/APPID_PLACEHOLDER_GATES.md) | AppID / DepotID placeholder ship gates |
 | [`docs/RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md) | Next Fest demo + AppID placeholders |
 | [`docs/RELEASE/capsules/`](../RELEASE/capsules/) | Size-correct capsule placeholders |
 | [`docs/RELEASE/PLATFORMS.md`](../RELEASE/PLATFORMS.md) | Store priority + build matrix |
-| [`steam/echo_lattice/`](../../steam/echo_lattice/) | SteamPipe VDF templates |
+| [`steam/echo_lattice/`](../../steam/echo_lattice/) | SteamPipe VDF templates (Win + Linux + demo stub) |
 
 Referenced but **not merged:** `docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md` (missing on this branch).
 

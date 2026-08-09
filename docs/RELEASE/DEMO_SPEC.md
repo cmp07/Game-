@@ -135,8 +135,10 @@ Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excl
 | Placeholder | Where | Action |
 |---|---|---|
 | `YOUR_APP_ID` | `scripts/demo_build.gd` → `WISHLIST_URL` | Full game Steam AppID |
-| Demo AppID / DepotID | Steamworks + `steam/echo_lattice/` (when present) | Separate demo app depot |
+| `YOUR_DEMO_APP_ID` / `YOUR_DEMO_DEPOT_ID` | `steam/echo_lattice/app_build_demo.vdf`, `depot_windows_demo.vdf` | Separate demo app + Windows depot |
 | Exit survey | Marketing §9.4 | Optional follow-up; not required for this code gate |
+
+Full placeholder gate list: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md).
 
 ---
 

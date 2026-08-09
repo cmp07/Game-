@@ -98,7 +98,7 @@ Legend: **Ship** = intended public artifact · **QA** = must pass before store c
 | macOS `display/high_res=true` | Set | Good for Retina; still needs notarized binary |
 | Demo exclude filters | Drops chambers `09_*` and `1*_*` / `2*_*` / `3*_*` | Matches demo scope docs |
 | Retail `custom_features` | Empty string (not `steam`) | Matches offline-first; Steam feature tag not yet wired |
-| Steam depot templates | Windows VDF only under `steam/echo_lattice/` | Linux/mac depots documented, not templated |
+| Steam depot templates | Win + Linux VDFs + demo stub under `steam/echo_lattice/` | macOS depot still not templated |
 
 ---
 
@@ -326,7 +326,7 @@ Until then: treat mac artifacts as **non-shipping**, matching [`PLATFORMS.md`](.
 | CD-6 | Docs | FAQ `--windowed` not implemented | Low | Implement flag or remove FAQ line |
 | CD-7 | Docs | Store / FAQ controller copy lags Deck + a11y work | Low | Update Steam copy when claiming Full Controller Support |
 | CD-8 | Linux | Wayland / fractional scaling untested | Medium | Add Ubuntu Wayland + Deck smoke to QA |
-| CD-9 | Depots | Only Windows SteamPipe templates committed | Medium | Add Linux/mac depot VDFs when those SKUs ship |
+| CD-9 | Depots | Linux + demo SteamPipe templates landed; mac still missing | Medium | Add macOS depot VDF when notarized mac ships |
 | CD-10 | Paths | Userdata dir has space (`Echo Lattice`) | Info | Keep quoting in scripts; document for support |
 | CD-11 | Case | No collisions today | Info | Keep Linux CI as case gate |
 | CD-12 | Demo | Demo preset is Windows-only | Info | Add Linux demo export if Next Fest Deck promo needs it |

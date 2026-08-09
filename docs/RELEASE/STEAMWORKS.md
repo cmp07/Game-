@@ -134,43 +134,53 @@ Stub testing: `SteamService.debug_simulate_overlay(true|false)`.
 
 ## 8. Depot export notes
 
-Windows-first SteamPipe layout (templates under [`steam/echo_lattice/`](../../steam/echo_lattice/)):
+Windows + Linux SteamPipe layout (templates under [`steam/echo_lattice/`](../../steam/echo_lattice/)).  
+Placeholder gates: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GATES.md).
 
 ```text
 steam/echo_lattice/
-  app_build.vdf
+  app_build.vdf              # full game — Win + Linux depots
   depot_windows.vdf
+  depot_linux.vdf
+  app_build_demo.vdf         # demo AppID stub
+  depot_windows_demo.vdf
   depot_build/
-    windows/                 # upload root
-      EchoLattice.exe
-      EchoLattice.pck
-      steam_api64.dll        # only if GodotSteam redistrib required
-      LICENSE.txt
+    windows/                 # EchoLattice.exe + .pck (+ steam_api64.dll if needed)
+    linux/                   # EchoLattice.x86_64 + .pck (+ libsteam_api.so if needed)
+    windows_demo/            # EchoLatticeDemo.exe + .pck
   README.md
 ```
 
-### Export → stage → upload
+### Export → stage → upload (full game)
 
-1. Export Windows release (Godot preset `Windows Desktop` → `builds/windows/EchoLattice.exe`, or `scripts/echo_lattice/export_windows.sh` when present).
-2. Copy artifacts into `steam/echo_lattice/depot_build/windows/`.
+1. Export Windows + Linux (presets `Windows Desktop` / `Linux/X11`, or CI artifacts from [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
+2. Copy into `steam/echo_lattice/depot_build/windows/` and `depot_build/linux/`.
 3. **Strip** `steam_appid.txt`, `*.pdb`, `.godot/`, source trees, and any CI secrets.
-4. Replace `YOUR_APP_ID` / `YOUR_DEPOT_ID` in the VDF files.
+4. Replace `YOUR_APP_ID` / `YOUR_DEPOT_ID` / `YOUR_DEPOT_ID_LINUX` in the VDF files.
 5. SteamCMD:
    ```bash
    steamcmd +login <user> +run_app_build <abs>/steam/echo_lattice/app_build.vdf +quit
    ```
 6. Set the build live on a Steam branch (`beta` for QA, then `default`).
+7. Partner launch options: Windows → `EchoLattice.exe`; SteamOS/Deck → native `EchoLattice.x86_64`.
+
+### Demo depot stub
+
+1. Export preset `Windows Demo` → stage `depot_build/windows_demo/`.
+2. Replace `YOUR_DEMO_APP_ID` / `YOUR_DEMO_DEPOT_ID` in `app_build_demo.vdf` + `depot_windows_demo.vdf`.
+3. `steamcmd +run_app_build …/app_build_demo.vdf`.
 
 ### Depot rules
 
 | Rule | Detail |
 |------|--------|
-| Launch option | `EchoLattice.exe` (working dir = install dir) |
+| Launch option (Win) | `EchoLattice.exe` (working dir = install dir) |
+| Launch option (Linux/Deck) | `EchoLattice.x86_64` — prefer native over Proton |
 | No editor | Never upload `.godot/`, `.tscn` source trees, export cache |
 | No secrets | No Steam Guard ma-files, passwords, or shipping keys in git |
 | `steam_appid.txt` | Dev only — listed in `FileExclusion` |
-| Demo | Separate demo depot / AppID; prefer demo wing content only |
-| Linux / macOS | Add depots when multi-OS presets are shipping (see `docs/RELEASE/PLATFORMS.md` when merged) |
+| Demo | Separate demo AppID + `app_build_demo.vdf`; Act I / demo wing only |
+| macOS | Add depot when notarized mac preset is shipping (see `PLATFORMS.md`) |
 
 ### Retail vs dev
 

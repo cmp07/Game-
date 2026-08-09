@@ -1,0 +1,20 @@
+// Windows Demo content depot stub (Next Fest / separate Demo AppID).
+// Staging: EchoLatticeDemo.exe + EchoLatticeDemo.pck from Windows Demo preset.
+// Replace YOUR_DEMO_DEPOT_ID after Steamworks demo app + depot creation.
+// Docs: docs/RELEASE/DEMO_SPEC.md · docs/RELEASE/APPID_PLACEHOLDER_GATES.md
+
+"DepotBuildConfig"
+{
+	"DepotID" "YOUR_DEMO_DEPOT_ID"
+	"ContentRoot" "depot_build/windows_demo"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"recursive" "1"
+	}
+	"FileExclusion" "*.pdb"
+	"FileExclusion" "steam_appid.txt"
+	"FileExclusion" "*.tmp"
+	"FileExclusion" "*.log"
+}
