@@ -173,6 +173,9 @@ class TestFeelQuickWins(unittest.TestCase):
         # Cadmium reserved — selection is rust underline + ink tick.
         self.assertNotIn("CADMIUM_WARN", menu)
         self.assertIn("_draw_seal_lattice", menu)
+        self.assertIn("ArtKit.draw_habit_maze_mark", menu)
+        self.assertIn('"maze": true', menu)
+        self.assertNotIn('"caption": "FIELD"', menu)
         self.assertIn("begin_boot_handoff", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn('"hero": true', menu)
@@ -282,6 +285,10 @@ class TestDiegeticShellMvp(unittest.TestCase):
         self.assertIn('opts.get("binder_holes"', art)
         self.assertIn('opts.get("header_rules"', art)
         self.assertIn("func draw_seal_stamp", art)
+        self.assertIn("func draw_habit_maze_mark", art)
+        self.assertIn("rectangular plate", art)
+        boot = (ROOT / "scripts" / "boot_title.gd").read_text()
+        self.assertNotIn('"caption": "FIELD"', boot)
 
     def test_field_index_card_syncs_with_card_column(self) -> None:
         """Regression: drawn Field Index plate and CardColumn must share layout."""

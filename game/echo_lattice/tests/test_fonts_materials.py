@@ -81,10 +81,13 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_binder_clip",
         ):
             self.assertIn(f"func {name}", art)
-        # Desk vignette + blotter; seal is imperfect rubber ink; card has thickness.
+        # Desk vignette + blotter; seal is imperfect rubber ink plate; card has thickness.
         self.assertIn("blotter", art.lower())
         self.assertIn("vignette", art.lower())
         self.assertIn("Imperfect rubber ink", art)
+        self.assertIn("func draw_habit_maze_mark", art)
+        self.assertIn("rectangular plate", art)
+        self.assertIn("No giant dashed circles", art)
         self.assertIn("binder_holes", art)
         self.assertIn("contact wash", art.lower())
         self.assertIn('"thickness"', art)
@@ -104,6 +107,8 @@ class TestFontsMaterials(unittest.TestCase):
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
         self.assertIn('"hero": true', menu)
+        self.assertIn('"maze": true', menu)
+        self.assertNotIn('"caption": "FIELD"', menu)
         self.assertIn("ArtKit.draw_oxide_flecks", menu)
         self.assertIn("LedgerChrome.title_type_scale", menu)
         # Field Index enclosure must stay on shared card geometry helpers.

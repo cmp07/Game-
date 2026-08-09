@@ -111,11 +111,10 @@ func _draw() -> void:
 		{
 			"rot_deg": 3.0,
 			"color": Palette.SLATE_TEAL,
-			"alpha": 0.72 * fade,
+			"alpha": 0.78 * fade,
 			"seed": 19,
-			"caption": "FIELD",
-			"font": _type("display"),
-			"font_size": 10,
+			"maze": true,
+			"rust_accent": true,
 		}
 	)
 	var wing := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.95 * fade)

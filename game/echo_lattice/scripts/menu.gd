@@ -734,8 +734,8 @@ func _draw() -> void:
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
 
-	# Surveyor seal as hero glyph — imperfect rubber ink under the brand.
-	var seal_r: float = 78.0 if page.size.y >= 700.0 else 44.0
+	# Survey seal as hero letterpress plate — habit-maze mark under the brand.
+	var seal_r: float = 72.0 if page.size.y >= 700.0 else 40.0
 	var seal_c := Vector2(brand_x + seal_r + 12.0, brand_y + 178.0)
 	if seal_c.x + seal_r + 20.0 > card.position.x:
 		seal_c.x = brand_x + seal_r + 8.0
@@ -757,24 +757,16 @@ func _draw() -> void:
 			false,
 			1.5
 		)
-	# Soft ink blot under the stamp so it reads as pressed into stock.
-	draw_circle(
-		seal_c + Vector2(3, 4),
-		seal_r + 8.0,
-		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.22)
-	)
+	# Letterpress lattice plate — rectangular stamp, habit-maze silhouette inside.
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
-		"rot_deg": -5.0,
+		"rot_deg": -4.0,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.90,
+		"alpha": 0.92,
 		"seed": 42,
-		"ring_w": 3.4,
-		"caption": "FIELD",
-		"font": _type("display"),
-		"font_size": maxi(15, folio_px + 5),
 		"hero": true,
+		"maze": true,
+		"rust_accent": true,
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.50)
 	draw_string(
 		_type("mono"),
 		Vector2(brand_x, seal_c.y + seal_r + 30.0),
@@ -824,21 +816,14 @@ func _draw() -> void:
 
 
 func _draw_seal_lattice(center: Vector2, half: float) -> void:
-	## Ink lattice fragment inside the surveyor seal — process-visible glyph.
-	var cell: float = maxf(6.0, half / 2.6)
-	var grid_origin: Vector2 = center - Vector2(cell * 2.5, cell * 2.0)
-	var walls: Array = [
-		Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(4, 0), Vector2i(5, 0),
-		Vector2i(0, 1), Vector2i(5, 1), Vector2i(0, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(5, 2),
-		Vector2i(0, 3), Vector2i(5, 3), Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(5, 4),
-	]
-	var fossil: Array = [Vector2i(3, 0), Vector2i(3, 1), Vector2i(4, 1), Vector2i(4, 2)]
-	for w in walls:
-		var r := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
-		ArtKit.draw_letterpress_wall(self, r, false, 15)
-	for w in fossil:
-		var r2 := Rect2(grid_origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.2, cell - 1.2))
-		ArtKit.draw_letterpress_wall(self, r2, true, 15)
+	## Habit-maze silhouette helper — ArtKit owns the plate; this stays for craft tests / reuse.
+	ArtKit.draw_habit_maze_mark(self, center, half, {
+		"color": Palette.SLATE_TEAL,
+		"alpha": 0.9,
+		"seed": 49,
+		"rust_accent": true,
+		"hero": false,
+	})
 
 
 func _draw_specimen_lattice(origin: Vector2, cell: float = 16.0) -> void:
