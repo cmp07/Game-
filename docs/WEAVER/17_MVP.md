@@ -65,8 +65,8 @@
 
 ### 3.7 Economy
 
-- Soft costs in materials only.
-- **Critique / cut:** player trade, auction houses, currency sinks tied to other humans — see [`07_ECONOMY.md`](07_ECONOMY.md) when present. Those belong to a different product.
+- Soft costs in materials only — **solo-satisfying scarcity** ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)).
+- **Critique / cut:** player trade, auction houses, currency sinks tied to other humans — fence in [`07_ECONOMY.md`](07_ECONOMY.md) §3. Those belong to a different product.
 
 ---
 

@@ -43,8 +43,14 @@
 | Doc | Topic |
 |---|---|
 | [`06_WORLD.md`](06_WORLD.md) | Shed Yard + authored fields |
-| [`07_ECONOMY.md`](07_ECONOMY.md) | Craft scarcity + player-trade critique |
+| [`07_ECONOMY.md`](07_ECONOMY.md) | Craft scarcity + player-trade critique *(archive; see V2)* |
 | [`08_LEGACY.md`](08_LEGACY.md) | Local residue / gallery |
+
+### 27 — Economy V2
+
+| Doc | Topic |
+|---|---|
+| [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) | **Live** solo-satisfying scarcity — replaces player-trade fantasy |
 
 ### 09–11 — Craft
 
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-solo-econ` | Solo economy V2 (`27`) |
 
 ---
 

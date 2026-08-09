@@ -15,7 +15,7 @@ Severity: **H** = can kill the product · **M** = can stall a quarter · **L** =
 | D1 | **Verb mud** — Fragments / Threads / Structures sound poetic but play like three inventories | H | Players ask “what do I press?” at minute 5 | One Yard job teaches the chain; no parallel meta currencies |
 | D2 | **Physics toy without puzzle** — sandbox collapse comedy, no reasons to care | H | Session ends after one funny snap | Authored jobs with acceptance tests; sandbox is dessert |
 | D3 | **Besiege gravity** — part catalog and Workshop expectations balloon | H | Recipe count > job count | Cap recipes; jobs first ([`17_MVP.md`](17_MVP.md)) |
-| D4 | **Economy creep** — player trade / soft MMO enters “just for legacy” | H | Design docs mention stalls before first Structure sings | Keep critique in economy doc; MVP forbids human trade |
+| D4 | **Economy creep** — player trade / soft MMO enters “just for legacy” | H | Design docs mention stalls before first Structure sings | Solo scarcity law [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md); trade pre-mortem [`07_ECONOMY.md`](07_ECONOMY.md); MVP forbids human trade |
 | D5 | **Purple-void identity** — default AI-fantasy look (glow, chronomancy, rarity gems) | M | Capsule looks like every generative asset flip | Material bible: fiber, dust, timber, wire, chalk, rust |
 | D6 | **Echo Lattice mash** — store page or trailer mixes maze-habit with loom-craft | M | Wishlist confusion; “is this the same game?” | Separate fantasy; EL frozen; no shared store copy |
 | D7 | **Tutorial slides instead of literacy** | M | Tip stack in first eight minutes | Follow [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) pedagogy rules |

@@ -168,7 +168,7 @@ Shared taste: authored scarcity, readable failure, clip-sized verbs. Not a share
 |---|---|
 | Open-world / extraction map | Wrong session shape; Besiege/survival gravity |
 | NPC faction politics as world spine | Social-sim mash |
-| Player stalls / auction plazas | See [`07_ECONOMY.md`](07_ECONOMY.md) critique |
+| Player stalls / auction plazas | See [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) · [`07_ECONOMY.md`](07_ECONOMY.md) critique |
 | Server-side shared monuments as MVP world | Legacy is local first ([`08_LEGACY.md`](08_LEGACY.md)) |
 | Echo Lattice chamber rewrite as required subsystem | EL frozen; different verb chain |
 

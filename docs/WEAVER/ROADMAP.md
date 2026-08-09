@@ -91,7 +91,7 @@ Craft: [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md).
 | Legacy | Local gallery + ghosts |
 | MP / trade | Still **out** |
 
-Progression voice: [`11_PROGRESSION.md`](11_PROGRESSION.md). Economy critique remains law: [`07_ECONOMY.md`](07_ECONOMY.md).
+Progression voice: [`11_PROGRESSION.md`](11_PROGRESSION.md). Solo scarcity law: [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) (trade critique archive: [`07_ECONOMY.md`](07_ECONOMY.md)).
 
 ### W5 — Store (separate pack)
 
@@ -108,7 +108,7 @@ Progression voice: [`11_PROGRESSION.md`](11_PROGRESSION.md). Economy critique re
 | Temptation | Earliest reconsider |
 |---|---|
 | Realtime co-op / servers | Post-G7 + human reopen of [`12_MULTIPLAYER.md`](12_MULTIPLAYER.md) |
-| Player trade / stalls | Default **never**; narrow fence only in economy §3.5 |
+| Player trade / stalls | Default **never**; narrow fence only in [`07_ECONOMY.md`](07_ECONOMY.md) §3.5 — feel authority [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) |
 | Second biome pack | Post-MVP, pick one expansion lane |
 | Workshop / mods | After job quality proven |
 | Echo Lattice Coming Soon resume | Only if EL product line explicitly reopened |
