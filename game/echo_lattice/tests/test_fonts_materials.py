@@ -94,7 +94,7 @@ class TestFontsMaterials(unittest.TestCase):
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
         self.assertIn("func title_type_scale", chrome)
-        self.assertIn("const TYPE_BRAND := 88", chrome)
+        self.assertIn("const TYPE_BRAND := 92", chrome)
         self.assertIn("const TYPE_INDEX := 20", chrome)
         self.assertIn("_draw_ink_rule", chrome)
         self.assertNotIn("CADMIUM_WARN", chrome)

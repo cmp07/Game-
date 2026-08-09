@@ -151,14 +151,15 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 	var page: Rect2 = _ledger_page_rect(vp)
-	# Brand column owns left ~50%; card fills the right plane with a narrow gutter.
-	var brand_clear: float = page.position.x + page.size.x * 0.50
-	var right_pad: float = 20.0 if page.size.x < 1100.0 else 36.0
-	var card_w: float = page.size.x * 0.455
+	# Brand column + seal own left ~52%; card fills the right plane with a narrow gutter.
+	# Keep card.x in ~1000–1180 @1080p so store-slate QA sees a massy plate (not a stamp).
+	var brand_clear: float = page.position.x + page.size.x * 0.52
+	var right_pad: float = 18.0 if page.size.x < 1100.0 else 30.0
+	var card_w: float = page.size.x * 0.44
 	if page.size.x >= 1100.0:
-		card_w = clampf(card_w, 680.0, 860.0)
+		card_w = clampf(card_w, 700.0, 860.0)
 	else:
-		card_w = clampf(card_w, 320.0, 440.0)
+		card_w = clampf(card_w, 330.0, 450.0)
 	var card_x: float = page.end.x - right_pad - card_w
 	if card_x < brand_clear:
 		card_x = brand_clear
@@ -702,17 +703,18 @@ func _draw() -> void:
 		Color(Palette.SLATE_TEAL_SOFT.r, Palette.SLATE_TEAL_SOFT.g, Palette.SLATE_TEAL_SOFT.b, 0.75)
 	)
 
-	# Brand lockup — largest, sharpest signal on the left plane.
-	var brand_col_w: float = maxf(280.0, card.position.x - page.position.x - 64.0)
-	var brand_x: float = page.position.x + (48.0 if page.size.x >= 1100.0 else 32.0)
-	var brand_y: float = page.position.y + page.size.y * (0.18 if page.size.y >= 700.0 else 0.16)
+	# Brand lockup — largest, sharpest signal composing the left plane with the seal.
+	var brand_col_w: float = maxf(280.0, card.position.x - page.position.x - 56.0)
+	var brand_x: float = page.position.x + (56.0 if page.size.x >= 1100.0 else 36.0)
+	# Sit the lockup mid-upper so brand + seal read as one mass, not a top-edge stamp.
+	var brand_y: float = page.position.y + page.size.y * (0.20 if page.size.y >= 700.0 else 0.17)
 	draw_string(
 		_type("display"),
 		Vector2(brand_x, brand_y),
 		tr("brand.title"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, brand_px, Palette.INK_BLACK
 	)
-	var brand_rule_len: float = minf(rule_len, brand_col_w - 12.0)
+	var brand_rule_len: float = minf(rule_len, brand_col_w - 8.0)
 	ArtKit.draw_letterpress_rule(
 		self,
 		Vector2(brand_x, brand_y + 16.0),
@@ -742,45 +744,48 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Large authored lattice seal — print glyph under the brand (not a micro stamp).
+	# Large authored lattice seal — print glyph bridging brand type and Field Index.
+	# Bias right in the brand column so the gutter is ink, not empty graph paper.
 	var seal_c := Vector2(
-		brand_x + seal_r + 8.0,
-		brand_y + 118.0 + seal_r
+		brand_x + brand_col_w * 0.58,
+		brand_y + 96.0 + seal_r * 0.92
 	)
 	# Keep seal inside the brand column and above the page foot.
-	var seal_max_x: float = card.position.x - seal_r - 28.0
-	if seal_c.x > seal_max_x:
-		seal_c.x = maxf(brand_x + seal_r, seal_max_x)
-	var seal_max_y: float = page.end.y - seal_r - 48.0
+	var seal_max_x: float = card.position.x - seal_r - 20.0
+	if seal_c.x + seal_r > seal_max_x:
+		seal_c.x = seal_max_x - seal_r * 0.15
+	if seal_c.x < brand_x + seal_r * 0.75:
+		seal_c.x = brand_x + seal_r * 0.75
+	var seal_max_y: float = page.end.y - seal_r - 36.0
 	if seal_c.y > seal_max_y:
 		seal_c.y = seal_max_y
 	# Soft ink press into stock — no empty preview box / blotter plate.
 	draw_circle(
-		seal_c + Vector2(4, 5),
-		seal_r + 14.0,
-		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.20)
+		seal_c + Vector2(5, 6),
+		seal_r + 18.0,
+		Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.18)
 	)
 	ArtKit.draw_seal_stamp(self, seal_c, seal_r, {
 		"rot_deg": -4.5,
 		"color": Palette.SLATE_TEAL,
-		"alpha": 0.92,
+		"alpha": 0.93,
 		"seed": 42,
-		"ring_w": 4.2 if seal_r >= 90.0 else 3.0,
+		"ring_w": 5.0 if seal_r >= 120.0 else (3.6 if seal_r >= 80.0 else 2.8),
 		"caption": "FIELD",
 		"font": _type("action"),
-		"font_size": maxi(16, int(seal_r * 0.14)),
+		"font_size": maxi(16, int(seal_r * 0.13)),
 		"hero": true,
 	})
-	_draw_seal_lattice(seal_c, seal_r * 0.52)
+	_draw_seal_lattice(seal_c, seal_r * 0.54)
 	draw_string(
 		_type("mono"),
-		Vector2(brand_x, seal_c.y + seal_r + 28.0),
+		Vector2(brand_x, seal_c.y + seal_r + 26.0),
 		tr("menu.seal_caption"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, folio_px,
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.70)
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.68)
 	)
-	# Subtle chalk path beside the seal — atmosphere, not a second UI panel.
-	_draw_ambient_chalk(Vector2(seal_c.x + seal_r * 0.15, seal_c.y - seal_r * 0.35), seal_r)
+	# Subtle chalk path wrapping the seal — atmosphere only (no second UI panel).
+	_draw_ambient_chalk(Vector2(seal_c.x - seal_r * 0.05, seal_c.y - seal_r * 0.55), seal_r)
 
 	# Field Index — physical card object; all actions live inside.
 	ArtKit.draw_index_card(self, card, {
@@ -788,14 +793,15 @@ func _draw() -> void:
 		"shadow_off": Vector2(10, 13),
 		"binder_holes": 8,
 		"grain_seed": 11,
-		"grain_a": 0.06,
-		"fiber_a": 0.055,
+		"grain_a": 0.055,
+		"fiber_a": 0.04,
 		"header_rules": true,
 		"deep_backer": true,
 		"binder_clip": true,
-		"thickness": 4.0,
+		"thickness": 4.2,
 		"oxide_accents": true,
 		"skip_grain": false,
+		"ruled_stock": false,
 	})
 	draw_string(
 		_type("mono"),

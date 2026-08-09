@@ -358,7 +358,9 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
 	## Layered contact shadow + thickness + fiber stock + binder clip/holes (restore-rich).
 	## opts: alpha, shadow_off, grain_seed, grain_a, binder_holes, header_rules, deep_backer,
-	##       skip_grain, thickness, oxide_accents, binder_clip, fiber_a
+	##       skip_grain, thickness, oxide_accents, binder_clip, fiber_a, ruled_stock
+	## ruled_stock=false (title Field Index): grain + streaks only — dense 4px rules
+	## read as spreadsheet underlines under action rows.
 	if card.size.x < 2.0 or card.size.y < 2.0:
 		return
 	var alpha: float = float(opts.get("alpha", 1.0))
@@ -373,6 +375,7 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	var oxide_accents: bool = bool(opts.get("oxide_accents", true))
 	var binder_clip: bool = bool(opts.get("binder_clip", true))
 	var fiber_a: float = float(opts.get("fiber_a", 0.055))
+	var ruled_stock: bool = bool(opts.get("ruled_stock", true))
 
 	# Soft outer contact wash, then ink-soft multiply stack — card as object.
 	# Keep α modest so contact reads as lift, not a dark slab under the plate.
@@ -431,20 +434,32 @@ func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> 
 	canvas.draw_rect(card.grow(-2.0), face_warm, true)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, card, grain_seed, grain_a * alpha)
-	# Micro fiber grid + vertical stock + print-shop streaks.
-	var fiber: Color = Palette.INK_SOFT
-	fiber.a = fiber_a * alpha
-	var fy: float = card.position.y + 8.0
-	while fy < card.end.y - 8.0:
-		canvas.draw_line(Vector2(card.position.x + 8.0, fy), Vector2(card.end.x - 8.0, fy), fiber, 1.0)
-		fy += 4.0
-	var fiber_v: Color = Palette.INK_SOFT
-	fiber_v.a = fiber_a * 0.45 * alpha
-	var fx: float = card.position.x + 28.0
-	while fx < card.end.x - 12.0:
-		canvas.draw_line(Vector2(fx, card.position.y + 10.0), Vector2(fx, card.end.y - 10.0), fiber_v, 1.0)
-		fx += 28.0
-	draw_fiber_streaks(canvas, card.grow(-6.0), grain_seed + 3, 0.04 * alpha, 18)
+	if ruled_stock:
+		# Micro fiber grid + vertical stock — only when stock should read as ruled paper.
+		var fiber: Color = Palette.INK_SOFT
+		fiber.a = fiber_a * alpha
+		var fy: float = card.position.y + 8.0
+		while fy < card.end.y - 8.0:
+			canvas.draw_line(Vector2(card.position.x + 8.0, fy), Vector2(card.end.x - 8.0, fy), fiber, 1.0)
+			fy += 4.0
+		var fiber_v: Color = Palette.INK_SOFT
+		fiber_v.a = fiber_a * 0.45 * alpha
+		var fx: float = card.position.x + 28.0
+		while fx < card.end.x - 12.0:
+			canvas.draw_line(Vector2(fx, card.position.y + 10.0), Vector2(fx, card.end.y - 10.0), fiber_v, 1.0)
+			fx += 28.0
+	else:
+		# Title Field Index: quiet stock — faint vertical only in binder gutter.
+		var gutter: Color = Palette.INK_SOFT
+		gutter.a = 0.035 * alpha
+		var gx: float = card.position.x + 26.0
+		canvas.draw_line(
+			Vector2(gx, card.position.y + 48.0),
+			Vector2(gx, card.end.y - 24.0),
+			gutter,
+			1.0
+		)
+	draw_fiber_streaks(canvas, card.grow(-6.0), grain_seed + 3, (0.035 if not ruled_stock else 0.04) * alpha, 14 if not ruled_stock else 18)
 	var border := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
 	# Continuous plate edge first (enclosure / screenshot QA), then letterpress tremor.
 	canvas.draw_rect(card, border, false, 1.5)

@@ -7,8 +7,8 @@ class_name LedgerChrome
 ##
 
 ## Premium title-page type scale (px @ ~1080p). Brand owns the plane; actions are Medium.
-const TYPE_BRAND := 88
-const TYPE_TAGLINE := 24
+const TYPE_BRAND := 92
+const TYPE_TAGLINE := 26
 const TYPE_BLURB := 18
 const TYPE_INDEX_PRIMARY := 24
 const TYPE_INDEX := 20
@@ -17,7 +17,7 @@ const TYPE_FOLIO := 11
 const TYPE_SEED := 12
 const TYPE_CARD_HEADER := 13
 const BRAND_RULE_W := 4.0
-const BRAND_RULE_LEN := 520.0
+const BRAND_RULE_LEN := 540.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
@@ -25,22 +25,22 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 56,
+			"brand": 64,
 			"tagline": 18,
 			"blurb": 14,
-			"index_primary": 18,
-			"index": 16,
-			"meta": 11,
+			"index_primary": 17,
+			"index": 15,
+			"meta": 10,
 			"folio": 10,
-			"seed": 11,
+			"seed": 10,
 			"card_header": 11,
-			"rule_w": 2.5,
-			"rule_len": 300.0,
-			"seal_r": 56.0,
-			"row_h": 28.0,
-			"primary_h": 34.0,
-			"row_sep": 6,
-		}
+			"rule_w": 2.8,
+			"rule_len": 280.0,
+		"seal_r": 96.0,
+		"row_h": 26.0,
+		"primary_h": 32.0,
+		"row_sep": 4,
+	}
 	return {
 		"brand": TYPE_BRAND,
 		"tagline": TYPE_TAGLINE,
@@ -53,7 +53,7 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"card_header": TYPE_CARD_HEADER,
 		"rule_w": BRAND_RULE_W,
 		"rule_len": BRAND_RULE_LEN,
-		"seal_r": 124.0,
+		"seal_r": 186.0,
 		"row_h": 44.0,
 		"primary_h": 52.0,
 		"row_sep": 10,
