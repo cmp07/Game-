@@ -9,6 +9,7 @@
 | [`01_GDD.md`](01_GDD.md) | Full game design (when present on branch) |
 | [`02_SYSTEMS.md`](02_SYSTEMS.md) | Systems contracts |
 | [`04_CONTENT_BIBLE.md`](04_CONTENT_BIBLE.md) | **Authoring authority** — chamber format, Acts, daily seeds |
+| [`../VISION/HABIT_SYSTEMS_V3.md`](../VISION/HABIT_SYSTEMS_V3.md) | **Habit/rewrite vision** — archetypes READ, soft/hard TEACH, Mirror Birth setpieces, identity drama |
 | [`13_VERTICAL_SLICE_README.md`](13_VERTICAL_SLICE_README.md) | How to run the playable Godot project |
 | [`06_AUDIO_BIBLE.md`](06_AUDIO_BIBLE.md) | Audio architecture (buses, events, silence policy) |
 | [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) | **1.0 audio identity** — slam as musical event, habit as motif, silence as tool |
