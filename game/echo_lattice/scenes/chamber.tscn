@@ -67,6 +67,13 @@ flat = true
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
 
+[node name="SettingsButton" type="Button" parent="TopBar/TopMargin/TopRow"]
+unique_name_in_owner = true
+text = "Settings"
+flat = true
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
+
 [node name="MenuButton" type="Button" parent="TopBar/TopMargin/TopRow"]
 unique_name_in_owner = true
 text = "Menu (Esc)"

@@ -1,0 +1,223 @@
+[gd_scene load_steps=2 format=3 uid="uid://cel_settings_a11y"]
+
+[ext_resource type="Script" path="res://scripts/a11y/settings_menu.gd" id="1_settings"]
+
+[node name="SettingsMenu" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+script = ExtResource("1_settings")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.078, 0.071, 0.063, 0.55)
+mouse_filter = 0
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -290.0
+offset_right = 340.0
+offset_bottom = 290.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+text = "Settings — Accessibility"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.078, 0.071, 0.063, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 430)
+
+[node name="Content" type="VBoxContainer" parent="Panel/Margin/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="A11yHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+text = "Accessibility"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
+[node name="ColorblindRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="ColorblindLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/ColorblindRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Colorblind mode"
+
+[node name="ColorblindOption" type="OptionButton" parent="Panel/Margin/VBox/Scroll/Content/ColorblindRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(240, 0)
+
+[node name="FossilPatternsCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pattern cues (not color-only)"
+
+[node name="ReduceFlashCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reduce flash (soften rewrite strobes)"
+
+[node name="ScreenShakeCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Screen shake"
+
+[node name="ShakeRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="ShakeIntensityLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/ShakeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shake intensity"
+
+[node name="ShakeIntensitySlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/ShakeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+min_value = 0.0
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SubtitlesCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Subtitles (PA / rewrite lines)"
+
+[node name="SubtitleSizeRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="SubtitleSizeLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/SubtitleSizeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Subtitle size"
+
+[node name="SubtitleSizeOption" type="OptionButton" parent="Panel/Margin/VBox/Scroll/Content/SubtitleSizeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+
+[node name="UiScaleRow" type="HBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+
+[node name="UiScaleLabel" type="Label" parent="Panel/Margin/VBox/Scroll/Content/UiScaleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "UI scale"
+
+[node name="UiScaleSlider" type="HSlider" parent="Panel/Margin/VBox/Scroll/Content/UiScaleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(180, 0)
+min_value = 0.85
+max_value = 1.5
+step = 0.05
+value = 1.0
+
+[node name="UiScaleValue" type="Label" parent="Panel/Margin/VBox/Scroll/Content/UiScaleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(48, 0)
+text = "1.00×"
+
+[node name="GhostAssistCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Assist: show ghost path once per chamber"
+
+[node name="ReduceMotionCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reduce motion"
+
+[node name="HoldToWalkCheck" type="CheckButton" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Hold to walk"
+
+[node name="InputHeader" type="Label" parent="Panel/Margin/VBox/Scroll/Content"]
+layout_mode = 2
+text = "Input (click to rebind keyboard; gamepad preserved)"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
+[node name="BindingsList" type="VBoxContainer" parent="Panel/Margin/VBox/Scroll/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StatusLabel" type="Label" parent="Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 1)
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="ResetA11yButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Reset accessibility"
+
+[node name="ResetInputButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Reset input"
+
+[node name="CloseButton" type="Button" parent="Panel/Margin/VBox/Buttons"]
+layout_mode = 2
+text = "Close"
+
+[connection signal="item_selected" from="Panel/Margin/VBox/Scroll/Content/ColorblindRow/ColorblindOption" to="." method="_on_colorblind_selected"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/FossilPatternsCheck" to="." method="_on_patterns_toggled"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/ReduceFlashCheck" to="." method="_on_reduce_flash_toggled"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/ScreenShakeCheck" to="." method="_on_shake_toggled"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/ShakeRow/ShakeIntensitySlider" to="." method="_on_shake_intensity_changed"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/SubtitlesCheck" to="." method="_on_subtitles_toggled"]
+[connection signal="item_selected" from="Panel/Margin/VBox/Scroll/Content/SubtitleSizeRow/SubtitleSizeOption" to="." method="_on_subtitle_size_selected"]
+[connection signal="value_changed" from="Panel/Margin/VBox/Scroll/Content/UiScaleRow/UiScaleSlider" to="." method="_on_ui_scale_changed"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/GhostAssistCheck" to="." method="_on_ghost_assist_toggled"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/ReduceMotionCheck" to="." method="_on_reduce_motion_toggled"]
+[connection signal="toggled" from="Panel/Margin/VBox/Scroll/Content/HoldToWalkCheck" to="." method="_on_hold_walk_toggled"]
+[connection signal="pressed" from="Panel/Margin/VBox/Buttons/ResetA11yButton" to="." method="_on_reset_accessibility"]
+[connection signal="pressed" from="Panel/Margin/VBox/Buttons/ResetInputButton" to="." method="_on_reset_bindings"]
+[connection signal="pressed" from="Panel/Margin/VBox/Buttons/CloseButton" to="." method="_on_close_pressed"]
