@@ -820,7 +820,8 @@ func _draw() -> void:
 	# Focus underlines — rust ink craft + selection tick (cadmium reserved).
 	_draw_button_underlines(card)
 
-	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.
+	# Title shell is NOT a paused chamber — never draw / instance chamber HUD
+	# (punch-card ribbon, save stamp, move counter, restart / undo foot line).
 
 
 func _draw_seal_lattice(center: Vector2, half: float) -> void:

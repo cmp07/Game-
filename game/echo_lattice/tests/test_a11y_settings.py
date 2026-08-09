@@ -175,11 +175,15 @@ class TestSourceSurface(unittest.TestCase):
         self.assertIn('tr("glyphs.controls_keyboard")', src)
         self.assertIn('tr("hud.restart_fmt")', src)
 
-    def test_menu_footer_uses_gamepad_not_last_device_ge_zero(self) -> None:
+    def test_glyph_path_uses_gamepad_not_last_device_ge_zero(self) -> None:
+        ## Controls footer lives on chamber / InputGlyphs — not the title menu.
+        glyphs = (ROOT / "scripts" / "input_glyphs.gd").read_text()
+        self.assertIn("using_gamepad()", glyphs)
+        self.assertNotIn("last_device >= 0", glyphs)
+        self.assertIn('tr("glyphs.controls_keyboard")', glyphs)
         menu = (ROOT / "scripts" / "menu.gd").read_text()
-        self.assertIn("using_gamepad()", menu)
-        self.assertNotIn("last_device >= 0", menu)
-        self.assertIn('tr("menu.controls_hint_remap")', menu)
+        self.assertNotIn('tr("menu.controls_hint_remap")', menu)
+        self.assertNotIn("_footer_controls_hint", menu)
 
     def test_cjk_fetch_script_and_ofl(self) -> None:
         script = REPO / "tools" / "fonts" / "fetch_noto_sans_sc.py"

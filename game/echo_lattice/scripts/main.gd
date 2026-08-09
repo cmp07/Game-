@@ -1341,13 +1341,19 @@ static func _bfs_shortest_len(data: Dictionary) -> int:
 
 
 func _clear_stage() -> void:
+	## Detach immediately so chamber HUD cannot linger under the next title shell.
+	## Deferred free without remove_child keeps TopBar/BottomBar parented on Stage
+	## until idle — punch-card + move/restart chrome would still be instanced.
 	if has_node("/root/Juice") and Juice.has_method("reset_transient"):
 		Juice.reset_transient()
-	for c in stage.get_children():
+	var kids: Array = stage.get_children()
+	for c in kids:
+		stage.remove_child(c)
 		c.queue_free()
 
 
 func show_menu() -> void:
+	## Title stage mounts Menu only — never chamber.tscn / playable HUD chrome.
 	_clear_stage()
 	var m: Node = MENU_SCENE.instantiate()
 	stage.add_child(m)
