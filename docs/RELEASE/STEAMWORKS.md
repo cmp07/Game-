@@ -4,7 +4,7 @@
 **Engine:** Godot 4.3 desktop  
 **Status:** Offline-first stub + feature flags landed; real AppID / GodotSteam pin still placeholders.
 
-This is the release-facing Steamworks guide. Store/capsule checklist remains in the parallel Steam readiness doc (`docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md` when merged). Achievement API names: [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json).
+This is the release-facing Steamworks guide. **GodotSteam install + fail-closed SDK policy:** [`GODOTSTEAM.md`](GODOTSTEAM.md). Store/capsule checklist remains in the parallel Steam readiness doc (`docs/ECHO_LATTICE/08_STEAM_CHECKLIST.md` when merged). Achievement API names: [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json).
 
 ---
 
@@ -14,7 +14,8 @@ This is the release-facing Steamworks guide. Store/capsule checklist remains in 
 |------|--------|
 | Offline without Steam | Default. Puzzle loop never requires `steam_api` or a running Steam client. |
 | Feature flags | `game/echo_lattice/config/steam_features.json` gates Steam init, achievements, rich presence, cloud, overlay pause. |
-| Soft failure | Missing GodotSteam / failed init → stub backend; no hard crash. |
+| Fail-closed without SDK | `steam_enabled` + missing GodotSteam → stub stays inert for Steam APIs (no fake unlocks/cloud); no hard crash. |
+| No Spacewar in release | AppID `480` never resolves in shipping/`steam` builds; depot render rejects `480`. |
 | Depot hygiene | Retail uploads omit `steam_appid.txt`, editor trees, and secrets. |
 
 ---
@@ -137,9 +138,13 @@ Stub testing: `SteamService.debug_simulate_overlay(true|false)`.
 
 ## 7. GodotSteam bring-up (when leaving stub)
 
-1. Install GodotSteam GDExtension matching Godot **4.3.x** into `game/echo_lattice/addons/godotsteam/` (do not commit Valve redistributables without license review).
+Step-by-step install, pin, and fail-closed behavior: **[`GODOTSTEAM.md`](GODOTSTEAM.md)**.
+
+Summary:
+
+1. Install GodotSteam GDExtension matching Godot **4.3.x** into `game/echo_lattice/addons/godotsteam/` (binaries gitignored; do not commit Valve redistributables without license review).
 2. Pin the exact GodotSteam + Godot version pair in release notes.
-3. Set `steam_enabled: true` for Steam export presets only (`custom_features` may include `steam`).
+3. Set `steam_enabled: true` for Steam export presets only (`custom_features` should include `steam`).
 4. Local exported testing: `steam_appid.txt` beside the exe with the **real** AppID. Spacewar `480` only with `allow_spacewar_dev: true` in editor/debug — never as a silent fallback. **Never ship `480` or `steam_appid.txt` in retail depots.**
 5. Smoke: init → unlock one achievement → Shift+Tab overlay pause → quit flush.
 
@@ -168,11 +173,19 @@ steam/echo_lattice/
 
 1. Export Windows + Linux (presets `Windows Desktop` / `Linux/X11`, or CI artifacts from [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
 2. Copy into `steam/echo_lattice/depot_build/windows/` and `depot_build/linux/`.
-3. **Strip** `steam_appid.txt`, `*.pdb`, `.godot/`, source trees, and any CI secrets.
-4. Replace `YOUR_APP_ID` / `YOUR_DEPOT_ID` / `YOUR_DEPOT_ID_LINUX` in the VDF files.
-5. SteamCMD:
+3. **Strip** `steam_appid.txt`, `*.pdb`, `.godot/`, source trees, and any CI secrets. Run:
    ```bash
-   steamcmd +login <user> +run_app_build <abs>/steam/echo_lattice/app_build.vdf +quit
+   python3 steam/echo_lattice/verify_retail_staging.py
+   ```
+4. Render VDFs from real Partner env vars (do not invent IDs; never `480`):
+   ```bash
+   export STEAM_APP_ID=… STEAM_DEPOT_ID_WINDOWS=… STEAM_DEPOT_ID_LINUX=…
+   python3 steam/echo_lattice/render_vdf_from_env.py --write --full
+   ```
+   Committed templates keep `YOUR_*` placeholders; rendered copies land under `dist/echo_lattice/steampipe_rendered/`.
+5. SteamCMD against the **rendered** app build:
+   ```bash
+   steamcmd +login <user> +run_app_build <abs>/dist/echo_lattice/steampipe_rendered/app_build.vdf +quit
    ```
 6. Set the build live on a Steam branch (`beta` for QA, then `default`).
 7. Partner launch options: Windows → `EchoLattice.exe`; SteamOS/Deck → native `EchoLattice.x86_64`.
@@ -180,8 +193,9 @@ steam/echo_lattice/
 ### Demo depot stub
 
 1. Export preset `Windows Demo` → stage `depot_build/windows_demo/`.
-2. Replace `YOUR_DEMO_APP_ID` / `YOUR_DEMO_DEPOT_ID` in `app_build_demo.vdf` + `depot_windows_demo.vdf`.
-3. `steamcmd +run_app_build …/app_build_demo.vdf`.
+2. `export STEAM_DEMO_APP_ID=… STEAM_DEMO_DEPOT_ID=…` then  
+   `python3 steam/echo_lattice/render_vdf_from_env.py --write --demo`.
+3. `steamcmd +run_app_build` on the rendered `app_build_demo.vdf`.
 
 ### Depot rules
 
@@ -199,10 +213,10 @@ steam/echo_lattice/
 
 | | Dev / local export | Retail Steam build |
 |--|--------------------|--------------------|
-| AppID source | `steam_appid.txt` | Steam client |
+| AppID source | `steam_appid.txt` (real AppID) or editor Spacewar only if `allow_spacewar_dev` | Steam client (never `steam_appid.txt`, never `480`) |
 | Overlay | If Steam running | On |
-| Achievements | Test app / Spacewar | Real AppID |
-| Stub flags | `steam_enabled` false in editor | true only in Steam-branded export |
+| Achievements | Real AppID preferred; Spacewar only with explicit dev flag | Real AppID only |
+| Stub flags | `steam_enabled` false in editor | true only in Steam-branded export with GodotSteam installed |
 
 ---
 
@@ -213,6 +227,9 @@ steam/echo_lattice/
 python3 game/echo_lattice/tests/test_steamworks.py
 # SEC-01 / SEC-02 / SEC-03 contracts
 python3 game/echo_lattice/tests/test_security_high.py
+# GodotSteam install docs + fail-closed SDK + depot env render
+python3 game/echo_lattice/tests/test_godotsteam_gate.py
+python3 steam/echo_lattice/verify_retail_staging.py
 ```
 
 Manual (Steam branch build):
@@ -231,9 +248,10 @@ Manual (Steam branch build):
 | Doc / path | Role |
 |------------|------|
 | [`ACHIEVEMENTS.json`](ACHIEVEMENTS.json) | Partner achievement table |
+| [`GODOTSTEAM.md`](GODOTSTEAM.md) | Optional GodotSteam install + fail-closed SDK |
 | [`PLATFORMS.md`](PLATFORMS.md) | Store priority (when merged) |
 | [`CI_BUILDS.md`](CI_BUILDS.md) | Export CI sketch (when merged) |
 | `game/echo_lattice/config/steam_features.json` | Runtime flags |
-| `steam/echo_lattice/` | SteamPipe VDF templates |
+| `steam/echo_lattice/` | SteamPipe VDF templates + env render scripts |
 
 *AppID still placeholder — do not invent a real AppID in-repo.*

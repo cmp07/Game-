@@ -39,6 +39,12 @@ jobs:
       - name: Steamworks catalog / flags gate
         run: python3 game/echo_lattice/tests/test_steamworks.py
 
+      - name: GodotSteam optional integration gate
+        run: python3 game/echo_lattice/tests/test_godotsteam_gate.py
+
+      - name: Retail depot staging hygiene
+        run: python3 steam/echo_lattice/verify_retail_staging.py
+
       - name: Demo spec gate
         run: python3 game/echo_lattice/tests/test_demo_spec.py
 

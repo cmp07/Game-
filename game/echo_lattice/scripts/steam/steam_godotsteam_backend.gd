@@ -19,6 +19,13 @@ func is_steam_available() -> bool:
 
 
 func init_steam(app_id: int) -> bool:
+	# Belt-and-suspenders: never init Spacewar from a shipping/release binary.
+	if app_id == 480 and not OS.has_feature("editor") and not OS.is_debug_build():
+		push_error("SteamGodotSteamBackend: refusing Spacewar AppID 480 in release (fail-closed).")
+		return false
+	if app_id <= 0:
+		push_warning("SteamGodotSteamBackend: refusing init with AppID %d." % app_id)
+		return false
 	_steam = _resolve_steam()
 	if _steam == null:
 		push_warning("SteamGodotSteamBackend: Steam singleton unavailable; staying inert.")

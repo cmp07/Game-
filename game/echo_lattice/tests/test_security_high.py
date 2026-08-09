@@ -180,6 +180,8 @@ class TestSec01AppIdFailClosed(unittest.TestCase):
         self.assertIn("func _spacewar_dev_allowed", gd)
         self.assertIn("allow_spacewar_dev", gd)
         self.assertIn("refusing Spacewar fallback", gd)
+        self.assertIn("_steam_sdk_fail_closed", gd)
+        self.assertIn("_is_shipping_steam_context", gd)
         # Must not silently return spacewar when steam_enabled without gate.
         self.assertNotRegex(
             gd,

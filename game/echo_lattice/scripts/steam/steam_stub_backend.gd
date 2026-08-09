@@ -65,7 +65,9 @@ func clear_rich_presence() -> bool:
 
 
 func cloud_enabled_for_account() -> bool:
-	return true
+	# Fail-closed: stub is offline. Tests that need Cloud use an explicit
+	# in-memory file write rather than pretending Steam Cloud is available.
+	return false
 
 
 func cloud_file_exists(remote_path: String) -> bool:

@@ -44,6 +44,9 @@ class SteamworksTests(unittest.TestCase):
             "Overlay pause",
             "Depot export",
             "steam_appid.txt",
+            "Fail-closed without SDK",
+            "GODOTSTEAM.md",
+            "render_vdf_from_env.py",
         ):
             self.assertIn(needle, text)
 
