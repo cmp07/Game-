@@ -83,7 +83,16 @@ func _ready() -> void:
 		a11y.colorblind_changed.connect(queue_redraw)
 	if a11y != null and a11y.has_signal("fossil_style_changed"):
 		a11y.fossil_style_changed.connect(queue_redraw)
+	if not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
+		Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	load_chamber(GameState.current_chamber)
+
+
+func _on_joy_connection_changed(_device: int, connected: bool) -> void:
+	# Unplug can leave stick axes "pressed" in the InputMap — kill hold-to-walk.
+	if not connected:
+		_hold_dir = Vector2i.ZERO
+		_hold_timer = 0.0
 
 
 func _exit_tree() -> void:
@@ -195,6 +204,19 @@ func freeze_rewrite_at(t_norm: float) -> void:
 func is_rewrite_locking() -> bool:
 	## True while the origami slam owns the board — movement would softlock.
 	return pending_echoes.size() > 0
+
+
+func _notification(what: int) -> void:
+	# Alt-tab / focus loss mid-hold must not keep walking after return.
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+		_hold_dir = Vector2i.ZERO
+		_hold_timer = 0.0
+	# Focus return after mid-rewrite: if freeze was not intentional, let settle timer resume.
+	if what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
+		if pending_echoes.size() > 0 and not rewrite_freeze:
+			# Defensive: do not leave a stale hold edge armed across focus gaps.
+			_hold_dir = Vector2i.ZERO
+			_hold_timer = 0.0
 
 
 func _input(event: InputEvent) -> void:

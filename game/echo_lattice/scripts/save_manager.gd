@@ -27,6 +27,7 @@ func save_to_disk() -> bool:
 		return false
 	var data := {
 		"version": SAVE_VERSION,
+		"build_flavor": "demo" if DemoBuild.is_demo() else "full",
 		"current_chamber": GameState.current_chamber,
 		"best_moves": GameState.best_moves,
 		"best_stars": GameState.best_stars,
@@ -90,9 +91,22 @@ func save_to_disk() -> bool:
 		direct.close()
 		if FileAccess.file_exists(SAVE_TMP):
 			DirAccess.remove_absolute(abs_tmp)
-	# Cloud must see the committed primary, not the pre-rename bytes.
+	# Cloud must read the committed save.json — never the pre-rename stale file.
 	_push_cloud_after_commit()
 	return true
+
+
+func _push_cloud_after_commit() -> void:
+	if not (Engine.get_main_loop() is SceneTree):
+		return
+	var root: Node = (Engine.get_main_loop() as SceneTree).root
+	if root == null or not root.has_node("SteamService"):
+		return
+	var steam: Node = root.get_node("SteamService")
+	var feats: Variant = steam.get("features")
+	if steam.has_method("push_cloud_save") and typeof(feats) == TYPE_DICTIONARY \
+			and bool(feats.get("cloud_save_enabled", false)):
+		steam.push_cloud_save()
 
 
 func load_from_disk() -> bool:
@@ -131,16 +145,28 @@ func _read_json_file(path: String) -> Variant:
 
 
 func _apply_save(parsed: Dictionary) -> void:
+	var flavor: String = str(parsed.get("build_flavor", ""))
+	var now_demo: bool = DemoBuild.is_demo()
+	if flavor == "full" and now_demo:
+		push_warning("Echo Lattice: loading full-game save into demo — clamping to Act I book.")
+	elif flavor == "demo" and not now_demo:
+		push_warning("Echo Lattice: loading demo save into full game — Continue may only cover Act I.")
 	GameState.current_chamber = int(parsed.get("current_chamber", 0))
 	var best = parsed.get("best_moves", {})
 	if typeof(best) == TYPE_DICTIONARY:
 		GameState.best_moves = _stringify_int_keys(best)
+	else:
+		GameState.best_moves = {}
 	var stars = parsed.get("best_stars", {})
 	if typeof(stars) == TYPE_DICTIONARY:
 		GameState.best_stars = _stringify_int_keys(stars)
+	else:
+		GameState.best_stars = {}
 	var done = parsed.get("completed", {})
 	if typeof(done) == TYPE_DICTIONARY:
 		GameState.completed = _stringify_int_keys(done)
+	else:
+		GameState.completed = {}
 	var cleared = parsed.get("run_cleared", null)
 	if typeof(cleared) == TYPE_DICTIONARY:
 		GameState.run_cleared = _stringify_int_keys(cleared)
@@ -163,12 +189,15 @@ func _apply_save(parsed: Dictionary) -> void:
 	var rq = parsed.get("run_queue", [])
 	if typeof(rq) == TYPE_ARRAY:
 		GameState.run_queue = rq.duplicate()
+	else:
+		GameState.run_queue = []
 	var dbest = parsed.get("daily_best_stars", {})
 	if typeof(dbest) == TYPE_DICTIONARY:
 		GameState.daily_best_stars = dbest.duplicate()
-	# Demo / Next Fest: drop out-of-range indices from a full-game save so
-	# Continue cannot open an empty chamber (get_chamber → {}).
-	_sanitize_queue_for_demo()
+	else:
+		GameState.daily_best_stars = {}
+	# Drop chamber indices the active build cannot address (demo↔full / corrupt).
+	_sanitize_queue_against_book()
 	# Legacy / partial saves: rebuild a standard queue so Continue cannot softlock.
 	if GameState.run_queue.is_empty() and GameState.run_mode == "standard":
 		for i in range(ChamberBook.chamber_count()):
@@ -181,22 +210,34 @@ func _apply_save(parsed: Dictionary) -> void:
 			GameState.current_chamber = int(GameState.run_queue[GameState.queue_pos])
 		else:
 			GameState.current_chamber = int(GameState.run_queue[GameState.run_queue.size() - 1])
+	else:
+		GameState.current_chamber = clampi(GameState.current_chamber, 0, maxi(0, ChamberBook.chamber_count() - 1))
 
 
-func _sanitize_queue_for_demo() -> void:
-	if not DemoBuild.is_demo():
-		return
+func _sanitize_queue_against_book() -> void:
 	var n: int = ChamberBook.chamber_count()
 	if n <= 0:
+		GameState.run_queue = []
 		return
 	var filtered: Array = []
 	for idx in GameState.run_queue:
 		var i: int = int(idx)
 		if i >= 0 and i < n:
 			filtered.append(i)
+	if filtered.size() != GameState.run_queue.size():
+		push_warning(
+			"Echo Lattice: save run_queue had out-of-range chamber indices; clamped to book size %d."
+			% n
+		)
 	GameState.run_queue = filtered
-	if GameState.current_chamber < 0 or GameState.current_chamber >= n:
-		GameState.current_chamber = int(GameState.run_queue[0]) if not GameState.run_queue.is_empty() else 0
+	# Prune score tables that point past the active book (demo load of full save).
+	for table in [GameState.best_moves, GameState.best_stars, GameState.completed, GameState.run_cleared]:
+		var drop: Array = []
+		for k in table.keys():
+			if int(k) < 0 or int(k) >= n:
+				drop.append(k)
+		for k2 in drop:
+			table.erase(k2)
 
 
 func _write_primary_payload(payload: String) -> bool:
@@ -207,19 +248,6 @@ func _write_primary_payload(payload: String) -> bool:
 	file.store_string(payload)
 	file.close()
 	return true
-
-
-func _push_cloud_after_commit() -> void:
-	if not Engine.get_main_loop() is SceneTree:
-		return
-	var root: Node = (Engine.get_main_loop() as SceneTree).root
-	if root == null or not root.has_node("SteamService"):
-		return
-	var steam: Node = root.get_node("SteamService")
-	var feats: Variant = steam.get("features")
-	if steam.has_method("push_cloud_save") and typeof(feats) == TYPE_DICTIONARY \
-			and bool(feats.get("cloud_save_enabled", false)):
-		steam.push_cloud_save()
 
 
 static func _stringify_int_keys(d: Dictionary) -> Dictionary:

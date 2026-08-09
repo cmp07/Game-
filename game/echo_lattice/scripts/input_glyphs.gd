@@ -12,6 +12,8 @@ var last_device: int = Device.KEYBOARD
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process_input(true)
+	if not Input.joy_connection_changed.is_connected(_on_joy_connection_changed):
+		Input.joy_connection_changed.connect(_on_joy_connection_changed)
 
 
 func _input(event: InputEvent) -> void:
@@ -22,6 +24,15 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventJoypadMotion:
 		if absf(event.axis_value) >= 0.55:
 			last_device = Device.GAMEPAD
+
+
+func _on_joy_connection_changed(_device: int, connected: bool) -> void:
+	# Unplug mid-run: fall back to keyboard glyphs unless another pad remains.
+	if connected:
+		last_device = Device.GAMEPAD
+		return
+	if Input.get_connected_joypads().is_empty():
+		last_device = Device.KEYBOARD
 
 
 func using_gamepad() -> bool:
