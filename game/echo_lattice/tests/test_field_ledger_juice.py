@@ -166,9 +166,16 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertNotIn('AudioDirector.fire("ui.click")\n\n\nfunc _localize_chrome', menu)
         # Fold tease must not breathe.
         self.assertNotIn("sin(_t * 2.0)", menu)
-        self.assertIn("fold_on", menu)
+        art = (ROOT / "scripts" / "art_kit.gd").read_text()
+        # Discrete fossil fold in the habit silhouette — no sin breathe.
+        self.assertIn("fold_on", art)
+        self.assertIn("func draw_open_folio", art)
+        self.assertIn("func draw_habit_silhouette", art)
         self.assertIn("binder_holes", menu)
         self.assertIn("ArtKit.draw_seal_stamp", menu)
+        self.assertIn("ArtKit.draw_open_folio", menu)
+        self.assertIn("ArtKit.draw_habit_silhouette", menu)
+        self.assertIn("folio_leaves", menu)
         self.assertIn("LedgerChrome.title_type_scale", menu)
         # Cadmium reserved — selection is rust underline + ink tick.
         self.assertNotIn("CADMIUM_WARN", menu)
@@ -179,7 +186,7 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertIn("ArtKit.draw_oxide_flecks", menu)
         self.assertNotIn("_draw_specimen_lattice", menu)
         self.assertIn("Idle rows stay clean", (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text())
-        self.assertIn("func draw_desk_vignette", (ROOT / "scripts" / "art_kit.gd").read_text())
+        self.assertIn("func draw_desk_vignette", art)
         self.assertIn("_draw_ink_rule", (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text())
         # Title shell is not a paused chamber.
         self.assertNotIn("_draw_punchcard_ribbon", menu)
@@ -268,7 +275,7 @@ class TestDiegeticShellMvp(unittest.TestCase):
         self.assertIn("menu.folio_mark", menu)
         self.assertIn("_card_slot_t", menu)
         self.assertIn("LedgerChrome", menu)
-        self.assertIn("draw_ledger_page", menu)
+        self.assertIn("draw_open_folio", menu)
         self.assertIn("_focus_underline_t", menu)
         self.assertIn("_style_meta_as_ledger_lines", menu)
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()

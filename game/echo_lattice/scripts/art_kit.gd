@@ -354,6 +354,220 @@ func draw_ledger_page(
 		)
 
 
+func draw_open_folio(
+	canvas: CanvasItem,
+	outer: Rect2,
+	opts: Dictionary = {}
+) -> Dictionary:
+	## Open two-leaf Field Ledger — verso + recto with a bound spine gutter.
+	## Returns {outer, left, right, spine}. Fills the frame; no dead center void.
+	if outer.size.x < 8.0 or outer.size.y < 8.0:
+		return {"outer": outer, "left": outer, "right": outer, "spine": Rect2()}
+	var grain_seed: int = int(opts.get("grain_seed", 19))
+	var grain_a: float = float(opts.get("grain_a", 0.055))
+	var major_cell: int = int(opts.get("major_cell", 32))
+	var gutter: float = float(opts.get("gutter", 0.0))
+	if gutter < 1.0:
+		gutter = 30.0 if outer.size.x >= 1100.0 else 18.0
+	var mid_x: float = outer.position.x + outer.size.x * 0.5
+	var left := Rect2(
+		outer.position.x,
+		outer.position.y,
+		maxf(80.0, mid_x - gutter * 0.5 - outer.position.x),
+		outer.size.y
+	)
+	var right := Rect2(
+		mid_x + gutter * 0.5,
+		outer.position.y,
+		maxf(80.0, outer.end.x - (mid_x + gutter * 0.5)),
+		outer.size.y
+	)
+	var spine := Rect2(left.end.x, outer.position.y, gutter, outer.size.y)
+
+	# Soft desk contact under the whole open book.
+	var wash := Palette.PAPER_SHADOW
+	wash.a = 0.22
+	canvas.draw_rect(Rect2(outer.position + Vector2(10, 14), outer.size), wash, true)
+
+	# Spine trough — bound gutter between leaves (kills the empty center).
+	var trough := Palette.PAPER_DEEP
+	trough.a = 0.92
+	canvas.draw_rect(spine, trough, true)
+	var stitch := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55)
+	var stitch_x: float = spine.position.x + spine.size.x * 0.5
+	var y: float = spine.position.y + 28.0
+	while y < spine.end.y - 28.0:
+		canvas.draw_line(
+			Vector2(stitch_x - 3.0, y),
+			Vector2(stitch_x + 3.0, y + 5.0),
+			stitch,
+			1.4,
+			true
+		)
+		y += 22.0
+	# Inner shadow into each leaf from the spine.
+	var crease := Color(Palette.INK_BLACK.r, Palette.INK_BLACK.g, Palette.INK_BLACK.b, 0.08)
+	canvas.draw_rect(Rect2(left.end.x - 10.0, left.position.y, 10.0, left.size.y), crease, true)
+	canvas.draw_rect(Rect2(right.position.x, right.position.y, 10.0, right.size.y), crease, true)
+
+	draw_ledger_page(canvas, left, {
+		"shadow_off": Vector2(4, 7),
+		"grain_seed": grain_seed,
+		"grain_a": grain_a,
+		"major_cell": major_cell,
+		"rule_w": 2.2,
+		"double_rule": true,
+		"spine": false,
+		"skip_grain": false,
+	})
+	draw_ledger_page(canvas, right, {
+		"shadow_off": Vector2(7, 9),
+		"grain_seed": grain_seed + 3,
+		"grain_a": grain_a,
+		"major_cell": major_cell,
+		"rule_w": 2.2,
+		"double_rule": true,
+		"spine": false,
+		"skip_grain": false,
+	})
+	return {"outer": outer, "left": left, "right": right, "spine": spine}
+
+
+func draw_habit_silhouette(
+	canvas: CanvasItem,
+	plate: Rect2,
+	opts: Dictionary = {}
+) -> void:
+	## Authored habit→geometry specimen — real corridor silhouette, never an empty dashed box.
+	## Chalk trail + fossil fold answer inside letterpress walls.
+	if plate.size.x < 40.0 or plate.size.y < 40.0:
+		return
+	var seed: int = int(opts.get("seed", 61))
+	var progress: float = float(opts.get("progress", 24.0))
+	var cell: float = float(opts.get("cell", 0.0))
+	if cell < 4.0:
+		cell = clampf(minf(plate.size.x, plate.size.y) / 14.0, 14.0, 28.0)
+
+	# Stock plate under the specimen — filled object, not a void preview.
+	var back := Palette.PAPER_DEEP
+	back.a = 0.50
+	canvas.draw_rect(Rect2(plate.position + Vector2(3, 4), plate.size), back, true)
+	var face := Palette.PAPER_BONE
+	face.a = 0.96
+	canvas.draw_rect(plate, face, true)
+	draw_paper_grain(canvas, plate, seed, 0.045)
+	draw_fiber_streaks(canvas, plate, seed + 2, 0.035, 18)
+	draw_letterpress_rule(
+		canvas, plate.position, plate.position + Vector2(plate.size.x, 0.0),
+		Palette.INK_SOFT, 1.6, seed
+	)
+	draw_letterpress_rule(
+		canvas, plate.position + Vector2(plate.size.x, 0.0), plate.end,
+		Palette.INK_SOFT, 1.6, seed + 1
+	)
+	draw_letterpress_rule(
+		canvas, plate.end, plate.position + Vector2(0.0, plate.size.y),
+		Palette.INK_SOFT, 1.6, seed + 2
+	)
+	draw_letterpress_rule(
+		canvas, plate.position + Vector2(0.0, plate.size.y), plate.position,
+		Palette.INK_SOFT, 1.6, seed + 3
+	)
+
+	# Fill the plate with a dense corridor specimen — sized to the stock, not a postage stamp.
+	var pad: float = 18.0
+	var cols: int = maxi(10, int((plate.size.x - pad * 2.0) / cell))
+	var rows: int = maxi(8, int((plate.size.y - pad * 2.0) / cell))
+	cols = mini(cols, 22)
+	rows = mini(rows, 16)
+	var grid_w: float = float(cols) * cell
+	var grid_h: float = float(rows) * cell
+	var origin := Vector2(
+		plate.position.x + (plate.size.x - grid_w) * 0.5,
+		plate.position.y + (plate.size.y - grid_h) * 0.55
+	)
+	# Perimeter walls + authored corridor ribs (scales with cols/rows).
+	var walls: Array = []
+	for x in range(cols):
+		walls.append(Vector2i(x, 0))
+		walls.append(Vector2i(x, rows - 1))
+	for y in range(1, rows - 1):
+		walls.append(Vector2i(0, y))
+		walls.append(Vector2i(cols - 1, y))
+	# Inner ribs — leave a winding corridor open for the chalk path.
+	var mid_y: int = int(rows / 2)
+	var mid_x: int = int(cols / 2)
+	var third_x: int = int(cols / 3)
+	var two_third_x: int = int((cols * 2) / 3)
+	for x in range(2, cols - 3):
+		if x == mid_x or x == mid_x + 1:
+			continue
+		walls.append(Vector2i(x, mid_y - 1))
+	for x in range(3, cols - 2):
+		if x == third_x:
+			continue
+		walls.append(Vector2i(x, mid_y + 1))
+	for y in range(2, mid_y - 1):
+		walls.append(Vector2i(third_x, y))
+	for y in range(mid_y + 2, rows - 2):
+		walls.append(Vector2i(two_third_x, y))
+	# Extra blocking masses so the plate never reads empty.
+	for x in range(2, mini(5, cols - 2)):
+		walls.append(Vector2i(x, 2))
+	for x in range(maxi(2, cols - 5), cols - 2):
+		walls.append(Vector2i(x, rows - 3))
+
+	var fossils: Array = [
+		Vector2i(mid_x, 1), Vector2i(mid_x, 2), Vector2i(mid_x + 1, 2),
+		Vector2i(mid_x + 1, mid_y), Vector2i(mid_x + 2, mid_y),
+		Vector2i(two_third_x - 1, mid_y + 2), Vector2i(two_third_x - 1, mid_y + 3),
+	]
+	for w in walls:
+		var r := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.4, cell - 1.4))
+		draw_letterpress_wall(canvas, r, false, 15)
+	var fold_on: bool = int(progress) % 31 > 14
+	for w in fossils:
+		var r2 := Rect2(origin + Vector2(w.x * cell, w.y * cell), Vector2(cell - 1.4, cell - 1.4))
+		if fold_on:
+			draw_letterpress_wall(canvas, r2, true, 15)
+		else:
+			# Telegraph — slate tick, not an empty dashed preview box.
+			var tick := Color(Palette.SLATE_TEAL.r, Palette.SLATE_TEAL.g, Palette.SLATE_TEAL.b, 0.55)
+			canvas.draw_rect(r2, Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, 0.35), true)
+			canvas.draw_rect(r2, tick, false, 1.5)
+
+	# Habit chalk path through the corridor — the game's verb as silhouette.
+	var path: Array = [
+		Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1),
+		Vector2i(4, 2), Vector2i(4, 3), Vector2i(5, 3), Vector2i(6, 3),
+		Vector2i(7, mid_y), Vector2i(8, mid_y), Vector2i(9, mid_y),
+		Vector2i(9, mid_y + 1), Vector2i(9, mid_y + 2), Vector2i(8, mid_y + 2),
+		Vector2i(7, mid_y + 2), Vector2i(6, mid_y + 2), Vector2i(5, mid_y + 2),
+		Vector2i(5, mid_y + 3), Vector2i(5, rows - 2), Vector2i(6, rows - 2),
+		Vector2i(7, rows - 2), Vector2i(8, rows - 2), Vector2i(cols - 2, rows - 2),
+	]
+	var visible: int = mini(path.size(), maxi(3, int(progress) % (path.size() + 4)))
+	var chalk := Color(Palette.CHALK_WHITE.r, Palette.CHALK_WHITE.g, Palette.CHALK_WHITE.b, 0.90)
+	var ink_trail := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.40)
+	for i in range(visible - 1):
+		var a: Vector2i = path[i]
+		var b: Vector2i = path[i + 1]
+		var pa: Vector2 = origin + Vector2((a.x + 0.5) * cell, (a.y + 0.5) * cell)
+		var pb: Vector2 = origin + Vector2((b.x + 0.5) * cell, (b.y + 0.5) * cell)
+		canvas.draw_line(pa, pb, ink_trail, 2.2, true)
+		draw_dashed_line(canvas, pa, pb, chalk, 2.6, 5.0, 2.4)
+	# Surveyor stamp at the live tip.
+	if visible > 0:
+		var tip: Vector2i = path[visible - 1]
+		var tip_c: Vector2 = origin + Vector2((tip.x + 0.5) * cell, (tip.y + 0.5) * cell)
+		canvas.draw_circle(tip_c, cell * 0.28, Palette.COPPER_KEY)
+		canvas.draw_circle(tip_c, cell * 0.14, Palette.INK_BLACK)
+	# Copper goal at corridor mouth.
+	var goal_c: Vector2 = origin + Vector2((float(cols - 2) + 0.5) * cell, (float(rows - 2) + 0.5) * cell)
+	canvas.draw_circle(goal_c, cell * 0.38, Color(Palette.COPPER_KEY.r, Palette.COPPER_KEY.g, Palette.COPPER_KEY.b, 0.85))
+	canvas.draw_circle(goal_c, cell * 0.22, Color(Palette.PAPER_BONE.r, Palette.PAPER_BONE.g, Palette.PAPER_BONE.b, 0.9))
+
+
 func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> void:
 	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
 	## Layered contact shadow + thickness + fiber stock + binder clip/holes (restore-rich).
