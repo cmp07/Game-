@@ -84,7 +84,8 @@ class TestFontsMaterials(unittest.TestCase):
     def test_ledger_chrome_title_type_scale(self) -> None:
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
         self.assertIn("func title_type_scale", chrome)
-        self.assertIn("const TYPE_BRAND := 72", chrome)
+        self.assertIn("const TYPE_BRAND := 92", chrome)
+        self.assertIn("func draw_binder_clip", (ROOT / "scripts" / "art_kit.gd").read_text(encoding="utf-8"))
         self.assertIn("TYPE_TAGLINE", chrome)
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)

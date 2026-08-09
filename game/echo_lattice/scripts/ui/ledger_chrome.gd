@@ -7,18 +7,18 @@ class_name LedgerChrome
 ##
 
 ## ART_DIRECTION_V3 §3.2 — title-page type scale (px @ ~1080p reference).
-## Brand is the hero signal; meta/seed never compete with brand size.
-const TYPE_BRAND := 72
-const TYPE_TAGLINE := 20
-const TYPE_BLURB := 15
-const TYPE_INDEX_PRIMARY := 18
-const TYPE_INDEX := 16
-const TYPE_META := 12
-const TYPE_FOLIO := 11
-const TYPE_SEED := 12
-const TYPE_CARD_HEADER := 12
-const BRAND_RULE_W := 3.0
-const BRAND_RULE_LEN := 440.0
+## Brand owns the left plane; Field Index type must read as a tactile card, not microcopy.
+const TYPE_BRAND := 92
+const TYPE_TAGLINE := 24
+const TYPE_BLURB := 17
+const TYPE_INDEX_PRIMARY := 24
+const TYPE_INDEX := 20
+const TYPE_META := 13
+const TYPE_FOLIO := 12
+const TYPE_SEED := 13
+const TYPE_CARD_HEADER := 14
+const BRAND_RULE_W := 4.0
+const BRAND_RULE_LEN := 560.0
 
 
 static func title_type_scale(page_h: float = 720.0) -> Dictionary:
@@ -26,17 +26,17 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 48,
-			"tagline": 16,
-			"blurb": 13,
-			"index_primary": 15,
-			"index": 14,
-			"meta": 10,
+			"brand": 56,
+			"tagline": 18,
+			"blurb": 14,
+			"index_primary": 17,
+			"index": 15,
+			"meta": 11,
 			"folio": 10,
-			"seed": 10,
-			"card_header": 10,
-			"rule_w": 2.0,
-			"rule_len": 300.0,
+			"seed": 11,
+			"card_header": 11,
+			"rule_w": 2.5,
+			"rule_len": 340.0,
 		}
 	return {
 		"brand": TYPE_BRAND,
@@ -189,11 +189,12 @@ static func draw_index_underlines(
 		var focused: bool = c.has_focus()
 		var hovered: bool = c is BaseButton and (c as BaseButton).is_hovered()
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
-		var max_w: float = minf(r.size.x - 4.0, 220.0)
+		# Wide card rows need long underlines — postage-stamp caps read as sparse chrome.
+		var max_w: float = minf(r.size.x - 8.0, 420.0)
 		if focused and not disabled:
 			var w: float = max_w * eased
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, w, 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 5.0, w, 3.0),
 				Palette.RUST_FOSSIL,
 				true
 			)
@@ -203,25 +204,25 @@ static func draw_index_underlines(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
 				host.draw_circle(
-					Vector2(local_pos.x - 10.0, local_pos.y + r.size.y * 0.55),
-					2.2,
+					Vector2(local_pos.x - 12.0, local_pos.y + r.size.y * 0.55),
+					2.8,
 					tick_c
 				)
 		elif hovered and not disabled:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, max_w, 2.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 5.0, max_w, 2.5),
 				Palette.SLATE_TEAL,
 				true
 			)
 		elif disabled:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 3.0, minf(max_w, 120.0), 1.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 160.0), 1.0),
 				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.22),
 				true
 			)
 		else:
 			host.draw_rect(
-				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 180.0), 1.0),
+				Rect2(local_pos.x, local_pos.y + r.size.y - 4.0, minf(max_w, 280.0), 1.5),
 				Palette.INK_SOFT,
 				true
 			)

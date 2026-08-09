@@ -219,75 +219,129 @@ func draw_ledger_page(
 func draw_index_card(canvas: CanvasItem, card: Rect2, opts: Dictionary = {}) -> void:
 	## Physical Field Index plate (ART_DIRECTION_V3 §6.1).
 	## Contact shadow + paper_deep thickness + bone face + fiber + binder holes + double header.
-	## opts: alpha, shadow_off, grain_seed, grain_a, binder_holes, header_rules, deep_backer, skip_grain
+	## opts: alpha, shadow_off, grain_seed, grain_a, binder_holes, header_rules, deep_backer,
+	##       skip_grain, binder_clip, fiber_a
 	if card.size.x < 2.0 or card.size.y < 2.0:
 		return
 	var alpha: float = float(opts.get("alpha", 1.0))
-	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(5, 7))
+	var shadow_off: Vector2 = opts.get("shadow_off", Vector2(7, 10))
 	var grain_seed: int = int(opts.get("grain_seed", 11))
-	var grain_a: float = float(opts.get("grain_a", 0.045))
+	var grain_a: float = float(opts.get("grain_a", 0.055))
 	var binder_holes: int = int(opts.get("binder_holes", 5))
 	var header_rules: bool = bool(opts.get("header_rules", true))
 	var deep_backer: bool = bool(opts.get("deep_backer", true))
 	var skip_grain: bool = bool(opts.get("skip_grain", false))
+	var binder_clip: bool = bool(opts.get("binder_clip", true))
+	var fiber_a: float = float(opts.get("fiber_a", 0.055))
 
+	# Soft outer contact wash, then hard offset shadow — card as object, not outline.
+	var wash := Palette.PAPER_SHADOW
+	wash.a = 0.14 * alpha
+	canvas.draw_rect(Rect2(card.position + Vector2(10, 14), card.size + Vector2(6, 6)), wash, true)
 	var shadow := Palette.PAPER_SHADOW
 	shadow.a *= alpha
 	canvas.draw_rect(Rect2(card.position + shadow_off, card.size), shadow, true)
 	if deep_backer:
 		var deep := Palette.PAPER_DEEP
 		deep.a = alpha
-		canvas.draw_rect(Rect2(card.position + Vector2(2, 2), card.size), deep, true)
+		canvas.draw_rect(Rect2(card.position + Vector2(3, 3), card.size), deep, true)
+		var deep2 := Palette.PAPER_DEEP.darkened(0.06)
+		deep2.a = 0.55 * alpha
+		canvas.draw_rect(Rect2(card.position + Vector2(5, 5), Vector2(card.size.x - 2.0, card.size.y - 2.0)), deep2, true)
 	var bone := Palette.PAPER_BONE
 	bone.a = alpha
 	canvas.draw_rect(card, bone, true)
+	# Warm face wash so the plate reads as stock, not clinical void.
+	var face_warm := Palette.PAPER_DEEP
+	face_warm.a = 0.18 * alpha
+	canvas.draw_rect(card.grow(-2.0), face_warm, true)
 	if not skip_grain and grain_a > 0.001:
 		draw_paper_grain(canvas, card, grain_seed, grain_a * alpha)
 	# Micro fiber grid on the card face — document stock, not a flat panel.
 	var fiber: Color = Palette.INK_SOFT
-	fiber.a = 0.035 * alpha
+	fiber.a = fiber_a * alpha
 	var fy: float = card.position.y + 8.0
 	while fy < card.end.y - 8.0:
 		canvas.draw_line(Vector2(card.position.x + 8.0, fy), Vector2(card.end.x - 8.0, fy), fiber, 1.0)
 		fy += 4.0
+	var fiber_v: Color = Palette.INK_SOFT
+	fiber_v.a = fiber_a * 0.45 * alpha
+	var fx: float = card.position.x + 28.0
+	while fx < card.end.x - 12.0:
+		canvas.draw_line(Vector2(fx, card.position.y + 10.0), Vector2(fx, card.end.y - 10.0), fiber_v, 1.0)
+		fx += 28.0
 	canvas.draw_rect(
 		card,
 		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
 		false,
-		1.5
+		2.0
 	)
 	canvas.draw_rect(
 		card.grow(-3.0),
-		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45 * alpha),
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.55 * alpha),
 		false,
 		1.0
 	)
 	if binder_holes > 0:
-		# Match prior Field Index chrome spacing (menu QW-2) — do not retune enclosure.
-		var hole_step: float = maxf(56.0, (card.size.y - 52.0) / float(binder_holes))
+		var hole_step: float = maxf(48.0, (card.size.y - 64.0) / float(maxi(1, binder_holes - 1)))
 		for i in range(binder_holes):
-			var hy: float = card.position.y + 28.0 + float(i) * hole_step
-			if hy > card.end.y - 24.0:
+			var hy: float = card.position.y + 36.0 + float(i) * hole_step
+			if hy > card.end.y - 28.0:
 				break
 			canvas.draw_circle(
-				Vector2(card.position.x + 12.0, hy),
-				3.5,
+				Vector2(card.position.x + 14.0, hy),
+				4.2,
 				Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha)
 			)
-			canvas.draw_circle(Vector2(card.position.x + 12.0, hy), 1.8, bone)
+			canvas.draw_circle(Vector2(card.position.x + 14.0, hy), 2.2, bone)
+			# Soft hole shadow inside the punch.
+			canvas.draw_circle(
+				Vector2(card.position.x + 14.6, hy + 0.6),
+				1.4,
+				Color(Palette.PAPER_SHADOW.r, Palette.PAPER_SHADOW.g, Palette.PAPER_SHADOW.b, 0.35 * alpha)
+			)
 	if header_rules:
 		canvas.draw_line(
-			card.position + Vector2(22, 34),
-			card.position + Vector2(card.size.x - 16, 34),
+			card.position + Vector2(26, 38),
+			card.position + Vector2(card.size.x - 18, 38),
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
-			1.0
+			1.5
 		)
 		canvas.draw_line(
-			card.position + Vector2(22, 38),
-			card.position + Vector2(card.size.x - 16, 38),
+			card.position + Vector2(26, 43),
+			card.position + Vector2(card.size.x - 18, 43),
 			Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, alpha),
 			1.0
 		)
+	if binder_clip:
+		draw_binder_clip(canvas, Vector2(card.position.x + card.size.x * 0.5, card.position.y - 2.0), alpha)
+
+
+func draw_binder_clip(canvas: CanvasItem, tip: Vector2, alpha: float = 1.0) -> void:
+	## Etched binder clip at the top edge of an index card — stamp, not chrome photo.
+	var ink := Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.92 * alpha)
+	var fill := Color(Palette.PAPER_DEEP.r, Palette.PAPER_DEEP.g, Palette.PAPER_DEEP.b, 0.95 * alpha)
+	var w: float = 54.0
+	var h: float = 22.0
+	var r := Rect2(tip.x - w * 0.5, tip.y - h + 4.0, w, h)
+	canvas.draw_rect(r, fill, true)
+	canvas.draw_rect(r, ink, false, 1.5)
+	# Inner jaw.
+	canvas.draw_line(
+		Vector2(r.position.x + 8.0, r.position.y + 8.0),
+		Vector2(r.end.x - 8.0, r.position.y + 8.0),
+		ink,
+		1.5
+	)
+	canvas.draw_line(
+		Vector2(r.position.x + 10.0, r.position.y + 14.0),
+		Vector2(r.end.x - 10.0, r.position.y + 14.0),
+		Color(ink.r, ink.g, ink.b, 0.7 * alpha),
+		1.0
+	)
+	# Prongs into the card stock.
+	canvas.draw_line(Vector2(tip.x - 10.0, tip.y + 2.0), Vector2(tip.x - 10.0, tip.y + 14.0), ink, 1.5)
+	canvas.draw_line(Vector2(tip.x + 10.0, tip.y + 2.0), Vector2(tip.x + 10.0, tip.y + 14.0), ink, 1.5)
 
 
 func draw_seal_stamp(canvas: CanvasItem, center: Vector2, radius: float = 28.0, opts: Dictionary = {}) -> void:
