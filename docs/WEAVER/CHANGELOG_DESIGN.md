@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-08-09 — 1000× Structures (classes · evolution · ecosystems · composition)
+
+**Branch:** `cursor/weaver-1000x-structures` · **Base:** `cursor/echo-lattice-rc1`
+
+- New [`1000X/04_STRUCTURES.md`](1000X/04_STRUCTURES.md) — class roster + listen/answer protocol
+- Named ecosystem formations (Call & Cross, Latch & Vent, Brace & Span, …)
+- Class-aware offline evolution stages (Seat → Chain → Weather → Scar)
+- Composition grammar: ≤2 stands, order locks, inhabit-as-win
+- Indexed from [`README.md`](README.md)
+
+---
+
 ## 2026-08-09 — Weaver on Lattice (hybrid launch)
 
 **Branch:** `cursor/weaver-on-lattice-3a1d` · **Base:** `cursor/echo-lattice-rc1`  

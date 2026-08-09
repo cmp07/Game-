@@ -100,6 +100,12 @@
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 
+### 1000× — Competitive / vision elevations
+
+| Doc | Topic |
+|---|---|
+| [`1000X/04_STRUCTURES.md`](1000X/04_STRUCTURES.md) | Classes · evolution · ecosystems · composition |
+
 ---
 
 ## Sibling PR sources
