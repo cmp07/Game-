@@ -18,10 +18,17 @@ func _ready() -> void:
 	var all_args: PackedStringArray = OS.get_cmdline_user_args()
 	for a in OS.get_cmdline_args():
 		all_args.append(a)
+	if all_args.has("--battery"):
+		DeckProfile.set_battery_mode(true)
 	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
 		var ok: bool = await _run_self_test()
 		get_tree().quit(0 if ok else 1)
+		return
+	# Steam Deck 1280×800 / 16:10 layout QA — `-- --deck-layout-check`.
+	if all_args.has("--deck-layout-check"):
+		var deck_ok: bool = await _run_deck_layout_check()
+		get_tree().quit(0 if deck_ok else 1)
 		return
 	# Screenshot capture — `-- --screenshot menu|chamber:N|won:N|end   out_dir`.
 	if all_args.has("--screenshot"):
@@ -207,6 +214,102 @@ func _capture_screenshot(kind: String, out_dir: String) -> void:
 	var path: String = "%s/%s.png" % [out_dir, kind.replace(":", "_")]
 	img.save_png(path)
 	print("saved %s" % path)
+
+
+func _run_deck_layout_check() -> bool:
+	print("== Echo Lattice Steam Deck layout check (1280x800 / 16:10) ==")
+	var ok := true
+	DeckProfile.force_deck_window_for_qa()
+	for _warm in range(4):
+		await get_tree().process_frame
+
+	var screens: Array = [
+		{"name": "menu", "fn": Callable(self, "show_menu")},
+		{"name": "chamber", "fn": Callable(self, "_deck_show_chamber")},
+		{"name": "won", "fn": Callable(self, "_deck_show_won")},
+		{"name": "end", "fn": Callable(self, "_deck_show_end")},
+	]
+	for entry in screens:
+		var show_fn: Callable = entry["fn"]
+		show_fn.call()
+		for _f in range(6):
+			await get_tree().process_frame
+		var report: Dictionary = DeckProfile.layout_report(self)
+		var aspect: float = float(report.get("aspect", 0.0))
+		print("  %s viewport=%sx%s aspect=%.3f offenders=%d" % [
+			str(entry["name"]),
+			str(report.get("viewport", {}).get("w", "?")),
+			str(report.get("viewport", {}).get("h", "?")),
+			aspect,
+			(report.get("offenders", []) as Array).size(),
+		])
+		## With stretch/aspect=expand, Deck native window yields ~16:10 logical size.
+		if absf(aspect - 1.6) > 0.08:
+			printerr("  %s aspect %.3f is not near 16:10" % [str(entry["name"]), aspect])
+			ok = false
+		if not bool(report.get("ok", false)):
+			printerr("  %s layout offenders: %s" % [str(entry["name"]), str(report.get("offenders", []))])
+			ok = false
+		## Glyph path must not require a keyboard — footer / HUD must resolve.
+		if str(entry["name"]) == "menu" and has_node("/root/InputGlyphs"):
+			InputGlyphs.last_device = InputGlyphs.Device.GAMEPAD
+			var line: String = InputGlyphs.controls_line()
+			if line.find("D-Pad") < 0 and line.find("Stick") < 0:
+				printerr("  menu gamepad glyph line missing stick/D-Pad: %s" % line)
+				ok = false
+			if line.to_lower().find("wasd") >= 0:
+				printerr("  menu still showing WASD while gamepad preferred")
+				ok = false
+
+	## No on-screen keyboard requirement: project must not instantiate text fields.
+	if _tree_has_text_entry(self):
+		printerr("  found LineEdit/TextEdit — OSK would be required on Deck")
+		ok = false
+	else:
+		print("  OSK: not required (no text-entry controls)")
+
+	print("  TDP target (doc): %dW verified / %dW battery" % [
+		DeckProfile.TDP_TARGET_WATTS, DeckProfile.TDP_BATTERY_WATTS
+	])
+	print("  FPS target: %d verified / %d battery" % [
+		DeckProfile.TARGET_FPS_VERIFIED, DeckProfile.TARGET_FPS_BATTERY
+	])
+	print("result: %s" % ("OK" if ok else "FAIL"))
+	return ok
+
+
+func _deck_show_chamber() -> void:
+	GameState.start_new_run()
+	GameState.current_chamber = 0
+	GameState.queue_pos = 0
+	show_chamber()
+
+
+func _deck_show_won() -> void:
+	GameState.start_new_run()
+	GameState.current_chamber = 0
+	GameState.queue_pos = 0
+	GameState.last_clear_stars = 3
+	GameState.last_clear_bfs_par = 20
+	GameState.best_moves[0] = 24
+	GameState.best_stars[0] = 3
+	show_chamber_won(0, 24)
+
+
+func _deck_show_end() -> void:
+	GameState.start_new_run()
+	for i in range(mini(3, ChamberBook.chamber_count())):
+		GameState.record_chamber_win(i, 30 + i)
+	show_end_screen()
+
+
+func _tree_has_text_entry(node: Node) -> bool:
+	if node is LineEdit or node is TextEdit:
+		return true
+	for c in node.get_children():
+		if _tree_has_text_entry(c):
+			return true
+	return false
 
 
 func _run_self_test() -> bool:

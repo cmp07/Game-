@@ -16,10 +16,14 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
+<<<<<<< HEAD
 - `docs/RELEASE/` — multi-platform store strategy + CI build sketch
+=======
+- `docs/RELEASE/STEAM_DECK.md` — Echo Lattice Steam Deck Verified prep
+>>>>>>> origin/cursor/release-deck
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/` — Godot 4 project (after a lane is locked)
+- `game/echo_lattice/` — Godot 4.3 project (Echo Lattice)
 
 ## Stack
 

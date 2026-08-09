@@ -14,6 +14,8 @@ signal menu_requested()
 @onready var restart_button: Button = %RestartButton
 @onready var menu_button: Button = %MenuButton
 
+var _glyph_device: int = -1
+
 
 func _ready() -> void:
 	restart_button.pressed.connect(func(): chamber_node.reset_chamber())
@@ -21,11 +23,34 @@ func _ready() -> void:
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
+	## Keep D-Pad on movement — HUD chrome is clickable but not focus-stealing.
+	restart_button.focus_mode = Control.FOCUS_NONE
+	menu_button.focus_mode = Control.FOCUS_NONE
+	_refresh_glyph_labels()
 	_style_ledger_chrome()
 	_refresh_title()
 	_on_moves_changed(0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(str(data.get("caption", "")))
+	set_process(true)
+	_glyph_device = InputGlyphs.last_device if has_node("/root/InputGlyphs") else -1
+
+
+func _process(_delta: float) -> void:
+	if not has_node("/root/InputGlyphs"):
+		return
+	if InputGlyphs.last_device != _glyph_device:
+		_glyph_device = InputGlyphs.last_device
+		_refresh_glyph_labels()
+
+
+func _refresh_glyph_labels() -> void:
+	if has_node("/root/InputGlyphs"):
+		restart_button.text = InputGlyphs.restart_button_text()
+		menu_button.text = InputGlyphs.menu_button_text()
+	else:
+		restart_button.text = "Restart (R)"
+		menu_button.text = "Menu (Esc)"
 
 
 func _style_ledger_chrome() -> void:
