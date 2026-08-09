@@ -28,6 +28,7 @@ hud.habit,Habit: %s,习惯：%s
 hud.habit_unwritten,unwritten,尚未写就
 hud.habit_leaning,%s-leaning,%s倾向
 hud.habit_leaning_pct,%s-leaning (%s%%),%s倾向（%s%%）
+hud.seed,SEED  %s,种子  %s
 hud.restart,Restart (R),重开 (R)
 hud.menu,Menu (Esc),菜单 (Esc)
 hud.daily_tag, · Daily %s, · 每日 %s

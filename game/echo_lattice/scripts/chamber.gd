@@ -3,7 +3,7 @@ extends Node2D
 ## Chamber — VISUAL v2 Field Ledger + elevated playable loop.
 ##
 ## Materials follow the art bible: ink on paper, fossilization not radiance.
-## Rewrite: 12-beat origami slam + juice/audio punches; cadmium telegraph.
+## Rewrite: 12-beat origami slam + juice/audio punches; cadmium only on warn/heartbeat.
 ## Stars via BFS par on win. Supports invert transform from the content book.
 ##
 
@@ -334,8 +334,9 @@ func _try_move(dir: Vector2i) -> void:
 		if has_node("/root/AudioDirector"):
 			AudioDirector.on_footstep(true)
 		if has_node("/root/Juice"):
-			Juice.bump(0.08)
-			Juice.flash(0.06, 0.12, Palette.CADMIUM_WARN)
+			# Ink scuff only — cadmium is reserved for rewrite-imminent warn/heartbeat.
+			Juice.bump(0.06)
+			Juice.flash(0.05, 0.08, Palette.INK_SOFT)
 		return
 	undo_stack.push_back({
 		"prev_pos": player_pos,
@@ -451,6 +452,8 @@ func _trigger_rewrite() -> void:
 	telegraph_cells.clear()
 	_telegraph_dirty = false
 	moves_since_checkpoint.clear()
+	# Refresh diegetic punch-card (buffer emptied; move_count unchanged).
+	emit_signal("moves_changed", move_count)
 	if has_node("/root/Juice"):
 		Juice.rewrite_punch(pending_echoes.size())
 		var offset: Vector2 = _grid_offset()
@@ -664,6 +667,15 @@ func _nearest_unused_checkpoint_dist() -> int:
 	return best
 
 
+func nearest_unused_checkpoint_dist() -> int:
+	## Public HUD/telegraph accessor (diegetic punch-card warn state).
+	return _nearest_unused_checkpoint_dist()
+
+
+func buffer_fill_count() -> int:
+	return moves_since_checkpoint.size()
+
+
 func _update_habit_audio() -> void:
 	if not has_node("/root/AudioDirector"):
 		return
@@ -781,15 +793,23 @@ func _draw() -> void:
 	_draw_ghost_trail(offset)
 	_draw_assist_path(offset)
 
-	# Cadmium telegraph ticks — foreshadow the next rewrite landing.
+	# Telegraph ticks — slate/chalk diagram marks by default; cadmium only when
+	# rewrite is ≤3 steps away (art bible cadmium exclusivity ≤1%).
 	if telegraph_cells.size() > 0 and pending_echoes.is_empty():
 		var near_cp2 := _nearest_unused_checkpoint_dist()
-		var warn: float = 1.0 if near_cp2 >= 0 and near_cp2 <= 3 else 0.35
-		var pulse: float = 0.45 + 0.55 * abs(sin(goal_pulse_t * 6.0))
+		var near_warn: bool = near_cp2 >= 0 and near_cp2 <= 3
+		var tension: float = 0.0
+		if near_warn:
+			tension = 1.0 - float(near_cp2) / 3.0
 		for p in telegraph_cells:
 			var r := Rect2(offset + Vector2(p) * CELL_SIZE, Vector2(CELL_SIZE, CELL_SIZE))
-			var c := _role_color(FossilPalette.FossilRole.WARN)
-			c.a = 0.55 * warn * pulse
+			var c: Color
+			if near_warn:
+				c = _role_color(FossilPalette.FossilRole.WARN)
+				c.a = 0.40 + 0.35 * tension
+			else:
+				c = _role_color(FossilPalette.FossilRole.CHECKPOINT)
+				c.a = 0.30
 			var tick := 4.0
 			draw_line(r.position, r.position + Vector2(tick, 0), c, 1.5)
 			draw_line(r.position, r.position + Vector2(0, tick), c, 1.5)

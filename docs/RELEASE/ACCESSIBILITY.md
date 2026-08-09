@@ -11,14 +11,14 @@ Persistence: `user://echo_lattice_settings.json` (defaults in `game/echo_lattice
 | Feature | Setting | Runtime path | Manual verify |
 |---|---|---|---|
 | **Colorblind** | Settings → Colorblind mode (+ pattern cues) | `AccessibilityService.role_color()` → chamber echo walls, fossils, telegraph, checkpoints | Switch to Protanopia; rewrite once — fossils must not rely on rust-vs-teal alone; patterns visible when cues on |
-| **Reduce flash** | Settings → Reduce flash / Reduce motion | `FlashGate` ← `Juice.flash` / `rewrite_punch`; chamber skips margin heartbeat when reduce-flash; reduce-motion short-circuits slam | Toggle reduce flash; trigger checkpoint — full-screen flash peak ≤ 0.25, desaturated |
+| **Reduce flash** | Settings → Reduce flash / Reduce motion | `FlashGate` ← `Juice.flash`; rewrite uses chamber **margin** heartbeat (not full-screen); skipped when reduce-flash; reduce-motion short-circuits slam | Toggle reduce flash; trigger checkpoint — no full-screen rewrite flash; margin heartbeat suppressed |
 | **Remap** | Settings → Input rebind | `ActionRemap` ↔ `InputMap` (keyboard); **gamepad events preserved** | Rebind Undo to `U`; confirm chamber + Steam Deck / Xbox pad still undo on X |
 | **Subtitles** | Settings → Subtitles + size | `SubtitleOverlay` lines on rewrite / PA / win / assist | Enable subtitles; cross checkpoint — line appears; size large readable at 1280×800 |
 | **UI scale** | Settings → UI scale (0.85–1.5) | `AccessibilityService.apply_ui_scale()` → `Window.content_scale_factor` | Set 1.25 on Deck-like 1280×800; HUD / settings still fully reachable |
 
 Additional assists (same Settings surface):
 
-- Screen shake on/off + intensity (forced off under reduce motion)
+- Screen shake on/off + intensity (default **off** / subtle 0.35; forced off under reduce motion; rewrite does not shake unless opted in)
 - Hold to walk (key/stick hold repeats steps)
 - Ghost path once per chamber (`G` / gamepad B when assist enabled)
 

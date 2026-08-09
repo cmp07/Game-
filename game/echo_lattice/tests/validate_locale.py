@@ -41,6 +41,7 @@ REQUIRED_UI_KEYS = {
     "hud.habit_unwritten",
     "hud.habit_leaning",
     "hud.habit_leaning_pct",
+    "hud.seed",
     "hud.restart",
     "hud.menu",
     "hud.endless_tag",

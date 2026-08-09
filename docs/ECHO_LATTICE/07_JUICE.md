@@ -7,6 +7,19 @@
 This document is the tuning rulebook. When something feels off, the fix is
 almost always in here: change a number, don't invent a new system.
 
+### Field Ledger overrides (Godot RC1 — authoritative)
+
+The Vite/TS arena juice below is **historical**. Playable Godot Echo Lattice
+follows [`05_ART_BIBLE.md`](05_ART_BIBLE.md) Wing I (Field Ledger):
+
+| Rule | Godot behavior |
+|---|---|
+| No screen-shake on rewrite | `Juice.rewrite_punch` skips trauma unless the player opts into shake (default **off**, intensity **0.35**) |
+| Cadmium ≤1% | Reserved for ≤3-step telegraph warn + slam **margin** heartbeat; telegraph far ticks are slate; blocked-step flash is ink |
+| Operator earprints | `AudioEvents.rewrite_event_id` aliases `mirror_v` / `rotate_180` / … → catalog stingers |
+| Diegetic HUD | Chamber top seed header + bottom punch-card ribbon (not glass overlays) |
+| Hitstop OK | Rewrite still gets a short hitstop; origami slam carries the spectacle |
+
 ---
 
 ## 1. The six juice pillars

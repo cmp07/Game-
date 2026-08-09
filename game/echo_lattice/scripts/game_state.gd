@@ -285,6 +285,35 @@ func dominant_habit() -> String:
 	return best_key
 
 
+func active_seed_int() -> int:
+	## Live ledger seed for the diegetic HUD header.
+	if run_mode == "daily" and daily_seed != 0:
+		return daily_seed
+	var data: Dictionary = ChamberBook.get_chamber(current_chamber)
+	var chamber_seed: int = int(data.get("seed", 0))
+	if chamber_seed != 0:
+		return chamber_seed
+	return current_chamber + 1
+
+
+func seed_display_string() -> String:
+	## Art bible: seed string in mono, four groups of four.
+	return format_seed_groups(active_seed_int())
+
+
+static func format_seed_groups(seed_int: int) -> String:
+	var n: int = abs(seed_int) & 0xFFFFFFFF
+	var g0: int = (n >> 16) & 0xFFFF
+	var g1: int = n & 0xFFFF
+	var mix: int = (n * 0x9E3779B9) & 0xFFFFFFFF
+	var g2: int = (mix >> 16) & 0xFFFF
+	var g3: int = mix & 0xFFFF
+	if g0 == 0:
+		# Small chamber seeds still read as four groups (derived + raw).
+		return "%04X · %04X · %04X · %04X" % [g2, g3, g1 ^ g2, g1]
+	return "%04X · %04X · %04X · %04X" % [g0, g1, g2, g3]
+
+
 func _update_daily_stars() -> void:
 	var key: String = str(daily_seed)
 	var total: int = 0

@@ -4,7 +4,7 @@
 **Base:** Field Ledger vision on `cursor/echo-lattice-rc1`  
 **How to use:** Work top-down within a priority band. Items are implementation-sized, not calendar estimates.
 
-Status keys: `[ ]` open · `[~]` partial · `[x]` done (none checked in this pass — docs-only audit).
+Status keys: `[ ]` open · `[~]` partial · `[x]` done.
 
 ---
 
@@ -16,7 +16,7 @@ Must clear before marketing “final mix,” Partner Coming Soon with non-temp a
 |---|---|---|---|
 | P0-01 | **Author rewrite warn + generic rewrite + footstep one-shots** (replace `*_placeholder.ogg`) — paper-crease / ink-pop / chalk-scuff language | Audio | Blind A/B: placeholder beep vs new; warn readable on laptop speakers |
 | P0-02 | **Author L0–L3 stems** (HVAC bed → lattice ticks → habit dissonance → rewrite swell); keep adaptive API | Audio | Chamber 0 stays silent; intensity rises with habit metrics |
-| P0-03 | **Map content transforms → stinger events** (`mirror_v`/`mirror_h`/`mirror_v_then_h`→`mirror`, `rotate_180`→`rotate`, `thicken`, `invert`) in `AudioEvents.rewrite_event_id` | Audio/Code | Each campaign transform plays its unique file, not `sfx.rewrite` |
+| P0-03 | **Map content transforms → stinger events** (`mirror_v`/`mirror_h`/`mirror_v_then_h`→`mirror`, `rotate_180`→`rotate`, `thicken`, `invert`) in `AudioEvents.rewrite_event_id` | Audio/Code | [x] Alias map + catalog `operator_aliases`; campaign transforms hit unique stingers |
 | P0-04 | **Trailer audio pass** — warn + slam + queue-next audible in 15s / 30s cuts; Music ducked; no DSP-beep identity | Audio/Mkt | Matches `STEAM_STORE_FINAL.md` §9 |
 | P0-05 | **Final capsule set** (header/main/small/vertical/hero/logo/icon/background) — illustrator pass; remove PLACEHOLDER stamps; lock hex to `echo_lattice.palette.json` | Art/Mkt | Capsules README acceptance checklist 1–5 |
 | P0-06 | **Encode trailers** into `docs/RELEASE/presskit/trailers/` (`15s` vertical, `30s`, optional store loop) + poster slam still | Mkt | Files exist; muted-safe first 5s; −14 LUFS |
@@ -28,11 +28,11 @@ Must clear before marketing “final mix,” Partner Coming Soon with non-temp a
 
 | ID | Upgrade | Owner lane | Acceptance |
 |---|---|---|---|
-| P1-01 | **Chamber diegetic punch-card ribbon** (last 30 moves) on page margin using existing punch-card cells | UX/Code | Trailer beat “buffer fills” capturable in-chamber |
-| P1-02 | **Chamber seed header** printed on top margin (live seed / chamber id), not only menu décor | UX/Code | Silent frame shows seed + buffer + maze |
-| P1-03 | **Cadmium reserve** — telegraph ticks use slate/chalk; escalate to cadmium only at ≤3 steps + slam heartbeat | Art/Code | Ratio law ≤1% cadmium on mid-run screenshots |
-| P1-04 | **Disable rewrite screen shake by default** (keep a11y slider); prefer origami motion + optional sparse particles | Juice/Code | Matches art bible §5; reduce-motion still short-circuits slam |
-| P1-05 | **Kill continuous pulse** on goal / telegraph / menu fold tease — discrete stamps or tension opacity | Art/Code | No idle “breathing” in captures |
+| P1-01 | **Chamber diegetic punch-card ribbon** (last 30 moves) on page margin using existing punch-card cells | UX/Code | [x] Bottom-bar ribbon wired to `moves_since_checkpoint` |
+| P1-02 | **Chamber seed header** printed on top margin (live seed / chamber id), not only menu décor | UX/Code | [x] Top-bar seed strip + `GameState.seed_display_string()` |
+| P1-03 | **Cadmium reserve** — telegraph ticks use slate/chalk; escalate to cadmium only at ≤3 steps + slam heartbeat | Art/Code | [x] Far ticks slate; near + heartbeat cadmium; blocked flash ink |
+| P1-04 | **Disable rewrite screen shake by default** (keep a11y slider); prefer origami motion + optional sparse particles | Juice/Code | [x] Shake default off / 0.35; rewrite_punch no forced trauma/full-screen flash |
+| P1-05 | **Kill continuous pulse** on goal / telegraph / menu fold tease — discrete stamps or tension opacity | Art/Code | [~] Telegraph pulse removed (tension opacity); goal/menu still breathe |
 | P1-06 | **Warn threshold UX** — hysteresis so warn SFX doesn’t re-spam when dancing dist=3 | Audio/Code | One arm per approach unless buffer changes shape |
 | P1-07 | **Grayscale / colorblind capture audit** in CI or scripted screenshots | A11y | Player/wall/floor/fossil/door-goal/telegraph distinct without hue |
 | P1-08 | **Recapture store screenshots ≥1920×1080** from `capture_v2_complete.sh`; keep tour captions | Mkt | Steam slate 8 shots meet resolution preference |

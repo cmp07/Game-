@@ -27,8 +27,8 @@
 | P2 Ink on paper (no glow void) | **Pass with drift** | Viewport/menu are paper; slam stills can read “warm glow” on fold tiles; juice flash/particles risk spectacle |
 | P3 Fossilization not radiance | **Pass** | Echo walls use rust materials; slam is crease → lift → slot → bleed |
 | P4 One habit accent (rust) | **Pass** | Over-walk colonization + fossil walls; colorblind patterns exist |
-| P5 Cartographer honesty | **Partial** | Menu has seed strip + punch-card; **chamber HUD lacks diegetic buffer/seed** (Label bars instead) |
-| Audio as readability | **Wired, not authored** | `AudioDirector` + catalog + silence policy live; streams are DSP placeholders; transform→stinger IDs mostly miss |
+| P5 Cartographer honesty | **Pass (scaffold)** | Chamber HUD now prints seed header + live punch-card ribbon on page margins |
+| Audio as readability | **Wired, not authored** | `AudioDirector` + catalog + silence policy live; streams are DSP placeholders; content transforms alias to operator stingers |
 | Menu Field Ledger polish | **Strong scaffold** | Brand-first title card, index-card column, underline selection — fonts still Godot fallback |
 | Trailer / store readiness | **Scaffold only** | Capsules size-correct but stamped placeholders; no MP4s; screenshots 1152×672 |
 
@@ -115,16 +115,15 @@ Telegraph is the skill channel: players must see/hear *where* the maze will rewr
 
 ### 3.2 Gaps / diluters
 
-1. **Cadmium exclusivity diluted.** Art bible: `cadmium_warn` is for the rewrite-imminent heartbeat (and death-adjacent). Code also uses warn color for **always-on telegraph ticks** (α≈0.35 even when far from checkpoint) and for blocked-step / juice flashes. Distant ticks teach the buffer map (good) but burn the “reserved” color before the heartbeat.
+1. **Cadmium exclusivity — mitigated.** Far telegraph ticks are slate (checkpoint role); cadmium only at ≤3-step warn + slam margin heartbeat. Blocked-step juice uses ink soft. Full-screen rewrite flash removed from `rewrite_punch`.
 
-2. **No diegetic move-buffer ribbon in chamber.** Art bible MVP HUD: punch-card of last 30 moves on the page margin. Menu draws it; `chamber_scene.gd` only shows Moves / Habit labels. Silent viewers and streamers lose the “Same seed. Different you.” literacy beat mid-run.
+2. **Diegetic move-buffer ribbon — landed.** Chamber bottom margin shows a live 30-cell punch-card of `moves_since_checkpoint`; top margin prints the seed header.
 
-3. **Operator earprints mostly fail closed.** Content transforms are `mirror_v`, `mirror_h`, `mirror_v_then_h`, `rotate_180`, `thicken`, `invert` (loader). Catalog stingers are `mirror`, `rotate`, `thicken`, `invert`, plus unused habit-engine ids (`fossilize_hot_cell`, …).  
-   `AudioEvents.rewrite_event_id()` looks up `sfx.rewrite.<exact_name>` → **misses** → generic `sfx.rewrite` for nearly every chamber. Unique earprints are authored on disk but not heard in the campaign.
+3. **Operator earprints — aliased.** Content transforms map through `AudioEvents.REWRITE_OPERATOR_ALIASES` (`mirror_v`→`mirror`, `rotate_180`→`rotate`, …) so campaign rewrites hit unique stingers instead of generic `sfx.rewrite`.
 
-4. **Rewrite juice vs art bible.** `Juice.rewrite_punch()` applies **screen shake** + hitstop + particle bursts. Art bible §5: *“No screen-shake on rewrite… Echo Lattice is a document game.”* Shake is a11y-gated but default-on — conflicts with Field Ledger restraint (and can hurt telegraph clarity during the slam).
+4. **Rewrite juice vs art bible — mitigated.** Shake defaults **off** (intensity 0.35 when enabled). `rewrite_punch` no longer forces trauma or full-screen cadmium; hitstop + origami slam remain.
 
-5. **Pulse language.** Goal copper plate and telegraph ticks use continuous `sin` pulse. Art bible UI motion: *“Nothing pulses. Nothing breathes.”* Prefer tension-scaled opacity or discrete stamp steps.
+5. **Pulse language — partial.** Telegraph ticks use tension opacity (no sin pulse). Goal copper plate / menu fold tease still breathe.
 
 6. **Warn re-arm.** `rewrite_warn_armed` clears when leaving the ≤3 ring, so re-entering can re-fire warn SFX — OK for readability, but placeholder warn tone will spam if players dance the threshold.
 
@@ -158,7 +157,7 @@ Telegraph is the skill channel: players must see/hear *where* the maze will rewr
 | Won / end screens | Functional labels; less “loose ledger page” than title | Same underline index language + stamp numerals |
 | Ambient fold tease pulses | `sin(_t)` alpha on menu fossils | Discrete stamp or paper-turn, not breathe |
 | Credits surface | Compliance asks menu → Credits | Missing as first-class shell entry |
-| Chamber chrome | Top/bottom Label bars | Printed margins: seed header + live punch-card |
+| Chamber chrome | [x] Seed header + punch-card on margins | Keep caption/habit readable at UI scale 1.25 |
 | Capsule README hex drift | Marketing palette ≠ `palette.json` | One table; regenerate capsules from palette |
 
 ---
@@ -203,9 +202,9 @@ These are not “bugs” until product picks a side — they are vision conflict
 
 | Tension | Art / Audio bible | Shipped behavior | Recommendation |
 |---|---|---|---|
-| Rewrite screen shake | Forbidden (document game) | `Juice.rewrite_punch` shake default on | Default **off** for rewrite; keep hitstop/particles optional & sparse |
-| Cadmium use | ≤1% heartbeat | Telegraph ticks + flashes | Keep ticks **slate/chalk**; reserve cadmium for ≤3-step warn + heartbeat |
-| Operator stingers | Unique per operator | Generic fallback for `mirror_v` etc. | Alias map content transforms → catalog ids |
+| Rewrite screen shake | Forbidden (document game) | [x] Default off; rewrite opt-in subtle only | Keep hitstop/particles sparse |
+| Cadmium use | ≤1% heartbeat | [x] Slate far ticks; cadmium warn+heartbeat | Guard future juice from re-introducing warn flashes |
+| Operator stingers | Unique per operator | [x] Alias map in `rewrite_event_id` | Author final one-shots (still placeholders) |
 | Juice TS doc (`07_JUICE.md`) | Enemy pulsar telegraphs, bloom-ish post | Godot maze has checkpoint telegraph | Treat Vite juice as historical; Field Ledger juice rules win |
 | Capsule hex table | Must match palette JSON | README approx hex drifted | Regenerate marketing placeholders from JSON |
 
