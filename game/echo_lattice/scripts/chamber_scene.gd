@@ -36,6 +36,8 @@ func _ready() -> void:
 		settings_button.focus_mode = Control.FOCUS_NONE
 		settings_button.text = tr("menu.settings")
 	menu_button.focus_mode = Control.FOCUS_NONE
+	if has_node("/root/LocaleManager"):
+		LocaleManager.locale_changed.connect(_on_locale_changed)
 	_refresh_glyph_labels()
 	_style_ledger_chrome()
 	_refresh_title()
@@ -44,6 +46,17 @@ func _ready() -> void:
 	_on_caption_changed(_localized_caption(data))
 	set_process(true)
 	_glyph_device = InputGlyphs.last_device if has_node("/root/InputGlyphs") else -1
+
+
+func _on_locale_changed(_locale: String) -> void:
+	# Mid-run language switch must refresh HUD chrome, not only the next move event.
+	_refresh_glyph_labels()
+	if settings_button:
+		settings_button.text = tr("menu.settings")
+	_refresh_title()
+	_on_moves_changed(chamber_node.move_count if chamber_node else 0)
+	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
+	_on_caption_changed(_localized_caption(data))
 
 
 func _process(_delta: float) -> void:
