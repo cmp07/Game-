@@ -55,6 +55,8 @@ func _ready() -> void:
 	_style_as_index_button(continue_button, false)
 	_style_as_index_button(daily_button, false)
 	_style_as_index_button(quit_button, false)
+	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
+	_ensure_gamepad_focus_chain()
 	if has_node("/root/AudioDirector"):
 		AudioDirector.fire("ui.click")
 
@@ -72,6 +74,25 @@ func _style_as_index_button(btn: Button, primary: bool) -> void:
 	btn.add_theme_color_override("font_focus_color", Palette.RUST_FOSSIL)
 	btn.add_theme_color_override("font_disabled_color", Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35))
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	btn.focus_mode = Control.FOCUS_ALL
+
+
+func _ensure_gamepad_focus_chain() -> void:
+	var order: Array = [continue_button, start_button, daily_button, quit_button]
+	var live: Array = []
+	for btn in order:
+		if btn != null and not btn.disabled:
+			live.append(btn)
+	for i in range(live.size()):
+		var cur: Control = live[i]
+		var prev: Control = live[(i - 1 + live.size()) % live.size()]
+		var next: Control = live[(i + 1) % live.size()]
+		cur.focus_neighbor_top = cur.get_path_to(prev)
+		cur.focus_neighbor_bottom = cur.get_path_to(next)
+		cur.focus_neighbor_left = cur.get_path_to(cur)
+		cur.focus_neighbor_right = cur.get_path_to(cur)
+		cur.focus_previous = cur.get_path_to(prev)
+		cur.focus_next = cur.get_path_to(next)
 
 
 func _build_demo_path() -> void:
@@ -170,11 +191,14 @@ func _draw() -> void:
 	# Bottom punch-card ribbon.
 	_draw_punchcard_ribbon(page)
 
-	# Footer controls hint.
+	# Footer controls hint — swaps to Deck/Xbox glyphs after gamepad input.
+	var hint: String = "Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc"
+	if has_node("/root/InputGlyphs"):
+		hint = InputGlyphs.controls_line()
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(page.position.x + 16, page.end.y - 14),
-		"Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc",
+		hint,
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
 	)
 
