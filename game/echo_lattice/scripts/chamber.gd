@@ -522,24 +522,53 @@ func _trigger_rewrite() -> void:
 			_subtitle_line("rewrite_begin")
 
 
-	_select_reachable_echoes(candidates)
-	# Habit-reactive lever: archetype counters via RewriteScoreBias (additive).
-	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
-	last_habit_op = str(habit_pick.get("op", ""))
-	last_habit_archetype = str(habit_pick.get("archetype", ""))
-	for p in habit_pick.get("cells", []):
-		var hp: Vector2i = p
-		if seen.has(hp):
-			continue
-		if not _in_bounds(hp):
-			continue
-		if hp == player_pos or hp == goal_pos:
-			continue
-		if grid[hp.y][hp.x] != Tile.FLOOR:
-			continue
-		if _would_still_be_reachable(hp):
-			pending_echoes.append(hp)
-			seen[hp] = true
+
+func _select_reachable_echoes(candidates: Array) -> void:
+	## Prefer one BFS with all candidates blocked. Fall back to greedy per-cell
+	## checks only when the full set would softlock (preserves prior accept order).
+	if candidates.is_empty():
+		return
+	var blocked_all := {}
+	for p in candidates:
+		blocked_all[p] = true
+	if _bfs_goal_open(blocked_all):
+		for p in candidates:
+			pending_echoes.append(p)
+		return
+	for p in candidates:
+		if _would_still_be_reachable(p):
+			pending_echoes.append(p)
+
+
+func _select_habit_rewrite_cells(already: Dictionary) -> Dictionary:
+	## Score-bias path: HabitSignature → HabitArchetype → RewriteScoreBias → cells.
+	var blocked := already.duplicate()
+	blocked[player_pos] = true
+	blocked[goal_pos] = true
+	for y in range(GRID_H):
+		for x in range(GRID_W):
+			var cell: int = grid[y][x]
+			if cell == Tile.WALL or cell == Tile.ECHO_WALL or cell == Tile.CHECKPOINT_USED:
+				blocked[Vector2i(x, y)] = true
+	var act_id: int = int(chamber.get("act", ChamberBook.act_for_chamber(int(chamber.get("id", 0)))))
+	var chamber_index: int = int(chamber.get("act_index", int(chamber.get("id", 0)) % 7))
+	# Daily shares standard mode budgets for RC1; reader/cold UI not shipped.
+	var mode_id: String = "standard"
+	var chamber_bias: float = float(chamber.get("soft_hard_bias", -1.0))
+	var dirs: Array = []
+	if has_node("/root/GameState"):
+		dirs = GameState.move_ring
+	return HabitRewriteLever.select_echo_cells(
+		dirs,
+		traverse_count,
+		moves_since_checkpoint,
+		blocked,
+		act_id,
+		chamber_index,
+		mode_id,
+		chamber_bias
+	)
+
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
