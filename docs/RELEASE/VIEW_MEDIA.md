@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:**  (menu-seal-v2 / #157 letterpress lattice plate; brand menu slate = seal recapture)  
+**Tip at index authoring:** `0783a337eec654d6267d796aba06affb8bac4e4d` (menu-seal-v2 / #157 letterpress lattice plate; brand menu slate = seal recapture)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu seal v2:** letterpress lattice plate (`menu-seal-v2` / #157) — rectangular stamp + habit-maze mark; no dashed FIELD ring. Recapture `02_brand_main_menu.png`.
 **Menu design craft:** print-shop materials elevation (`menu-design-craft` / #152) — ArtKit desk vignette / letterpress / hero seal; LedgerChrome type + ink-craft selection; craft `02_brand_main_menu.png`.  
