@@ -14,6 +14,7 @@ menu.wishlist,Wishlist on Steam,Steam 愿望单
 menu.quit,Quit,退出
 menu.subtitle_fresh,Four Acts — %s chambers. Ink on paper.,四幕 — %s 间室。纸上墨迹。
 menu.subtitle_progress,Chamber %s of %s  ·  %s★ earned,第 %s / %s 间室  ·  已获 %s★
+menu.subtitle_wing_complete,Wing complete  ·  %s★ earned — start a new run,本翼完成  ·  已获 %s★ — 开始新周目
 menu.daily_meta,Daily %s  ·  best %s★ / 15,每日 %s  ·  最佳 %s★ / 15
 menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
 menu.demo_index,DEMO INDEX,试玩索引

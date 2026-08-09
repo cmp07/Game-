@@ -32,7 +32,7 @@ func _ready() -> void:
 	_localize_chrome()
 	if has_node("/root/LocaleManager"):
 		LocaleManager.locale_changed.connect(func(_l): _localize_chrome())
-	var has: bool = GameState.has_progress()
+	var has: bool = GameState.can_continue()
 	continue_button.disabled = not has
 	continue_button.modulate = Color(1, 1, 1, 1.0 if has else 0.40)
 	var stars: int = GameState.total_stars_earned()
@@ -44,6 +44,8 @@ func _ready() -> void:
 		]
 	elif DemoBuild.is_demo():
 		subtitle.text = "Demo — Act I · Mirror Birth. Ink on paper."
+	elif GameState.is_run_complete():
+		subtitle.text = tr("menu.subtitle_wing_complete") % stars
 	else:
 		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
 	var today: String = GameState._today_label()
@@ -58,7 +60,7 @@ func _ready() -> void:
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
 	continue_button.pressed.connect(func():
-		if has:
+		if GameState.can_continue():
 			emit_signal("continue_pressed")
 	)
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))

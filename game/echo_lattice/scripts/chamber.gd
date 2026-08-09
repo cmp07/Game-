@@ -54,6 +54,12 @@ var goal_pulse_t: float = 0.0
 var has_won: bool = false
 var lantern_t: float = 0.0
 
+## Hold-to-walk (accessibility) — initial delay then repeat while held.
+const HOLD_INITIAL_DELAY: float = 0.22
+const HOLD_REPEAT_DELAY: float = 0.08
+var _hold_dir: Vector2i = Vector2i.ZERO
+var _hold_timer: float = 0.0
+
 var tex_floor_fresh: Texture2D
 var tex_floor_walked: Texture2D
 var tex_wall_fresh: Texture2D
@@ -65,9 +71,6 @@ var tex_rust: Array = []
 
 var _ghost_assist: GhostPathAssist
 var _assist_path: Array = []
-var _hold_repeat_t: float = 0.0
-const HOLD_REPEAT_DELAY: float = 0.22
-const HOLD_REPEAT_RATE: float = 0.09
 
 
 func _ready() -> void:
@@ -81,6 +84,12 @@ func _ready() -> void:
 	if a11y != null and a11y.has_signal("fossil_style_changed"):
 		a11y.fossil_style_changed.connect(queue_redraw)
 	load_chamber(GameState.current_chamber)
+
+
+func _exit_tree() -> void:
+	# Never leave a mid-slam lattice half-applied when the scene tears down.
+	if pending_echoes.size() > 0:
+		_flush_pending_echoes()
 
 
 func _load_art() -> void:
@@ -106,8 +115,9 @@ func _process(delta: float) -> void:
 		pending_echo_timer += delta
 		if pending_echo_timer >= pending_echo_settle_time:
 			_flush_pending_echoes()
+	elif not has_won and pending_echoes.is_empty():
+		_update_hold_to_walk(delta)
 	_refresh_telegraph()
-	_process_hold_to_walk(delta)
 	queue_redraw()
 
 
@@ -156,6 +166,8 @@ func load_chamber(id: int) -> void:
 	_assist_path.clear()
 	if _ghost_assist != null:
 		_ghost_assist.begin_chamber(str(id))
+	_hold_dir = Vector2i.ZERO
+	_hold_timer = 0.0
 	if has_node("/root/AudioDirector"):
 		AudioDirector.set_chamber(id)
 		AudioDirector.on_pa_line("pa.ghost.floor")
@@ -180,32 +192,82 @@ func freeze_rewrite_at(t_norm: float) -> void:
 	queue_redraw()
 
 
+func is_rewrite_locking() -> bool:
+	## True while the origami slam owns the board — movement would softlock.
+	return pending_echoes.size() > 0
+
+
 func _input(event: InputEvent) -> void:
 	if has_won:
+		return
+	# OS key-repeat echoes are handled by hold-to-walk, not as fresh presses.
+	if event is InputEventKey and event.is_echo():
 		return
 	if event.is_action_pressed("ghost_assist"):
 		_try_ghost_assist()
 		return
-	if event.is_action_pressed("move_up"):
-		_try_move(Vector2i(0, -1))
-		_hold_repeat_t = -HOLD_REPEAT_DELAY
-	elif event.is_action_pressed("move_down"):
-		_try_move(Vector2i(0, 1))
-		_hold_repeat_t = -HOLD_REPEAT_DELAY
-	elif event.is_action_pressed("move_left"):
-		_try_move(Vector2i(-1, 0))
-		_hold_repeat_t = -HOLD_REPEAT_DELAY
-	elif event.is_action_pressed("move_right"):
-		_try_move(Vector2i(1, 0))
-		_hold_repeat_t = -HOLD_REPEAT_DELAY
-	elif event.is_action_pressed("restart"):
+	if event.is_action_pressed("restart"):
 		reset_chamber()
-	elif event.is_action_pressed("undo"):
+		return
+	# During rewrite slam: only restart is allowed (anti-softlock).
+	if is_rewrite_locking():
+		return
+	if event.is_action_pressed("undo"):
 		_undo()
 		_subtitle_line("undo")
+		return
+	var dir := _dir_from_event(event)
+	if dir != Vector2i.ZERO:
+		_hold_dir = dir
+		_hold_timer = HOLD_INITIAL_DELAY
+		_try_move(dir)
+
+
+func _dir_from_event(event: InputEvent) -> Vector2i:
+	if event.is_action_pressed("move_up"):
+		return Vector2i(0, -1)
+	if event.is_action_pressed("move_down"):
+		return Vector2i(0, 1)
+	if event.is_action_pressed("move_left"):
+		return Vector2i(-1, 0)
+	if event.is_action_pressed("move_right"):
+		return Vector2i(1, 0)
+	return Vector2i.ZERO
+
+
+func _update_hold_to_walk(delta: float) -> void:
+	if has_won or not _hold_to_walk_enabled():
+		_hold_dir = Vector2i.ZERO
+		_hold_timer = 0.0
+		return
+	var dir := Vector2i.ZERO
+	if Input.is_action_pressed("move_up"):
+		dir = Vector2i(0, -1)
+	elif Input.is_action_pressed("move_down"):
+		dir = Vector2i(0, 1)
+	elif Input.is_action_pressed("move_left"):
+		dir = Vector2i(-1, 0)
+	elif Input.is_action_pressed("move_right"):
+		dir = Vector2i(1, 0)
+	if dir == Vector2i.ZERO:
+		_hold_dir = Vector2i.ZERO
+		_hold_timer = 0.0
+		return
+	if dir != _hold_dir:
+		# Fresh direction while another was held — treat as a new press edge.
+		_hold_dir = dir
+		_hold_timer = HOLD_INITIAL_DELAY
+		_try_move(dir)
+		return
+	_hold_timer -= delta
+	if _hold_timer <= 0.0:
+		_hold_timer = HOLD_REPEAT_DELAY
+		_try_move(dir)
 
 
 func _try_move(dir: Vector2i) -> void:
+	if has_won or is_rewrite_locking():
+		return
 	var target: Vector2i = player_pos + dir
 	if not _in_bounds(target):
 		return
@@ -215,6 +277,7 @@ func _try_move(dir: Vector2i) -> void:
 			AudioDirector.on_footstep(true)
 		if has_node("/root/Juice"):
 			Juice.bump(0.08)
+			Juice.flash(0.06, 0.12, Palette.CADMIUM_WARN)
 		return
 	undo_stack.push_back({
 		"prev_pos": player_pos,
@@ -223,6 +286,7 @@ func _try_move(dir: Vector2i) -> void:
 		"triggered_snapshot": checkpoints_triggered.duplicate(true),
 		"grid_deltas": [],
 		"walked_had_target": walked.has(target),
+		"walked_target": target,
 	})
 	player_pos = target
 	move_count += 1
@@ -245,14 +309,20 @@ func _try_move(dir: Vector2i) -> void:
 
 
 func _undo() -> void:
-	if undo_stack.is_empty():
+	if undo_stack.is_empty() or has_won:
 		return
-	_flush_pending_echoes()
+	# Never undo mid-slam — settle first only if already locking (defensive).
+	if is_rewrite_locking():
+		return
 	var frame: Dictionary = undo_stack.pop_back()
+	var walked_target: Vector2i = frame.get("walked_target", player_pos)
+	var had_walked: bool = bool(frame.get("walked_had_target", true))
 	player_pos = frame["prev_pos"]
 	move_count = max(0, move_count - 1)
 	while moves_since_checkpoint.size() > int(frame["moves_since_cp_len"]):
 		moves_since_checkpoint.pop_back()
+	if not had_walked and walked.has(walked_target):
+		walked.erase(walked_target)
 	var new_triggered: Dictionary = frame["triggered_snapshot"]
 	for pos in checkpoints_triggered.keys():
 		if not new_triggered.has(pos):
@@ -265,12 +335,19 @@ func _undo() -> void:
 
 
 func _flush_pending_echoes() -> void:
+	var placed: Array = []
 	for p in pending_echoes:
+		# Never fossilize under the player or goal — both are softlock vectors.
+		if p == player_pos or p == goal_pos:
+			continue
 		if _in_bounds(p) and grid[p.y][p.x] == Tile.FLOOR:
 			grid[p.y][p.x] = Tile.ECHO_WALL
+			placed.append(p)
 	pending_echoes.clear()
 	pending_echo_timer = 0.0
 	rewrite_freeze = false
+	if placed.size() > 0 and not _goal_reachable_now():
+		_recover_softlock(placed)
 
 
 func _clear_all_echoes() -> void:
@@ -334,12 +411,20 @@ func _trigger_rewrite() -> void:
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
-	var w: int = GRID_W
-	var h: int = GRID_H
 	var blocked := {}
 	blocked[new_wall] = true
 	for p in pending_echoes:
 		blocked[p] = true
+	return _bfs_goal_open(blocked)
+
+
+func _goal_reachable_now() -> bool:
+	return _bfs_goal_open({})
+
+
+func _bfs_goal_open(extra_blocked: Dictionary) -> bool:
+	var w: int = GRID_W
+	var h: int = GRID_H
 	var q: Array = [player_pos]
 	var seen := {}
 	seen[player_pos] = true
@@ -351,9 +436,7 @@ func _would_still_be_reachable(new_wall: Vector2i) -> bool:
 			var n: Vector2i = cur + d
 			if n.x < 0 or n.x >= w or n.y < 0 or n.y >= h:
 				continue
-			if seen.has(n):
-				continue
-			if blocked.has(n):
+			if seen.has(n) or extra_blocked.has(n):
 				continue
 			var cell: int = grid[n.y][n.x]
 			if cell == Tile.WALL or cell == Tile.ECHO_WALL:
@@ -361,6 +444,28 @@ func _would_still_be_reachable(new_wall: Vector2i) -> bool:
 			seen[n] = true
 			q.append(n)
 	return false
+
+
+func _recover_softlock(placed: Array) -> void:
+	## Balance v2 fallback: strip just-placed echoes until the goal is open again.
+	push_warning("Echo Lattice: softlock assert failed after rewrite; recovering.")
+	var tel := LocalTelemetry.from_balance()
+	tel.emit_softlock_assert_failed({
+		"chamber_id": int(chamber.get("id", -1)),
+		"placed": placed.size(),
+		"player": {"x": player_pos.x, "y": player_pos.y},
+		"goal": {"x": goal_pos.x, "y": goal_pos.y},
+	})
+	# Remove newest-first so earlier safety-net picks stay preferred.
+	var i: int = placed.size() - 1
+	while i >= 0 and not _goal_reachable_now():
+		var p: Vector2i = placed[i]
+		if _in_bounds(p) and grid[p.y][p.x] == Tile.ECHO_WALL:
+			grid[p.y][p.x] = Tile.FLOOR
+		i -= 1
+	# Absolute last resort — clear every echo fossil.
+	if not _goal_reachable_now():
+		_clear_all_echoes()
 
 
 func _apply_transform(name: String, path: Array) -> Array:
@@ -470,12 +575,18 @@ func _on_win() -> void:
 	if has_won:
 		return
 	has_won = true
+	_hold_dir = Vector2i.ZERO
+	_hold_timer = 0.0
 	var cid: int = int(chamber.get("id", 0))
 	var bfs_par: int = _bfs_length(start_pos, goal_pos)
 	GameState.record_chamber_win(cid, move_count, bfs_par)
 	if has_node("/root/Juice"):
 		Juice.bump(0.25)
+		Juice.hitstop(0.07, 0.08)
 		Juice.flash(0.35, 0.4, _role_color(FossilPalette.FossilRole.CHECKPOINT))
+		var offset: Vector2 = _grid_offset()
+		var wp: Vector2 = offset + Vector2(goal_pos.x + 0.5, goal_pos.y + 0.5) * CELL_SIZE
+		Juice.spawn_burst(wp, Palette.COPPER_KEY, 10)
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_chamber_won(true)
 	_subtitle_line("win")
@@ -861,26 +972,6 @@ func _subtitle_line(id: String) -> void:
 	if overlay != null and overlay.has_method("show_line"):
 		overlay.call("show_line", id)
 
-
-func _process_hold_to_walk(delta: float) -> void:
-	if has_won or not _hold_to_walk_enabled():
-		return
-	var dir := Vector2i.ZERO
-	if Input.is_action_pressed("move_up"):
-		dir = Vector2i(0, -1)
-	elif Input.is_action_pressed("move_down"):
-		dir = Vector2i(0, 1)
-	elif Input.is_action_pressed("move_left"):
-		dir = Vector2i(-1, 0)
-	elif Input.is_action_pressed("move_right"):
-		dir = Vector2i(1, 0)
-	else:
-		_hold_repeat_t = 0.0
-		return
-	_hold_repeat_t += delta
-	if _hold_repeat_t >= HOLD_REPEAT_RATE:
-		_hold_repeat_t = 0.0
-		_try_move(dir)
 
 
 func _try_ghost_assist() -> void:

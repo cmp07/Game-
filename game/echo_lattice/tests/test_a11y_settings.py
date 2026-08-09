@@ -111,7 +111,9 @@ class TestSourceSurface(unittest.TestCase):
         for needle in (
             "_role_color",
             "GhostPathAssist",
-            "_process_hold_to_walk",
+			"_update_hold_to_walk",
+			"_hold_to_walk_enabled",
+
             "_subtitle_line",
             "FossilRole.ECHO_WALL",
         ):
