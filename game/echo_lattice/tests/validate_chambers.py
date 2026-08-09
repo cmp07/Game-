@@ -238,10 +238,10 @@ def validate_one(path: Path) -> list[str]:
     if data.get("transform") != "none" and not cs:
         errs.append(f"{cid}: missing checkpoint")
     cap = int(data.get("rewrite", {}).get("cap", -1))
-    # Literacy plates (transform none / onboarding) may set rewrite.cap = 0 so C
-    # arms the buffer without fossils. All other chambers still need cap ≥ C count.
-    literacy_plate = data.get("transform") == "none" or bool(data.get("onboarding"))
-    if cap >= 0 and len(cs) > cap and not (cap == 0 and literacy_plate and data.get("transform") == "none"):
+    # Literacy plates (transform none) may set rewrite.cap = 0 so C arms the
+    # buffer without fossils. All other chambers still need cap >= C count.
+    literacy_plate = data.get("transform") == "none" and cap == 0
+    if cap >= 0 and len(cs) > cap and not literacy_plate:
         errs.append(f"{cid}: rewrite.cap {cap} < checkpoint count {len(cs)}")
     if not Sim(rows, data.get("transform", "none")).playthrough():
         errs.append(f"{cid}: playthrough failed")
