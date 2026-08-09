@@ -175,6 +175,11 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertIn("_draw_seal_lattice", menu)
         self.assertIn("begin_boot_handoff", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
+        # Title shell is not a paused chamber.
+        self.assertNotIn("_draw_punchcard_ribbon", menu)
+        self.assertNotIn("_footer_controls_hint", menu)
+        self.assertNotIn('tr("menu.buffer")', menu)
+        self.assertNotIn('tr("menu.controls_hint")', menu)
 
     def test_settings_index_card_chrome(self) -> None:
         settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
@@ -356,29 +361,31 @@ class TestDiegeticShellMvp(unittest.TestCase):
 
         brand = sum(
             1
-            for y in range(280, 360, 2)
-            for x in range(80, 520, 2)
+            for y in range(220, 360, 2)
+            for x in range(80, 640, 2)
             if lum(x, y) < 160
         )
-        self.assertGreater(brand, 200, msg="brand lockup missing on left")
+        self.assertGreater(brand, 280, msg="brand lockup missing on left")
+        # Rich composition: Field Index owns the right ~45% (not a postage stamp at x≥1450).
         left = None
-        for x in range(1450, 1700):
-            if lum(x, 180) < 90:
+        for x in range(980, 1300):
+            if lum(x, 200) < 90:
                 left = x
                 break
-        self.assertIsNotNone(left)
+        self.assertIsNotNone(left, msg="Field Index left edge missing in right column")
+        self.assertLess(left, 1200, msg="Field Index too narrow / pushed to corner")
         # Ink hairline on the plate — strict threshold so ledger fiber/grid
         # (lum ~190–210) does not inflate the card height.
         edge = [
             y
-            for y in range(80, 1000)
+            for y in range(60, 1040)
             if any(lum(left + dx, y) < 130 for dx in range(0, 3))
         ]
-        self.assertGreater(len(edge), 200, msg="Field Index left rule missing")
+        self.assertGreater(len(edge), 280, msg="Field Index left rule missing")
         # Longest contiguous ink run = physical card edge.
         runs: list[tuple[int, int]] = []
         run_a: int | None = None
-        for y in range(80, 1000):
+        for y in range(60, 1040):
             dark = any(lum(left + dx, y) < 130 for dx in range(0, 3))
             if dark and run_a is None:
                 run_a = y
@@ -386,23 +393,37 @@ class TestDiegeticShellMvp(unittest.TestCase):
                 runs.append((run_a, y - 1))
                 run_a = None
         if run_a is not None:
-            runs.append((run_a, 999))
+            runs.append((run_a, 1039))
         self.assertTrue(runs, msg="Field Index card edge run missing")
         top, bottom = max(runs, key=lambda r: r[1] - r[0])
-        self.assertGreater(bottom - top, 300, msg="Field Index plate too short")
+        self.assertGreater(bottom - top, 520, msg="Field Index plate too short")
         text_bottom = max(
             y
             for y in range(top, bottom + 20, 2)
-            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 150) > 10
+            if sum(1 for x in range(left + 48, left + 360, 2) if lum(x, y) < 150) > 10
         )
-        self.assertLessEqual(text_bottom, bottom + 8)
+        # Allow a hairline for contact shadow / underline below the ink rule.
+        self.assertLessEqual(text_bottom, bottom + 16)
         orphan = sum(
             1
-            for y in range(bottom + 24, 1000, 2)
-            for x in range(left + 40, left + 240, 2)
+            for y in range(bottom + 28, 1040, 2)
+            for x in range(left + 48, left + 360, 2)
             if lum(x, y) < 140
         )
         self.assertLess(orphan, 40, msg="menu rows orphaned below Field Index card")
+        # Title shell must not carry the chamber punch-card ribbon
+        # (30× ~12px cells on a 14px pitch near the page foot).
+        ribbon = 0
+        for y in range(990, 1040, 2):
+            cells = 0
+            x = 100
+            while x < 520:
+                if lum(x, y) < 100 and lum(x + 6, y) < 100:
+                    cells += 1
+                x += 14
+            if cells >= 12:
+                ribbon += 1
+        self.assertEqual(ribbon, 0, msg="BUFFER punch-card ribbon still on title menu")
 
     def test_locale_shell_keys(self) -> None:
         csv = (ROOT / "locale" / "echo_lattice.csv").read_text()
