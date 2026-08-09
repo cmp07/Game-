@@ -1,0 +1,343 @@
+{
+  "schema_version": 2,
+  "doc": "docs/ECHO_LATTICE/14_BALANCE_V2.md",
+  "goal": "one_more_run",
+  "modes": {
+    "reader": {
+      "soft_hard_bias": 0.15,
+      "magnitude_scale": 0.5,
+      "undo_budget_per_chamber": -1,
+      "rewind_budget_per_chamber": -1,
+      "tempo_multiplier": 1.35,
+      "star_slack": 1.25,
+      "hard_ops_allowed_from_act": 2
+    },
+    "standard": {
+      "soft_hard_bias": 0.5,
+      "magnitude_scale": 1.0,
+      "undo_budget_per_chamber": 24,
+      "rewind_budget_per_chamber": 5,
+      "tempo_multiplier": 1.0,
+      "star_slack": 1.0,
+      "hard_ops_allowed_from_act": 1
+    },
+    "cold": {
+      "soft_hard_bias": 0.85,
+      "magnitude_scale": 1.35,
+      "undo_budget_per_chamber": 10,
+      "rewind_budget_per_chamber": 2,
+      "tempo_multiplier": 0.85,
+      "star_slack": 0.9,
+      "hard_ops_allowed_from_act": 1
+    }
+  },
+  "acts": {
+    "1": {
+      "id": 1,
+      "name": "SEED",
+      "chambers": 7,
+      "habit_window": 32,
+      "rewrite_cap": 1,
+      "soft_hard_bias": 0.25,
+      "hard_ops_enabled": false,
+      "hard_ops_unlock_chamber_index": 4,
+      "grid_scale": 1.0,
+      "checkpoint_density": 0.08,
+      "dead_end_bias": 0.1,
+      "tempo_base": 72,
+      "tempo_per_checkpoint": 10,
+      "bfs_length_multiplier": 1.0,
+      "star_par_multiplier": 1.15,
+      "session_target_minutes": [18, 28],
+      "teaching_focus": "move_buffer_then_one_soft_rewrite"
+    },
+    "2": {
+      "id": 2,
+      "name": "GROWTH",
+      "chambers": 7,
+      "habit_window": 48,
+      "rewrite_cap": 2,
+      "soft_hard_bias": 0.5,
+      "hard_ops_enabled": true,
+      "hard_ops_unlock_chamber_index": 0,
+      "grid_scale": 1.15,
+      "checkpoint_density": 0.12,
+      "dead_end_bias": 0.22,
+      "tempo_base": 84,
+      "tempo_per_checkpoint": 12,
+      "bfs_length_multiplier": 1.2,
+      "star_par_multiplier": 1.0,
+      "session_target_minutes": [22, 36],
+      "teaching_focus": "habit_counters_and_route_variety"
+    },
+    "3": {
+      "id": 3,
+      "name": "PRISM",
+      "chambers": 7,
+      "habit_window": 64,
+      "rewrite_cap": 3,
+      "soft_hard_bias": 0.72,
+      "hard_ops_enabled": true,
+      "hard_ops_unlock_chamber_index": 0,
+      "grid_scale": 1.3,
+      "checkpoint_density": 0.16,
+      "dead_end_bias": 0.35,
+      "tempo_base": 96,
+      "tempo_per_checkpoint": 14,
+      "bfs_length_multiplier": 1.4,
+      "star_par_multiplier": 0.92,
+      "session_target_minutes": [28, 45],
+      "teaching_focus": "deliberate_habit_breaking_under_pressure"
+    }
+  },
+  "difficulty_curve": {
+    "ideal_clear_rate_by_act": { "1": 0.92, "2": 0.78, "3": 0.62 },
+    "ideal_retry_median_by_act": { "1": 0.4, "2": 1.2, "3": 2.1 },
+    "ideal_one_more_run_prob": 0.55,
+    "chamber_escalation": [
+      { "act": 1, "index": 0, "relative": 0.55 },
+      { "act": 1, "index": 1, "relative": 0.65 },
+      { "act": 1, "index": 2, "relative": 0.75 },
+      { "act": 1, "index": 3, "relative": 0.85 },
+      { "act": 1, "index": 4, "relative": 1.0 },
+      { "act": 1, "index": 5, "relative": 1.1 },
+      { "act": 1, "index": 6, "relative": 1.25 },
+      { "act": 2, "index": 0, "relative": 1.05 },
+      { "act": 2, "index": 1, "relative": 1.15 },
+      { "act": 2, "index": 2, "relative": 1.25 },
+      { "act": 2, "index": 3, "relative": 1.35 },
+      { "act": 2, "index": 4, "relative": 1.45 },
+      { "act": 2, "index": 5, "relative": 1.55 },
+      { "act": 2, "index": 6, "relative": 1.7 },
+      { "act": 3, "index": 0, "relative": 1.5 },
+      { "act": 3, "index": 1, "relative": 1.65 },
+      { "act": 3, "index": 2, "relative": 1.8 },
+      { "act": 3, "index": 3, "relative": 1.95 },
+      { "act": 3, "index": 4, "relative": 2.1 },
+      { "act": 3, "index": 5, "relative": 2.25 },
+      { "act": 3, "index": 6, "relative": 2.45 }
+    ]
+  },
+  "habit_archetypes": {
+    "classifier_window_min_steps": 12,
+    "confidence_margin": 0.08,
+    "right_leaner": {
+      "id": "right_leaner",
+      "detect": {
+        "dominant_bias_min": 0.42,
+        "turn_rate_max": 0.35,
+        "backtrack_rate_max": 0.18,
+        "longest_streak_min": 4
+      },
+      "counters": [
+        {
+          "op": "place_deflector",
+          "weight": 1.35,
+          "reason": "Break long cardinal runs before they calcify corridors."
+        },
+        {
+          "op": "fossilize_hot_cell",
+          "weight": 1.1,
+          "reason": "Freeze the repeated lane cell the leaner overuses."
+        },
+        {
+          "op": "grow_wall_far_from_path",
+          "weight": 0.85,
+          "reason": "Close unused side routes so the leaner must turn."
+        }
+      ],
+      "relief_ops": ["carve_shortcut", "widen_hot_corridor"],
+      "star_nudge": 0.03
+    },
+    "looper": {
+      "id": "looper",
+      "detect": {
+        "unique_ratio_max": 0.55,
+        "revisit_ratio_min": 0.35,
+        "backtrack_rate_min": 0.12,
+        "turn_rate_min": 0.28
+      },
+      "counters": [
+        {
+          "op": "fossilize_hot_cell",
+          "weight": 1.4,
+          "reason": "Collapse the loop hinge cell the player keeps circling."
+        },
+        {
+          "op": "thicken_walked",
+          "weight": 1.15,
+          "reason": "Solidify dense revisit rings so loops become traps."
+        },
+        {
+          "op": "mirror_walked_v",
+          "weight": 0.95,
+          "reason": "Duplicate the loop geometry and force a new exit."
+        }
+      ],
+      "relief_ops": ["carve_shortcut", "widen_hot_corridor"],
+      "star_nudge": 0.05
+    },
+    "zigzagger": {
+      "id": "zigzagger",
+      "detect": {
+        "turn_rate_min": 0.55,
+        "dominant_bias_max": 0.4,
+        "backtrack_rate_max": 0.22,
+        "longest_streak_max": 3
+      },
+      "counters": [
+        {
+          "op": "widen_hot_corridor",
+          "weight": 0.7,
+          "reason": "Reward intentional turns with breathing room (soft)."
+        },
+        {
+          "op": "grow_wall_far_from_path",
+          "weight": 1.2,
+          "reason": "Punish aimless zigzags by sealing unexplored space."
+        },
+        {
+          "op": "mirror_walked_h",
+          "weight": 1.05,
+          "reason": "Reflect noisy paths into blocking lattices."
+        }
+      ],
+      "relief_ops": ["carve_shortcut"],
+      "star_nudge": 0.04
+    },
+    "balanced": {
+      "id": "balanced",
+      "detect": {
+        "fallback": true
+      },
+      "counters": [
+        {
+          "op": "carve_shortcut",
+          "weight": 1.0,
+          "reason": "Reward mixed movement with optional shortcuts."
+        },
+        {
+          "op": "place_deflector",
+          "weight": 0.9,
+          "reason": "Keep mild pressure without archetype targeting."
+        }
+      ],
+      "relief_ops": ["widen_hot_corridor"],
+      "star_nudge": 0.0
+    }
+  },
+  "stars": {
+    "metric": "moves_vs_bfs_par",
+    "formula": "stars = 1 + (moves <= ceil(bfs_par * three_star_mult * act_mult * mode_slack)) + (moves <= ceil(bfs_par * two_star_mult * act_mult * mode_slack))",
+    "bfs_par_padding": 2,
+    "thresholds": {
+      "three_star_mult": 1.15,
+      "two_star_mult": 1.55,
+      "one_star_mult": null
+    },
+    "notes": {
+      "one_star": "Any legal clear awards 1★. Never gate progression on ★.",
+      "two_star": "moves <= ceil((bfs_len + padding) * two_star_mult * act.star_par_multiplier * mode.star_slack)",
+      "three_star": "moves <= ceil((bfs_len + padding) * three_star_mult * act.star_par_multiplier * mode.star_slack)"
+    },
+    "no_death_bonus": false,
+    "habit_variety_bonus_star": false,
+    "display": {
+      "show_par_ghost": true,
+      "show_best_moves": true,
+      "show_archetype_hint_after_clear": true
+    }
+  },
+  "anti_frustration": {
+    "never_softlock": {
+      "invariant": "LatticeBFS.is_solvable(lattice) == true after every committed rewrite and chamber load",
+      "engine_max_attempts": 32,
+      "reject_unsolvable": true,
+      "reject_start_goal_overwrite": true,
+      "fallback_when_exhausted": "keep_previous_lattice",
+      "assert_on_load": true
+    },
+    "undo": {
+      "enabled": true,
+      "cost_tempo": 1,
+      "counts_toward_habit_h7": true,
+      "budget_semantics": "-1 means unlimited",
+      "forgive_field_free_undos": 3,
+      "debounce_ms": 120,
+      "cannot_undo_across_checkpoint": true
+    },
+    "rewind": {
+      "enabled": true,
+      "snapshot_on": ["checkpoint_commit", "chamber_enter"],
+      "restores": ["lattice", "path_recorder", "tempo", "active_rewrites"],
+      "budget_semantics": "-1 means unlimited",
+      "stalled_always_allows_rewind_or_reset": true
+    },
+    "reset": {
+      "enabled": true,
+      "restores_seed_lattice": true,
+      "keeps_unlocks": true,
+      "clears_motif_progress": true
+    },
+    "stalled_options": ["rewind", "reset", "exit_resume"],
+    "no_game_over": true
+  },
+  "rewrite_engine": {
+    "max_attempts": 32,
+    "score_jitter": 0.05,
+    "min_score": 0.0,
+    "require_shorter_or_equal": false,
+    "enabled_ops_default": [
+      "fossilize_hot_cell",
+      "place_deflector",
+      "carve_shortcut",
+      "grow_wall_far_from_path",
+      "widen_hot_corridor"
+    ],
+    "hard_ops": ["fossilize_hot_cell", "thicken_walked"],
+    "archetype_weight_blend": 0.65
+  },
+  "tempo": {
+    "formula": "floor((tempo_base + tempo_per_checkpoint * checkpoint_count + 12 * (act - 1)) * mode.tempo_multiplier)",
+    "warn_ratio": 0.1,
+    "chorus_cost_reduction": 1
+  },
+  "telemetry": {
+    "enabled_default": true,
+    "sink": "local_jsonl",
+    "path": "user://telemetry/echo_lattice_balance.jsonl",
+    "flush_every_events": 1,
+    "include_pii": false,
+    "events": [
+      "run_start",
+      "chamber_enter",
+      "move",
+      "undo",
+      "checkpoint",
+      "rewrite_applied",
+      "rewrite_rejected",
+      "archetype_classified",
+      "star_awarded",
+      "rewind",
+      "reset",
+      "stalled",
+      "chamber_clear",
+      "run_end",
+      "softlock_assert_failed"
+    ],
+    "aggregates_for_tuning": [
+      "clear_rate_by_chamber",
+      "median_retries_by_chamber",
+      "star_distribution",
+      "archetype_share",
+      "rewrite_reject_reasons",
+      "undo_per_clear",
+      "rewind_per_clear",
+      "one_more_run_proxy"
+    ],
+    "one_more_run_proxy": {
+      "definition": "player starts another chamber or retries within 90s of a clear or stall",
+      "window_seconds": 90
+    }
+  }
+}
