@@ -72,6 +72,12 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### 30 — Store draft
+
+| Doc | Topic |
+|---|---|
+| [`30_STEAM_PITCH.md`](30_STEAM_PITCH.md) | Steam page draft + pricing rethink vs $24.99 |
+
 ---
 
 ## Sibling PR sources (design wave)
@@ -86,6 +92,7 @@
 | `cursor/weaver-biz-tech` | [#170](https://github.com/cmp07/Game-/pull/170) |
 | `cursor/weaver-mvp-pack` | [#167](https://github.com/cmp07/Game-/pull/167) |
 | `cursor/weaver-master` | This synthesis |
+| `cursor/weaver-steam-pitch` | [`30_STEAM_PITCH.md`](30_STEAM_PITCH.md) |
 
 ---
 
