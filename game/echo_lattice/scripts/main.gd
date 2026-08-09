@@ -479,6 +479,10 @@ func _run_self_test() -> bool:
 	if GameState.dominant_habit() != "right":
 		printerr("dominant_habit expected 'right' got %s" % GameState.dominant_habit())
 		ok = false
+
+	# Habit rewrite wire — signature → archetype bias → soft/hard gated cells.
+	ok = _selftest_habit_rewrite_wire() and ok
+
 	GameState.record_chamber_win(0, 42, 20)
 	if not GameState.completed.has(0):
 		printerr("record_chamber_win did not mark completed"); ok = false
@@ -761,6 +765,59 @@ func _selftest_perf_budgets() -> bool:
 	Juice.reset_transient()
 	if Juice.live_particle_count() != 0:
 		printerr("reset_transient did not clear particles"); ok = false
+	return ok
+
+
+
+func _selftest_habit_rewrite_wire() -> bool:
+	var ok := true
+	var dirs: Array = []
+	for _i in range(16):
+		dirs.append("right")
+	var visits := {
+		Vector2i(1, 5): 1,
+		Vector2i(2, 5): 1,
+		Vector2i(3, 5): 1,
+		Vector2i(4, 5): 2,
+	}
+	var pick: Dictionary = HabitRewriteLever.select_echo_cells(
+		dirs, visits, [], {}, 1, 0, "standard", -1.0
+	)
+	# Act I chamber 0: hard counters gated → soft place_deflector lever.
+	if str(pick.get("op", "")) != "place_deflector":
+		printerr("habit wire: expected place_deflector in Act I, got %s" % str(pick.get("op", "")))
+		ok = false
+	if pick.get("cells", []).is_empty():
+		printerr("habit wire: expected at least one habit cell")
+		ok = false
+	var arch := HabitArchetype.classify({
+		"total_steps": 30,
+		"unique_cells": 12,
+		"dominant_bias": 0.3,
+		"turn_rate": 0.4,
+		"backtrack_rate": 0.25,
+		"straight_streaks": [3, 2, 2],
+	})
+	if arch.id != HabitArchetype.ID_LOOP:
+		printerr("habit wire: looper classify failed (%s)" % arch.id)
+		ok = false
+	var cands: Array = [
+		{"name": "place_deflector", "score": 5.0, "meta": {}},
+		{"name": "fossilize_hot_cell", "score": 5.0, "meta": {}},
+	]
+	var biased: Array = RewriteScoreBias.apply(cands, {
+		"total_steps": 30,
+		"unique_cells": 12,
+		"dominant_bias": 0.3,
+		"turn_rate": 0.4,
+		"backtrack_rate": 0.25,
+		"straight_streaks": [3, 2, 2],
+	})
+	if biased.is_empty() or str(biased[0].get("name", "")) != "fossilize_hot_cell":
+		printerr("habit wire: RewriteScoreBias did not prefer fossilize for looper")
+		ok = false
+	if ok:
+		print("habit rewrite wire: ok (deflector + score bias)")
 	return ok
 
 

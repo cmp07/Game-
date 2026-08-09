@@ -103,12 +103,8 @@ func set_screen_shake_enabled(enabled: bool) -> void:
 func screen_shake_intensity() -> float:
 	if not screen_shake_enabled():
 		return 0.0
-<<<<<<< HEAD
 	# Default subtle when enabled — never ship intensity 1.0 as the stock feel.
-	return clampf(float(_get("accessibility", "screen_shake_intensity", 0.35)), 0.0, 1.0)
-=======
-	return clampf(float(_cfg_get("accessibility", "screen_shake_intensity", 1.0)), 0.0, 1.0)
->>>>>>> origin/cursor/fix-perf-grain
+	return clampf(float(_cfg_get("accessibility", "screen_shake_intensity", 0.35)), 0.0, 1.0)
 
 
 func set_screen_shake_intensity(value: float) -> void:
@@ -139,7 +135,7 @@ func subtitle_background() -> bool:
 
 
 func set_subtitle_background(enabled: bool) -> void:
-	_set("accessibility", "subtitle_background", enabled)
+	_cfg_set("accessibility", "subtitle_background", enabled)
 	subtitle_policy_changed.emit()
 
 

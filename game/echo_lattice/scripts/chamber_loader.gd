@@ -123,11 +123,27 @@ static func _normalize(raw: Dictionary) -> Dictionary:
 		"seed": int(raw.get("seed", 0)),
 		"daily_eligible": bool(raw.get("daily_eligible", false)),
 		"identity": raw.get("identity", null),
+		"rewrite": raw.get("rewrite", {}),
 		"hard_variant_of": raw.get("hard_variant_of", null),
 		"par_moves": int(raw.get("par_moves", 0)),
 		"map": rows,
 		"raw": raw,
 	}
+
+
+static func _soft_hard_from_record(rec: Dictionary) -> float:
+	## Authored dial lives on rewrite{} (content bible); identity{} is optional.
+	for key in ["rewrite", "identity"]:
+		var block = rec.get(key, null)
+		if typeof(block) == TYPE_DICTIONARY and block.has("soft_hard_bias"):
+			return float(block.get("soft_hard_bias"))
+	var raw = rec.get("raw", null)
+	if typeof(raw) == TYPE_DICTIONARY:
+		for key2 in ["rewrite", "identity"]:
+			var block2 = raw.get(key2, null)
+			if typeof(block2) == TYPE_DICTIONARY and block2.has("soft_hard_bias"):
+				return float(block2.get("soft_hard_bias"))
+	return -1.0
 
 
 static func to_playable(rec: Dictionary) -> Dictionary:
@@ -145,6 +161,7 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 				if s.substr(i, 1) == "C":
 					cps += 1
 		rewrite_cap = maxi(cps, 1)
+	var soft_hard := _soft_hard_from_record(rec)
 	return {
 		"id": int(rec.get("id", 0)),
 		"title": str(rec.get("title", "")),
@@ -157,4 +174,6 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"seed": int(rec.get("seed", 0)),
 		"daily_eligible": bool(rec.get("daily_eligible", false)),
 		"rewrite_cap": rewrite_cap,
+		"soft_hard_bias": soft_hard,
+		"act_index": int(rec.get("act_index", 0)),
 	}

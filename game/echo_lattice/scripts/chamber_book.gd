@@ -88,6 +88,19 @@ func _to_playable(rec: Dictionary) -> Dictionary:
 	play["act"] = clampi(act_idx + 1, 1, 4)
 	play["act_index"] = act_idx
 	play["act_name"] = str(rec.get("act", ""))
+	play["role"] = str(rec.get("role", play.get("role", "")))
+	# Prefer rewrite/identity soft_hard_bias when authored; else leave loader default (-1).
+	for key in ["rewrite", "identity"]:
+		var block = rec.get(key, null)
+		if typeof(block) == TYPE_DICTIONARY and block.has("soft_hard_bias"):
+			play["soft_hard_bias"] = float(block.get("soft_hard_bias"))
+			break
+	if typeof(rec.get("raw", null)) == TYPE_DICTIONARY:
+		for key2 in ["rewrite", "identity"]:
+			var block2 = rec["raw"].get(key2, null)
+			if typeof(block2) == TYPE_DICTIONARY and block2.has("soft_hard_bias"):
+				play["soft_hard_bias"] = float(block2.get("soft_hard_bias"))
+				break
 	return play
 
 

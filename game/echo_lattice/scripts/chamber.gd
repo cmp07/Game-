@@ -4,6 +4,8 @@ extends Node2D
 ##
 ## Materials follow the art bible: ink on paper, fossilization not radiance.
 ## Rewrite: 12-beat origami slam + juice/audio punches; cadmium only on warn/heartbeat.
+## Habit reactivity: HabitRewriteLever + RewriteScoreBias add archetype counters
+## (fossilize_hot_cell / place_deflector) under soft/hard adaptation.
 ## Stars via BFS par on win. Supports invert transform from the content book.
 ##
 
@@ -51,6 +53,10 @@ var traverse_count: Dictionary = {}  ## Vector2i -> int — rust colonization in
 
 var chamber: Dictionary = {}
 var transform_name: String = "none"
+## Last habit-reactive rewrite (archetype counter) applied at a checkpoint.
+var last_habit_op: String = ""
+var last_habit_archetype: String = ""
+var habit_telegraph_cells: Array = []
 
 var goal_pulse_t: float = 0.0
 var has_won: bool = false
@@ -212,6 +218,9 @@ func load_chamber(id: int) -> void:
 	pending_echo_timer = 0.0
 	rewrite_freeze = false
 	telegraph_cells.clear()
+	habit_telegraph_cells.clear()
+	last_habit_op = ""
+	last_habit_archetype = ""
 	rewrite_warn_armed = false
 	has_won = false
 	_assist_path.clear()
@@ -460,6 +469,23 @@ func _trigger_rewrite() -> void:
 		candidates.append(p)
 	pending_echoes.clear()
 	_select_reachable_echoes(candidates)
+	# Habit-reactive lever: archetype counters via RewriteScoreBias (additive).
+	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
+	last_habit_op = str(habit_pick.get("op", ""))
+	last_habit_archetype = str(habit_pick.get("archetype", ""))
+	for p in habit_pick.get("cells", []):
+		var hp: Vector2i = p
+		if seen.has(hp):
+			continue
+		if not _in_bounds(hp):
+			continue
+		if hp == player_pos or hp == goal_pos:
+			continue
+		if grid[hp.y][hp.x] != Tile.FLOOR:
+			continue
+		if _would_still_be_reachable(hp):
+			pending_echoes.append(hp)
+			seen[hp] = true
 	pending_echo_timer = 0.0
 	pending_echo_settle_time = REWRITE_DURATION
 	if _reduce_motion():
@@ -468,6 +494,7 @@ func _trigger_rewrite() -> void:
 	rewrite_freeze = false
 	telegraph_cells.clear()
 	_telegraph_dirty = false
+	habit_telegraph_cells.clear()
 	moves_since_checkpoint.clear()
 	# Refresh diegetic punch-card (buffer emptied; move_count unchanged).
 	emit_signal("moves_changed", move_count)
@@ -480,6 +507,8 @@ func _trigger_rewrite() -> void:
 			Juice.spawn_burst(wp, burst_color, 6 if not _reduce_motion() else 2)
 	if has_node("/root/AudioDirector"):
 		AudioDirector.on_rewrite(transform_name)
+		if last_habit_op != "" and last_habit_op != transform_name:
+			AudioDirector.on_rewrite(last_habit_op)
 		AudioDirector.on_pa_line("pa.checkpoint.armed")
 	_subtitle_line("checkpoint")
 	match transform_name:
@@ -493,21 +522,24 @@ func _trigger_rewrite() -> void:
 			_subtitle_line("rewrite_begin")
 
 
-func _select_reachable_echoes(candidates: Array) -> void:
-	## Prefer one BFS with all candidates blocked. Fall back to greedy per-cell
-	## checks only when the full set would softlock (preserves prior accept order).
-	if candidates.is_empty():
-		return
-	var blocked_all := {}
-	for p in candidates:
-		blocked_all[p] = true
-	if _bfs_goal_open(blocked_all):
-		for p in candidates:
-			pending_echoes.append(p)
-		return
-	for p in candidates:
-		if _would_still_be_reachable(p):
-			pending_echoes.append(p)
+	_select_reachable_echoes(candidates)
+	# Habit-reactive lever: archetype counters via RewriteScoreBias (additive).
+	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
+	last_habit_op = str(habit_pick.get("op", ""))
+	last_habit_archetype = str(habit_pick.get("archetype", ""))
+	for p in habit_pick.get("cells", []):
+		var hp: Vector2i = p
+		if seen.has(hp):
+			continue
+		if not _in_bounds(hp):
+			continue
+		if hp == player_pos or hp == goal_pos:
+			continue
+		if grid[hp.y][hp.x] != Tile.FLOOR:
+			continue
+		if _would_still_be_reachable(hp):
+			pending_echoes.append(hp)
+			seen[hp] = true
 
 
 func _would_still_be_reachable(new_wall: Vector2i) -> bool:
@@ -634,23 +666,38 @@ func _apply_transform(name: String, path: Array) -> Array:
 
 func _refresh_telegraph() -> void:
 	telegraph_cells.clear()
-	if transform_name == "none" or has_won or pending_echoes.size() > 0:
+	habit_telegraph_cells.clear()
+	if has_won or pending_echoes.size() > 0:
 		return
 	if moves_since_checkpoint.is_empty():
 		return
-	var transformed: Array = _apply_transform(transform_name, moves_since_checkpoint)
 	var seen := {}
-	for p in transformed:
-		if not _in_bounds(p):
+	if transform_name != "none":
+		var transformed: Array = _apply_transform(transform_name, moves_since_checkpoint)
+		for p in transformed:
+			if not _in_bounds(p):
+				continue
+			if p == player_pos or p == goal_pos:
+				continue
+			if seen.has(p):
+				continue
+			if grid[p.y][p.x] != Tile.FLOOR:
+				continue
+			seen[p] = true
+			telegraph_cells.append(p)
+	# Foreshadow habit counters the same way — style, not only path mirror.
+	var habit_pick: Dictionary = _select_habit_rewrite_cells(seen)
+	for p in habit_pick.get("cells", []):
+		var hp: Vector2i = p
+		if seen.has(hp) or not _in_bounds(hp):
 			continue
-		if p == player_pos or p == goal_pos:
+		if hp == player_pos or hp == goal_pos:
 			continue
-		if seen.has(p):
+		if grid[hp.y][hp.x] != Tile.FLOOR:
 			continue
-		if grid[p.y][p.x] != Tile.FLOOR:
-			continue
-		seen[p] = true
-		telegraph_cells.append(p)
+		seen[hp] = true
+		telegraph_cells.append(hp)
+		habit_telegraph_cells.append(hp)
 	var near_cp := _nearest_unused_checkpoint_dist()
 	if near_cp >= 0 and near_cp <= 3 and telegraph_cells.size() > 0:
 		if not rewrite_warn_armed and has_node("/root/AudioDirector"):
