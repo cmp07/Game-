@@ -56,7 +56,7 @@
 | **W1A.4** | `cursor/execute-g1` (was `cursor/v3-shell-boot-*`) | Custom boot splash (`paper_bone` / ink stamp); quiet cold boot | No Godot robot / grey flash | [x] landed |
 
 
-**Sibling merges into `cursor/execute-g1`:** `g1-habit-feel` · `g1-prototype-tells` · `g1-audio-lift` · `g1-tech-art` · `media-g1-capsules`.
+**Sibling merges into `cursor/execute-g1`:** `g1-habit-feel` · `g1-prototype-tells` · `g1-audio-lift` · `g1-tech-art` · `media-g1-capsules` · `g1-ui-shell` · `g1-ghost-self` · `g1-chambers-22a5`. Deferred (overlap): `g1-fonts-materials` (TypeKit vs LedgerType — ours already vendors Plex).
 
 **Also on `cursor/execute-g1` (G1 MVP):** diegetic Clear Stamp / Wing Colophon plates ([`UI_DIEGETIC_V3`](UI_DIEGETIC_V3.md) §4.5–4.6); remix/Daily/Endless habit-answer plain speech ([`HABIT_SYSTEMS_V3`](HABIT_SYSTEMS_V3.md) READ aloud); screenshot path seeds habit answer for media agents.
 
