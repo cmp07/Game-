@@ -4,7 +4,7 @@
 **Status:** Feel authority (CLOUD ONLY) · **Branch:** `cursor/weaver-fragment-feel`  
 **Product:** **The Weaver** (north star)  
 **Job:** Deepen Fragment *hand-feel* beyond the systems lock in [`03_FRAGMENTS.md`](03_FRAGMENTS.md) — recover juice, greyscale silhouette grammar, and a **non-purple** beat/tempo color for Pulse.  
-**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`MASTER_GDD.md`](MASTER_GDD.md)
+**Peers:** [`02_CORE_LOOP.md`](02_CORE_LOOP.md) · [`03_FRAGMENTS.md`](03_FRAGMENTS.md) · [`05_STRUCTURES.md`](05_STRUCTURES.md) · [`09_VISUAL.md`](09_VISUAL.md) · [`10_AUDIO.md`](10_AUDIO.md) · [`11_PROGRESSION.md`](11_PROGRESSION.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`MASTER_GDD.md`](MASTER_GDD.md) · [`1000X/02_FRAGMENTS.md`](1000X/02_FRAGMENTS.md) (twelve-family silhouette matrix · grades · mutations)
 
 ---
 
