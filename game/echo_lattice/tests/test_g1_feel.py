@@ -70,6 +70,8 @@ class TestW1ALatinType(unittest.TestCase):
     def test_latin_faces_vendored(self) -> None:
         latin = ROOT / "fonts" / "latin"
         for name in (
+            "IBMPlexSansCondensed-Bold.ttf",
+            "IBMPlexSansCondensed-Medium.ttf",
             "IBMPlexSansCondensed-Regular.ttf",
             "IBMPlexSansCondensed-SemiBold.ttf",
             "IBMPlexSerif-Regular.ttf",

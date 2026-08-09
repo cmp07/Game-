@@ -4,7 +4,8 @@
 
 | Role | Face | File |
 |---|---|---|
-| Display | IBM Plex Sans Condensed SemiBold (Regular fallback) | `latin/IBMPlexSansCondensed-SemiBold.ttf` |
+| Display / brand | IBM Plex Sans Condensed **Bold** | `latin/IBMPlexSansCondensed-Bold.ttf` |
+| UI actions | IBM Plex Sans Condensed **Medium** | `latin/IBMPlexSansCondensed-Medium.ttf` |
 | Body | IBM Plex Serif Regular | `latin/IBMPlexSerif-Regular.ttf` |
 | Mono (seed / buffer / folio) | IBM Plex Mono Regular | `latin/IBMPlexMono-Regular.ttf` |
 

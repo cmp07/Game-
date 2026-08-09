@@ -3,14 +3,18 @@
 | File | Role |
 |---|---|
 | `OFL.txt` | SIL Open Font License 1.1 (IBM Plex) |
-| `IBMPlexSansCondensed-SemiBold.ttf` | Display — brand, chamber titles |
-| `IBMPlexSansCondensed-Regular.ttf` | UI actions / index underlines |
+| `IBMPlexSansCondensed-Bold.ttf` | Display / brand — `ECHO LATTICE` |
+| `IBMPlexSansCondensed-Medium.ttf` | UI actions — Field Index rows |
+| `IBMPlexSansCondensed-SemiBold.ttf` | Display fallback |
+| `IBMPlexSansCondensed-Regular.ttf` | Action fallback |
 | `IBMPlexSerif-Regular.ttf` | Body — blurbs, settings, captions |
 | `IBMPlexMono-Regular.ttf` | Mono — seed header, punch-card labels |
 
-Loaded at runtime by `scripts/type_kit.gd` (autoload `TypeKit`).
+Loaded at runtime by `scripts/ledger_type.gd` (autoload `LedgerType`).
 
 ## Fetch / refresh
+
+Source faces also live under `tools/fonts/` for Bold/Medium. Full family:
 
 ```bash
 python3 tools/fonts/fetch_ibm_plex_latin.py

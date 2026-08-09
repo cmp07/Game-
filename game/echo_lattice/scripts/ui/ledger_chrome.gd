@@ -7,7 +7,7 @@ class_name LedgerChrome
 ##
 
 ## ART_DIRECTION_V3 §3.2 + MENU_TYPE_SYSTEM — published title-page type @ ~1080p.
-## Partners menu-premium-v1 composition: brand owns the left plane; actions 20–24 display.
+## Premium composition: brand owns the plane; actions are Medium (never mono).
 const TYPE_BRAND := 92
 const TYPE_TAGLINE := 24
 const TYPE_BLURB := 17
@@ -23,7 +23,7 @@ const TYPE_SEED := 13
 const TYPE_CARD_HEADER := 14
 const BRAND_RULE_W := 4.0
 const BRAND_RULE_LEN := 560.0
-## Selection baseline budget — text advance, not full-row chrome (MENU_TYPE_SYSTEM §4).
+## Selection baseline budget — text advance when available; premium cap keeps massy underlines.
 const SELECT_RULE_PAD := 8.0
 const SELECT_RULE_MAX := 220.0
 
@@ -36,7 +36,7 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 	var compact: bool = page_h < 700.0
 	if compact:
 		return {
-			"brand": 56,
+			"brand": 64,
 			"tagline": 18,
 			"blurb": 14,
 			"deck": 14,
@@ -50,8 +50,12 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 			"micro": 10,
 			"seed": 11,
 			"card_header": 11,
-			"rule_w": 2.5,
-			"rule_len": 340.0,
+			"rule_w": 2.8,
+			"rule_len": 280.0,
+			"seal_r": 96.0,
+			"row_h": 26.0,
+			"primary_h": 32.0,
+			"row_sep": 4,
 		}
 	return {
 		"brand": TYPE_BRAND,
@@ -70,6 +74,10 @@ static func title_type_scale(page_h: float = 720.0) -> Dictionary:
 		"card_header": TYPE_CARD_HEADER,
 		"rule_w": BRAND_RULE_W,
 		"rule_len": BRAND_RULE_LEN,
+		"seal_r": 186.0,
+		"row_h": 44.0,
+		"primary_h": 52.0,
+		"row_sep": 10,
 	}
 
 
@@ -93,23 +101,15 @@ static func style_index_button(btn: Button, primary: bool = false, font_size: in
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	btn.focus_mode = Control.FOCUS_ALL
 	btn.flat = true
-	var lt = _ledger_type()
-	var role := "action_disabled" if btn.disabled else "action"
 	var px: int = font_size
-	if px < 0 and lt != null and lt.has_method("role_size"):
-		px = int(lt.role_size(role, 1080.0, primary))
-	elif px < 0:
+	if px < 0:
 		px = TYPE_INDEX_PRIMARY if primary else TYPE_INDEX
-	## Actions must NOT use mono — always display face (MENU_TYPE_SYSTEM §1).
+	var lt = _ledger_type()
 	if lt != null and lt.has_method("apply_to_control"):
-		lt.apply_to_control(btn, "display", px)
+		# UI actions: Plex Sans Condensed Medium — never mono, never ThemeDB.
+		lt.apply_to_control(btn, "action", px)
 	else:
 		btn.add_theme_font_size_override("font_size", px)
-	if lt != null and lt.has_method("role_tracking"):
-		btn.add_theme_constant_override(
-			"letter_spacing",
-			int(round(float(lt.role_tracking(role, 1080.0))))
-		)
 
 
 static func _ledger_type() -> Node:
@@ -211,9 +211,9 @@ static func draw_index_underlines(
 	global_origin: Vector2,
 	focus_progress: float = 1.0
 ) -> void:
-	## Selection = margin tick + baseline rule under label advance (MENU_TYPE_SYSTEM §4).
-	## Idle / disabled = no rule (no full-width underline spam). Hover = slate baseline only.
-	## Cadmium reserved — never used here. No filled pills / chrome.
+	## Selection = margin tick + baseline rule (premium ink + MENU_TYPE_SYSTEM §4).
+	## Idle rows stay clean type — never underline-every-row spreadsheet chrome.
+	## Cadmium reserved — never used here. No filled pills.
 	var prog: float = clampf(focus_progress, 0.0, 1.0)
 	var eased: float = 1.0 - (1.0 - prog) * (1.0 - prog)
 	for btn in buttons:
@@ -229,15 +229,16 @@ static func draw_index_underlines(
 		var disabled: bool = c is BaseButton and (c as BaseButton).disabled
 		if disabled or (not focused and not hovered):
 			continue
+		# Premium massy underline capped by type-system text-advance budget.
 		var baseline_w: float = _selection_baseline_width(c, r.size.x)
-		var y: float = local_pos.y + r.size.y - 4.0
+		var y: float = local_pos.y + r.size.y - 5.0
 		if focused:
 			var w: float = baseline_w * eased
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
 				w,
-				2.4,
+				2.6,
 				Palette.RUST_FOSSIL,
 				hash(c.get_instance_id()) ^ 0x51F01D
 			)
@@ -247,15 +248,19 @@ static func draw_index_underlines(
 				var tick_c := Color(
 					Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, tick_a
 				)
-				var tick_p := Vector2(local_pos.x - 11.0, local_pos.y + r.size.y * 0.55)
-				host.draw_circle(tick_p, 2.4, tick_c)
-				host.draw_circle(tick_p + Vector2(1.2, 0.6), 1.1, Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55))
+				var tick_p := Vector2(local_pos.x - 12.0, local_pos.y + r.size.y * 0.52)
+				host.draw_circle(tick_p, 2.6, tick_c)
+				host.draw_circle(
+					tick_p + Vector2(1.3, 0.7),
+					1.15,
+					Color(tick_c.r, tick_c.g, tick_c.b, tick_a * 0.55)
+				)
 		elif hovered:
 			_draw_ink_rule(
 				host,
 				Vector2(local_pos.x, y),
-				baseline_w,
-				2.0,
+				baseline_w * 0.92,
+				1.8,
 				Palette.SLATE_TEAL,
 				hash(c.get_instance_id()) ^ 0x51A7E
 			)

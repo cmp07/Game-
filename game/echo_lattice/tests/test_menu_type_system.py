@@ -64,10 +64,13 @@ class TestLedgerTypeRoles(unittest.TestCase):
 
     def test_actions_never_mono(self) -> None:
         src = (ROOT / "scripts" / "ledger_type.gd").read_text(encoding="utf-8")
-        self.assertIn('ROLE_BRAND, ROLE_TAGLINE, ROLE_ACTION, ROLE_ACTION_DISABLED:', src)
+        # Premium type seam: actions resolve to Medium ("action"), brand/tagline to Bold display.
+        self.assertIn("ROLE_BRAND, ROLE_TAGLINE:", src)
+        self.assertIn("ROLE_ACTION, ROLE_ACTION_DISABLED:", src)
+        self.assertIn('return "action"', src)
         self.assertIn('return "display"', src)
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text(encoding="utf-8")
-        self.assertIn('lt.apply_to_control(btn, "display", px)', chrome)
+        self.assertIn('lt.apply_to_control(btn, "action", px)', chrome)
         self.assertNotIn('apply_to_control(btn, "mono"', chrome)
 
     def test_meta_mono_gate(self) -> None:
