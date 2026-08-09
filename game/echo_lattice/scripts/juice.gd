@@ -81,8 +81,9 @@ func hitstop(duration: float = 0.09, floor_scale: float = 0.06) -> void:
 
 
 func flash(duration: float = 0.22, peak: float = 0.45, color: Color = Color(0, 0, 0, 0)) -> void:
-	# Transparent default → cadmium warn (matches Palette.CADMIUM_WARN; no autoload in default args).
-	var resolved: Color = Color("#D6432B") if color.a <= 0.0 else color
+	# Transparent default → ink soft (Field Ledger: cadmium is reserved for the
+	# rewrite-imminent margin heartbeat drawn by Chamber, not generic juice).
+	var resolved: Color = Color("#3A342C") if color.a <= 0.0 else color
 	var gated: Dictionary = FlashGate.gate(resolved, peak, duration)
 	if gated.is_empty():
 		flash_left = 0.0
@@ -96,17 +97,16 @@ func flash(duration: float = 0.22, peak: float = 0.45, color: Color = Color(0, 0
 
 
 func rewrite_punch(segment_count: int = 1) -> void:
-	var shake_amt: float = minf(0.55, 0.20 + 0.03 * float(segment_count))
-	bump(shake_amt)
+	# Field Ledger art bible §5: no screen-shake on rewrite (document game).
+	# Cadmium is the chamber margin heartbeat only — no full-screen rewrite flash
+	# (avoids the old double-gated FlashGate path).
 	if not _reduce_motion():
 		hitstop(0.09, 0.06)
-	var rewrite_flash: Dictionary = FlashGate.request_rewrite_flash()
-	if not rewrite_flash.is_empty():
-		flash(
-			float(rewrite_flash.get("duration", 0.28)),
-			float(rewrite_flash.get("intensity", 0.55)),
-			rewrite_flash.get("color", Color("#D6432B"))
-		)
+	# Players who explicitly enable shake get a tiny optional settle, not a punch.
+	var intensity: float = _shake_intensity()
+	if intensity > 0.001:
+		var shake_amt: float = minf(0.14, 0.03 + 0.008 * float(segment_count))
+		bump(shake_amt)
 
 
 func spawn_burst(world_pos: Vector2, color: Color, count: int = 8) -> void:

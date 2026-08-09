@@ -43,6 +43,12 @@ class TestDefaultsCompleteness(unittest.TestCase):
     def test_ui_scale_range_default(self) -> None:
         self.assertAlmostEqual(float(self.data["accessibility"]["ui_scale"]), 1.0)
 
+    def test_shake_defaults_field_ledger(self) -> None:
+        # Document game: shake off / subtle unless the player opts in.
+        a11y = self.data["accessibility"]
+        self.assertFalse(bool(a11y["screen_shake_enabled"]))
+        self.assertLessEqual(float(a11y["screen_shake_intensity"]), 0.4)
+
     def test_required_input_actions(self) -> None:
         bindings = self.data["input_bindings"]
         for action in (
@@ -105,6 +111,16 @@ class TestSourceSurface(unittest.TestCase):
         juice = (ROOT / "scripts" / "juice.gd").read_text()
         self.assertIn("FlashGate.gate", juice)
         self.assertIn("_shake_intensity", juice)
+
+    def test_rewrite_punch_no_forced_cadmium_flash(self) -> None:
+        juice = (ROOT / "scripts" / "juice.gd").read_text()
+        # Field Ledger: rewrite_punch must not full-screen flash cadmium.
+        start = juice.index("func rewrite_punch")
+        end = juice.index("\nfunc ", start + 1)
+        body = juice[start:end]
+        self.assertNotIn("request_rewrite_flash", body)
+        self.assertNotIn("FlashGate.gate", body)
+        self.assertIn("hitstop", body)
 
     def test_chamber_uses_role_colors(self) -> None:
         chamber = (ROOT / "scripts" / "chamber.gd").read_text()

@@ -41,4 +41,7 @@ static func gate(color: Color, intensity: float, duration: float, a11y: Node = n
 
 
 static func request_rewrite_flash(a11y: Node = null) -> Dictionary:
-	return gate(Color("#D6432B"), 0.55, 0.28, a11y)
+	## Legacy helper — rewrite juice no longer full-screen flashes (cadmium is
+	## the page-margin heartbeat in Chamber). Kept for tools/tests; returns {}.
+	var _unused_a11y: Node = a11y
+	return {}

@@ -1,12 +1,14 @@
 extends Control
 ##
-## Chamber scene root — Chamber + HUD.
+## Chamber scene root — Chamber + diegetic Field Ledger HUD
+## (seed header + punch-card move buffer on the page margins).
 ##
 
 signal chamber_won(chamber_id: int, moves: int)
 signal menu_requested()
 
 const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
+const PUNCHCARD_CELLS: int = 30
 
 @onready var chamber_node: Node2D = %Chamber
 @onready var title_label: Label = %ChamberTitle
@@ -16,9 +18,18 @@ const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn"
 @onready var restart_button: Button = %RestartButton
 @onready var settings_button: Button = %SettingsButton
 @onready var menu_button: Button = %MenuButton
+@onready var seed_label: Label = %SeedLabel
+@onready var seed_header_tex: TextureRect = %SeedHeaderTex
+@onready var buffer_label: Label = %BufferLabel
+@onready var punchcard_cells: HBoxContainer = %PunchcardCells
 
 var _glyph_device: int = -1
 var _settings_overlay: Control = null
+var _punch_rects: Array = []  # Array[TextureRect]
+var _tex_empty: Texture2D
+var _tex_filled: Texture2D
+var _tex_rust: Texture2D
+var _tex_warn: Texture2D
 
 
 func _ready() -> void:
@@ -38,9 +49,11 @@ func _ready() -> void:
 	menu_button.focus_mode = Control.FOCUS_NONE
 	if has_node("/root/LocaleManager"):
 		LocaleManager.locale_changed.connect(_on_locale_changed)
+	_setup_ledger_hud()
 	_refresh_glyph_labels()
 	_style_ledger_chrome()
 	_refresh_title()
+	_refresh_seed_header()
 	_on_moves_changed(0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(_localized_caption(data))
@@ -53,7 +66,10 @@ func _on_locale_changed(_locale: String) -> void:
 	_refresh_glyph_labels()
 	if settings_button:
 		settings_button.text = tr("menu.settings")
+	if buffer_label:
+		buffer_label.text = tr("menu.buffer")
 	_refresh_title()
+	_refresh_seed_header()
 	_on_moves_changed(chamber_node.move_count if chamber_node else 0)
 	var data: Dictionary = ChamberBook.get_chamber(GameState.current_chamber)
 	_on_caption_changed(_localized_caption(data))
@@ -65,6 +81,31 @@ func _process(_delta: float) -> void:
 	if InputGlyphs.last_device != _glyph_device:
 		_glyph_device = InputGlyphs.last_device
 		_refresh_glyph_labels()
+
+
+func _setup_ledger_hud() -> void:
+	_tex_empty = ArtKit.tex("res://art/ui/punchcard_cell_empty.png")
+	_tex_filled = ArtKit.tex("res://art/ui/punchcard_cell_filled.png")
+	_tex_rust = ArtKit.tex("res://art/ui/punchcard_cell_rust.png")
+	_tex_warn = ArtKit.tex("res://art/ui/punchcard_cell_warn.png")
+	if seed_header_tex:
+		seed_header_tex.texture = ArtKit.tex("res://art/ui/seed_header_256x24.png")
+		seed_header_tex.modulate = Color(1, 1, 1, 0.95)
+	if buffer_label:
+		buffer_label.text = tr("menu.buffer")
+	_punch_rects.clear()
+	if punchcard_cells == null:
+		return
+	for child in punchcard_cells.get_children():
+		child.queue_free()
+	for i in range(PUNCHCARD_CELLS):
+		var cell := TextureRect.new()
+		cell.custom_minimum_size = Vector2(12, 16)
+		cell.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		cell.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		cell.texture = _tex_empty
+		punchcard_cells.add_child(cell)
+		_punch_rects.append(cell)
 
 
 func _refresh_glyph_labels() -> void:
@@ -116,6 +157,13 @@ func _refresh_title() -> void:
 	]
 
 
+func _refresh_seed_header() -> void:
+	if seed_label == null:
+		return
+	seed_label.text = tr("hud.seed") % GameState.seed_display_string()
+	seed_label.add_theme_color_override("font_color", Palette.SLATE_TEAL_SOFT)
+
+
 func _localized_title(data: Dictionary) -> String:
 	var cid: String = str(data.get("content_id", data.get("id", "")))
 	var fallback: String = str(data.get("title", ""))
@@ -139,6 +187,34 @@ func _on_chamber_won(chamber_id: int, moves: int) -> void:
 func _on_moves_changed(moves: int) -> void:
 	moves_label.text = tr("hud.moves") % moves
 	habit_label.text = tr("hud.habit") % _habit_summary()
+	_refresh_seed_header()
+	_refresh_punchcard()
+
+
+func _refresh_punchcard() -> void:
+	if _punch_rects.is_empty():
+		return
+	var filled: int = 0
+	if chamber_node != null and chamber_node.has_method("buffer_fill_count"):
+		filled = int(chamber_node.buffer_fill_count())
+	else:
+		filled = mini(GameState.move_ring.size(), PUNCHCARD_CELLS)
+	filled = clampi(filled, 0, PUNCHCARD_CELLS)
+	var near_cp: int = -1
+	if chamber_node != null and chamber_node.has_method("nearest_unused_checkpoint_dist"):
+		near_cp = int(chamber_node.nearest_unused_checkpoint_dist())
+	var warn: bool = near_cp >= 0 and near_cp <= 3 and filled > 0
+	for i in range(PUNCHCARD_CELLS):
+		var cell: TextureRect = _punch_rects[i]
+		var tex: Texture2D = _tex_empty
+		if i < filled:
+			tex = _tex_filled
+			# Late buffer cells pick up rust — habit pressure before rewrite.
+			if filled >= 8 and i >= filled - 7:
+				tex = _tex_rust
+		if warn and i == filled - 1:
+			tex = _tex_warn
+		cell.texture = tex if tex != null else _tex_empty
 
 
 func _on_caption_changed(text: String) -> void:

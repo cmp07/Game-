@@ -185,6 +185,8 @@ Each operator in the habit engine / transform pack has a dedicated one-shot. Pla
 
 Unknown operator → `sfx.rewrite` generic. Always call `AdaptiveMusic.pulse_rewrite()` alongside the stinger (`AudioDirector.on_rewrite` does this).
 
+**Content-transform aliases** (campaign chamber `transform` strings → catalog operators): `mirror_v` / `mirror_h` / `mirror_v_then_h` → `mirror`; `rotate_180` → `rotate`; `thicken` / `invert` pass through. Implemented in `AudioEvents.rewrite_event_id` + `operator_aliases` in `audio_events.json`.
+
 Warn telegraph remains shared: `sfx.rewrite_warn` when habit tension crosses threshold (footstep pitch still rises with tension — §8).
 
 ---

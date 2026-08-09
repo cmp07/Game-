@@ -91,7 +91,8 @@ func set_flash_max_intensity(value: float) -> void:
 func screen_shake_enabled() -> bool:
 	if reduce_motion():
 		return false
-	return bool(_get("accessibility", "screen_shake_enabled", true))
+	# Field Ledger default: shake off (document game). Opt-in via Settings.
+	return bool(_get("accessibility", "screen_shake_enabled", false))
 
 
 func set_screen_shake_enabled(enabled: bool) -> void:
@@ -102,7 +103,8 @@ func set_screen_shake_enabled(enabled: bool) -> void:
 func screen_shake_intensity() -> float:
 	if not screen_shake_enabled():
 		return 0.0
-	return clampf(float(_get("accessibility", "screen_shake_intensity", 1.0)), 0.0, 1.0)
+	# Default subtle when enabled — never ship intensity 1.0 as the stock feel.
+	return clampf(float(_get("accessibility", "screen_shake_intensity", 0.35)), 0.0, 1.0)
 
 
 func set_screen_shake_intensity(value: float) -> void:

@@ -14,6 +14,12 @@
     "thicken",
     "invert"
   ],
+  "operator_aliases": {
+    "mirror_v": "mirror",
+    "mirror_h": "mirror",
+    "mirror_v_then_h": "mirror",
+    "rotate_180": "rotate"
+  },
   "events": {
     "sfx.footstep": {
       "bus": "SFX",

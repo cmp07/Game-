@@ -49,10 +49,29 @@ func bus_name(event_id: String) -> String:
 	return str(ev.get("bus", "SFX"))
 
 
+## Content transforms → catalog stinger operators (audio bible §6 / UPGRADE P0-03).
+const REWRITE_OPERATOR_ALIASES := {
+	"mirror_v": "mirror",
+	"mirror_h": "mirror",
+	"mirror_v_then_h": "mirror",
+	"rotate_180": "rotate",
+	"rotate": "rotate",
+	"thicken": "thicken",
+	"invert": "invert",
+}
+
+
 func rewrite_event_id(operator_name: String) -> String:
-	var specific := "sfx.rewrite.%s" % operator_name
+	var op := operator_name.strip_edges()
+	if op.is_empty() or op == "none":
+		return "sfx.rewrite"
+	var aliased: String = str(REWRITE_OPERATOR_ALIASES.get(op, op))
+	var specific := "sfx.rewrite.%s" % aliased
 	if has_event(specific):
 		return specific
+	var exact := "sfx.rewrite.%s" % op
+	if has_event(exact):
+		return exact
 	return "sfx.rewrite"
 
 
