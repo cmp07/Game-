@@ -1,6 +1,6 @@
 extends Node
 ## Layered Music-bus intensity driven by habit solidification + rewrite tension.
-## See docs/ECHO_LATTICE/06_AUDIO_BIBLE.md §5–§7 (AUDIO v2).
+## Stems are Ledger Cell motif transforms (AUDIO v3); gates/API from AUDIO v2 bible §5–§7.
 
 signal intensity_changed(intensity: float)
 signal layers_changed(gains: Dictionary)

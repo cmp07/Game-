@@ -270,6 +270,8 @@ func load_chamber(id: int) -> void:
 func reset_chamber() -> void:
 	if chamber.is_empty():
 		return
+	if has_node("/root/AudioDirector"):
+		AudioDirector.on_fail_reset()
 	load_chamber(int(chamber.get("id", 0)))
 
 
