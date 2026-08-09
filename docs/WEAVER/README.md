@@ -100,6 +100,12 @@
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 
+### 1000× vision
+
+| Doc | Topic |
+|---|---|
+| [`1000X/11_NARRATIVE.md`](1000X/11_NARRATIVE.md) | Diegetic craft mythos — no cutscene dump |
+
 ---
 
 ## Sibling PR sources

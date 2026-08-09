@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-08-09 — 1000× Narrative (diegetic mythos)
+
+**Branch:** `cursor/weaver-1000x-narrative` · **Base:** `cursor/echo-lattice-rc1`
+
+- Added [`1000X/11_NARRATIVE.md`](1000X/11_NARRATIVE.md) — yard-learns-your-hand mythos via chalk / coach stamps / gallery / ending
+- Hard ban on cutscene dumps, RPG lore, and Echo Lattice plot-noun bleed
+- Indexed under README 1000× vision
+
+---
+
 ## 2026-08-09 — Weaver on Lattice (hybrid launch)
 
 **Branch:** `cursor/weaver-on-lattice-3a1d` · **Base:** `cursor/echo-lattice-rc1`  
