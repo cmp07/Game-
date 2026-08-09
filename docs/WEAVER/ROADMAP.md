@@ -121,7 +121,7 @@ Progression voice: [`11_PROGRESSION.md`](11_PROGRESSION.md). Solo scarcity law: 
 |---|---|
 | Target `docs/WEAVER/` + future `game/weaver/` | Edit `game/echo_lattice/` “to save time” |
 | Link MASTER / PIVOT from new Weaver PRs | Invent a third product fantasy mid-wave |
-| Keep MVP cuts when sibling docs fantasize post features | Merge player-trade or MP into slice milestones |
+| Keep MVP cuts when sibling docs fantasize post features | Merge player-trade or MP into slice milestones; cite [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) |
 | Open PRs into active integration line | Delete BACKUP / RELEASE / EL trees |
 
 ---
