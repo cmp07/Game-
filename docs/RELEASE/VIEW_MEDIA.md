@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `479e8ce12cb26c9d4896eb35b4f0ae82fac7f5a2` (menu-10-of-10 / #158 letterpress seal + premium Field Index; brand slate recapture)
+**Tip at index authoring:** `039fa2e87e4ade9b65e6c011e77d9431eb59e42d` (menu-10-of-10 / #158 letterpress seal + premium Field Index; brand slate recapture)
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu 10/10:** letterpress seal plate + premium Field Index (`menu-10-of-10` / #158) — open folio, no dashed circles, selection-only rules; [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md).
 **Menu composition art:** open folio fills the frame (`menu-composition-art` / #156) — large survey seal + authored habit silhouette.  
