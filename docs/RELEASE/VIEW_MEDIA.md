@@ -1,9 +1,9 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:**  (menu-restore-rich Field Ledger title shell; brand slate recaptured)
+**Tip at index authoring:** `edafaae9e027cd87fd0485a6b02e78001d078ce1` (menu-restore-rich Field Ledger title shell; brand slate recaptured)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu 1000×:** premium Field Ledger title shell (`menu-1000x` / #149) with integrated art materials (#148) + feel audio (#147).  
+**Menu restore:** rich Field Ledger title shell (`menu-restore-rich` / #151) — hero brand + substantial Field Index; enclosure fix kept; chamber HUD removed from title. Builds on menu-1000x (#149).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
