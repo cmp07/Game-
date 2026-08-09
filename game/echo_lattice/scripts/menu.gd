@@ -9,6 +9,7 @@ signal continue_pressed()
 signal daily_pressed()
 signal settings_pressed()
 signal quit_pressed()
+signal wishlist_pressed()
 
 const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
 
@@ -24,6 +25,7 @@ var _t: float = 0.0
 var _demo_path: Array = []  ## Vector2i points for ambient ghost walk
 var _demo_progress: float = 0.0
 var _settings_overlay: Control = null
+var _wishlist_button: Button = null
 
 
 func _ready() -> void:
@@ -40,12 +42,18 @@ func _ready() -> void:
 			GameState.chambers_in_run(),
 			stars,
 		]
+	elif DemoBuild.is_demo():
+		subtitle.text = "Demo — Act I · Mirror Birth. Ink on paper."
 	else:
 		subtitle.text = tr("menu.subtitle_fresh") % ChamberBook.chamber_count()
 	var today: String = GameState._today_label()
 	var dseed: int = GameState._today_seed()
 	var dbest: int = int(GameState.daily_best_stars.get(str(dseed), 0))
-	meta_label.text = tr("menu.daily_meta") % [today, dbest]
+	if DemoBuild.is_demo():
+		# Daily stays Act-I-scoped via ChamberBook; copy avoids full-game spoilers.
+		meta_label.text = tr("menu.demo_daily_meta") % [today, dbest]
+	else:
+		meta_label.text = tr("menu.daily_meta") % [today, dbest]
 	start_button.grab_focus()
 
 	start_button.pressed.connect(func(): emit_signal("start_new_pressed"))
@@ -56,6 +64,8 @@ func _ready() -> void:
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
+	if DemoBuild.is_demo():
+		_ensure_wishlist_button()
 
 	_build_demo_path()
 	set_process(true)
@@ -65,6 +75,8 @@ func _ready() -> void:
 	_style_as_index_button(daily_button, false)
 	_style_as_index_button(settings_button, false)
 	_style_as_index_button(quit_button, false)
+	if _wishlist_button != null:
+		_style_as_index_button(_wishlist_button, false)
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
 	if has_node("/root/AudioDirector"):
@@ -78,6 +90,8 @@ func _localize_chrome() -> void:
 	if settings_button:
 		settings_button.text = tr("menu.settings")
 	quit_button.text = tr("menu.quit")
+	if _wishlist_button != null:
+		_wishlist_button.text = tr("menu.wishlist")
 	queue_redraw()
 
 
@@ -94,6 +108,25 @@ func _open_settings() -> void:
 	if has_node("/root/AudioDirector"):
 		AudioDirector.fire("ui.click")
 
+
+func _ensure_wishlist_button() -> void:
+	if _wishlist_button != null:
+		return
+	_wishlist_button = Button.new()
+	_wishlist_button.name = "WishlistButton"
+	_wishlist_button.unique_name_in_owner = true
+	_wishlist_button.custom_minimum_size = Vector2(240, 34)
+	_wishlist_button.text = "Wishlist on Steam"
+	_wishlist_button.flat = true
+	_wishlist_button.add_theme_font_size_override("font_size", 18)
+	_wishlist_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	var col: Node = quit_button.get_parent()
+	col.add_child(_wishlist_button)
+	col.move_child(_wishlist_button, quit_button.get_index())
+	_wishlist_button.pressed.connect(func():
+		emit_signal("wishlist_pressed")
+		DemoBuild.open_wishlist()
+	)
 
 func _style_as_index_button(btn: Button, primary: bool) -> void:
 	var empty := StyleBoxEmpty.new()
@@ -113,6 +146,9 @@ func _style_as_index_button(btn: Button, primary: bool) -> void:
 
 func _ensure_gamepad_focus_chain() -> void:
 	var order: Array = [continue_button, start_button, daily_button, settings_button, quit_button]
+	if _wishlist_button != null:
+		order.insert(order.size() - 1, _wishlist_button)
+
 	var live: Array = []
 	for btn in order:
 		if btn != null and not btn.disabled:
@@ -215,7 +251,7 @@ func _draw() -> void:
 	draw_string(
 		ThemeDB.fallback_font,
 		card.position + Vector2(20, 28),
-		tr("menu.field_index"),
+		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
 	)
 
@@ -292,7 +328,10 @@ func _controls_hint() -> String:
 
 
 func _draw_button_underlines(_card: Rect2) -> void:
-	for btn in [continue_button, start_button, daily_button, settings_button, quit_button]:
+	var buttons: Array = [continue_button, start_button, daily_button, settings_button, quit_button]
+	if _wishlist_button != null:
+		buttons.insert(buttons.size() - 1, _wishlist_button)
+	for btn in buttons:
 		if btn == null:
 			continue
 		var r: Rect2 = btn.get_global_rect()

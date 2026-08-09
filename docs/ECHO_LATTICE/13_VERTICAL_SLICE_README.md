@@ -89,11 +89,12 @@ Steam Deck Verified prep (glyphs, 16:10 layout check, TDP targets, native Linux 
 
 ## Building
 
-The project ships with three export presets (`game/echo_lattice/export_presets.cfg`):
+The project ships with export presets (`game/echo_lattice/export_presets.cfg`):
 
 - `Windows Desktop` → `builds/windows/EchoLattice.exe` (x86_64, PCK not embedded)
 - `Linux/X11` → `builds/linux/EchoLattice.x86_64` (x86_64, PCK not embedded) — Steam Linux / Deck path
 - `macOS` → `builds/macos/EchoLattice.zip` (universal; **unsigned stub** — notarize before public mac builds)
+- `Windows Demo` → `builds/windows_demo/EchoLatticeDemo.exe` (`custom_features=demo`, Act I only — see [`docs/RELEASE/DEMO_SPEC.md`](../RELEASE/DEMO_SPEC.md))
 
 Store matrix and CI sketch: [`docs/RELEASE/PLATFORMS.md`](../RELEASE/PLATFORMS.md) · [`docs/RELEASE/CI_BUILDS.md`](../RELEASE/CI_BUILDS.md).
 
@@ -104,6 +105,7 @@ cd game/echo_lattice
 godot --headless --export-release "Windows Desktop" builds/windows/EchoLattice.exe
 godot --headless --export-release "Linux/X11"       builds/linux/EchoLattice.x86_64
 godot --headless --export-release "macOS"           builds/macos/EchoLattice.zip
+godot --headless --export-release "Windows Demo"    builds/windows_demo/EchoLatticeDemo.exe
 ```
 
 You need the matching Godot 4.3 export templates installed. Install them via the editor (`Editor > Manage Export Templates > Download and Install`) or, if you are automating a CI job, drop the extracted `templates/` folder into:
@@ -129,12 +131,17 @@ The project has a self-test entry point that runs the same rewrite math, save/lo
 cd game/echo_lattice
 godot --headless --path . -- --selftest
 # expected: "result: OK" and exit code 0
+
+# Next Fest demo scope (Act I + Mirror Birth, no late-act spoilers):
+godot --headless --path . -- --selftest --demo
 ```
 
 Content v2 expands the campaign to **35 playable chambers across 4 Acts** (+ 4 hard variants) loaded from `content/chambers/*.json`. Python validation (no Godot required):
 
 ```bash
 python3 game/echo_lattice/tests/validate_chambers.py
+# expected: "result: OK"
+python3 game/echo_lattice/tests/test_demo_spec.py
 # expected: "result: OK"
 ```
 
@@ -159,7 +166,7 @@ This has been run against both the editor-driven project and the exported Linux 
 game/echo_lattice/
 ├── project.godot                # Autoloads, input map, Forward+/GLES3 setup
 ├── icon.svg                     # Boot / window icon (lattice mark)
-├── export_presets.cfg           # Windows + Linux/X11 + macOS (unsigned stub) presets
+├── export_presets.cfg           # Windows + Linux/X11 + macOS stub + Windows Demo
 ├── content/
 │   ├── chambers/*.json          # 39 authored chambers (source of truth)
 │   ├── acts.json                # 4 Acts — Induction→Mastery

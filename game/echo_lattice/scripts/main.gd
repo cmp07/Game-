@@ -324,7 +324,7 @@ func _tree_has_text_entry(node: Node) -> bool:
 
 
 func _run_self_test() -> bool:
-	print("== Echo Lattice self-test ==")
+	print("== Echo Lattice self-test%s ==" % (" [DEMO]" if DemoBuild.is_demo() else ""))
 	var ok := true
 	var grid_w: int = int(ChamberBook.GRID_W)
 	var grid_h: int = int(ChamberBook.GRID_H)
@@ -343,6 +343,8 @@ func _run_self_test() -> bool:
 				a.get("hard_variants", []).size(),
 				a.get("bosses", []).size(),
 			])
+	if DemoBuild.is_demo():
+		ok = _selftest_demo_scope(acts) and ok
 	for i in range(ChamberBook.chamber_count()):
 		var data: Dictionary = ChamberBook.get_chamber(i)
 		var rows: Array = data.get("map", [])
@@ -387,7 +389,17 @@ func _run_self_test() -> bool:
 	GameState.best_stars.clear()
 	GameState.completed.clear()
 	GameState.start_new_run()
-	if ChamberBook.chamber_count() < 35:
+	if DemoBuild.is_demo():
+		var expect_n: int = DemoBuild.allowed_campaign_ids().size()
+		if ChamberBook.chamber_count() != expect_n:
+			printerr("demo expects %d campaign chambers, got %d" % [
+				expect_n, ChamberBook.chamber_count()
+			])
+			ok = false
+		if GameState.run_queue.size() != expect_n:
+			printerr("demo run_queue expected %d got %d" % [expect_n, GameState.run_queue.size()])
+			ok = false
+	elif ChamberBook.chamber_count() < 35:
 		printerr("v2 complete expects >= 35 campaign chambers, got %d" % ChamberBook.chamber_count()); ok = false
 	GameState.record_direction(Vector2i(1, 0))
 	GameState.record_direction(Vector2i(1, 0))
@@ -406,10 +418,11 @@ func _run_self_test() -> bool:
 	if GameState.last_clear_stars < 1:
 		printerr("stars not awarded"); ok = false
 
-	# Daily wing shape.
+	# Daily wing shape (demo pools from Act I only — still five when possible).
 	GameState.start_daily_run()
-	if GameState.run_queue.size() != 5:
-		printerr("daily wing expected 5 chambers got %d" % GameState.run_queue.size()); ok = false
+	var daily_n: int = mini(5, ChamberBook.chamber_count())
+	if GameState.run_queue.size() != daily_n:
+		printerr("daily wing expected %d chambers got %d" % [daily_n, GameState.run_queue.size()]); ok = false
 	GameState.start_new_run()
 	# Re-assert the lifetime best survived the mode switch.
 	GameState.best_moves[0] = 42
@@ -502,6 +515,34 @@ func _run_self_test() -> bool:
 			print("  playthrough chamber %d OK" % i)
 
 	print("result: %s" % ("OK" if ok else "FAIL"))
+	return ok
+
+
+func _selftest_demo_scope(acts: Array) -> bool:
+	var ok := true
+	var expect: PackedStringArray = DemoBuild.allowed_campaign_ids()
+	if ChamberBook.chamber_count() != expect.size():
+		printerr("demo chamber_count %d != %d" % [ChamberBook.chamber_count(), expect.size()])
+		ok = false
+	if acts.size() != 1 or str(acts[0].get("id", "")) != DemoBuild.ACT_ID:
+		printerr("demo acts_summary must expose Induction only"); ok = false
+	var mirror: Dictionary = ChamberBook.get_chamber_by_content_id(DemoBuild.MIRROR_BIRTH_ID)
+	if mirror.is_empty():
+		printerr("demo missing Mirror Birth (%s)" % DemoBuild.MIRROR_BIRTH_ID); ok = false
+	elif str(mirror.get("title", "")) != "Mirror Birth":
+		printerr("Mirror Birth title mismatch: %s" % str(mirror.get("title", ""))); ok = false
+	for i in range(ChamberBook.chamber_count()):
+		var data: Dictionary = ChamberBook.get_chamber(i)
+		var act_idx: int = int(data.get("act_index", -1))
+		if act_idx != 0:
+			printerr("demo spoiler: chamber %d has act_index %d" % [i, act_idx]); ok = false
+	# Late-act content must not be addressable.
+	for spoil in ["09_twin_rail", "17_identity_reflection", "26_identity_pressure", "33_nameplate"]:
+		if not ChamberBook.get_chamber_by_content_id(spoil).is_empty():
+			printerr("demo spoiler leak: %s still loaded" % spoil); ok = false
+	if DemoBuild.wishlist_url().strip_edges() == "":
+		printerr("demo wishlist URL empty"); ok = false
+	print("demo scope: Act I (%d) + Mirror Birth + wishlist OK" % expect.size())
 	return ok
 
 
