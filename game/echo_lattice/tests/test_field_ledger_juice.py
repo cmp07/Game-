@@ -255,6 +255,119 @@ class TestDiegeticShellMvp(unittest.TestCase):
         chrome = (ROOT / "scripts" / "ui" / "ledger_chrome.gd").read_text()
         self.assertIn("class_name LedgerChrome", chrome)
 
+    def test_field_index_card_syncs_with_card_column(self) -> None:
+        """Regression: drawn Field Index plate and CardColumn must share layout."""
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        tscn = (ROOT / "scenes" / "menu.tscn").read_text()
+        main = (ROOT / "scripts" / "main.gd").read_text()
+        self.assertIn("func field_index_card_rect", menu)
+        self.assertIn("func field_index_content_rect", menu)
+        self.assertIn("func _sync_field_index_layout", menu)
+        self.assertIn("func verify_field_index_layout", menu)
+        self.assertIn("field_index_card_rect(vp, y_off)", menu)
+        self.assertIn("_sync_field_index_layout()", menu)
+        # Broken float used right-center anchors + fixed 280×400 card — ban that pairing.
+        self.assertNotIn("offset_left = -340.0", tscn)
+        self.assertNotIn("anchor_left = 1.0", tscn)
+        self.assertIn("func _selftest_field_index_layout", main)
+        self.assertIn("_verify_menu_field_index_layout", main)
+
+    def test_brand_main_menu_screenshot_frames_field_index(self) -> None:
+        """Store slate 02: menu actions must sit inside the Field Index plate."""
+        import struct
+        import zlib
+        from pathlib import Path
+
+        shot = Path(__file__).resolve().parents[3] / "docs/RELEASE/screenshots/02_brand_main_menu.png"
+        self.assertTrue(shot.is_file(), msg=str(shot))
+        data = shot.read_bytes()
+        assert data[:8] == b"\x89PNG\r\n\x1a\n"
+        idat = b""
+        w = h = bpp = 0
+        off = 8
+        while off < len(data):
+            ln = struct.unpack(">I", data[off : off + 4])[0]
+            typ = data[off + 4 : off + 8]
+            chunk = data[off + 8 : off + 8 + ln]
+            off += 12 + ln
+            if typ == b"IHDR":
+                w, h = struct.unpack(">II", chunk[:8])
+                bpp = {2: 3, 6: 4}[chunk[9]]
+            elif typ == b"IDAT":
+                idat += chunk
+            elif typ == b"IEND":
+                break
+        self.assertEqual((w, h), (1920, 1080))
+        raw = zlib.decompress(idat)
+        stride = w * bpp
+        rows = []
+        i = 0
+        prev = bytearray(stride)
+        for _y in range(h):
+            filt = raw[i]
+            i += 1
+            row = bytearray(raw[i : i + stride])
+            i += stride
+            if filt == 1:
+                for x in range(stride):
+                    row[x] = (row[x] + (row[x - bpp] if x >= bpp else 0)) & 255
+            elif filt == 2:
+                for x in range(stride):
+                    row[x] = (row[x] + prev[x]) & 255
+            elif filt == 3:
+                for x in range(stride):
+                    left = row[x - bpp] if x >= bpp else 0
+                    row[x] = (row[x] + ((left + prev[x]) // 2)) & 255
+            elif filt == 4:
+                for x in range(stride):
+                    a = row[x - bpp] if x >= bpp else 0
+                    b = prev[x]
+                    c = prev[x - bpp] if x >= bpp else 0
+                    p = a + b - c
+                    pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                    pr = a if pa <= pb and pa <= pc else (b if pb <= pc else c)
+                    row[x] = (row[x] + pr) & 255
+            rows.append(row)
+            prev = row
+
+        def lum(x: int, y: int) -> int:
+            r = rows[y]
+            j = x * bpp
+            return (r[j] + r[j + 1] + r[j + 2]) // 3
+
+        brand = sum(
+            1
+            for y in range(280, 360, 2)
+            for x in range(80, 520, 2)
+            if lum(x, y) < 160
+        )
+        self.assertGreater(brand, 200, msg="brand lockup missing on left")
+        left = None
+        for x in range(1450, 1700):
+            if lum(x, 180) < 90:
+                left = x
+                break
+        self.assertIsNotNone(left)
+        ys = [
+            y
+            for y in range(80, 900)
+            if any(lum(left + dx, y) < 200 for dx in range(0, 3))
+        ]
+        self.assertGreater(ys[-1] - ys[0], 350)
+        text_bottom = max(
+            y
+            for y in range(ys[0], ys[-1] + 40, 2)
+            if sum(1 for x in range(left + 40, left + 240, 2) if lum(x, y) < 200) > 10
+        )
+        self.assertLessEqual(text_bottom, ys[-1] + 8)
+        orphan = sum(
+            1
+            for y in range(ys[-1] + 40, 1000, 2)
+            for x in range(left + 40, left + 240, 2)
+            if lum(x, y) < 180
+        )
+        self.assertLess(orphan, 40, msg="menu rows orphaned below Field Index card")
+
     def test_locale_shell_keys(self) -> None:
         csv = (ROOT / "locale" / "echo_lattice.csv").read_text()
         for key in (
