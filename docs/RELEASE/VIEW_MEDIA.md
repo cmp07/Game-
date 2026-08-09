@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `b8bec38a5aa3594e40ffefb722ed871eda7880d0` (post–menu-1000x Field Ledger shell; brand menu slate recaptured)  
+**Tip at index authoring:** `e9eb4dbf9fc3ff54fa26bd16e2f56d6a30ed7b48` (post–menu-1000x Field Ledger shell; brand menu slate recaptured)  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu 1000×:** premium Field Ledger title shell (`menu-1000x` / #149) with integrated art materials (#148) + feel audio (#147).  
 **Links below** use branch `cursor/echo-lattice-rc1` (blob + raw).
