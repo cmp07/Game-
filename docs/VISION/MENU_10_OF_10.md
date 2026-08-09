@@ -1,7 +1,7 @@
 # Menu 10/10 — Title Shell Acceptance (LEFT PAGE FINAL)
 
 **Status:** integration authority (CLOUD ONLY) · **Product:** Echo Lattice · **Date:** 2026-08-09  
-**Branch:** `cursor/menu-preview-fill` → RC1 · not `main`  
+**Branch:** `cursor/echo-lattice-rc1` tip `4d29031` (#164 merged) · not `main`  
 **Supersedes** #163 postage-stamp SubViewport inside a hollow film plate.
 
 ---
@@ -73,4 +73,4 @@ Rejected forever: dashed circle seal · FIELD / SURVEY SEAL watermark · dual se
 Regenerate fallback loop: `python3 tools/release/build_menu_preview_loop.py`
 
 Raw (after branch push):  
-`https://github.com/cmp07/Game-/raw/cursor/menu-preview-fill/docs/RELEASE/screenshots/02_brand_main_menu.png`
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu.png`

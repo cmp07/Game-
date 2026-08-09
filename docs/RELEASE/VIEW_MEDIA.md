@@ -1,10 +1,10 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip:** `cursor/menu-preview-fill` — film plate fills the media well (cover-scaled SubViewport); merges to [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1) (not `main`).  
+**Tip:** `4d29031` on [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1) — [#164](https://github.com/cmp07/Game-/pull/164) menu preview fill merged (not `main`).  
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
-**Menu preview fill:** #163 plate sized the well but left a board-native 768×448 stamp; this tip cover-scales the live board into the well, drops the twin seed footer, and recaptures the brand slate. [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py`.  
-**Menu gameplay film plate (#163):** superseded hollow-plate stamp.  
+**Menu preview fill (#164):** cover-scales the live SubViewport board into the film-plate well, drops the twin seed footer, density/seed gates green; brand slate recaptured. [`MENU_10_OF_10.md`](../VISION/MENU_10_OF_10.md) · `test_menu_composition_density.py`.  
+**Menu gameplay film plate (#163):** superseded hollow-plate / postage-stamp SubViewport.  
 **Menu left-page final (#162):** superseded static seal+maze specimen.  
 **Menu dense craft (#161):** Field Index compact block (superseded hollow left specimen).  
 **Menu hard-reset (#160):** explicit 52/42 anchors, ECHO LATTICE ≥72px, rectangular letterpress seal only.  
@@ -12,12 +12,12 @@
 **Menu composition art:** open folio fills the frame (`menu-composition-art` / #156).  
 **Menu premium / type / no-hud:** #155 · #153 · #154.  
 
-**Links below** use branch `cursor/menu-preview-fill` (blob + raw) until merged to RC1. Brand slate raw:  
-`https://github.com/cmp07/Game-/raw/cursor/menu-preview-fill/docs/RELEASE/screenshots/02_brand_main_menu.png`  
+**Links below** use branch `cursor/echo-lattice-rc1` (blob + raw) unless noted. Brand slate raw on this tip:  
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu.png`  
 Left-page crop:  
-`https://github.com/cmp07/Game-/raw/cursor/menu-preview-fill/docs/RELEASE/screenshots/02_brand_main_menu_left.png`  
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu_left.png`  
 Preview loop gif:  
-`https://github.com/cmp07/Game-/raw/cursor/menu-preview-fill/docs/RELEASE/screenshots/02_brand_main_menu_preview.gif`
+`https://github.com/cmp07/Game-/raw/cursor/echo-lattice-rc1/docs/RELEASE/screenshots/02_brand_main_menu_preview.gif`
 
 > **MP4 masters are in-repo.** Watch [`presskit/trailers/echo_lattice_30s.mp4`](presskit/trailers/echo_lattice_30s.mp4) (16:9 Gate A) and [`echo_lattice_15s_vertical.mp4`](presskit/trailers/echo_lattice_15s_vertical.mp4) (9:16 Clip A). Built from G1-recaptured [`trailer/frame_packs/`](trailer/frame_packs/) + [`text_cards/`](trailer/text_cards/) per [`BEAT_SHEET.md`](trailer/BEAT_SHEET.md). Silent AAC bed until authored SFX mix; Partner upload still human.
 
