@@ -23,7 +23,6 @@ menu.demo_daily_meta_code,Next Fest demo  ·  Daily %s  ·  %s  ·  best %s★,N
 menu.demo_index,DEMO INDEX,试玩索引
 menu.subtitle_placeholder,Four Acts. Ink on paper.,四幕。纸上墨迹。
 menu.daily_placeholder,Daily,每日
-
 hud.moves,Moves: %s,步数：%s
 hud.habit,Habit: %s,习惯：%s
 hud.habit_unwritten,unwritten,尚未写就
@@ -47,7 +46,6 @@ won.finish_demo,→ Finish Demo,→ 完成试玩
 won.next_daily,→ Next Daily,→ 下一每日
 won.daily_complete,→ Daily Complete,→ 每日完成
 won.next_endless,→ Keep Climbing,→ 继续攀升
-
 won.replay,Replay this chamber,重玩本间室
 won.menu,Menu,菜单
 won.stats,"%s
@@ -260,3 +258,18 @@ Habit signature: %s
 最佳步数合计：%s
 习惯签名：%s
 (上:%s  下:%s  左:%s  右:%s)"
+menu.demo_daily_meta,Next Fest demo  ·  Daily %s  ·  best %s★,Next Fest 试玩  ·  每日 %s  ·  最佳 %s★
+hud.habit_sealed,sealed until Mirror Birth,镜像诞生前封存
+hud.habit_identity,%s-leaning · %s,%s倾向 · %s
+hud.habit_identity_pct,%s-leaning (%s%%) · %s,%s倾向（%s%%） · %s
+hud.chamber_fallback,Chamber,间室
+habit.hand_right_leaner,long corridor hand,长廊手笔
+habit.hand_looper,looping ink,回环墨迹
+habit.hand_zigzagger,zigzag hand,折线手笔
+habit.hand_balanced,even hand,匀衡手笔
+won.stars_glyph,%s (%s/3),%s (%s/3)
+won.stamp_birth,Birth stamp · %s · portrait %s%%,诞生印记 · %s · 肖像 %s%%
+won.stamp_boss,Ledger stamp · %s · portrait %s%%,账本印记 · %s · 肖像 %s%%
+won.stamp_grade_scribble,scribble,潦草
+won.stamp_grade_readable,readable,可读
+won.stamp_grade_signed,signed,署名

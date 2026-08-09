@@ -457,6 +457,9 @@ func _run_self_test() -> bool:
 	GameState.best_moves.clear()
 	GameState.best_stars.clear()
 	GameState.completed.clear()
+	GameState.identity_stamps.clear()
+	GameState.last_identity_stamp = {}
+	GameState.habit_identity_unlocked = false
 	GameState.start_new_run()
 	if DemoBuild.is_demo():
 		var expect_n: int = DemoBuild.allowed_campaign_ids().size()
@@ -490,6 +493,35 @@ func _run_self_test() -> bool:
 		printerr("best_moves not updated"); ok = false
 	if GameState.last_clear_stars < 1:
 		printerr("stars not awarded"); ok = false
+	if GameState.is_habit_identity_visible():
+		printerr("habit identity should stay sealed before Mirror Birth"); ok = false
+
+	# Identity ledger stamp — intentional silhouette outranks thrash scribble.
+	var face: Array = [
+		Vector2i(2, 1), Vector2i(4, 1),
+		Vector2i(1, 2), Vector2i(2, 2), Vector2i(4, 2), Vector2i(5, 2),
+		Vector2i(1, 3), Vector2i(3, 3), Vector2i(5, 3),
+		Vector2i(1, 4), Vector2i(5, 4),
+		Vector2i(2, 5), Vector2i(3, 5), Vector2i(4, 5),
+		Vector2i(2, 6), Vector2i(4, 6),
+	]
+	var scribble: Array = [
+		Vector2i(0, 0), Vector2i(3, 1), Vector2i(7, 4), Vector2i(2, 6),
+		Vector2i(11, 2), Vector2i(1, 9), Vector2i(8, 8),
+	]
+	var face_stamp: Dictionary = IdentityStamp.evaluate(face, "mirror_v", 18, 20, {
+		"teaches": "identity", "identity": "induction_signature", "role": "boss", "slug": "identity_induction"
+	})
+	var scribble_stamp: Dictionary = IdentityStamp.evaluate(scribble, "mirror_v", 8, 28, {
+		"teaches": "identity", "identity": "induction_signature", "role": "boss"
+	})
+	if float(face_stamp.get("portrait", 0.0)) <= float(scribble_stamp.get("portrait", 0.0)):
+		printerr("identity portrait failed to prefer intentional silhouette"); ok = false
+	if IdentityStamp.merge_stars(1, face_stamp) < 2:
+		printerr("identity stamp should be able to lift stars via portrait"); ok = false
+	GameState.reveal_habit_identity()
+	if not GameState.is_habit_identity_visible():
+		printerr("habit identity should unlock after Mirror Birth reveal"); ok = false
 
 	# Daily wing: calendar / catalog authority (not YYYYMMDD-only shuffle).
 	GameState.start_daily_run()

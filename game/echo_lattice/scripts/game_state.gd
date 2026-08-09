@@ -29,6 +29,11 @@ var queue_pos: int = 0
 var daily_best_stars: Dictionary = {}  # date_str (or legacy seed_str) -> total stars
 var last_clear_stars: int = 0
 var last_clear_bfs_par: int = 0
+var last_identity_stamp: Dictionary = {}
+## Best portrait stamp per chamber index (ledger gallery).
+var identity_stamps: Dictionary = {}
+## Habit identity HUD unlocks after a Mirror Birth (or Looking Glass) moment.
+var habit_identity_unlocked: bool = false
 
 # Endless: deterministic seeded climb through DailySeeds catalog + rewrite pressure.
 var endless_seed: int = 0
@@ -174,7 +179,7 @@ func record_direction(dir: Vector2i) -> void:
 		move_ring.pop_front()
 
 
-func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1) -> void:
+func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1, stamp: Dictionary = {}) -> void:
 	completed[chamber_id] = true
 	run_cleared[chamber_id] = true
 	var prev: int = int(best_moves.get(chamber_id, 999999))
@@ -184,8 +189,16 @@ func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1) -> void:
 	var par: int = bfs_par if bfs_par > 0 else moves
 	var star_mode: String = "endless" if run_mode == "endless" else "standard"
 	var stars: int = StarRater.rate(moves, par, act_id, star_mode)
+	var data: Dictionary = ChamberBook.get_chamber(chamber_id)
+	if not stamp.is_empty() and IdentityStamp.affects_stars(data):
+		stars = IdentityStamp.merge_stars(stars, stamp)
 	last_clear_stars = stars
 	last_clear_bfs_par = par
+	last_identity_stamp = stamp.duplicate(true) if not stamp.is_empty() else {}
+	if not stamp.is_empty():
+		_store_best_stamp(chamber_id, stamp)
+	if IdentityStamp.is_birth_moment(data) or IdentityStamp.is_identity_chamber(data):
+		habit_identity_unlocked = true
 	var prev_stars: int = int(best_stars.get(chamber_id, 0))
 	if stars > prev_stars:
 		best_stars[chamber_id] = stars
@@ -201,6 +214,73 @@ func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1) -> void:
 		var root: Node = (Engine.get_main_loop() as SceneTree).root
 		if root != null and root.has_node("SteamService"):
 			root.get_node("SteamService").notify_chamber_cleared(chamber_id, moves)
+
+
+func reveal_habit_identity() -> void:
+	## Called mid-chamber after a Mirror Birth rewrite slam settles.
+	if habit_identity_unlocked:
+		return
+	habit_identity_unlocked = true
+	SaveManager.save_to_disk()
+
+
+func is_habit_identity_visible() -> bool:
+	return habit_identity_unlocked
+
+
+func habit_hand_id() -> String:
+	## Diegetic Field Ledger hand from the move ring / habit profile.
+	var sig := _habit_signature_dict()
+	var arch := HabitArchetype.classify(sig)
+	return arch.id
+
+
+func _habit_signature_dict() -> Dictionary:
+	var total: int = 0
+	var best: int = 0
+	for k in habit_profile.keys():
+		var v: int = int(habit_profile[k])
+		total += v
+		best = maxi(best, v)
+	var dominant_bias: float = 0.0 if total <= 0 else float(best) / float(total)
+	var turns: int = 0
+	var backtracks: int = 0
+	var streak: int = 0
+	var longest: int = 0
+	var prev := ""
+	for i in range(move_ring.size()):
+		var d: String = str(move_ring[i])
+		if prev != "" and d != prev:
+			turns += 1
+			if _is_opposite(prev, d):
+				backtracks += 1
+			streak = 1
+		else:
+			streak += 1
+		longest = maxi(longest, streak)
+		prev = d
+	var n: int = move_ring.size()
+	var turn_rate: float = 0.0 if n <= 1 else float(turns) / float(n - 1)
+	var backtrack_rate: float = 0.0 if n <= 1 else float(backtracks) / float(n - 1)
+	return {
+		"total_steps": maxi(total, n),
+		"unique_cells": maxi(1, int(round(float(maxi(total, n)) * (1.0 - backtrack_rate * 0.5)))),
+		"dominant_bias": dominant_bias,
+		"turn_rate": turn_rate,
+		"backtrack_rate": backtrack_rate,
+		"straight_streaks": [longest],
+	}
+
+
+func _store_best_stamp(chamber_id: int, stamp: Dictionary) -> void:
+	var prev: Dictionary = identity_stamps.get(chamber_id, {})
+	if prev.is_empty() or float(stamp.get("portrait", 0.0)) >= float(prev.get("portrait", 0.0)):
+		identity_stamps[chamber_id] = stamp.duplicate(true)
+
+
+static func _is_opposite(a: String, b: String) -> bool:
+	return (a == "up" and b == "down") or (a == "down" and b == "up") \
+		or (a == "left" and b == "right") or (a == "right" and b == "left")
 
 
 func last_stars(chamber_id: int, moves: int, bfs_par: int) -> int:

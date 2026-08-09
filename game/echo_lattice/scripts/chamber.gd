@@ -423,6 +423,15 @@ func _undo() -> void:
 	queue_redraw()
 
 
+func _maybe_reveal_habit_identity() -> void:
+	## Mirror Birth / Looking Glass slam unlocks habit identity in the HUD.
+	if GameState.is_habit_identity_visible():
+		return
+	if IdentityStamp.is_birth_moment(chamber):
+		GameState.reveal_habit_identity()
+		moves_changed.emit(move_count)
+
+
 func _flush_pending_echoes() -> void:
 	var placed: Array = []
 	for p in pending_echoes:
@@ -437,8 +446,10 @@ func _flush_pending_echoes() -> void:
 	rewrite_freeze = false
 	_telegraph_dirty = true
 	_invalidate_checkpoint_dist()
-	if placed.size() > 0 and not _goal_reachable_now():
-		_recover_softlock(placed)
+	if placed.size() > 0:
+		_maybe_reveal_habit_identity()
+		if not _goal_reachable_now():
+			_recover_softlock(placed)
 
 
 func _clear_all_echoes() -> void:
@@ -802,7 +813,16 @@ func _on_win() -> void:
 	_hold_timer = 0.0
 	var cid: int = int(chamber.get("id", 0))
 	var bfs_par: int = _bfs_length(start_pos, goal_pos)
-	GameState.record_chamber_win(cid, move_count, bfs_par)
+	var stamp: Dictionary = {}
+	if IdentityStamp.should_stamp(chamber):
+		stamp = IdentityStamp.evaluate(
+			IdentityStamp.collect_echo_cells(grid, Tile.ECHO_WALL),
+			transform_name,
+			walked.size(),
+			move_count,
+			chamber
+		)
+	GameState.record_chamber_win(cid, move_count, bfs_par, stamp)
 	if has_node("/root/Juice"):
 		Juice.bump(0.25)
 		Juice.hitstop(0.07, 0.08)
