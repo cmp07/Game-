@@ -7,11 +7,15 @@ extends Control
 signal start_new_pressed()
 signal continue_pressed()
 signal daily_pressed()
+signal settings_pressed()
 signal quit_pressed()
+
+const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
 
 @onready var continue_button: Button = %ContinueButton
 @onready var start_button: Button = %StartButton
 @onready var daily_button: Button = %DailyButton
+@onready var settings_button: Button = %SettingsButton
 @onready var quit_button: Button = %QuitButton
 @onready var subtitle: Label = %Subtitle
 @onready var meta_label: Label = %MetaLabel
@@ -19,6 +23,7 @@ signal quit_pressed()
 var _t: float = 0.0
 var _demo_path: Array = []  ## Vector2i points for ambient ghost walk
 var _demo_progress: float = 0.0
+var _settings_overlay: Control = null
 
 
 func _ready() -> void:
@@ -49,6 +54,7 @@ func _ready() -> void:
 			emit_signal("continue_pressed")
 	)
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
+	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
 
 	_build_demo_path()
@@ -57,6 +63,7 @@ func _ready() -> void:
 	_style_as_index_button(start_button, true)
 	_style_as_index_button(continue_button, false)
 	_style_as_index_button(daily_button, false)
+	_style_as_index_button(settings_button, false)
 	_style_as_index_button(quit_button, false)
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
@@ -68,8 +75,24 @@ func _localize_chrome() -> void:
 	continue_button.text = tr("menu.continue")
 	start_button.text = tr("menu.start_new")
 	daily_button.text = tr("menu.daily")
+	if settings_button:
+		settings_button.text = tr("menu.settings")
 	quit_button.text = tr("menu.quit")
 	queue_redraw()
+
+
+func _open_settings() -> void:
+	emit_signal("settings_pressed")
+	if _settings_overlay == null:
+		_settings_overlay = SETTINGS_SCENE.instantiate()
+		add_child(_settings_overlay)
+		_settings_overlay.closed.connect(func():
+			if start_button:
+				start_button.grab_focus()
+		)
+	_settings_overlay.open_menu()
+	if has_node("/root/AudioDirector"):
+		AudioDirector.fire("ui.click")
 
 
 func _style_as_index_button(btn: Button, primary: bool) -> void:
@@ -89,7 +112,7 @@ func _style_as_index_button(btn: Button, primary: bool) -> void:
 
 
 func _ensure_gamepad_focus_chain() -> void:
-	var order: Array = [continue_button, start_button, daily_button, quit_button]
+	var order: Array = [continue_button, start_button, daily_button, settings_button, quit_button]
 	var live: Array = []
 	for btn in order:
 		if btn != null and not btn.disabled:
@@ -202,14 +225,11 @@ func _draw() -> void:
 	# Bottom punch-card ribbon.
 	_draw_punchcard_ribbon(page)
 
-	# Footer controls hint — swaps to Deck/Xbox glyphs after gamepad input.
-	var hint: String = "Move  WASD / Arrows     Restart  R     Undo  Z     Menu  Esc"
-	if has_node("/root/InputGlyphs"):
-		hint = InputGlyphs.controls_line()
+	# Footer controls hint — Deck glyphs > remap labels > localized default.
 	draw_string(
 		ThemeDB.fallback_font,
 		Vector2(page.position.x + 16, page.end.y - 14),
-		hint if has_node("/root/InputGlyphs") else tr("menu.controls_hint"),
+		_footer_controls_hint(),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.INK_SOFT
 	)
 
@@ -254,8 +274,25 @@ func _draw_ambient_lattice(page: Rect2) -> void:
 		draw_rect(fr, fc, true)
 
 
+func _footer_controls_hint() -> String:
+	if has_node("/root/InputGlyphs") and InputGlyphs.last_device >= 0:
+		return InputGlyphs.controls_line()
+	return _controls_hint()
+
+
+func _controls_hint() -> String:
+	var remap := get_node_or_null("/root/ActionRemap")
+	if remap == null or not remap.has_method("get_binding_labels"):
+		return tr("menu.controls_hint")
+	var up: String = ", ".join(remap.get_binding_labels("move_up"))
+	var restart: String = ", ".join(remap.get_binding_labels("restart"))
+	var undo: String = ", ".join(remap.get_binding_labels("undo"))
+	var pause: String = ", ".join(remap.get_binding_labels("pause_menu"))
+	return "Move  %s…     Restart  %s     Undo  %s     Menu  %s" % [up, restart, undo, pause]
+
+
 func _draw_button_underlines(_card: Rect2) -> void:
-	for btn in [continue_button, start_button, daily_button, quit_button]:
+	for btn in [continue_button, start_button, daily_button, settings_button, quit_button]:
 		if btn == null:
 			continue
 		var r: Rect2 = btn.get_global_rect()

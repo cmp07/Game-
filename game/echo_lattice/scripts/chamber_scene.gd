@@ -6,27 +6,35 @@ extends Control
 signal chamber_won(chamber_id: int, moves: int)
 signal menu_requested()
 
+const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn")
+
 @onready var chamber_node: Node2D = %Chamber
 @onready var title_label: Label = %ChamberTitle
 @onready var caption_label: Label = %Caption
 @onready var moves_label: Label = %MovesLabel
 @onready var habit_label: Label = %HabitLabel
 @onready var restart_button: Button = %RestartButton
+@onready var settings_button: Button = %SettingsButton
 @onready var menu_button: Button = %MenuButton
 
 var _glyph_device: int = -1
+var _settings_overlay: Control = null
 
 
 func _ready() -> void:
 	restart_button.text = tr("hud.restart")
 	menu_button.text = tr("hud.menu")
 	restart_button.pressed.connect(func(): chamber_node.reset_chamber())
+	settings_button.pressed.connect(_open_settings)
 	menu_button.pressed.connect(func(): emit_signal("menu_requested"))
 	chamber_node.chamber_won.connect(_on_chamber_won)
 	chamber_node.moves_changed.connect(_on_moves_changed)
 	chamber_node.caption_changed.connect(_on_caption_changed)
 	## Keep D-Pad on movement — HUD chrome is clickable but not focus-stealing.
 	restart_button.focus_mode = Control.FOCUS_NONE
+	if settings_button:
+		settings_button.focus_mode = Control.FOCUS_NONE
+		settings_button.text = tr("menu.settings")
 	menu_button.focus_mode = Control.FOCUS_NONE
 	_refresh_glyph_labels()
 	_style_ledger_chrome()
@@ -53,6 +61,13 @@ func _refresh_glyph_labels() -> void:
 	else:
 		restart_button.text = tr("hud.restart")
 		menu_button.text = tr("hud.menu")
+
+
+func _open_settings() -> void:
+	if _settings_overlay == null:
+		_settings_overlay = SETTINGS_SCENE.instantiate()
+		add_child(_settings_overlay)
+	_settings_overlay.open_menu()
 
 
 func _style_ledger_chrome() -> void:
