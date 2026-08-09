@@ -45,7 +45,7 @@ All requested `cursor/release-*` packs present at integration time are merged ab
 | Demo clamp, focus/pad, locale refresh + tests | [#88](https://github.com/cmp07/Game-/pull/88) `audit-adversarial` | Yes |
 | Full audit corpus under [`docs/AUDIT/`](../AUDIT/) | [#75](https://github.com/cmp07/Game-/pull/75)–[#81](https://github.com/cmp07/Game-/pull/81), [#83](https://github.com/cmp07/Game-/pull/83)–[#86](https://github.com/cmp07/Game-/pull/86), [#89](https://github.com/cmp07/Game-/pull/89) | Yes |
 
-Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **76/100**; Gate A/upgrade wave landed — still blocked on AppID / trailer / Partner paste).
+Executive synthesis: [`../AUDIT/ULTRA_AUDIT_RC1.md`](../AUDIT/ULTRA_AUDIT_RC1.md) (ship-readiness **78/100**; Gate A media landed — still blocked on AppID / final trailer encode / Partner paste).
 
 ### Security High code landed (2026-08-09)
 
@@ -62,13 +62,15 @@ GodotSteam optional path: [`GODOTSTEAM.md`](GODOTSTEAM.md) — clear install doc
 | `cursor/gate-a-capsules` | Yes — Field Ledger finals under [`capsules/`](capsules/) |
 | `cursor/gate-a-godotsteam` | Yes — fail-closed optional SDK + env VDF render |
 | `cursor/gate-a-win-export` | Yes — [`BUILD_WINDOWS.md`](BUILD_WINDOWS.md) + CI stamps |
+| `cursor/gate-a-screenshots` | Yes — 1920×1080 Partner slate under [`screenshots/`](screenshots/) (#111) |
+| `cursor/gate-a-trailer` | Yes — 30s editor pack under [`trailer/`](trailer/) (#112) |
 | `cursor/upgrade-museum` | Yes — thin Museum of Selves |
 | `cursor/upgrade-onboarding` | Yes — 0–3 min Mirror Birth teach path |
 | `cursor/fix-remaining-p1` | Yes — Cloud schema / Hard+ / telemetry |
 
-**Still human / Partner:** real AppID + DepotIDs, legal names, capsule/screenshot/trailer upload, survey+AI paste, live privacy HTTPS URL. Trailer branch not yet on remote at integration time.
+**Still human / Partner:** real AppID + DepotIDs, legal names, capsule/screenshot/trailer **upload**, final 30s trailer encode from editor pack, survey+AI paste, live privacy HTTPS URL. **No AppIDs invented.**
 
-Python contract suite: **23/23** green on the landed tip.
+Python contract suite: re-run after media merge (see Ultra Audit tip note).
 
 ---
 
@@ -83,6 +85,8 @@ Python contract suite: **23/23** green on the landed tip.
 | CI / exports | [`CI_BUILDS.md`](CI_BUILDS.md) |
 | Compliance (Content Survey, privacy, credits) | [`COMPLIANCE_FINAL.md`](COMPLIANCE_FINAL.md) |
 | Gate A Partner legal paste pack | [`legal/`](legal/) |
+| Gate A screenshot slate | [`screenshots/`](screenshots/) |
+| Gate A trailer editor pack | [`trailer/`](trailer/) |
 | Launch marketing | [`LAUNCH_PLAYBOOK.md`](LAUNCH_PLAYBOOK.md) · [`presskit/`](presskit/) |
 | Post-launch / live ops | [`POSTLAUNCH.md`](POSTLAUNCH.md) · [`ROADMAP.md`](ROADMAP.md) · [`SUPPORT_FAQ.md`](SUPPORT_FAQ.md) |
 | Crash / logs | [`CRASH_LOG_HOOK.md`](CRASH_LOG_HOOK.md) |

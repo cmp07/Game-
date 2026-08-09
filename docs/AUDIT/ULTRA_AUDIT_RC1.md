@@ -7,11 +7,11 @@
 | **Synthesis branch** | `cursor/audit-ultra-synthesis` |
 | **Date** | 2026-08-09 |
 | **Mode** | Cloud-only merge of sibling `cursor/audit-*` findings + RC1 tree spot-checks |
-| **Ship-readiness score** | **76 / 100** (post–Gate A / upgrade / remaining-P1 integration; AppID + trailer + Partner paste still block Coming Soon) |
+| **Ship-readiness score** | **78 / 100** (post–Gate A media integration; AppID + final trailer encode + Partner paste still block Coming Soon) |
 | **P0 code landed** | **Yes — 2026-08-09** on `cursor/echo-lattice-rc1` (#82 / #87 / #88 + full `docs/AUDIT/`) |
 | **Fix wave landed** | **Yes — 2026-08-09** `cursor/fix-*` + meta/identity/ci category lanes on RC1 tip `c5cb181` |
 | **Remaining-P1 wave** | **Yes — 2026-08-09** `cursor/fix-remaining-p1` — Cloud save schema, hard-variant menu, telemetry path, rewrite wall-clock |
-| **Gate A / upgrade wave** | **Yes — 2026-08-09** `gate-a-*` (legal, store-copy, capsules, godotsteam, win-export) + `upgrade-museum` + `upgrade-onboarding` on RC1 tip |
+| **Gate A / upgrade wave** | **Yes — 2026-08-09** `gate-a-*` (legal, store-copy, capsules, godotsteam, win-export, **screenshots**, **trailer**) + `upgrade-museum` + `upgrade-onboarding` on RC1 tip |
 
 ---
 
@@ -21,9 +21,9 @@ RC1 is a **real offline playable Steam candidate**, not a paper prototype. The h
 
 **P0 code landed (2026-08-09):** SaveManager bak recovery / post-commit cloud push (#82), Continue/`run_cleared` lifetime-skip fix (#87), and adversarial session integrity (build_flavor + book sanitize, focus/pad hold clear, locale HUD refresh + tests) (#88) are merged into this RC1 tip. Full audit set `#75–#89` docs live under [`docs/AUDIT/`](.).
 
-It is **not** Partner-ready. Steam Partner readiness is **~60% in-repo** (capsule finals + store freeze + legal paste pack + Windows export/GodotSteam scaffolds) but **public Coming Soon still blocked** on real AppID, trailer, screenshot Partner upload, and human Partner console clicks. **Also landed:** `fix-remaining-p1` (Cloud schema / Hard+ / telemetry), thin **Museum of Selves**, **0–3 min Mirror Birth** onboarding. Production audio/art + real AppID remain open.
+It is **not** Partner-ready. Steam Partner readiness is **~68% in-repo** (capsule finals + 1920×1080 screenshot slate + trailer editor pack + store freeze + legal paste pack + Windows export/GodotSteam scaffolds) but **public Coming Soon still blocked** on real AppID, final trailer encode, Partner asset upload, and human Partner console clicks. **Also landed:** `fix-remaining-p1` (Cloud schema / Hard+ / telemetry), thin **Museum of Selves**, **0–3 min Mirror Birth** onboarding. Production audio/art + real AppID remain open.
 
-**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**. In-repo Gate A pack is largely ready; **humans must create AppID, paste Partner fields, upload capsules/screenshots/trailer**. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. **Do not** merge RC1 to `main`.
+**Bottom line:** Safe to treat RC1 as the **integration line for Coming Soon prep**. In-repo Gate A pack (including media) is largely ready; **humans must create AppID, paste Partner fields, encode/upload trailer, upload capsules/screenshots**. **Do not** claim Next Fest Verified / paid 1.0 until the gates in §5 are green. **Do not** merge RC1 to `main`.
 
 ---
 
@@ -60,23 +60,24 @@ It is **not** Partner-ready. Steam Partner readiness is **~60% in-repo** (capsul
 | Sibling P0 **code** fixes | **Merged into RC1** (2026-08-09) — #82 / #87 / #88 + SaveManager union |
 | Post-audit **fix-*** / category lanes | **Merged into RC1** (2026-08-09) — sec-high, daily, habit, content, meta, perf, a11y, endless, juice, identity, ci, wishlist, compat |
 | Gate A / upgrade / remaining-P1 | **Merged into RC1** (2026-08-09) — partner-legal, store-copy, capsules, godotsteam, win-export, museum, onboarding, fix-remaining-p1 |
+| Gate A media (screenshots + trailer) | **Merged into RC1** (2026-08-09) — `gate-a-screenshots` (#111) + `gate-a-trailer` (#112) |
 
 ---
 
-## 2. Scorecard (weighted → 76/100)
+## 2. Scorecard (weighted → 78/100)
 
 | Pillar | Weight | Score | Evidence |
 |---|---:|---:|---|
 | Offline playable loop & softlock bar | 20 | **18** | Continue/save P0s + Daily + Endless + Hard+ wing; rewrite settle wall-clock |
 | Demo / content spine (Act I → Mirror Birth) | 15 | **14** | Clone maps + rewrite.cap + **0–3 min onboarding** teach path to Mirror Birth |
 | Thesis reactivity (habit → authorship) | 10 | **8** | HabitRewriteLever + score bias + Endless mode floor; sealed habit HUD until birth |
-| Store & Steam Partner | 20 | **13** | Capsule finals + store freeze + legal paste pack + wishlist gates; **AppID/trailer/Partner paste still open** (~60% in-repo) |
+| Store & Steam Partner | 20 | **15** | Capsule finals + **1920×1080 screenshot slate** + **trailer editor pack** + store freeze + legal paste; **AppID / final encode / Partner paste still open** (~68% in-repo) |
 | Compat (Win / Linux / Deck / mac) | 10 | **8** | Windows export + digest stamps; GodotSteam fail-closed; Deck 7W; Linux/demo VDFs |
 | Security & privacy | 10 | **9** | SEC High closed; Cloud schema matches save_to_disk; telemetry path + PII scrub |
 | A11y / l10n | 8 | **6** | Settings/demo/glyphs keyed; CJK fetch/OFL; subtitle background |
 | Perf / juice / production audio-art | 7 | **5** | Baked grain + dirty redraw + particle pool; Field Ledger juice; stems still placeholder |
 
-**Interpretation:** Mid-70s = “Coming Soon pack largely ready in-repo,” still **not** Partner-live until AppID + trailer + human Partner clicks.
+**Interpretation:** Upper-70s = “Coming Soon media pack in-repo,” still **not** Partner-live until AppID + final trailer encode + human Partner clicks.
 
 ---
 
@@ -171,7 +172,7 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 
 ## 7. Ship-readiness score & milestone gates
 
-### Score: **76 / 100**
+### Score: **78 / 100**
 
 | Band | Meaning |
 |---|---|
@@ -185,14 +186,15 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 ### Gate A — Steam Coming Soon (must be green)
 
 - [ ] Real **AppID** + studio/legal names; zero `YOUR_*` in live store/compliance paste
-- [~] Final **capsules** landed under `docs/RELEASE/capsules/` (Gate A Field Ledger finals; no PLACEHOLDER stamp) — **Partner upload pending**; still need ≥5 screenshots at ≥1080p preferred
-- [ ] **Trailer** (30s) encoded; muted-safe first 5s; AI disclosure **No** submitted
+- [~] Final **capsules** landed under `docs/RELEASE/capsules/` (Gate A Field Ledger finals; no PLACEHOLDER stamp) — **Partner upload pending**
+- [x] **Screenshot slate** (≥5 @ 1920×1080) under [`docs/RELEASE/screenshots/`](../RELEASE/screenshots/) — **Partner upload pending**
+- [~] **Trailer** editor pack under [`docs/RELEASE/trailer/`](../RELEASE/trailer/) (beat sheet, frame packs, VO/cards, SRT) — **final 30s encode + Partner upload pending**; muted-safe first 5s; AI disclosure **No** still to submit
 - [~] Content Survey + AI disclosure + privacy + ratings **paste-ready** under [`docs/RELEASE/legal/`](../RELEASE/legal/) — **Partner paste + live privacy HTTPS URL pending**
 - [x] Windows export reproducible (CI or checklist) with `steam_enabled=false` for page-only phase OK — **`BUILD_WINDOWS.md` + `export_windows.sh` + digest-pinned CI stamps; confirm green export run**
 - [x] Merge **audit P0 save/Continue/demo** fixes into RC1 (**done 2026-08-09**)
 - [x] Store copy freeze (primary short/long from `STEAM_STORE_FINAL.md` + [`STORE_COPY_FREEZE.md`](../RELEASE/STORE_COPY_FREEZE.md)); habits / Daily / Endless; no horror/AI/loot lead — **Partner paste pending**
 
-**Coming Soon readiness estimate after remaining Gate A Partner clicks:** ~78 partner-page / ~76 overall.
+**Coming Soon readiness estimate after remaining Gate A Partner clicks:** ~82 partner-page / ~78 overall.
 
 ### Gate B — Next Fest demo
 
@@ -244,9 +246,10 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 2. ✅ Land fix-* / category wave (sec/daily/habit/content/meta/perf/a11y/endless/juice/identity/ci/wishlist/compat)
 3. ✅ Remaining code P1s (cloud save schema, Hard+ menu, telemetry path, rewrite wall-clock)
 4. ✅ Gate A / upgrade wave (legal, store-copy, capsules, godotsteam, win-export, museum, onboarding)
-5. Partner clicks: AppID / legal names / capsule+screenshot+trailer upload / survey+AI paste / privacy URL (blocks public)
-6. Confirm CI green Windows export; bake real AppIDs via render_vdf_from_env.py; device BUGBASH Win+Deck
-7. Audio identity polish (Gate B remainder) → Deck Verified
+5. ✅ Gate A media — `gate-a-screenshots` + `gate-a-trailer` into RC1
+6. Partner clicks: AppID / legal names / capsule+screenshot+trailer upload / survey+AI paste / privacy URL (blocks public); encode final 30s trailer from editor pack
+7. Confirm CI green Windows export; bake real AppIDs via render_vdf_from_env.py; device BUGBASH Win+Deck
+8. Audio identity polish (Gate B remainder) → Deck Verified
 ```
 
 ---
@@ -260,3 +263,4 @@ Defer (fence): Workshop/editor, online leaderboards, Act V Afterimage DLC, cosme
 - **Fix-wave note (2026-08-09):** Integrated `cursor/fix-*` plus category lanes `bugs-meta-p1` / `form-identity-ledger` / `steam-ci-depots` into `cursor/echo-lattice-rc1` @ `c5cb181`. Python suite green (17/17). Score **54 → 68**.
 - **Remaining-P1 note (2026-08-09):** `cursor/fix-remaining-p1` closes Cloud save-schema drift, Hard+ menu (U7), SEC-04/08 telemetry hardening, CORE-08 wall-clock settle, habit Endless mode floor. Score **68 → 70**.
 - **Gate A / upgrade integration note (2026-08-09):** Merged `gate-a-partner-legal`, `gate-a-store-copy`, `gate-a-capsules`, `gate-a-godotsteam`, `gate-a-win-export`, `upgrade-museum`, `upgrade-onboarding`, `fix-remaining-p1` into `cursor/echo-lattice-rc1` @ `3cea815`. Python suite green (**23/23** including museum/onboarding/godotsteam/windows/remaining-p1). Score **70 → 76**. Human AppID / Partner paste / trailer / screenshot upload still Gate A.
+- **Gate A media integration note (2026-08-09):** Polled remotes for `cursor/gate-a-trailer*` / `cursor/gate-a-screenshots*` + `docs/RELEASE/trailer/` / `docs/RELEASE/screenshots/`. Merged `cursor/gate-a-screenshots` (#111) and `cursor/gate-a-trailer` (#112) into `cursor/echo-lattice-rc1`. Python suite re-run after merge. Score **76 → 78**. Final trailer encode + Partner uploads + AppID still human Gate A. **No AppIDs invented. Do not merge RC1 to `main`.**

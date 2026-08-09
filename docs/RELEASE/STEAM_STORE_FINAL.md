@@ -359,8 +359,7 @@ Partner doc: [Steam Next Fest: October 2026](https://partner.steamgames.com/doc/
 - [ ] Tags + categories set in Partner  
 - [ ] Capsules uploaded (Gate A finals in `capsules/` — Partner upload pending)  
 - [x] Screenshot slate in-repo (`docs/RELEASE/screenshots/` 1920×1080) — Partner upload pending  
-
-- [ ] Trailer uploaded (announce cut)  
+- [~] Trailer editor pack in-repo (`docs/RELEASE/trailer/`) — **final encode + Partner upload pending**  
 - [ ] Sysreqs filled in Partner  
 - [ ] Price set to frozen **$6.99 USD** (band $4.99–$9.99)  
 - [ ] AI / Content Survey aligned with compliance pack (**No** gameplay AI)  
