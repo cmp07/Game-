@@ -276,3 +276,15 @@ won.stamp_grade_signed,signed,署名
 settings.rebind_prompt,Press key… (Esc cancel),按下按键…（Esc 取消）
 settings.bindings_saved,Bindings saved.,绑定已保存。
 settings.a11y_reset,Accessibility reset to defaults.,无障碍设置已恢复默认。
+menu.museum,Museum of Selves,自我博物馆
+menu.museum_meta,%s selves archived,已归档 %s 个自我
+won.museum_archive,Archived · %s · %s · bias %s%% · museum %s,已归档 · %s · %s · 偏向 %s%% · 馆藏 %s
+museum.title,Museum of Selves,自我博物馆
+museum.blurb,Each clear leaves a fossil. Browse who you were — handwriting on paper.,每次通关留下化石。浏览曾经的你——纸上的笔迹。
+museum.empty,No selves archived yet. Clear a chamber.,尚无归档自我。先通过一间室。
+museum.back,Back,返回
+museum.replay,Replay handwriting,重播笔迹
+museum.detail,"%s
+%s · bias %s%% · %s moves · %s","%s
+%s · 偏向 %s%% · %s 步 · %s"
+museum.vignette_empty,No chalk path on this fossil.,此化石无粉笔路径。

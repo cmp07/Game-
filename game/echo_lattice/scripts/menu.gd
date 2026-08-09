@@ -8,6 +8,7 @@ signal start_new_pressed()
 signal continue_pressed()
 signal daily_pressed()
 signal endless_pressed()
+signal museum_pressed()
 signal settings_pressed()
 signal quit_pressed()
 signal wishlist_pressed()
@@ -18,6 +19,7 @@ const SETTINGS_SCENE: PackedScene = preload("res://scenes/ui/settings_menu.tscn"
 @onready var start_button: Button = %StartButton
 @onready var daily_button: Button = %DailyButton
 @onready var endless_button: Button = %EndlessButton
+@onready var museum_button: Button = %MuseumButton
 @onready var settings_button: Button = %SettingsButton
 @onready var quit_button: Button = %QuitButton
 @onready var subtitle: Label = %Subtitle
@@ -52,6 +54,8 @@ func _ready() -> void:
 	daily_button.pressed.connect(func(): emit_signal("daily_pressed"))
 	if endless_button:
 		endless_button.pressed.connect(func(): emit_signal("endless_pressed"))
+	if museum_button:
+		museum_button.pressed.connect(func(): emit_signal("museum_pressed"))
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
 	if DemoBuild.wishlist_cta_enabled():
@@ -69,6 +73,8 @@ func _ready() -> void:
 	_style_as_index_button(daily_button, false)
 	if endless_button:
 		_style_as_index_button(endless_button, false)
+	if museum_button:
+		_style_as_index_button(museum_button, false)
 	_style_as_index_button(settings_button, false)
 	_style_as_index_button(quit_button, false)
 	if _wishlist_button != null:
@@ -85,6 +91,8 @@ func _localize_chrome() -> void:
 	daily_button.text = tr("menu.daily")
 	if endless_button:
 		endless_button.text = tr("menu.endless")
+	if museum_button:
+		museum_button.text = tr("menu.museum")
 	if settings_button:
 		settings_button.text = tr("menu.settings")
 	quit_button.text = tr("menu.quit")
@@ -124,6 +132,9 @@ func _refresh_progress_copy() -> void:
 		meta_label.text = tr("menu.daily_endless_meta_code") % [today, friend_code, dbest, ebest]
 	else:
 		meta_label.text = tr("menu.daily_endless_meta") % [today, dbest, ebest]
+	var museum_n: int = GameState.museum_count()
+	if museum_n > 0:
+		meta_label.text = "%s  ·  %s" % [meta_label.text, tr("menu.museum_meta") % museum_n]
 
 
 func _open_settings() -> void:
@@ -180,6 +191,8 @@ func _ensure_gamepad_focus_chain() -> void:
 	var order: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		order.append(endless_button)
+	if museum_button:
+		order.append(museum_button)
 	order.append(settings_button)
 	order.append(quit_button)
 	if _wishlist_button != null:
@@ -284,7 +297,7 @@ func _draw() -> void:
 	)
 
 	# Index-card plate behind the button column (right side).
-	var card := Rect2(page.end.x - 340, page.position.y + 90, 280, 320)
+	var card := Rect2(page.end.x - 340, page.position.y + 80, 280, 360)
 	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
 	draw_rect(card, Palette.PAPER_BONE, true)
 	draw_rect(card, Palette.INK_SOFT, false, 1.5)
@@ -374,6 +387,8 @@ func _draw_button_underlines(_card: Rect2) -> void:
 	var buttons: Array = [continue_button, start_button, daily_button]
 	if endless_button:
 		buttons.append(endless_button)
+	if museum_button:
+		buttons.append(museum_button)
 	buttons.append(settings_button)
 	buttons.append(quit_button)
 	if _wishlist_button != null:

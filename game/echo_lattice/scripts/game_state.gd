@@ -34,6 +34,10 @@ var last_identity_stamp: Dictionary = {}
 var identity_stamps: Dictionary = {}
 ## Habit identity HUD unlocks after a Mirror Birth (or Looking Glass) moment.
 var habit_identity_unlocked: bool = false
+## Thin Museum of Selves — habit archive ring buffer (newest first).
+var museum: Dictionary = {"selves": [], "cap": MuseumOfSelves.DEFAULT_CAP}
+## Most recent archived self (post-clear stamp / replay vignette).
+var last_museum_self: Dictionary = {}
 
 # Endless: deterministic seeded climb through DailySeeds catalog + rewrite pressure.
 var endless_seed: int = 0
@@ -179,7 +183,14 @@ func record_direction(dir: Vector2i) -> void:
 		move_ring.pop_front()
 
 
-func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1, stamp: Dictionary = {}) -> void:
+func record_chamber_win(
+	chamber_id: int,
+	moves: int,
+	bfs_par: int = -1,
+	stamp: Dictionary = {},
+	path: Array = [],
+	undos: int = 0
+) -> void:
 	completed[chamber_id] = true
 	run_cleared[chamber_id] = true
 	var prev: int = int(best_moves.get(chamber_id, 999999))
@@ -209,11 +220,60 @@ func record_chamber_win(chamber_id: int, moves: int, bfs_par: int = -1, stamp: D
 		if endless_depth > endless_best_depth:
 			endless_best_depth = endless_depth
 		_ensure_endless_lookahead()
+	_archive_museum_self(chamber_id, data, moves, stars, path, undos, stamp)
 	SaveManager.save_to_disk()
 	if Engine.get_main_loop() is SceneTree:
 		var root: Node = (Engine.get_main_loop() as SceneTree).root
 		if root != null and root.has_node("SteamService"):
 			root.get_node("SteamService").notify_chamber_cleared(chamber_id, moves)
+
+
+func _archive_museum_self(
+	chamber_id: int,
+	data: Dictionary,
+	moves: int,
+	stars: int,
+	path: Array,
+	undos: int,
+	stamp: Dictionary
+) -> void:
+	## Clear-only habit fossil. Deaths never call record_chamber_win.
+	var sig: Dictionary = _habit_signature_dict()
+	var arch := HabitArchetype.classify(sig)
+	var habit: Dictionary = MuseumOfSelves.build_habit_snapshot(sig, dominant_habit(), arch.id)
+	var result: Dictionary = MuseumOfSelves.archive_clear(
+		museum,
+		data,
+		chamber_id,
+		run_mode,
+		active_seed_int(),
+		stars,
+		moves,
+		undos,
+		habit,
+		path,
+		stamp
+	)
+	museum = result.get("museum", museum)
+	last_museum_self = result.get("self", {}).duplicate(true) if typeof(result.get("self", null)) == TYPE_DICTIONARY else {}
+
+
+func list_museum_selves() -> Array:
+	var selves = museum.get("selves", [])
+	return selves if typeof(selves) == TYPE_ARRAY else []
+
+
+func museum_count() -> int:
+	return MuseumOfSelves.count(museum)
+
+
+func get_museum_self(self_id: String) -> Dictionary:
+	return MuseumOfSelves.get_self(museum, self_id)
+
+
+func clear_museum() -> void:
+	museum = {"selves": [], "cap": MuseumOfSelves.DEFAULT_CAP}
+	last_museum_self = {}
 
 
 func reveal_habit_identity() -> void:

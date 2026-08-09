@@ -17,6 +17,7 @@ const SAVE_MAX_CHAMBER_INDEX: int = 1023
 const SAVE_MAX_STRING_LEN: int = 256
 const SAVE_ALLOWED_KEYS: Array[String] = [
 	"version",
+	"updated_at",
 	"build_flavor",
 	"current_chamber",
 	"best_moves",
@@ -29,9 +30,22 @@ const SAVE_ALLOWED_KEYS: Array[String] = [
 	"queue_pos",
 	"daily_seed",
 	"daily_label",
+	"daily_friend_code",
+	"daily_chamber_id",
+	"daily_source",
+	"daily_variation",
 	"daily_best_stars",
+	"endless_seed",
+	"endless_depth",
+	"endless_best_depth",
+	"endless_label",
 	"run_started",
+	"habit_identity_unlocked",
+	"identity_stamps",
+	"museum",
 ]
+const SAVE_MAX_MUSEUM_SELVES: int = 128
+const SAVE_MAX_MUSEUM_PATH: int = 96
 
 
 func _notification(what: int) -> void:
@@ -76,6 +90,7 @@ func save_to_disk() -> bool:
 		"run_started": GameState.run_started,
 		"habit_identity_unlocked": GameState.habit_identity_unlocked,
 		"identity_stamps": GameState.identity_stamps,
+		"museum": GameState.museum,
 	}
 	var payload: String = JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_TMP, FileAccess.WRITE)
@@ -200,11 +215,11 @@ static func validate_save_dict(data: Dictionary) -> Dictionary:
 		var mode := str(data.get("run_mode", ""))
 		if mode.length() > SAVE_MAX_STRING_LEN:
 			return {"ok": false, "reason": "run_mode_too_long"}
-		if mode != "" and mode != "standard" and mode != "daily":
+		if mode != "" and mode != "standard" and mode != "daily" and mode != "endless":
 			return {"ok": false, "reason": "run_mode_invalid"}
 	if data.has("daily_label") and str(data.get("daily_label", "")).length() > SAVE_MAX_STRING_LEN:
 		return {"ok": false, "reason": "daily_label_too_long"}
-	for int_field in ["current_chamber", "queue_pos", "daily_seed"]:
+	for int_field in ["current_chamber", "queue_pos", "daily_seed", "endless_seed", "endless_depth", "endless_best_depth"]:
 		if data.has(int_field) and typeof(data[int_field]) not in [TYPE_INT, TYPE_FLOAT]:
 			return {"ok": false, "reason": "%s_not_number" % int_field}
 	if data.has("current_chamber"):
@@ -253,7 +268,52 @@ static func validate_save_dict(data: Dictionary) -> Dictionary:
 			var qi: int = int(idx_v)
 			if qi < 0 or qi > SAVE_MAX_CHAMBER_INDEX:
 				return {"ok": false, "reason": "run_queue_index_out_of_range"}
+	if data.has("habit_identity_unlocked") and typeof(data["habit_identity_unlocked"]) not in [TYPE_BOOL, TYPE_INT, TYPE_FLOAT]:
+		return {"ok": false, "reason": "habit_identity_unlocked_not_bool"}
+	if data.has("identity_stamps"):
+		if typeof(data["identity_stamps"]) != TYPE_DICTIONARY:
+			return {"ok": false, "reason": "identity_stamps_not_object"}
+		if (data["identity_stamps"] as Dictionary).size() > SAVE_MAX_MAP_ENTRIES:
+			return {"ok": false, "reason": "identity_stamps_too_many_keys"}
+	if data.has("museum"):
+		var museum_check := _validate_museum(data["museum"])
+		if not bool(museum_check.get("ok", false)):
+			return museum_check
 	return {"ok": true, "data": data, "reason": ""}
+
+
+static func _validate_museum(raw: Variant) -> Dictionary:
+	if typeof(raw) != TYPE_DICTIONARY:
+		return {"ok": false, "reason": "museum_not_object"}
+	var museum: Dictionary = raw
+	for k in museum.keys():
+		if str(k) != "selves" and str(k) != "cap":
+			return {"ok": false, "reason": "museum_unknown_key"}
+	if museum.has("cap"):
+		var cap: int = int(museum.get("cap", MuseumOfSelves.DEFAULT_CAP))
+		if cap < 1 or cap > SAVE_MAX_MUSEUM_SELVES:
+			return {"ok": false, "reason": "museum_cap_out_of_range"}
+	if not museum.has("selves"):
+		return {"ok": true, "data": museum, "reason": ""}
+	if typeof(museum["selves"]) != TYPE_ARRAY:
+		return {"ok": false, "reason": "museum_selves_not_array"}
+	var selves: Array = museum["selves"]
+	if selves.size() > SAVE_MAX_MUSEUM_SELVES:
+		return {"ok": false, "reason": "museum_selves_too_many"}
+	for row in selves:
+		if typeof(row) != TYPE_DICTIONARY:
+			return {"ok": false, "reason": "museum_self_not_object"}
+		var self_row: Dictionary = row
+		if str(self_row.get("id", "")).length() > SAVE_MAX_STRING_LEN:
+			return {"ok": false, "reason": "museum_self_id_too_long"}
+		if str(self_row.get("title", "")).length() > SAVE_MAX_STRING_LEN:
+			return {"ok": false, "reason": "museum_self_title_too_long"}
+		var ghost = self_row.get("ghost", {})
+		if typeof(ghost) == TYPE_DICTIONARY:
+			var path = ghost.get("path", [])
+			if typeof(path) == TYPE_ARRAY and path.size() > SAVE_MAX_MUSEUM_PATH:
+				return {"ok": false, "reason": "museum_path_too_long"}
+	return {"ok": true, "data": museum, "reason": ""}
 
 
 func _read_json_file(path: String) -> Variant:
@@ -339,6 +399,11 @@ func _apply_save(parsed: Dictionary) -> void:
 		GameState.identity_stamps = _stringify_int_keys(stamps)
 	else:
 		GameState.identity_stamps = {}
+	GameState.museum = MuseumOfSelves.sanitize_museum(parsed.get("museum", {}))
+	GameState.last_museum_self = {}
+	var selves = GameState.museum.get("selves", [])
+	if typeof(selves) == TYPE_ARRAY and selves.size() > 0 and typeof(selves[0]) == TYPE_DICTIONARY:
+		GameState.last_museum_self = (selves[0] as Dictionary).duplicate(true)
 	_sync_habit_unlock_from_progress()
 	# Drop chamber indices the active build cannot address (demo↔full / corrupt).
 	_sanitize_queue_against_book()
