@@ -13,6 +13,7 @@
 | [`../VISION/SYSTEMS_TRUTH.md`](../VISION/SYSTEMS_TRUTH.md) | **Claim ↔ lived** — habit / daily / identity / museum congruence after RC1 wires |
 | [`05_ART_BIBLE.md`](05_ART_BIBLE.md) | Field Ledger pillars, palette, MVP art lists |
 | [`../VISION/ART_DIRECTION_V3.md`](../VISION/ART_DIRECTION_V3.md) | **Elevation vision** — materials, type, light, fossil language, menu-as-object, chamber-as-page, shader/VFX plan |
+| [`../VISION/FIRST_TEN_MINUTES.md`](../VISION/FIRST_TEN_MINUTES.md) | **Premium cold path** — second-resolution first 10 min + Act I chamber beats |
 | [`13_VERTICAL_SLICE_README.md`](13_VERTICAL_SLICE_README.md) | How to run the playable Godot project |
 | [`06_AUDIO_BIBLE.md`](06_AUDIO_BIBLE.md) | Audio architecture (buses, events, silence policy) |
 | [`../VISION/AUDIO_V3.md`](../VISION/AUDIO_V3.md) | **1.0 audio identity** — slam as musical event, habit as motif, silence as tool |
