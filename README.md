@@ -22,7 +22,8 @@ Planning and production workspace for a sequence of **small, separate Steam desk
 - `docs/RELEASE/ACHIEVEMENTS.json` — Steam achievement catalog
 - `docs/research/` — category ranking and competitive notes
 - `research/` — scratch references
-- `game/echo_lattice/` — Godot 4.3 project (Echo Lattice)
+- `game/echo_lattice/` — Godot 4.3 project (Echo Lattice — frozen archive, kept)
+- `game/weaver/` — Godot 4.3 GDScript MVP stub (The Weaver north star; see [`game/weaver/README.md`](game/weaver/README.md))
 - `steam/echo_lattice/` — SteamPipe VDF templates (placeholder AppID)
 
 ## Stack

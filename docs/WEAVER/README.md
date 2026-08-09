@@ -72,6 +72,14 @@
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
+### Prototype spike
+
+| Doc | Topic |
+|---|---|
+| [`32_FIRST_FIVE.md`](32_FIRST_FIVE.md) | W1 throwaway five-minute beat script |
+| [`screenshots/`](screenshots/) | Prototype loop capture plates |
+| `game/weaver/` | Playable gather → combine → weave spike |
+
 ---
 
 ## Sibling PR sources (design wave)
