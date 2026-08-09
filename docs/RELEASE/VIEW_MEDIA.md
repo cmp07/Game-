@@ -1,7 +1,7 @@
 # Echo Lattice — view media (gallery)
 
 **Umbrella:** [PR #68](https://github.com/cmp07/Game-/pull/68) · RC1 branch [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Tip at index authoring:** `TBD` (menu wave #154–#156 on RC1; recapture after tip stamp)  
+**Tip at index authoring:** `PENDING` (menu wave #154–#156; 02_brand_main_menu.png recapture)
 **G1 media refresh:** capsules (`media-g1-capsules`) + screenshots (`media-g1-screenshots`) + trailer (`media-g1-trailer`) into RC1.  
 **Menu composition art:** open folio fills the frame (`menu-composition-art` / #156) — large survey seal + authored habit silhouette.  
 **Menu premium:** boutique type/selection (`menu-premium-v1` / #155) — Bold/Medium stack, selection-only rules.  

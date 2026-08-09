@@ -425,13 +425,17 @@ class TestDiegeticShellMvp(unittest.TestCase):
         )
         self.assertLess(orphan, 40, msg="menu rows orphaned below Field Index card")
         # Title shell must not carry the chamber punch-card ribbon
-        # (30× ~12px cells on a 14px pitch near the page foot).
+        # (discrete ~12px cells on a 14px pitch). Open-folio page-foot tear
+        # ink is continuous — require light gaps between cells so the
+        # jagged leaf edge is not a false positive.
         ribbon = 0
-        for y in range(990, 1040, 2):
+        for y in range(960, 1020, 2):
             cells = 0
             x = 100
             while x < 520:
-                if lum(x, y) < 100 and lum(x + 6, y) < 100:
+                dark = lum(x, y) < 100 and lum(x + 6, y) < 100
+                gap = lum(x + 11, y) > 150  # light gutter between punch cells
+                if dark and gap:
                     cells += 1
                 x += 14
             if cells >= 12:
