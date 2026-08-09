@@ -27,6 +27,7 @@ REQUIRED_UI_KEYS = {
     "brand.title",
     "brand.tagline",
     "brand.blurb",
+    "boot.wing_line",
     "menu.continue",
     "menu.start_new",
     "menu.daily",

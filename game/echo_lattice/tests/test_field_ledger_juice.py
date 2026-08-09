@@ -86,6 +86,60 @@ class TestShakeDefaults(unittest.TestCase):
         self.assertIn('"screen_shake_intensity": 0.35', store)
 
 
+class TestFeelQuickWins(unittest.TestCase):
+    """QW-1..5 from docs/VISION/QUICK_WINS_SPEC.md — static feel gates."""
+
+    def test_boot_title_scene_and_main_gate(self) -> None:
+        boot = (ROOT / "scripts" / "boot_title.gd").read_text()
+        self.assertIn("boot.wing_line", boot)
+        self.assertIn("signal finished", boot)
+        main = (ROOT / "scripts" / "main.gd").read_text()
+        self.assertIn("boot_title.tscn", main)
+        self.assertIn("_show_boot_title_if_needed", main)
+        self.assertIn("_boot_shown", main)
+        self.assertTrue((ROOT / "scenes" / "boot_title.tscn").is_file())
+
+    def test_menu_silent_boot_and_discrete_fold(self) -> None:
+        menu = (ROOT / "scripts" / "menu.gd").read_text()
+        self.assertIn("Cold boot stays silent", menu)
+        self.assertNotIn('AudioDirector.fire("ui.click")\n\n\nfunc _localize_chrome', menu)
+        # Fold tease must not breathe.
+        self.assertNotIn("sin(_t * 2.0)", menu)
+        self.assertIn("fold_on", menu)
+        self.assertIn("Binder holes", menu)
+
+    def test_settings_index_card_chrome(self) -> None:
+        settings = (ROOT / "scripts" / "a11y" / "settings_menu.gd").read_text()
+        self.assertIn("_style_as_index_card", settings)
+        self.assertIn("PAPER_BONE", settings)
+        self.assertIn("PAPER_MARGIN", settings)
+        self.assertIn("shadow_size = 0", settings)
+
+    def test_chamber_page_framing(self) -> None:
+        chamber = (ROOT / "scripts" / "chamber.gd").read_text()
+        self.assertIn("const PAGE_PAD", chamber)
+        self.assertIn("_draw_page_registration", chamber)
+        self.assertIn("Binding wash", chamber)
+
+    def test_rewrite_warn_hysteresis(self) -> None:
+        chamber = (ROOT / "scripts" / "chamber.gd").read_text()
+        self.assertIn("WARN_ARM_DIST", chamber)
+        self.assertIn("WARN_DISARM_DIST", chamber)
+        self.assertIn("_update_rewrite_warn_state", chamber)
+        self.assertIn("is_rewrite_warn_active", chamber)
+        # Goal plate no longer breathes.
+        self.assertNotIn("sin(goal_pulse_t * 2.0)", chamber)
+        scene = (ROOT / "scripts" / "chamber_scene.gd").read_text()
+        self.assertIn("is_rewrite_warn_active", scene)
+
+    def test_boot_locale_key(self) -> None:
+        csv = (ROOT / "locale" / "echo_lattice.csv").read_text()
+        self.assertIn("boot.wing_line,", csv)
+        vision = REPO / "docs" / "VISION" / "QUICK_WINS_SPEC.md"
+        self.assertTrue(vision.is_file())
+        self.assertIn("QW-1", vision.read_text())
+
+
 def main() -> int:
     suite = unittest.defaultTestLoader.loadTestsFromModule(sys.modules[__name__])
     result = unittest.TextTestRunner(verbosity=2).run(suite)

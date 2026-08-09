@@ -95,8 +95,7 @@ func _ready() -> void:
 		_style_as_index_button(_wishlist_button, false)
 	## Full gamepad path: vertical focus neighbors, no keyboard text entry.
 	_ensure_gamepad_focus_chain()
-	if has_node("/root/AudioDirector"):
-		AudioDirector.fire("ui.click")
+	# Cold boot stays silent — ui.click only on confirm / navigation (QW-2).
 
 
 func _localize_chrome() -> void:
@@ -334,11 +333,20 @@ func _draw() -> void:
 	draw_rect(Rect2(card.position + Vector2(3, 4), card.size), Palette.PAPER_SHADOW, true)
 	draw_rect(card, Palette.PAPER_BONE, true)
 	draw_rect(card, Palette.INK_SOFT, false, 1.5)
-	# Card header rule.
-	draw_line(card.position + Vector2(16, 36), card.position + Vector2(card.size.x - 16, 36), Palette.INK_SOFT, 1.0)
+	draw_rect(card.grow(-3.0), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45), false, 1.0)
+	# Binder holes — diegetic Field Index chrome (QW-2).
+	for i in range(5):
+		var hy: float = card.position.y + 28.0 + float(i) * 70.0
+		if hy > card.end.y - 24.0:
+			break
+		draw_circle(Vector2(card.position.x + 12.0, hy), 3.5, Palette.INK_SOFT)
+		draw_circle(Vector2(card.position.x + 12.0, hy), 1.8, Palette.PAPER_BONE)
+	# Card header double rule.
+	draw_line(card.position + Vector2(22, 34), card.position + Vector2(card.size.x - 16, 34), Palette.INK_SOFT, 1.0)
+	draw_line(card.position + Vector2(22, 38), card.position + Vector2(card.size.x - 16, 38), Palette.INK_SOFT, 1.0)
 	draw_string(
 		ThemeDB.fallback_font,
-		card.position + Vector2(20, 28),
+		card.position + Vector2(26, 26),
 		tr("menu.demo_index") if DemoBuild.is_demo() else tr("menu.field_index"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Palette.SLATE_TEAL
 	)
@@ -387,15 +395,17 @@ func _draw_ambient_lattice(page: Rect2) -> void:
 		var pa: Vector2 = origin + Vector2(a.x * 0.55 * cell, (a.y - 6) * 0.55 * cell)
 		var pb: Vector2 = origin + Vector2(b.x * 0.55 * cell, (b.y - 6) * 0.55 * cell)
 		ArtKit.draw_dashed_line(self, pa, pb, chalk, 1.5, 3.0, 2.5)
-	# Folding walls appearing at the mirrored end of the path — the rewrite tease.
-	var fold_a: float = 0.5 + 0.5 * sin(_t * 2.0)
-	for j in range(3):
-		var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
-		var mx: float = origin.x + (26 - fp.x * 0.55) * cell
-		var my: float = origin.y + (fp.y - 6) * 0.55 * cell + j * cell * 0.55
-		var fr := Rect2(mx, my, cell - 1, cell - 1)
-		var fc := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.35 + 0.45 * fold_a)
-		draw_rect(fr, fc, true)
+	# Folding walls at the mirrored end — discrete stamp when buffer fills (no breath).
+	var fill: int = int(_demo_progress) % 31
+	var fold_on: bool = fill > 22
+	if fold_on:
+		for j in range(3):
+			var fp: Vector2i = _demo_path[mini(visible - 1, _demo_path.size() - 1)]
+			var mx: float = origin.x + (26 - fp.x * 0.55) * cell
+			var my: float = origin.y + (fp.y - 6) * 0.55 * cell + j * cell * 0.55
+			var fr := Rect2(mx, my, cell - 1, cell - 1)
+			var fc := Color(Palette.RUST_FOSSIL.r, Palette.RUST_FOSSIL.g, Palette.RUST_FOSSIL.b, 0.78)
+			draw_rect(fr, fc, true)
 
 
 func _footer_controls_hint() -> String:
@@ -459,7 +469,8 @@ func _draw_punchcard_ribbon(page: Rect2) -> void:
 			tex = cells[1]
 		if i > 22 and i < int(_demo_progress) % 31:
 			tex = cells[2]
-		if i == 29 and int(_t * 3.0) % 8 == 0:
+		# Discrete warn stamp on a full buffer — no blink pulse.
+		if i == 29 and (int(_demo_progress) % 31) > 28:
 			tex = cells[3]
 		var cell_r := Rect2(x + i * 14, y, 12, 16)
 		if tex != null:
