@@ -42,20 +42,30 @@ func _ready() -> void:
 
 func _capture_screenshot(kind: String, out_dir: String) -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
+	# Ensure run queue / progress labels match a real standard run.
+	GameState.start_new_run()
 	if kind == "menu":
 		show_menu()
 	elif kind.begins_with("chamber:"):
-		GameState.current_chamber = int(kind.substr(8))
+		var cidx: int = int(kind.substr(8))
+		GameState.current_chamber = cidx
+		GameState.queue_pos = cidx
 		show_chamber()
 	elif kind.begins_with("won:"):
 		var idx: int = int(kind.substr(4))
 		GameState.current_chamber = idx
+		GameState.queue_pos = idx
+		GameState.last_clear_stars = 3
+		GameState.last_clear_bfs_par = 28
+		GameState.best_moves[idx] = 32
+		GameState.best_stars[idx] = 3
 		show_chamber_won(idx, 42)
 	elif kind.begins_with("rewrite:"):
 		# Show a chamber right after its rewrite fires — drives the player to the
 		# first checkpoint via BFS so the ghost trail + echo walls are visible.
 		var idx2: int = int(kind.substr(8))
 		GameState.current_chamber = idx2
+		GameState.queue_pos = idx2
 		show_chamber()
 		await get_tree().process_frame
 		var stage_kid: Node = stage.get_child(0)
