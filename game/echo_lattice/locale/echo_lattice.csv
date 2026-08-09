@@ -146,11 +146,14 @@ subtitle.ghost_assist,Ghost path revealed once.,幽灵路径已显示一次。
 subtitle.undo,Step withdrawn.,已撤回一步。
 subtitle.win,Chamber clear.,间室清除。
 subtitle.pa.ghost.floor,Floor chalk noted.,已记录地面粉笔。
-subtitle.pa.checkpoint.armed,Rewrite armed.,改写已就绪。
+subtitle.pa.checkpoint.armed,Checkpoint — buffer armed.,检查点 — 缓冲已就绪。
 subtitle.pa.rewrite.fired,Rewrite committed.,改写已提交。
+subtitle.pa.rewrite.matched,It matches you.,它与你吻合。
+subtitle.pa.undo.hint,Undo clears a step.,撤销可清除一步。
 subtitle.pa.boot.lattice_online,Lattice online.,晶格在线。
 subtitle.pa.wing.clear,Wing clear.,本翼清除。
 subtitle.tutorial_buffer,Your last moves leave fossils behind you.,你最近的步伐会留下化石。
+hud.undo_hint,%s · UNDO,%s · 撤销
 menu.subtitle_demo,Demo — Act I · Mirror Birth. Ink on paper.,试玩 — 第一幕 · 镜生。纸上墨迹。
 menu.controls_hint_remap,Move  %s…     Restart  %s     Undo  %s     Menu  %s,移动  %s…     重开  %s     撤销  %s     菜单  %s
 hud.restart_fmt,Restart (%s),重开 (%s)
@@ -169,9 +172,9 @@ act.reflection,Reflection,反射
 act.pressure,Pressure,压力
 act.mastery,Mastery,精通
 chamber.00_quiet_span.title,Quiet Span,静距
-chamber.00_quiet_span.caption,Walk. Nothing here learns you yet.,走。这里还学不会你。
+chamber.00_quiet_span.caption,Walk the span.,走过这段跨距。
 chamber.01_echo_plate.title,Echo Plate,回声板
-chamber.01_echo_plate.caption,Turn once. The lattice is still asleep.,转一次。晶格仍在沉睡。
+chamber.01_echo_plate.caption,Step the plate. Still asleep.,踏上平板。仍在沉睡。
 chamber.02_mirror_birth.title,Mirror Birth,镜生
 chamber.02_mirror_birth.caption,Cross the checkpoint. Your path becomes wall.,跨过检查点。你的路径变成墙。
 chamber.03_break_the_loop.title,Break the Loop,破环

@@ -40,6 +40,8 @@ The demo is a **marketing surface**, not a truncated full build left unlocked. L
 
 **Required beat:** the player reaches **Mirror Birth** (`02_mirror_birth`) — first vertical-mirror rewrite. Act I continues through the Induction identity boss so the wing has a clear finish.
 
+**0–3 min first-hook path:** Quiet Span → Echo Plate → Mirror Birth must stay under a **90-step shortest-path budget** (self-tested in `main.gd` / `tests/test_onboarding_path.py`). That keeps the first authorship beat inside ~90s of deliberate play and well under three minutes for a fresh demo starter. Echo Plate is a **literacy plate** (`C` with `rewrite.cap: 0`) — arms the buffer without fossils — then Mirror Birth fires the spectacle rewrite with a post-slam teach line (`It matches you`) and surfaces the chamber hint.
+
 **Wishlist CTA:** once, on the demo end screen after Act I clear (also available from the demo main menu), **only** when `DemoBuild.wishlist_cta_enabled()` is true — Steam demo builds with a real `store_wishlist_url` or numeric `app_id_placeholder`. Suppressed for `itch` / `drm_free` custom features and whenever the URL would still contain `YOUR_APP_ID` (no placeholder links opened). No other storefront links.
 
 **Daily Challenge:** remains available but draws only from the demo chamber pool (Act I).
@@ -118,17 +120,20 @@ cd game/echo_lattice && godot --headless --path . -- --selftest --demo
 
 ```bash
 python3 game/echo_lattice/tests/test_demo_spec.py
+python3 game/echo_lattice/tests/test_onboarding_path.py
+python3 game/echo_lattice/tests/test_wishlist_gates.py
 ```
 
-Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excluded from the allow-list, export preset `Windows Demo` + `demo` feature + exclude filters, wishlist gates (no hardcoded `YOUR_APP_ID` store link). Also run `python3 game/echo_lattice/tests/test_wishlist_gates.py`.
+Checks: Act I allow-list vs `acts.json`, Mirror Birth present, late-act ids excluded from the allow-list, export preset `Windows Demo` + `demo` feature + exclude filters, wishlist gates (no hardcoded `YOUR_APP_ID` store link), and the 0–3 min onboarding path budget + teach hooks.
 
 ---
 
 ## 6. Acceptance checklist (ship gate)
 
 - [ ] Windows Demo export runs on Win10 / Win11 / Steam Deck Proton
-- [ ] Fresh player clears Quiet Span → Echo Plate → **Mirror Birth** without a tutorial wall of text
-- [ ] Act I end screen shows wishlist once only after AppID / `store_wishlist_url` is real; itch/`drm_free` builds omit the CTA
+- [ ] Fresh player clears Quiet Span → Echo Plate → **Mirror Birth** within ~3 minutes without a tutorial wall of text
+- [ ] Echo Plate arms buffer (PA) without fossils; Mirror Birth post-slam teach + hint surfaces; undo hint arms on first echo-wall bump
+- [ ] Act I end screen / menu show wishlist **only** when `DemoBuild.wishlist_cta_enabled()`; itch/`drm_free` / placeholder AppID omit the CTA
 - [ ] No Reflection / Pressure / Mastery chamber files in the demo PCK
 - [ ] `--selftest --demo` (or `test_demo_spec.py`) green in CI
 - [ ] Store page marks demo playable; Next Fest trailer cut ready
@@ -156,3 +161,4 @@ Full placeholder gate list: [`APPID_PLACEHOLDER_GATES.md`](APPID_PLACEHOLDER_GAT
 |---|---|
 | 2026-08-09 | Initial demo flag, Windows Demo preset, Act I + Mirror Birth scope, wishlist CTA, self-tests. |
 | 2026-08-09 | Wishlist CTA feature-flagged; hide on itch/DRM-free / missing AppID; no `YOUR_APP_ID` shell opens. |
+| 2026-08-09 | Onboarding upgrade: ≤90-step path to Mirror Birth, Echo Plate literacy + post-rewrite teach, wishlist CTA gated-only. |

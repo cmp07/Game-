@@ -58,8 +58,13 @@ func _ready() -> void:
 		museum_button.pressed.connect(func(): emit_signal("museum_pressed"))
 	settings_button.pressed.connect(_open_settings)
 	quit_button.pressed.connect(func(): emit_signal("quit_pressed"))
+	# Wishlist CTA only when DemoBuild gates allow (demo + Steam + real store URL).
 	if DemoBuild.wishlist_cta_enabled():
 		_ensure_wishlist_button()
+	elif _wishlist_button != null:
+		_wishlist_button.visible = false
+		_wishlist_button.queue_free()
+		_wishlist_button = null
 
 	_build_demo_path()
 	set_process(true)

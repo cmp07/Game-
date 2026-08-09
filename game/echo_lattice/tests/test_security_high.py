@@ -65,6 +65,7 @@ SAVE_ALLOWED_KEYS = {
     "habit_identity_unlocked",
     "identity_stamps",
     "museum",
+    "tutorial_flags",
 }
 
 

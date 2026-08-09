@@ -126,6 +126,9 @@ static func _normalize(raw: Dictionary) -> Dictionary:
 		"rewrite": raw.get("rewrite", {}),
 		"hard_variant_of": raw.get("hard_variant_of", null),
 		"par_moves": int(raw.get("par_moves", 0)),
+		"hints": raw.get("hints", []) if typeof(raw.get("hints", [])) == TYPE_ARRAY else [],
+		"onboarding": bool(raw.get("onboarding", false)),
+		"spectacle": bool(raw.get("spectacle", false)),
 		"map": rows,
 		"raw": raw,
 	}
@@ -162,6 +165,11 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 					cps += 1
 		rewrite_cap = maxi(cps, 1)
 	var soft_hard := _soft_hard_from_record(rec)
+	var hints: Array = []
+	if typeof(rec.get("hints", null)) == TYPE_ARRAY:
+		hints = (rec.get("hints") as Array).duplicate()
+	elif typeof(raw.get("hints", null)) == TYPE_ARRAY:
+		hints = (raw.get("hints") as Array).duplicate()
 	return {
 		"id": int(rec.get("id", 0)),
 		"title": str(rec.get("title", "")),
@@ -179,4 +187,7 @@ static func to_playable(rec: Dictionary) -> Dictionary:
 		"rewrite_cap": rewrite_cap,
 		"soft_hard_bias": soft_hard,
 		"act_index": int(rec.get("act_index", 0)),
+		"hints": hints,
+		"onboarding": bool(rec.get("onboarding", raw.get("onboarding", false))),
+		"spectacle": bool(rec.get("spectacle", raw.get("spectacle", false))),
 	}

@@ -43,6 +43,7 @@ const SAVE_ALLOWED_KEYS: Array[String] = [
 	"habit_identity_unlocked",
 	"identity_stamps",
 	"museum",
+	"tutorial_flags",
 ]
 const SAVE_MAX_MUSEUM_SELVES: int = 128
 const SAVE_MAX_MUSEUM_PATH: int = 96
@@ -91,6 +92,7 @@ func save_to_disk() -> bool:
 		"habit_identity_unlocked": GameState.habit_identity_unlocked,
 		"identity_stamps": GameState.identity_stamps,
 		"museum": GameState.museum,
+		"tutorial_flags": GameState.tutorial_flags,
 	}
 	var payload: String = JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_TMP, FileAccess.WRITE)
@@ -404,6 +406,11 @@ func _apply_save(parsed: Dictionary) -> void:
 	var selves = GameState.museum.get("selves", [])
 	if typeof(selves) == TYPE_ARRAY and selves.size() > 0 and typeof(selves[0]) == TYPE_DICTIONARY:
 		GameState.last_museum_self = (selves[0] as Dictionary).duplicate(true)
+	var tflags = parsed.get("tutorial_flags", {})
+	if typeof(tflags) == TYPE_DICTIONARY:
+		GameState.tutorial_flags = (tflags as Dictionary).duplicate(true)
+	else:
+		GameState.tutorial_flags = {}
 	_sync_habit_unlock_from_progress()
 	# Drop chamber indices the active build cannot address (demo↔full / corrupt).
 	_sanitize_queue_against_book()

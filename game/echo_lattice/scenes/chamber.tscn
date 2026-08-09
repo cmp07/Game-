@@ -104,7 +104,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -64.0
+offset_top = -96.0
 grow_horizontal = 2
 grow_vertical = 0
 
@@ -138,3 +138,19 @@ horizontal_alignment = 1
 text = ""
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 1)
+
+[node name="TeachHint" type="Label" parent="BottomBar/BottomMargin/BottomCol"]
+unique_name_in_owner = true
+horizontal_alignment = 1
+text = ""
+visible = false
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.545, 0.227, 0.122, 1)
+
+[node name="UndoHint" type="Label" parent="BottomBar/BottomMargin/BottomCol"]
+unique_name_in_owner = true
+horizontal_alignment = 1
+text = ""
+visible = false
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.29, 0.427, 0.467, 1)

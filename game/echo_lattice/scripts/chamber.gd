@@ -12,6 +12,8 @@ extends Node2D
 signal chamber_won(chamber_id: int, moves: int)
 signal moves_changed(moves: int)
 signal caption_changed(text: String)
+signal teach_hint(text: String)
+signal undo_hint_changed(armed: bool)
 
 enum Tile {
 	FLOOR,
@@ -93,6 +95,8 @@ var tex_rust: Array = []
 
 var _ghost_assist: GhostPathAssist
 var _assist_path: Array = []
+## Teach: arm undo toast after first rewrite self-trap bump.
+var _undo_hint_visible: bool = false
 
 
 func _ready() -> void:
@@ -228,6 +232,7 @@ func load_chamber(id: int) -> void:
 	rewrite_warn_armed = false
 	has_won = false
 	_assist_path.clear()
+	_undo_hint_visible = false
 	_telegraph_dirty = true
 	_invalidate_checkpoint_dist()
 	_pulse_redraw_accum = 0.0
@@ -237,10 +242,14 @@ func load_chamber(id: int) -> void:
 	_hold_timer = 0.0
 	if has_node("/root/AudioDirector"):
 		AudioDirector.set_chamber(id)
-		AudioDirector.on_pa_line("pa.ghost.floor")
-	_subtitle_line("pa.ghost.floor")
+		# Induction Quiet Span stays silent; later chambers keep the ghost-floor tick.
+		if not bool(chamber.get("onboarding", false)) or str(chamber.get("teaches", "")) != "move":
+			AudioDirector.on_pa_line("pa.ghost.floor")
+			_subtitle_line("pa.ghost.floor")
 	emit_signal("moves_changed", move_count)
 	emit_signal("caption_changed", str(chamber.get("caption", "")))
+	emit_signal("undo_hint_changed", false)
+	emit_signal("teach_hint", "")
 	queue_redraw()
 
 
@@ -295,6 +304,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("undo"):
 		_undo()
 		_subtitle_line("undo")
+		if _undo_hint_visible:
+			_undo_hint_visible = false
+			emit_signal("undo_hint_changed", false)
 		return
 	var dir := _dir_from_event(event)
 	if dir != Vector2i.ZERO:
@@ -359,6 +371,8 @@ func _try_move(dir: Vector2i) -> void:
 			# Ink scuff only — cadmium is reserved for rewrite-imminent warn/heartbeat.
 			Juice.bump(0.06)
 			Juice.flash(0.05, 0.08, Palette.INK_SOFT)
+		if t == Tile.ECHO_WALL and rewrites_fired > 0:
+			_arm_undo_teach()
 		return
 	undo_stack.push_back({
 		"prev_pos": player_pos,
@@ -385,9 +399,13 @@ func _try_move(dir: Vector2i) -> void:
 	if t == Tile.CHECKPOINT and not checkpoints_triggered.get(target, false):
 		checkpoints_triggered[target] = true
 		grid[target.y][target.x] = Tile.CHECKPOINT_USED
-		# Chamber rewrite.cap is authoritative — unused C cells stay walkable
-		# markers but do not fire another transform once the cap is spent.
-		if rewrites_fired < rewrite_cap:
+		# Literacy plate (transform none / rewrite.cap 0): arm buffer, no fossils.
+		if transform_name == "none" or rewrite_cap <= 0:
+			_teach_checkpoint_armed()
+			moves_since_checkpoint.clear()
+		elif rewrites_fired < rewrite_cap:
+			# Chamber rewrite.cap is authoritative — unused C cells stay walkable
+			# markers but do not fire another transform once the cap is spent.
 			rewrites_fired += 1
 			_trigger_rewrite()
 		else:
@@ -456,6 +474,7 @@ func _flush_pending_echoes() -> void:
 	_invalidate_checkpoint_dist()
 	if placed.size() > 0:
 		_maybe_reveal_habit_identity()
+		_teach_rewrite_settled()
 		if not _goal_reachable_now():
 			_recover_softlock(placed)
 
@@ -1225,6 +1244,66 @@ func _subtitle_line(id: String) -> void:
 	var overlay := tree.root.find_child("SubtitleOverlay", true, false)
 	if overlay != null and overlay.has_method("show_line"):
 		overlay.call("show_line", id)
+
+
+func _teach_checkpoint_armed() -> void:
+	## Echo Plate literacy: plate seals the buffer without rewriting geometry.
+	if has_node("/root/AudioDirector"):
+		AudioDirector.on_pa_line("pa.checkpoint.armed")
+	else:
+		_subtitle_line("pa.checkpoint.armed")
+	_surface_first_hint()
+	if has_node("/root/GameState"):
+		GameState.set_tutorial_flag("flag.checkpoint_literacy")
+
+
+func _teach_rewrite_settled() -> void:
+	## Mirror Birth coach: name the orange walls as the player's mirror.
+	var is_birth: bool = IdentityStamp.is_birth_moment(chamber) or bool(chamber.get("spectacle", false))
+	var first_mirror: bool = transform_name.begins_with("mirror") and rewrites_fired == 1
+	if not is_birth and not first_mirror:
+		return
+	if has_node("/root/GameState") and GameState.has_tutorial_flag("flag.seen_matches_you") and not is_birth:
+		_surface_first_hint()
+		return
+	if has_node("/root/AudioDirector"):
+		AudioDirector.on_pa_line("pa.rewrite.matched")
+	else:
+		_subtitle_line("pa.rewrite.matched")
+	if has_node("/root/GameState"):
+		GameState.set_tutorial_flag("flag.seen_matches_you")
+	_surface_first_hint()
+
+
+func _arm_undo_teach() -> void:
+	if has_node("/root/GameState") and GameState.has_tutorial_flag("flag.undo_taught"):
+		return
+	if _undo_hint_visible:
+		return
+	_undo_hint_visible = true
+	if has_node("/root/AudioDirector"):
+		AudioDirector.on_pa_line("pa.undo.hint")
+	else:
+		_subtitle_line("pa.undo.hint")
+	if has_node("/root/GameState"):
+		GameState.set_tutorial_flag("flag.undo_taught")
+	emit_signal("undo_hint_changed", true)
+
+
+func _surface_first_hint() -> void:
+	var hints = chamber.get("hints", [])
+	if typeof(hints) != TYPE_ARRAY or hints.is_empty():
+		return
+	var text: String = str(hints[0]).strip_edges()
+	if text.is_empty():
+		return
+	emit_signal("teach_hint", text)
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return
+	var overlay := tree.root.find_child("SubtitleOverlay", true, false)
+	if overlay != null and overlay.has_method("show_text"):
+		overlay.call("show_text", text, 3.2, "teach.hint")
 
 
 
