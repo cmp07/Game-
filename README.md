@@ -1,17 +1,15 @@
 ﻿# sandpile-tycoon
 
-Planning and production workspace for a sequence of **small, separate Steam desktop games** (real Windows `.exe`, not browser) priced roughly **$0.99–$10**.
+Planning and production workspace for a sequence of **small, separate Steam desktop games** (real Windows `.exe`, not browser) priced roughly **$0.99–$12**.
 
-**Start here:** [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md)
+**Start here:** [`docs/FIVE_GAMES_TO_BUILD.md`](docs/FIVE_GAMES_TO_BUILD.md) (decision doc) · [`docs/GAME_PLAN.md`](docs/GAME_PLAN.md) (index)
 
 ## Strategy (short)
 
 - **One pure category per product** — do not mash genres into a hybrid “first game.”
-- **Sequential small Steam releases**, not one mega-scope title:
-  1. Tension / horror vignette (recommended Game 1 — **confirm before production**)
-  2. Coin-machine game
-  3. Idle / particle tycoon (Particul-like)
-- Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- **Decision document:** five fully written concepts + 2026–27 next-wave prediction in [`docs/FIVE_GAMES_TO_BUILD.md`](docs/FIVE_GAMES_TO_BUILD.md).
+- **Sequential small Steam releases**, not one mega-scope title (confirm one of the five before production).
+- Historical category scores: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
 
 ## Layout
 
