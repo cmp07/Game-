@@ -4,7 +4,8 @@
 **Constraint:** Pure categories only — no mashup pitches.  
 **Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).  
+Full market map: [`STEAM_INDIE_TREND_MAP_2025_MID2026.md`](STEAM_INDIE_TREND_MAP_2025_MID2026.md).
 
 ---
 
