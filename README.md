@@ -12,6 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Adversarial kill list (what **not** to build): [`docs/research/DO_NOT_BUILD_2026.md`](docs/research/DO_NOT_BUILD_2026.md)
 
 ## Layout
 

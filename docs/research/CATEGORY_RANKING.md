@@ -4,7 +4,8 @@
 **Constraint:** Pure categories only — no mashup pitches.  
 **Lens:** Solo/small team, fast desktop Steam ship, **$0.99–$10**.
 
-Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).
+Executive plan: [`docs/GAME_PLAN.md`](../GAME_PLAN.md).  
+Kill list (late 2026 traps): [`DO_NOT_BUILD_2026.md`](DO_NOT_BUILD_2026.md).
 
 ---
 
