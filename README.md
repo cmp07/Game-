@@ -12,6 +12,7 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- Longevity patterns (easy start / deep mastery): [`docs/research/EASY_START_DEEP_MASTERY.md`](docs/research/EASY_START_DEEP_MASTERY.md)
 
 ## Layout
 
