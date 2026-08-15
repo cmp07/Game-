@@ -1,8 +1,18 @@
 # The Weaver — Design Changelog
 
 **Role:** Durable record of design corpus landings and product-identity locks.  
-**Authority:** [`MASTER_GDD.md`](MASTER_GDD.md) (v2) · [`ROADMAP.md`](ROADMAP.md) · [`PIVOT.md`](PIVOT.md) · [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md)  
+**Authority:** [`TRUE_NORTH.md`](TRUE_NORTH.md) (user correction, highest) · [`MASTER_GDD.md`](MASTER_GDD.md) (v2, superseded where conflicting) · [`ROADMAP.md`](ROADMAP.md) · [`PIVOT.md`](PIVOT.md) · [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md)  
 **Mode:** Docs history only. No AppID invention.
+
+---
+
+## 2026-08-15 — True North (user correction)
+
+**Branch:** `cursor/weaver-true-north-990f` · **Base:** `cursor/weaver-visual-lock`
+
+- New [`TRUE_NORTH.md`](TRUE_NORTH.md) — quotes user intent; names shed / ports / recipes / Field Ledger drift; locks void-first generative north star
+- **Overrides** shed-yard elevations and timber visual-lock as live fantasy law
+- Index: [`README.md`](README.md) Start here + catalog pointer
 
 ---
 
