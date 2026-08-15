@@ -170,7 +170,7 @@ func seat_structure() -> bool:
 	phase = "inhabit"
 	threads_changed.emit(thread_count)
 	structure_seated.emit()
-	prompt_changed.emit("Structure seated across the void. It will shed Fragments — the loom answers.")
+	prompt_changed.emit("Structure seated across the void. Geometry fills — Fragments will return.")
 	return true
 
 

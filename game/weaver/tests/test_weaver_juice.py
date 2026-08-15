@@ -77,12 +77,16 @@ class TestPalette(unittest.TestCase):
         self.assertGreater(r, b, "kiln_copper must stay warm (R > B)")
         self.assertGreater(r, 120)
 
-    def test_gap_void_not_near_black_cosmos(self) -> None:
+    def test_gap_void_is_true_void_depth(self) -> None:
         h = self.swatches["gap_void"]["hex"].lstrip("#")
         r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-        # Torn cloth gap — sepia dark, not #000 void.
-        self.assertGreater(r + g + b, 60)
-        self.assertLess(abs(r - b), 40)
+        # True void — deep near-black with a cool depth bias (not purple, not cream).
+        self.assertLess(r + g + b, 80)
+        self.assertGreaterEqual(b, r - 8)
+        # Must not be flat pure #000 — keep a readable depth floor.
+        self.assertGreater(r + g + b, 8)
+        # First light token present for creation wake.
+        self.assertIn("first_light", self.swatches)
 
     def test_juice_timings_in_json(self) -> None:
         juice = self.data["juice"]
@@ -162,7 +166,10 @@ class TestJuiceApi(unittest.TestCase):
 
     def test_demo_brand_lockup(self) -> None:
         self.assertIn("THE WEAVER", self.demo)
-        self.assertIn("Stitch the gap", self.demo)
+        self.assertTrue(
+            "Create in the void" in self.demo or "Stitch the gap" in self.demo,
+            msg="demo brand line must sell void-create or legacy stitch",
+        )
 
     def test_demo_selftest_hook(self) -> None:
         self.assertIn("func _selftest(", self.demo)

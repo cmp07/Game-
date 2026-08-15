@@ -1,24 +1,27 @@
 extends Node
 ##
-## WeaverPalette — shed-loom swatches for the W1 juice spike.
-## Single source: content/palette.json. No purple void.
+## WeaverPalette — true-void swatches. Deep black with depth + first light.
+## Single source: content/weaver/palette.json. No purple void. Not a shed.
 ##
 
 const PALETTE_PATH := "res://content/weaver/palette.json"
 
 var cloth_bone: Color = Color("E8DFC8")
 var cloth_deep: Color = Color("D4C7A8")
-var ink_seat: Color = Color("2C2620")
-var ink_soft: Color = Color("4A4238")
-var chalk_dust: Color = Color("C4B8A0")
-var chalk_bright: Color = Color("F0E8D4")
-var timber: Color = Color("6B5344")
+var ink_seat: Color = Color("DCE2EC")
+var ink_soft: Color = Color("9AA6B8")
+var chalk_dust: Color = Color("C8D0DC")
+var chalk_bright: Color = Color("F2EEE4")
+var timber: Color = Color("A8B4C4")
 var kiln_copper: Color = Color("B8784A")
 var kiln_rust: Color = Color("8B4A2A")
-var gap_void: Color = Color("3A342C")
-var shed_lamp: Color = Color("E8D2A8")
-var shed_air: Color = Color("2A2E2C")
-var lamp_warm: Color = Color("C4A46A")
+var gap_void: Color = Color("0A0C12")
+var shed_lamp: Color = Color("E6E0D0")
+var shed_air: Color = Color("05060A")
+var lamp_warm: Color = Color("E6E0D0")
+var void_far: Color = Color("05060A")
+var void_near: Color = Color("0C1018")
+var first_light: Color = Color("E6E0D0")
 
 var _loaded: bool = false
 
@@ -52,6 +55,9 @@ func reload() -> void:
 	shed_lamp = _hex(swatches, "shed_lamp", shed_lamp)
 	shed_air = _hex(swatches, "shed_air", shed_air)
 	lamp_warm = _hex(swatches, "lamp_warm", lamp_warm)
+	void_far = _hex(swatches, "void_far", void_far)
+	void_near = _hex(swatches, "void_near", void_near)
+	first_light = _hex(swatches, "first_light", first_light)
 	_loaded = true
 
 

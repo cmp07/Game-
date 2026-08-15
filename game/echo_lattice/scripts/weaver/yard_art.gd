@@ -1,167 +1,132 @@
 extends Node2D
 ##
-## Shed-yard substrate in field space: canvas, timber decks, posts, seated loom,
-## one-lamp wash. Drawn under craft objects. Never purple void, never cream folio.
+## True void substrate for East Post Gap — deep black with depth.
+## Geometry and first light grow from player acts. Not a shed. Not timber.
+## Never purple nebula / circle-loot on flat black.
 ##
+
+## 0 = empty void · 1 = creation filled the field
+var fill_level: float = 0.0
+## Ambient first-light strength (rises with recover / combine / weave)
+var first_light: float = 0.07
+var _pulse: float = 0.0
+
 
 func _ready() -> void:
 	z_index = -2
-	set_process(false)
+	set_process(true)
 	queue_redraw()
 
 
+func set_creation_state(fill: float, light: float) -> void:
+	fill_level = clampf(fill, 0.0, 1.0)
+	first_light = clampf(light, 0.0, 1.0)
+	queue_redraw()
+
+
+func _process(delta: float) -> void:
+	_pulse += delta
+	# Idle redraw only while light is waking — quiet once fully dark or seated.
+	if first_light > 0.05 and fill_level < 0.98 and int(_pulse * 6.0) % 2 == 0:
+		queue_redraw()
+
+
 func _draw() -> void:
-	var page_deep := Color(0.824, 0.769, 0.643, 1.0)
-	var timber := Color(0.420, 0.325, 0.251, 1.0)
-	var timber_dark := Color(0.322, 0.243, 0.188, 1.0)
-	var timber_lit := Color(0.510, 0.400, 0.290, 1.0)
-	var ink := Color(0.110, 0.094, 0.078, 0.72)
-	var chalk := Color(0.953, 0.925, 0.855, 0.42)
-	var shed_air := Color(0.165, 0.180, 0.173, 1.0)
-	var lamp := Color(0.769, 0.643, 0.416, 0.16)
-	var rust := Color(0.545, 0.227, 0.122, 0.55)
+	var void_far := Color(0.015, 0.018, 0.028, 1.0)
+	var void_mid := Color(0.035, 0.042, 0.058, 1.0)
+	var void_near := Color(0.055, 0.065, 0.085, 1.0)
+	var rim := Color(0.090, 0.105, 0.130, 0.55)
+	var light := Color(0.90, 0.88, 0.82, first_light * 0.55)
+	var geo := Color(0.72, 0.78, 0.86, 0.22 + fill_level * 0.55)
+	var geo_bright := Color(0.92, 0.90, 0.84, 0.15 + fill_level * 0.45)
 
-	# Worn walk ellipses on both decks (Ground shader supplies the page).
-	_draw_ellipse(Vector2(280, 430), Vector2(170, 70), Color(page_deep.r, page_deep.g, page_deep.b, 0.55))
-	_draw_ellipse(Vector2(1000, 430), Vector2(160, 68), Color(page_deep.r, page_deep.g, page_deep.b, 0.5))
+	# Depth wells — authored value steps, not a flat black bag.
+	_draw_ellipse(Vector2(640, 360), Vector2(780, 420), void_far)
+	_draw_ellipse(Vector2(640, 370), Vector2(520, 300), void_mid)
+	_draw_ellipse(Vector2(640, 360), Vector2(300, 190), void_near)
 
-	_draw_timber_deck(40.0, 530.0, 80.0, 640.0, timber, timber_dark, timber_lit, ink, true)
-	_draw_timber_deck(750.0, 1240.0, 80.0, 640.0, timber, timber_dark, timber_lit, ink, false)
-
-	# Shed posts holding the yard — grounded mass, not UI ticks.
-	_draw_post(Vector2(96, 120), timber_dark, ink)
-	_draw_post(Vector2(1184, 124), timber_dark, ink)
-	_draw_post(Vector2(110, 600), timber_dark, ink)
-	_draw_post(Vector2(1170, 596), timber_dark, ink)
-
-	# Seated loom on the right deck — warp + beam, quiet workshop furniture.
-	_draw_loom(Vector2(1088, 248), timber_dark, ink, chalk)
-
-	# Single practical lamp (world-space wash; dithered edge, no bloom).
-	draw_circle(Vector2(300, 150), 210.0, lamp)
-	draw_circle(Vector2(300, 150), 96.0, Color(lamp.r, lamp.g, lamp.b, 0.22))
-	draw_circle(Vector2(300, 150), 28.0, Color(0.769, 0.643, 0.416, 0.18))
-	_dither_ring(Vector2(300, 150), 96.0, 210.0, Color(0.769, 0.643, 0.416, 0.08))
-
-	# Survey ticks / failed-span scars toward the tear.
+	# Soft horizon bands — sell depth without architecture.
 	for i in range(5):
-		var y: float = 140.0 + float(i) * 90.0
-		draw_line(Vector2(508, y), Vector2(528, y), chalk, 1.6, true)
-		draw_circle(Vector2(518, y), 2.0, Color(ink.r, ink.g, ink.b, 0.4))
-		draw_line(Vector2(752, y + 8.0), Vector2(772, y + 8.0), chalk, 1.5, true)
+		var t: float = float(i) / 4.0
+		var y: float = lerpf(80.0, 640.0, t)
+		var a: float = 0.04 + (1.0 - t) * 0.06
+		draw_line(Vector2(40, y), Vector2(1240, y + sin(t * 3.0) * 4.0), Color(rim.r, rim.g, rim.b, a), 1.0, true)
 
-	# Nail holes from a prior span.
-	var nails := PackedVector2Array([
-		Vector2(522, 210), Vector2(526, 330), Vector2(514, 470),
-		Vector2(758, 224), Vector2(766, 360), Vector2(754, 500),
-	])
-	for p in nails:
-		draw_circle(p, 2.4, shed_air)
-		draw_arc(p, 3.2, 0.0, TAU, 8, ink, 1.0, true)
+	# First light — single soft ember, grows with creation (no bloom stack).
+	var lx := 640.0
+	var ly := 300.0 - fill_level * 20.0
+	var r0: float = 28.0 + first_light * 90.0
+	draw_circle(Vector2(lx, ly), r0 * 2.4, Color(light.r, light.g, light.b, first_light * 0.08))
+	draw_circle(Vector2(lx, ly), r0 * 1.2, Color(light.r, light.g, light.b, first_light * 0.14))
+	draw_circle(Vector2(lx, ly), r0 * 0.35, Color(light.r, light.g, light.b, first_light * 0.35))
 
-	# Rust tick on one post — kiln accent ≤5%.
-	draw_line(Vector2(96, 148), Vector2(96, 168), rust, 2.0, true)
+	# Evolving geometry from player acts — seeds → ribs → lattice.
+	_draw_creation_geometry(geo, geo_bright)
 
-	# Fiber whiskers on the canvas margin.
+
+func _draw_creation_geometry(geo: Color, geo_bright: Color) -> void:
+	if fill_level < 0.02:
+		return
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 41
-	for i in range(18):
-		var x: float = rng.randf_range(20.0, 1260.0)
-		draw_line(Vector2(x, 12.0), Vector2(x + rng.randf_range(-6.0, 6.0), rng.randf_range(16.0, 28.0)), ink, 1.0, true)
+	rng.seed = 17
 
-
-func _draw_timber_deck(
-		x0: float, x1: float, y0: float, y1: float,
-		timber: Color, timber_dark: Color, timber_lit: Color, ink: Color,
-		left_side: bool
-) -> void:
-	var board_h := 26.0
-	var y: float = y0
-	var n := 0
-	while y < y1:
-		var h: float = minf(board_h, y1 - y)
-		var tint: Color = timber if (n % 2 == 0) else timber_dark
-		if n % 5 == 0:
-			tint = timber_lit
-		var inner_x: float = x1 if left_side else x0
-		# Deckle the gap edge so boards don't meet in a perfect cut.
-		var jag: float = sin(y * 0.07) * 10.0 + cos(y * 0.13) * 6.0
-		if left_side:
-			inner_x = x1 + jag
-		else:
-			inner_x = x0 + jag
-		var poly := PackedVector2Array([
-			Vector2(x0, y), Vector2(inner_x, y + 1.0),
-			Vector2(inner_x, y + h), Vector2(x0, y + h - 1.0),
+	# Recover phase — sparse angular seeds (not discs).
+	var seed_n: int = clampi(int(fill_level * 10.0), 1, 8)
+	for i in range(seed_n):
+		var ang: float = float(i) * TAU / float(seed_n) + _pulse * 0.08
+		var rad: float = 120.0 + float(i) * 38.0
+		var p := Vector2(640, 360) + Vector2(cos(ang), sin(ang) * 0.72) * rad
+		var s: float = 4.0 + fill_level * 6.0
+		var diamond := PackedVector2Array([
+			p + Vector2(0, -s), p + Vector2(s * 0.7, 0),
+			p + Vector2(0, s), p + Vector2(-s * 0.7, 0),
 		])
-		if not left_side:
-			poly = PackedVector2Array([
-				Vector2(inner_x, y), Vector2(x1, y + 1.0),
-				Vector2(x1, y + h), Vector2(inner_x, y + h - 1.0),
-			])
-		draw_colored_polygon(poly, tint)
-		draw_line(Vector2(x0 if left_side else inner_x, y + h), Vector2(inner_x if left_side else x1, y + h), Color(ink.r, ink.g, ink.b, 0.35), 1.2, true)
-		# End grain at the tear.
-		var ex: float = inner_x
-		draw_line(Vector2(ex, y + 3.0), Vector2(ex, y + h - 3.0), Color(ink.r, ink.g, ink.b, 0.55), 2.0, true)
-		for k in range(3):
-			var gy: float = y + 6.0 + float(k) * (h / 4.0)
-			draw_line(Vector2(ex - 5.0, gy), Vector2(ex + 5.0, gy), Color(ink.r, ink.g, ink.b, 0.28), 1.0, true)
-		y += board_h
-		n += 1
+		draw_colored_polygon(diamond, Color(geo.r, geo.g, geo.b, 0.35 + fill_level * 0.4))
 
+	# Thread phase — luminous ribs across the void.
+	if fill_level >= 0.28:
+		var taut := PackedVector2Array([
+			Vector2(220, 380), Vector2(480, 340 + sin(_pulse) * 2.0),
+			Vector2(640, 332), Vector2(800, 342), Vector2(1060, 372),
+		])
+		draw_polyline(taut, Color(geo_bright.r, geo_bright.g, geo_bright.b, 0.35 + fill_level * 0.4), 1.6 + fill_level * 2.0, true)
+		# Secondary echo rib.
+		var echo := PackedVector2Array([
+			Vector2(260, 430), Vector2(640, 410), Vector2(1020, 428),
+		])
+		draw_polyline(echo, Color(geo.r, geo.g, geo.b, 0.18 + fill_level * 0.25), 1.1, true)
 
-func _draw_post(at: Vector2, timber_dark: Color, ink: Color) -> void:
-	var body := PackedVector2Array([
-		at + Vector2(-9, -22), at + Vector2(9, -22),
-		at + Vector2(11, 28), at + Vector2(-11, 28),
-	])
-	draw_colored_polygon(PackedVector2Array([
-		at + Vector2(-6, 26), at + Vector2(14, 30), at + Vector2(12, 36), at + Vector2(-10, 34),
-	]), Color(0.05, 0.05, 0.04, 0.28))
-	draw_colored_polygon(body, timber_dark)
-	var closed := PackedVector2Array(body)
-	closed.append(body[0])
-	draw_polyline(closed, ink, 1.3, true)
-	draw_line(at + Vector2(-6, -8), at + Vector2(6, -8), ink, 1.1, true)
-
-
-func _draw_loom(at: Vector2, timber_dark: Color, ink: Color, chalk: Color) -> void:
-	# Uprights
-	draw_colored_polygon(PackedVector2Array([
-		at + Vector2(-42, -48), at + Vector2(-32, -48), at + Vector2(-30, 40), at + Vector2(-44, 40),
-	]), timber_dark)
-	draw_colored_polygon(PackedVector2Array([
-		at + Vector2(32, -48), at + Vector2(42, -48), at + Vector2(44, 40), at + Vector2(30, 40),
-	]), timber_dark)
-	# Beam
-	draw_colored_polygon(PackedVector2Array([
-		at + Vector2(-46, -52), at + Vector2(46, -50), at + Vector2(44, -38), at + Vector2(-48, -40),
-	]), Color(0.38, 0.29, 0.22, 1.0))
-	draw_colored_polygon(PackedVector2Array([
-		at + Vector2(-8, 26), at + Vector2(22, 30), at + Vector2(18, 36), at + Vector2(-14, 34),
-	]), Color(0.05, 0.05, 0.04, 0.26))
-	for i in range(7):
-		var t: float = float(i) / 6.0
-		var x: float = lerpf(-28.0, 28.0, t)
-		draw_line(at + Vector2(x, -38), at + Vector2(x * 0.9, 28), Color(ink.r, ink.g, ink.b, 0.55), 1.15, true)
-	draw_line(at + Vector2(-30, 8), at + Vector2(30, 10), chalk, 1.2, true)
+	# Structure phase — lattice fills the void.
+	if fill_level >= 0.72:
+		var lattice_a: float = (fill_level - 0.72) / 0.28
+		for i in range(7):
+			var x: float = 280.0 + float(i) * 110.0
+			draw_line(
+				Vector2(x, 160.0),
+				Vector2(x + (x - 640.0) * -0.08, 560.0),
+				Color(geo.r, geo.g, geo.b, 0.12 + lattice_a * 0.35),
+				1.0 + lattice_a,
+				true
+			)
+		for j in range(5):
+			var y: float = 200.0 + float(j) * 80.0
+			draw_line(
+				Vector2(200, y),
+				Vector2(1080, y + sin(float(j) + _pulse * 0.2) * 3.0),
+				Color(geo_bright.r, geo_bright.g, geo_bright.b, 0.08 + lattice_a * 0.28),
+				1.0,
+				true
+			)
+		# Settled span mass — luminous geometry, not a plank.
+		var span := PackedVector2Array([
+			Vector2(300, 330), Vector2(980, 322), Vector2(990, 358), Vector2(290, 368),
+		])
+		draw_colored_polygon(span, Color(geo_bright.r, geo_bright.g, geo_bright.b, 0.18 + lattice_a * 0.4))
 
 
 func _draw_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
 	var pts := PackedVector2Array()
-	for i in range(18):
-		var a: float = TAU * float(i) / 18.0
+	for i in range(28):
+		var a: float = TAU * float(i) / 28.0
 		pts.append(center + Vector2(cos(a) * radii.x, sin(a) * radii.y))
 	draw_colored_polygon(pts, color)
-
-
-func _dither_ring(center: Vector2, inner: float, outer: float, color: Color) -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 7
-	for i in range(90):
-		var a: float = rng.randf() * TAU
-		var r: float = rng.randf_range(inner, outer)
-		var p := center + Vector2(cos(a), sin(a)) * r
-		if int(p.x + p.y * 3.0) % 3 == 0:
-			draw_rect(Rect2(p, Vector2(2, 2)), color, true)

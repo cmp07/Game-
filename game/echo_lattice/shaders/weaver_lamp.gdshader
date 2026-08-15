@@ -1,13 +1,13 @@
 shader_type canvas_item;
 render_mode unshaded, blend_mix;
 
-// One practical shed lamp — hard-ish falloff + ordered dither, no bloom.
-uniform vec2 lamp_uv = vec2(0.28, 0.22);
-uniform vec4 lamp_color : source_color = vec4(0.769, 0.643, 0.416, 1.0);
-uniform float inner = 0.12;
-uniform float mid = 0.28;
-uniform float outer = 0.48;
-uniform float strength : hint_range(0.0, 0.45) = 0.22;
+// First light in the void — soft wake, ordered dither, no bloom stack, no purple.
+uniform vec2 lamp_uv = vec2(0.50, 0.40);
+uniform vec4 lamp_color : source_color = vec4(0.90, 0.88, 0.82, 1.0);
+uniform float inner = 0.06;
+uniform float mid = 0.22;
+uniform float outer = 0.55;
+uniform float strength : hint_range(0.0, 0.55) = 0.12;
 
 float bayer4(vec2 p) {
 	int x = int(mod(p.x, 4.0));
@@ -39,11 +39,11 @@ void fragment() {
 	if (d <= inner) {
 		inten = 1.0;
 	} else if (d <= mid) {
-		inten = mix(1.0, 0.35, (d - inner) / max(mid - inner, 0.0001));
+		inten = mix(1.0, 0.32, (d - inner) / max(mid - inner, 0.0001));
 	} else if (d <= outer) {
-		inten = mix(0.35, 0.0, (d - mid) / max(outer - mid, 0.0001));
+		inten = mix(0.32, 0.0, (d - mid) / max(outer - mid, 0.0001));
 	}
-	float dither = step(bayer4(FRAGCOORD.xy), clamp(inten + 0.08, 0.0, 1.0));
-	float a = mix(inten, inten * dither, 0.42) * strength;
+	float dither = step(bayer4(FRAGCOORD.xy), clamp(inten + 0.1, 0.0, 1.0));
+	float a = mix(inten, inten * dither, 0.5) * strength;
 	COLOR = vec4(lamp_color.rgb, a);
 }
