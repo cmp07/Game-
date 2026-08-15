@@ -8,6 +8,13 @@ const FragmentScene := preload("res://scenes/weaver/fragment.tscn")
 const StructureScene := preload("res://scenes/weaver/structure.tscn")
 const CombinePanelScene := preload("res://scenes/weaver/ui/combine_panel.tscn")
 
+## Authored yard (Ground / decks / gap). Camera COVER-zooms this into the window —
+## never 1:1 world pixels on a 1920×1080 capture (postage stamp + cream gutters).
+const FIELD_SIZE := Vector2(1280, 720)
+const FIELD_CENTER := Vector2(640, 360)
+## Mild overscan so 16:9 stills and 16:10 Deck crop into the banks, not letterbox.
+const FILL_OVERSCAN := 1.04
+
 @onready var _prompt: Label = %Prompt
 @onready var _hud_fragments: Label = %HudFragments
 @onready var _hud_threads: Label = %HudThreads
@@ -35,6 +42,8 @@ func _ready() -> void:
 	_on_threads_changed(0)
 	_on_prompt_changed("East Post Gap — recover Anchor + Span (E / walk over).")
 	_style_diegetic_hud()
+	_bind_playfield_camera()
+	_fill_window_with_field()
 	_spawn_fragments()
 	_thread_preview.visible = false
 	_combine_panel = CombinePanelScene.instantiate()
@@ -259,11 +268,42 @@ func _clear_spawned_fragments() -> void:
 			child.queue_free()
 
 
-func _frame_camera(center: Vector2, zoom: float) -> void:
+func _bind_playfield_camera() -> void:
+	var vp: Viewport = get_viewport()
+	if vp != null and not vp.size_changed.is_connected(_on_viewport_size_changed):
+		vp.size_changed.connect(_on_viewport_size_changed)
+
+
+func _on_viewport_size_changed() -> void:
+	_fill_window_with_field()
+
+
+func _fill_window_with_field(look: Vector2 = FIELD_CENTER) -> void:
+	## COVER the window with East Post Gap (banks + void). HUD CanvasLayer then
+	## sits on the field — not in a leftover folio / cream rail beside a plate.
 	if _camera == null:
 		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	if vp.x < 8.0 or vp.y < 8.0:
+		vp = Vector2(960, 560)
+	var zoom: float = maxf(vp.x / FIELD_SIZE.x, vp.y / FIELD_SIZE.y) * FILL_OVERSCAN
+	zoom = maxf(zoom, 0.01)
+	var vis: Vector2 = vp / zoom
+	var cx: float = look.x
+	var cy: float = look.y
+	if vis.x >= FIELD_SIZE.x:
+		cx = FIELD_CENTER.x
+	else:
+		var hx: float = vis.x * 0.5
+		cx = clampf(look.x, hx, FIELD_SIZE.x - hx)
+	if vis.y >= FIELD_SIZE.y:
+		cy = FIELD_CENTER.y
+	else:
+		var hy: float = vis.y * 0.5
+		cy = clampf(look.y, hy, FIELD_SIZE.y - hy)
 	_camera.enabled = true
-	_camera.position = center
+	_camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
+	_camera.position = Vector2(cx, cy)
 	_camera.zoom = Vector2(zoom, zoom)
 
 
@@ -283,7 +323,7 @@ func _stage_gather_beat() -> void:
 	# One Fragment already in hand; player stands at the next recover.
 	Loom.add_fragment("Anchor")
 	_player.global_position = Vector2(340, 450)
-	_frame_camera(Vector2(420, 400), 1.18)
+	_fill_window_with_field()
 	Loom.prompt_changed.emit("Gather — recover Span beside you (E / walk over).")
 	for i in 10:
 		await get_tree().process_frame
@@ -298,7 +338,7 @@ func _stage_combine_beat() -> void:
 	Loom.add_fragment("Anchor")
 	Loom.add_fragment("Span")
 	_player.global_position = Vector2(520, 400)
-	_frame_camera(Vector2(640, 360), 1.05)
+	_fill_window_with_field()
 	if _combine_panel != null and _combine_panel.has_method("stage_photo_selection"):
 		_combine_panel.stage_photo_selection([0, 1])
 	else:
@@ -322,7 +362,7 @@ func _stage_weave_beat() -> void:
 		return
 	_near_void = true
 	_player.global_position = Vector2(640, 400)
-	_frame_camera(Vector2(640, 360), 1.12)
+	_fill_window_with_field()
 	_refresh_thread_preview()
 	_flash_thread_bind()
 	Loom.prompt_changed.emit("Weave — tension the Brace Thread across the void (Space).")
@@ -341,7 +381,7 @@ func _stage_emit_beat() -> void:
 	for i in 20:
 		await get_tree().process_frame
 	_player.global_position = Vector2(520, 420)
-	_frame_camera(Vector2(640, 360), 1.1)
+	_fill_window_with_field()
 	var kind := Loom.emit_from_structure(_structure_anchor.global_position)
 	if kind == "":
 		kind = "Span"
@@ -362,7 +402,7 @@ func _stage_wider_yard_beat() -> void:
 	spawn_fragment("Span", Vector2(180, 600), Color(0.45, 0.36, 0.24))
 	_freeze_fragments_auto_collect()
 	_player.global_position = Vector2(200, 560)
-	_frame_camera(Vector2(640, 360), 0.72)
+	_fill_window_with_field()
 	Loom.prompt_changed.emit("Shed Yard — Structure stands; the loom answers across East Post Gap.")
 	for i in 12:
 		await get_tree().process_frame
@@ -381,7 +421,7 @@ func _stage_legacy_void_beat() -> void:
 	_spawn_fragments()
 	_freeze_fragments_auto_collect()
 	_player.global_position = Vector2(220, 400)
-	_frame_camera(Vector2(640, 360), 1.0)
+	_fill_window_with_field()
 	Loom.prompt_changed.emit("East Post Gap — gather Anchor + Span (E / walk over).")
 	for i in 10:
 		await get_tree().process_frame

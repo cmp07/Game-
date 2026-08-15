@@ -96,6 +96,22 @@ def test_main_routes_weaver() -> None:
         _fail("field.gd missing run_photo_beats")
 
 
+def test_field_camera_covers_window() -> None:
+    """Yard must COVER-zoom into the window — not 1:1 1280×720 on 1080p (postage + cream)."""
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    tscn = (SCENES / "field.tscn").read_text(encoding="utf-8")
+    if "func _fill_window_with_field" not in field:
+        _fail("field.gd must COVER-zoom the yard into the window")
+    if "FILL_OVERSCAN" not in field:
+        _fail("field camera missing FILL_OVERSCAN")
+    if "_frame_camera(Vector2(420, 400), 1.18)" in field:
+        _fail("gather beat still left-shifts camera into cream gutter")
+    if "_frame_camera(Vector2(640, 360), 0.72)" in field:
+        _fail("wider-yard beat still pulls camera out to a postage stamp")
+    if "YardMatte" not in tscn:
+        _fail("field.tscn needs YardMatte so overscan is dirt, not cream clear-color")
+
+
 def test_locale_brand() -> None:
     csv = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
     if "brand.title,THE WEAVER," not in csv:
@@ -172,6 +188,7 @@ def main() -> None:
     test_host_files_exist()
     test_field_returns_via_signal()
     test_main_routes_weaver()
+    test_field_camera_covers_window()
     test_locale_brand()
     test_visual_lock_no_maze_film_or_discs()
     test_loom_logic_mirror()
