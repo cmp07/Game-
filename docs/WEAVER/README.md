@@ -105,6 +105,7 @@
 | [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | EL → archive migrate **plan** (no move yet) |
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
+| [`36_SPEAK_TYPE.md`](36_SPEAK_TYPE.md) | Speak/type void spike — words become Fragments/Threads/Laws |
 
 ### 1000× — Vision / deepen pack
 
