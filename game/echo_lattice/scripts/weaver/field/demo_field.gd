@@ -15,7 +15,7 @@ var _gap_left: Vector2 = Vector2.ZERO
 var _gap_right: Vector2 = Vector2.ZERO
 var _thread_path: PackedVector2Array = PackedVector2Array()
 var _structure_seated: bool = false
-var _status: String = "Survey the frayed gap. Press E to recover a Fragment."
+var _status: String = "Survey the true void. Press E to recover a Fragment — first light wakes."
 var _brand_pulse: float = 0.0
 
 
@@ -54,7 +54,7 @@ func _reset_field() -> void:
 		{"id": &"anchor_b", "family": "anchor", "pos": Vector2(vs.x * 0.78, vs.y * 0.58), "home": Vector2(vs.x * 0.78, vs.y * 0.58), "loose": true},
 		{"id": &"span_c", "family": "span", "pos": Vector2(vs.x * 0.18, vs.y * 0.62), "home": Vector2(vs.x * 0.18, vs.y * 0.62), "loose": true},
 	]
-	_status = "Survey the frayed gap. Press E to recover a Fragment."
+	_status = "Survey the true void. Press E to recover a Fragment — first light wakes."
 	queue_redraw()
 
 
@@ -184,45 +184,64 @@ func _draw() -> void:
 
 
 func _draw_substrate(vs: Vector2) -> void:
-	draw_rect(Rect2(Vector2.ZERO, vs), WeaverPalette.cloth_bone, true)
-	# Soft shed lamp wash from upper left — practical light, no bloom stack.
+	# True void — deep black with depth wells. Not cream cloth / shed page.
+	draw_rect(Rect2(Vector2.ZERO, vs), WeaverPalette.gap_void, true)
+	var mid := Color(0.04, 0.05, 0.07, 1.0)
+	_draw_ellipse(Vector2(vs.x * 0.5, vs.y * 0.48), Vector2(vs.x * 0.38, vs.y * 0.28), mid)
+	# First light ember — wakes with acts (stronger once structure seated).
 	var lamp: Color = WeaverPalette.shed_lamp
-	draw_circle(Vector2(vs.x * 0.12, vs.y * 0.1), vs.x * 0.42, Color(lamp.r, lamp.g, lamp.b, 0.14))
-	# Cloth grain lines (subtle).
-	var grain: Color = Color(WeaverPalette.cloth_deep.r, WeaverPalette.cloth_deep.g, WeaverPalette.cloth_deep.b, 0.22)
-	var y: float = 24.0
+	var la: float = 0.10 if not _structure_seated else 0.28
+	if _hand.size() > 0:
+		la += 0.06
+	draw_circle(Vector2(vs.x * 0.5, vs.y * 0.42), vs.x * 0.22, Color(lamp.r, lamp.g, lamp.b, la * 0.35))
+	draw_circle(Vector2(vs.x * 0.5, vs.y * 0.42), vs.x * 0.06, Color(lamp.r, lamp.g, lamp.b, la * 0.55))
+	# Depth horizon bands.
+	var grain: Color = Color(0.12, 0.14, 0.18, 0.18)
+	var y: float = 40.0
 	while y < vs.y:
 		draw_line(Vector2(0, y), Vector2(vs.x, y), grain, 1.0)
-		y += 18.0
+		y += 28.0
 
 
 func _draw_gap(vs: Vector2) -> void:
 	var mid_y: float = vs.y * 0.48
 	var left_x: float = vs.x * 0.34
 	var right_x: float = vs.x * 0.66
-	# Physical torn gap — dark cloth, ragged edge, dust fall. Never purple cosmos.
-	var gap := Rect2(left_x, mid_y - 52.0, right_x - left_x, 104.0)
-	draw_rect(gap, WeaverPalette.gap_void, true)
-	var edge: Color = WeaverPalette.cloth_deep
-	for i in range(10):
-		var t: float = float(i) / 9.0
-		var x: float = lerpf(left_x, right_x, t)
-		var jag: float = sin(t * 17.0 + _brand_pulse * 0.3) * 5.0
-		draw_circle(Vector2(x, mid_y - 52.0 + jag), 3.5, edge)
-		draw_circle(Vector2(x, mid_y + 52.0 - jag), 3.5, edge)
-	# Dust motes falling in the gap (atmosphere, not sparkle juice).
-	var dust: Color = Color(WeaverPalette.chalk_dust.r, WeaverPalette.chalk_dust.g, WeaverPalette.chalk_dust.b, 0.35)
+	# True void well — deeper black, geometric rim, not torn boards.
+	var gap := Rect2(left_x, mid_y - 64.0, right_x - left_x, 128.0)
+	draw_rect(gap, Color(0.015, 0.018, 0.028, 1.0), true)
+	var rim: Color = Color(0.55, 0.60, 0.70, 0.45)
+	draw_line(Vector2(left_x, mid_y - 64.0), Vector2(left_x, mid_y + 64.0), rim, 1.4, true)
+	draw_line(Vector2(right_x, mid_y - 64.0), Vector2(right_x, mid_y + 64.0), rim, 1.4, true)
+	# Evolving geometry ribs as hand fills / structure seats.
+	var fill: float = 0.15 + float(_hand.size()) * 0.2 + (0.5 if _structure_seated else 0.0)
+	var geo: Color = Color(0.78, 0.84, 0.92, 0.25 + fill * 0.4)
+	for i in range(clampi(int(fill * 8.0), 2, 8)):
+		var t: float = float(i) / 7.0
+		var y2: float = lerpf(mid_y - 50.0, mid_y + 50.0, t)
+		draw_line(Vector2(left_x, y2), Vector2(left_x + 40.0 * fill, mid_y), geo, 1.1, true)
+		draw_line(Vector2(right_x, y2), Vector2(right_x - 40.0 * fill, mid_y), geo, 1.1, true)
+	# Sparse depth motes (rects — not Fragment orbs).
+	var dust: Color = Color(WeaverPalette.chalk_dust.r, WeaverPalette.chalk_dust.g, WeaverPalette.chalk_dust.b, 0.28)
 	for i in range(5):
 		var dx: float = left_x + 18.0 + float(i) * (gap.size.x - 36.0) / 4.0
 		var dy: float = mid_y - 30.0 + fmod(_brand_pulse * (12.0 + float(i) * 3.0) + float(i) * 17.0, 60.0)
-		draw_circle(Vector2(dx, dy), 1.4, dust)
+		draw_rect(Rect2(Vector2(dx, dy), Vector2(1.5, 1.5)), dust, true)
 
 
 func _draw_brand(vs: Vector2) -> void:
 	# Brand-first lockup — hero signal, not nav chrome.
 	var title := "THE WEAVER"
 	draw_string(ThemeDB.fallback_font, Vector2(vs.x * 0.08, vs.y * 0.12), title, HORIZONTAL_ALIGNMENT_LEFT, -1, 36, WeaverPalette.ink_seat)
-	draw_string(ThemeDB.fallback_font, Vector2(vs.x * 0.08, vs.y * 0.17), "Stitch the gap. Live in the seam.", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, WeaverPalette.ink_soft)
+	draw_string(ThemeDB.fallback_font, Vector2(vs.x * 0.08, vs.y * 0.17), "Create in the void. Fill it with light.", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, WeaverPalette.ink_soft)
+
+
+func _draw_ellipse(center: Vector2, radii: Vector2, color: Color) -> void:
+	var pts := PackedVector2Array()
+	for i in range(22):
+		var a: float = TAU * float(i) / 22.0
+		pts.append(center + Vector2(cos(a) * radii.x, sin(a) * radii.y))
+	draw_colored_polygon(pts, color)
 
 
 func _draw_loose_fragments() -> void:
@@ -250,7 +269,7 @@ func _draw_fragment_glyph(pos: Vector2, family: String, sc: float) -> void:
 
 func _draw_hand_shelf(vs: Vector2) -> void:
 	var shelf := Rect2(vs.x * 0.32, vs.y * 0.76, vs.x * 0.36, vs.y * 0.12)
-	draw_rect(shelf, WeaverPalette.cloth_deep, true)
+	draw_rect(shelf, Color(0.04, 0.05, 0.07, 1.0), true)
 	draw_rect(shelf, WeaverPalette.ink_soft, false, 1.0)
 	draw_string(ThemeDB.fallback_font, Vector2(shelf.position.x + 10, shelf.position.y + 18), "HAND / SHELF", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, WeaverPalette.ink_soft)
 	var n: int = _hand.size()
@@ -260,11 +279,19 @@ func _draw_hand_shelf(vs: Vector2) -> void:
 
 
 func _draw_seated_span() -> void:
-	# Quiet weight — ink seam + timber walkable law across the gap.
+	# Quiet weight — luminous geometry across the void.
 	draw_polyline(_thread_path, WeaverPalette.ink_seat, 5.0, true)
 	draw_polyline(_thread_path, WeaverPalette.timber, 3.0, true)
-	draw_circle(_gap_left, 6.0, WeaverPalette.ink_seat)
-	draw_circle(_gap_right, 6.0, WeaverPalette.ink_seat)
+	var diamond_l := PackedVector2Array([
+		_gap_left + Vector2(0, -6), _gap_left + Vector2(6, 0),
+		_gap_left + Vector2(0, 6), _gap_left + Vector2(-6, 0),
+	])
+	var diamond_r := PackedVector2Array([
+		_gap_right + Vector2(0, -6), _gap_right + Vector2(6, 0),
+		_gap_right + Vector2(0, 6), _gap_right + Vector2(-6, 0),
+	])
+	draw_colored_polygon(diamond_l, WeaverPalette.ink_seat)
+	draw_colored_polygon(diamond_r, WeaverPalette.ink_seat)
 
 
 func _draw_status(vs: Vector2) -> void:

@@ -225,7 +225,9 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
     frag = (SCRIPTS / "fragment.gd").read_text(encoding="utf-8")
     if "draw_colored_polygon" not in frag:
         _fail("fragments need polygon silhouettes")
-    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag:
+    if "draw_circle" in frag:
+        _fail("fragments must not default to discs")
+    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag and "shard" not in frag.lower():
         _fail("fragments need family silhouettes")
     # Ban disc-as-default body (Glow orb / circle mesh), not tiny punched ports.
     if "draw_circle(Vector2.ZERO" in frag or "draw_circle(Vector2(0, 0)" in frag:
@@ -245,8 +247,22 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
     if 'window_set_title("The Weaver")' not in main:
         _fail("main must set window title The Weaver")
     gap = (SCRIPTS / "gap_art.gd").read_text(encoding="utf-8")
-    if "shed_air" not in gap and "0.165" not in gap:
-        _fail("gap art must show shed-air depth")
+    if "true void" not in gap.lower() and "void_deep" not in gap and "0.012" not in gap:
+        _fail("gap art must show true-void depth (deep black with depth)")
+    if "splintered plank" in gap.lower() or "_draw_timber_deck" in gap:
+        _fail("gap art still draws shed timber/planks")
+    yard = (SCRIPTS / "yard_art.gd").read_text(encoding="utf-8")
+    if "set_creation_state" not in yard:
+        _fail("yard/void art must evolve from player creation state")
+    if "_draw_timber_deck" in yard or "_draw_loom" in yard:
+        _fail("yard art still draws shed timber/loom")
+    if "first_light" not in yard and "first light" not in yard.lower():
+        _fail("void field must include first light")
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    if "_sync_void_creation" not in field:
+        _fail("field.gd must sync void fill from player acts")
+    if "FILL_OVERSCAN" not in field or "_fill_window_with_field" not in field:
+        _fail("cover-zoom full window must remain")
 
 
 def test_loom_logic_mirror() -> None:

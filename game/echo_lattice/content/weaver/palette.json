@@ -1,24 +1,27 @@
 {
-  "name": "The Weaver — Shed Loom",
-  "version": "0.1.0",
-  "notes": "Diegetic workshop palette for the W1 juice spike. Fiber, dust, timber, kiln copper. Never purple void.",
+  "name": "The Weaver — True Void",
+  "version": "0.2.0",
+  "notes": "Deep black void with depth; first light and geometry evolve from player acts. Never purple nebula. Not a shed / timber workshop.",
   "swatches": {
-    "cloth_bone":      { "hex": "#E8DFC8", "role": "field substrate — warm bone paper / raw canvas" },
-    "cloth_deep":      { "hex": "#D4C7A8", "role": "worn cloth, gap shadow underlay" },
-    "ink_seat":        { "hex": "#2C2620", "role": "seated seams, Fragment silhouettes" },
-    "ink_soft":        { "hex": "#4A4238", "role": "secondary line, chalk under-ink" },
-    "chalk_dust":      { "hex": "#C4B8A0", "role": "fragment suck wisps, provisional fiber" },
-    "chalk_bright":    { "hex": "#F0E8D4", "role": "combine flash peak — paper press, not neon" },
-    "timber":          { "hex": "#6B5344", "role": "Span / Anchor body" },
-    "kiln_copper":     { "hex": "#B8784A", "role": "weave pulse crest, stress accent ≤10%" },
-    "kiln_rust":       { "hex": "#8B4A2A", "role": "overload creep along Thread" },
-    "gap_void":        { "hex": "#3A342C", "role": "frayed physical gap — torn edge, never chroma purple" },
-    "shed_air":        { "hex": "#2A2E2C", "role": "void drop behind torn margin — cool neutral, never #000" },
-    "lamp_warm":       { "hex": "#C4A46A", "role": "single practical shed lamp" },
-    "shed_lamp":       { "hex": "#E8D2A8", "role": "single practical light wash" }
+    "cloth_bone":      { "hex": "#E8DFC8", "role": "legacy craft warm — combine flash only" },
+    "cloth_deep":      { "hex": "#D4C7A8", "role": "legacy warm underlay — combine flash only" },
+    "ink_seat":        { "hex": "#DCE2EC", "role": "seated luminous seams" },
+    "ink_soft":        { "hex": "#9AA6B8", "role": "secondary geometry line" },
+    "chalk_dust":      { "hex": "#C8D0DC", "role": "fragment suck wisps" },
+    "chalk_bright":    { "hex": "#F2EEE4", "role": "combine flash peak / first light crest" },
+    "timber":          { "hex": "#A8B4C4", "role": "Span / Anchor geometry body (light mass)" },
+    "kiln_copper":     { "hex": "#B8784A", "role": "weave pulse crest ≤10%" },
+    "kiln_rust":       { "hex": "#8B4A2A", "role": "stress accent" },
+    "gap_void":        { "hex": "#0A0C12", "role": "true void well — deep black with depth" },
+    "shed_air":        { "hex": "#05060A", "role": "legacy key — maps to void_far depth" },
+    "void_far":        { "hex": "#05060A", "role": "far void depth plane" },
+    "void_near":       { "hex": "#0C1018", "role": "near void depth plane" },
+    "first_light":     { "hex": "#E6E0D0", "role": "first light ember — wakes with creation" },
+    "lamp_warm":       { "hex": "#E6E0D0", "role": "first light wash" },
+    "shed_lamp":       { "hex": "#E6E0D0", "role": "legacy key — first light wash" }
   },
   "banlist": {
-    "notes": "Hard ban — see docs/WEAVER/09_VISUAL.md §1 and docs/WEAVER/35_JUICE.md.",
+    "notes": "Hard ban — purple cosmic gameslop + shed timber cosplay as the field fantasy.",
     "colors": [
       "#7F00FF", "#B026FF", "#8A2BE2", "#9B59B6",
       "any mystical saturated purple / violet bloom",
@@ -29,19 +32,20 @@
       "magnet catch beam / Pokémon suck",
       "additive bloom halos on Fragments",
       "idle UI breathe/pulse chrome",
-      "confetti / portal swallow on Structure seat"
+      "confetti / portal swallow on Structure seat",
+      "timber deck / shed posts as the playfield identity"
     ]
   },
   "juice": {
     "fragment_suck": {
       "duration_ms": 320,
       "wisp_count": 6,
-      "material": "chalk_dust + fiber strand toward hand"
+      "material": "chalk_dust + light strand toward hand"
     },
     "combine_flash": {
       "duration_ms": 140,
       "peak": 0.55,
-      "material": "chalk_bright paper press at seam — local, not full-screen"
+      "material": "first_light paper press at seam — local, not full-screen"
     },
     "weave_pulse": {
       "duration_ms": 480,

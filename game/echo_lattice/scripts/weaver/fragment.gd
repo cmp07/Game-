@@ -1,8 +1,8 @@
 extends Area2D
-## Collectible craft atom. T-post / plank silhouettes with weight — never labeled stamps.
+## Collectible craft atom. Angular light geometry — never labeled stamps, never disc loot.
 
 @export var family: String = "Span"
-@export var accent: Color = Color(0.42, 0.33, 0.22, 1)
+@export var accent: Color = Color(0.82, 0.84, 0.90, 1)
 
 var _player_inside: bool = false
 var _taken: bool = false
@@ -24,11 +24,11 @@ func _enter_tree() -> void:
 
 
 func _draw() -> void:
-	var ink := Color(0.110, 0.094, 0.078, 1.0)
+	var ink := Color(0.92, 0.94, 0.98, 0.85)
 	var body: Color = accent
-	var shadow := Color(0.05, 0.04, 0.03, 0.32)
+	var shadow := Color(0.02, 0.03, 0.05, 0.45)
 	if family == "Anchor":
-		# T-post / stake — grounded mass, stamped port as a punched hole.
+		# Anchor stake — angular mass, punched port as a diamond (not a disc).
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(-4, 16), Vector2(18, 20), Vector2(16, 26), Vector2(-10, 22),
 		]), shadow)
@@ -41,28 +41,28 @@ func _draw() -> void:
 		draw_colored_polygon(post, body)
 		var closed := PackedVector2Array(post)
 		closed.append(post[0])
-		draw_polyline(closed, ink, 1.6, true)
+		draw_polyline(closed, ink, 1.5, true)
 		draw_line(Vector2(-14, 0), Vector2(14, 0), Color(ink.r, ink.g, ink.b, 0.45), 1.0, true)
-		draw_circle(Vector2(0, -10), 2.4, Color(0.165, 0.180, 0.173, 1.0))
-		draw_arc(Vector2(0, -10), 3.2, 0.0, TAU, 10, ink, 1.1, true)
+		var port := PackedVector2Array([
+			Vector2(0, -14), Vector2(3.5, -10), Vector2(0, -6), Vector2(-3.5, -10),
+		])
+		draw_colored_polygon(port, Color(0.02, 0.025, 0.04, 1.0))
+		draw_polyline(PackedVector2Array([port[0], port[1], port[2], port[3], port[0]]), ink, 1.0, true)
 	else:
-		# Span plank — length reads, end grain, one contact shadow.
+		# Span shard — length reads as light geometry, not a timber plank.
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(-18, 6), Vector2(24, 10), Vector2(22, 18), Vector2(-22, 14),
 		]), shadow)
-		var plank := PackedVector2Array([
-			Vector2(-26, -9), Vector2(24, -6), Vector2(28, 9), Vector2(-22, 12),
+		var shard := PackedVector2Array([
+			Vector2(-26, -6), Vector2(22, -10), Vector2(30, 2), Vector2(20, 12), Vector2(-20, 10),
 		])
-		draw_colored_polygon(plank, body)
-		var closed2 := PackedVector2Array(plank)
-		closed2.append(plank[0])
-		draw_polyline(closed2, ink, 1.6, true)
-		draw_line(Vector2(-14, -2), Vector2(16, 1), ink, 1.1, true)
-		draw_line(Vector2(-10, 4), Vector2(18, 6), Color(ink.r, ink.g, ink.b, 0.4), 1.0, true)
-		for k in range(3):
-			var gy: float = -4.0 + float(k) * 5.0
-			draw_line(Vector2(24, gy), Vector2(28, gy + 2.0), ink, 1.0, true)
-		# Stamped capacity tick — not a word label.
+		draw_colored_polygon(shard, body)
+		var closed2 := PackedVector2Array(shard)
+		closed2.append(shard[0])
+		draw_polyline(closed2, ink, 1.5, true)
+		draw_line(Vector2(-14, -2), Vector2(16, -1), ink, 1.1, true)
+		draw_line(Vector2(-10, 4), Vector2(18, 5), Color(ink.r, ink.g, ink.b, 0.4), 1.0, true)
+		# Capacity tick — not a word label.
 		draw_rect(Rect2(-6, -3, 7, 5), Color(ink.r, ink.g, ink.b, 0.55), false, 1.1)
 
 

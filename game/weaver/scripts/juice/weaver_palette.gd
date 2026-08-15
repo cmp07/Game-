@@ -1,22 +1,24 @@
 extends Node
 ##
-## WeaverPalette — shed-loom swatches for the W1 juice spike.
-## Single source: content/palette.json. No purple void.
+## WeaverPalette — true-void swatches for the W1 juice spike.
+## Single source: content/palette.json. No purple void. Not a shed.
 ##
 
 const PALETTE_PATH := "res://content/palette.json"
 
 var cloth_bone: Color = Color("E8DFC8")
 var cloth_deep: Color = Color("D4C7A8")
-var ink_seat: Color = Color("2C2620")
-var ink_soft: Color = Color("4A4238")
-var chalk_dust: Color = Color("C4B8A0")
-var chalk_bright: Color = Color("F0E8D4")
-var timber: Color = Color("6B5344")
+var ink_seat: Color = Color("DCE2EC")
+var ink_soft: Color = Color("9AA6B8")
+var chalk_dust: Color = Color("C8D0DC")
+var chalk_bright: Color = Color("F2EEE4")
+var timber: Color = Color("A8B4C4")
 var kiln_copper: Color = Color("B8784A")
 var kiln_rust: Color = Color("8B4A2A")
-var gap_void: Color = Color("3A342C")
-var shed_lamp: Color = Color("E8D2A8")
+var gap_void: Color = Color("0A0C12")
+var shed_lamp: Color = Color("E6E0D0")
+var first_light: Color = Color("E6E0D0")
+var void_far: Color = Color("05060A")
 
 var _loaded: bool = false
 
@@ -48,6 +50,8 @@ func reload() -> void:
 	kiln_rust = _hex(swatches, "kiln_rust", kiln_rust)
 	gap_void = _hex(swatches, "gap_void", gap_void)
 	shed_lamp = _hex(swatches, "shed_lamp", shed_lamp)
+	first_light = _hex(swatches, "first_light", first_light)
+	void_far = _hex(swatches, "void_far", void_far)
 	_loaded = true
 
 
