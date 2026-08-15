@@ -65,7 +65,15 @@ func _style_chrome() -> void:
 			_word_edit.add_theme_font_override("font", face)
 			_begin_button.add_theme_font_override("font", face)
 	_word_edit.add_theme_color_override("font_color", Color(0.91, 0.875, 0.784, 1.0))
-	_word_edit.add_theme_color_override("font_placeholder_color", Color(0.55, 0.50, 0.42, 0.7))
+	_word_edit.add_theme_color_override("font_placeholder_color", Color(0.70, 0.66, 0.58, 0.55))
+	_word_edit.add_theme_color_override("caret_color", Color(0.769, 0.643, 0.416, 1.0))
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(0.04, 0.045, 0.07, 0.82)
+	box.border_color = Color(0.55, 0.42, 0.28, 0.55)
+	box.set_border_width_all(1)
+	box.set_content_margin_all(8)
+	_word_edit.add_theme_stylebox_override("normal", box)
+	_word_edit.add_theme_stylebox_override("focus", box)
 	_word_edit.placeholder_text = "type a word…"
 	_word_edit.caret_blink = true
 	_word_edit.max_length = 24

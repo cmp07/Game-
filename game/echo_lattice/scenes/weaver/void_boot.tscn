@@ -10,7 +10,7 @@ script = ExtResource("1_void")
 
 [node name="VoidMatte" type="Polygon2D" parent="."]
 z_index = -8
-color = Color(0.145, 0.158, 0.152, 1)
+color = Color(0.02, 0.023, 0.039, 1)
 polygon = PackedVector2Array(-1200, -900, 2500, -900, 2500, 1800, -1200, 1800)
 
 [node name="VoidArt" type="Node2D" parent="."]

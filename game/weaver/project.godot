@@ -12,7 +12,7 @@ run/main_scene="res://scenes/void_speak.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 config/version="0.1.0-proto"
-boot_splash/bg_color=Color(0.910, 0.875, 0.784, 1)
+boot_splash/bg_color=Color(0.019608, 0.023529, 0.039216, 1)
 boot_splash/show_image=false
 
 [autoload]

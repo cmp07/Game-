@@ -176,8 +176,8 @@ def test_void_boot_playable_minutes() -> None:
         _fail("void_boot Esc gate must be Begin-only")
     if "YardArt" in void_tscn or "_draw_timber_deck" in art:
         _fail("void_boot must not include East Post Gap shed decks")
-    if "shed_air" not in art and "0.145" not in art:
-        _fail("void art must use shed-air void (not purple cosmos)")
+    if "STARRY BLACK VOID" not in art and "0.020" not in art:
+        _fail("void art must use starry black void (not cream folio / purple cosmos)")
     if "draw_circle" not in spark:
         _fail("spark must draw a kiln mote")
 

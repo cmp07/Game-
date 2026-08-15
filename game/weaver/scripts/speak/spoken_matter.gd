@@ -71,7 +71,7 @@ func _build() -> void:
 	_label.add_theme_font_size_override("font_size", 13 if kind != KIND_LAW else 15)
 	_label.add_theme_color_override(
 		"font_color",
-		Color(0.94, 0.90, 0.82, 1) if kind == KIND_LAW else Color(0.22, 0.18, 0.12, 1)
+		Color(0.94, 0.90, 0.82, 1)
 	)
 	_label.position = Vector2(-70, -10)
 	_label.size = Vector2(140, 24)

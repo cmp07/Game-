@@ -94,7 +94,7 @@ class TestW1ABootSplash(unittest.TestCase):
         project = (ROOT / "project.godot").read_text()
         self.assertIn('boot_splash/image="res://art/ui/boot_splash.png"', project)
         self.assertIn("boot_splash/show_image=true", project)
-        self.assertIn("0.894118", project)  # paper_bone
+        self.assertIn("0.019608", project)  # starry void far
         self.assertTrue((ROOT / "art" / "ui" / "boot_splash.png").is_file())
 
 

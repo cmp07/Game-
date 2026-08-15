@@ -1,18 +1,24 @@
 extends Node2D
-## Diegetic chalk utterance in the void — typed (or stub-spoken) words become matter.
+## Diegetic chalk utterance in the STARRY BLACK VOID — typed (or stub-spoken) words become matter.
+## Nested polygons / laws sit inside the void as created matter — never a cream folio skin.
 ## Not a command console. No shed UI.
 
 const SpokenMatterScript := preload("res://scripts/speak/spoken_matter.gd")
 const LexiconScript := preload("res://scripts/speak/utterance_lexicon.gd")
 const VoiceStubScript := preload("res://scripts/speak/voice_stub.gd")
 
+const FIELD_SIZE := Vector2(1280, 720)
+const FIELD_CENTER := Vector2(640, 360)
+const FILL_OVERSCAN := 1.04
+
 @onready var _utter_label: Label = %UtterLabel
 @onready var _whisper: Label = %Whisper
 @onready var _cursor_mark: Polygon2D = %CursorMark
 @onready var _matter_root: Node2D = %MatterRoot
 @onready var _void_fill: Polygon2D = %VoidFill
-@onready var _fray: Line2D = %FrayEdge
+@onready var _fray: Line2D = get_node_or_null("%FrayEdge")
 @onready var _dust: CPUParticles2D = %Dust
+@onready var _camera: Camera2D = $Camera2D
 
 var _lexicon: RefCounted
 var _voice: Node
@@ -36,6 +42,8 @@ func _ready() -> void:
 	_buffer = ""
 	_refresh_utter()
 	_whisper.text = "Type into the void. Enter seats the word. Hold Tab to speak (stub)."
+	_bind_playfield_camera()
+	_fill_window_with_field()
 	var args := OS.get_cmdline_user_args()
 	if args.has("--void-speak-selftest") or args.has("--speak-selftest"):
 		_selftest = true
@@ -158,11 +166,11 @@ func _spawn_from_text(text: String) -> void:
 func _accent_for_fragment(label: String) -> Color:
 	match label:
 		"Anchor":
-			return Color(0.30, 0.27, 0.22, 1)
+			return Color(0.55, 0.62, 0.72, 1)
 		"Span":
-			return Color(0.50, 0.38, 0.24, 1)
+			return Color(0.78, 0.68, 0.48, 1)
 		_:
-			return Color(0.42, 0.34, 0.24, 1)
+			return Color(0.62, 0.56, 0.46, 1)
 
 
 func _nearest_fragment(from_matter: Node2D) -> Node2D:
@@ -185,8 +193,46 @@ func _pulse_void() -> void:
 		return
 	var base := _void_fill.color
 	var tw := create_tween()
-	tw.tween_property(_void_fill, "color", Color(base.r * 1.15, base.g * 1.1, base.b * 0.95, base.a), 0.18)
+	tw.tween_property(_void_fill, "color", Color(0.08, 0.07, 0.06, 1.0), 0.18)
 	tw.tween_property(_void_fill, "color", base, 0.35)
+
+
+func _bind_playfield_camera() -> void:
+	var vp: Viewport = get_viewport()
+	if vp != null and not vp.size_changed.is_connected(_on_viewport_size_changed):
+		vp.size_changed.connect(_on_viewport_size_changed)
+
+
+func _on_viewport_size_changed() -> void:
+	_fill_window_with_field()
+
+
+func _fill_window_with_field(look: Vector2 = FIELD_CENTER) -> void:
+	## COVER the window with the starry void — no cream gutters, no folio rails.
+	if _camera == null:
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	if vp.x < 8.0 or vp.y < 8.0:
+		vp = Vector2(1280, 720)
+	var zoom: float = maxf(vp.x / FIELD_SIZE.x, vp.y / FIELD_SIZE.y) * FILL_OVERSCAN
+	zoom = maxf(zoom, 0.01)
+	var vis: Vector2 = vp / zoom
+	var cx: float = look.x
+	var cy: float = look.y
+	if vis.x >= FIELD_SIZE.x:
+		cx = FIELD_CENTER.x
+	else:
+		var hx: float = vis.x * 0.5
+		cx = clampf(look.x, hx, FIELD_SIZE.x - hx)
+	if vis.y >= FIELD_SIZE.y:
+		cy = FIELD_CENTER.y
+	else:
+		var hy: float = vis.y * 0.5
+		cy = clampf(look.y, hy, FIELD_SIZE.y - hy)
+	_camera.enabled = true
+	_camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
+	_camera.position = Vector2(cx, cy)
+	_camera.zoom = Vector2(zoom, zoom)
 
 
 func _chalk_burst(at: Vector2) -> void:
@@ -266,7 +312,7 @@ func _run_selftest() -> void:
 		_matter_root.z_index = 8
 		_cursor_mark.visible = false
 	var phrases := ["anchor", "span", "brace", "hold", "timber"]
-	# Seat along the void/page seam so matter reads against cream + charcoal.
+	# Seat in the starry void so nested polygons read as created matter, not a page.
 	var photo_spots := [
 		Vector2(360.0, 340.0),
 		Vector2(520.0, 280.0),

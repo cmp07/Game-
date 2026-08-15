@@ -1,67 +1,41 @@
-[gd_scene load_steps=2 format=3 uid="uid://weaver_void_speak_0001"]
+[gd_scene load_steps=3 format=3 uid="uid://weaver_void_speak_0001"]
 
 [ext_resource type="Script" path="res://scripts/speak/void_speak.gd" id="1_void"]
+[ext_resource type="Script" path="res://scripts/speak/starry_void.gd" id="2_stars"]
 
 [node name="VoidSpeak" type="Node2D"]
 script = ExtResource("1_void")
 
-[node name="Backdrop" type="ColorRect" parent="."]
-offset_right = 1280.0
-offset_bottom = 720.0
-mouse_filter = 2
-color = Color(0.86, 0.8, 0.7, 1)
-
-[node name="WarmWash" type="ColorRect" parent="."]
-offset_right = 1280.0
-offset_bottom = 720.0
-mouse_filter = 2
-color = Color(0.72, 0.52, 0.28, 0.1)
-
-[node name="PageGrain" type="Polygon2D" parent="."]
-color = Color(0.8, 0.74, 0.62, 0.35)
-polygon = PackedVector2Array(40, 40, 1240, 50, 1230, 680, 60, 690)
+[node name="StarryVoid" type="Node2D" parent="."]
+script = ExtResource("2_stars")
 
 [node name="VoidFill" type="Polygon2D" parent="."]
 unique_name_in_owner = true
-color = Color(0.22, 0.2, 0.17, 0.92)
-polygon = PackedVector2Array(320, 210, 540, 180, 780, 195, 960, 240, 980, 420, 900, 540, 640, 560, 380, 530, 300, 390)
-
-[node name="VoidDepth" type="Polygon2D" parent="."]
-color = Color(0.14, 0.12, 0.1, 0.55)
-polygon = PackedVector2Array(400, 280, 700, 260, 880, 320, 860, 450, 620, 480, 420, 440)
+z_index = -7
+color = Color(0.02, 0.023, 0.039, 1)
+polygon = PackedVector2Array(-2400, -1800, 4000, -1800, 4000, 3000, -2400, 3000)
 
 [node name="FrayEdge" type="Line2D" parent="."]
 unique_name_in_owner = true
+visible = false
 width = 2.0
-default_color = Color(0.55, 0.48, 0.38, 0.75)
-points = PackedVector2Array(320, 210, 420, 188, 540, 180, 660, 186, 780, 195, 880, 218, 960, 240, 980, 320, 980, 420, 940, 500, 900, 540, 760, 558, 640, 560, 500, 548, 380, 530, 310, 460, 300, 390, 308, 300, 320, 210)
-
-[node name="WhiskerA" type="Line2D" parent="."]
-width = 1.2
-default_color = Color(0.62, 0.54, 0.42, 0.55)
-points = PackedVector2Array(318, 220, 290, 205, 275, 230)
-
-[node name="WhiskerB" type="Line2D" parent="."]
-width = 1.2
-default_color = Color(0.62, 0.54, 0.42, 0.55)
-points = PackedVector2Array(970, 250, 1005, 235, 1015, 270)
-
-[node name="WhiskerC" type="Line2D" parent="."]
-width = 1.2
-default_color = Color(0.62, 0.54, 0.42, 0.5)
-points = PackedVector2Array(640, 562, 650, 595, 620, 600)
+default_color = Color(0.55, 0.48, 0.38, 0.0)
+points = PackedVector2Array(0, 0, 1, 0)
 
 [node name="MatterRoot" type="Node2D" parent="."]
 unique_name_in_owner = true
+z_index = 4
 
 [node name="CursorMark" type="Polygon2D" parent="."]
 unique_name_in_owner = true
+z_index = 5
 position = Vector2(640, 360)
 color = Color(0.86, 0.78, 0.62, 0.8)
 polygon = PackedVector2Array(-3, -18, 3, -18, 2, 18, -2, 18)
 
 [node name="Dust" type="CPUParticles2D" parent="."]
 unique_name_in_owner = true
+z_index = 6
 position = Vector2(640, 360)
 emitting = false
 amount = 18
@@ -76,18 +50,10 @@ initial_velocity_min = 20.0
 initial_velocity_max = 70.0
 scale_amount_min = 0.5
 scale_amount_max = 1.4
-color = Color(0.78, 0.72, 0.58, 0.75)
+color = Color(0.86, 0.80, 0.68, 0.75)
 
 [node name="UI" type="CanvasLayer" parent="."]
-
-[node name="Brand" type="Label" parent="UI"]
-offset_left = 36.0
-offset_top = 28.0
-offset_right = 420.0
-offset_bottom = 68.0
-theme_override_colors/font_color = Color(0.27, 0.2, 0.14, 0.9)
-theme_override_font_sizes/font_size = 28
-text = "The Weaver"
+layer = 20
 
 [node name="UtterLabel" type="Label" parent="UI"]
 unique_name_in_owner = true
@@ -121,7 +87,7 @@ offset_right = 420.0
 offset_bottom = -28.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.42, 0.34, 0.26, 0.85)
+theme_override_colors/font_color = Color(0.78, 0.74, 0.66, 0.88)
 theme_override_font_sizes/font_size = 15
 text = "Type into the void. Enter seats the word. Hold Tab to speak (stub)."
 horizontal_alignment = 1
@@ -130,12 +96,13 @@ autowrap_mode = 2
 [node name="HintEsc" type="Label" parent="UI"]
 offset_left = 36.0
 offset_top = 680.0
-offset_right = 420.0
+offset_right = 520.0
 offset_bottom = 708.0
-theme_override_colors/font_color = Color(0.45, 0.38, 0.3, 0.65)
+theme_override_colors/font_color = Color(0.70, 0.66, 0.58, 0.55)
 theme_override_font_sizes/font_size = 12
 text = "Esc clears / returns · speak/type spike"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(640, 360)
-current = true
+enabled = true
+zoom = Vector2(1.0, 1.0)

@@ -61,6 +61,7 @@ class SpeakTypeTests(unittest.TestCase):
         self.assertTrue((SCENES / "void_speak.tscn").is_file())
         for name in (
             "void_speak.gd",
+            "starry_void.gd",
             "utterance_lexicon.gd",
             "voice_stub.gd",
             "spoken_matter.gd",
@@ -74,7 +75,11 @@ class SpeakTypeTests(unittest.TestCase):
         for banned in ("combine_panel", "yard_art", "timber deck", "combinepanel"):
             self.assertNotIn(banned, blob)
         self.assertIn("VoidFill", scene)
+        self.assertIn("StarryVoid", scene)
         self.assertIn("type into the void", script.lower())
+        self.assertNotIn("Color(0.86, 0.8, 0.7, 1)", scene)
+        self.assertIn("FILL_OVERSCAN", script)
+        self.assertIn("_fill_window_with_field", script)
 
     def test_not_a_command_console(self) -> None:
         script = (SCRIPTS / "void_speak.gd").read_text(encoding="utf-8")
