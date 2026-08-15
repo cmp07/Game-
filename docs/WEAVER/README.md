@@ -17,7 +17,8 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
-| [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Gameplay photo gallery + raw URLs |
+| [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | **Visual lock** Yard Folio + torn-gap stills (`media/photos_v2/`) |
+| [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Photo galleries (photos_v2 + prior pack) |
 | [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
 | [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave) + GitHub links |
 

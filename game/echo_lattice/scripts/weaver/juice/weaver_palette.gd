@@ -17,6 +17,8 @@ var kiln_copper: Color = Color("B8784A")
 var kiln_rust: Color = Color("8B4A2A")
 var gap_void: Color = Color("3A342C")
 var shed_lamp: Color = Color("E8D2A8")
+var shed_air: Color = Color("2A2E2C")
+var lamp_warm: Color = Color("C4A46A")
 
 var _loaded: bool = false
 
@@ -48,6 +50,8 @@ func reload() -> void:
 	kiln_rust = _hex(swatches, "kiln_rust", kiln_rust)
 	gap_void = _hex(swatches, "gap_void", gap_void)
 	shed_lamp = _hex(swatches, "shed_lamp", shed_lamp)
+	shed_air = _hex(swatches, "shed_air", shed_air)
+	lamp_warm = _hex(swatches, "lamp_warm", lamp_warm)
 	_loaded = true
 
 

@@ -23,6 +23,7 @@ var _boot_shown: bool = false
 
 
 func _ready() -> void:
+	DisplayServer.window_set_title("The Weaver")
 	_ensure_subtitle_overlay()
 	var all_args: PackedStringArray = OS.get_cmdline_user_args()
 	for a in OS.get_cmdline_args():
@@ -82,7 +83,7 @@ func _ready() -> void:
 		await _capture_screenshot(kind, safe_out)
 		get_tree().quit(0)
 		return
-	# Cold-boot Field Ledger title plate once, then menu (QW-1).
+	# Cold-boot Weaver title plate once, then Yard Index (QW-1).
 	# Boot handoff mounts the menu under the stamp — skip a second show_menu clear.
 	var handed: bool = await _show_boot_title_if_needed()
 	if not handed:

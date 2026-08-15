@@ -96,6 +96,22 @@ def test_main_routes_weaver() -> None:
         _fail("field.gd missing run_photo_beats")
 
 
+def test_field_camera_covers_window() -> None:
+    """Yard must COVER-zoom into the window — not 1:1 1280×720 on 1080p (postage + cream)."""
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    tscn = (SCENES / "field.tscn").read_text(encoding="utf-8")
+    if "func _fill_window_with_field" not in field:
+        _fail("field.gd must COVER-zoom the yard into the window")
+    if "FILL_OVERSCAN" not in field:
+        _fail("field camera missing FILL_OVERSCAN")
+    if "_frame_camera(Vector2(420, 400), 1.18)" in field:
+        _fail("gather beat still left-shifts camera into cream gutter")
+    if "_frame_camera(Vector2(640, 360), 0.72)" in field:
+        _fail("wider-yard beat still pulls camera out to a postage stamp")
+    if "YardMatte" not in tscn:
+        _fail("field.tscn needs YardMatte so overscan is dirt, not cream clear-color")
+
+
 def test_locale_brand() -> None:
     csv = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
     if "brand.title,THE WEAVER," not in csv:
@@ -104,6 +120,44 @@ def test_locale_brand() -> None:
         _fail("locale start CTA must be Enter the Yard")
     if "menu.archive_chambers," not in csv:
         _fail("locale missing archive chambers label")
+    if "FIELD INDEX" in csv:
+        _fail("player-facing FIELD INDEX still in locale")
+    if "menu.folio_mark,YARD FOLIO" not in csv:
+        _fail("folio mark must be YARD FOLIO")
+    if "pause.title,PAUSE · YARD INDEX," not in csv:
+        _fail("pause title must not say FIELD INDEX")
+
+
+def test_visual_lock_no_maze_film_or_discs() -> None:
+    menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+    if "draw_yard_field_plate" not in menu:
+        _fail("menu must draw Yard field plate")
+    if "draw_ledger_film_plate" in menu:
+        _fail("menu still draws Lattice film plate")
+    if "_demote_archive_actions" not in menu:
+        _fail("archive CTAs must be demoted")
+    frag = (SCRIPTS / "fragment.gd").read_text(encoding="utf-8")
+    if "draw_circle" in frag:
+        _fail("fragments must not default to discs")
+    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag:
+        _fail("fragments need family silhouettes")
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    if "nest  " not in field:
+        _fail("field HUD must be diegetic nest stamps")
+    if "Fragments:" in field:
+        _fail("field HUD still says Fragments:")
+    struct = (SCRIPTS / "structure.gd").read_text(encoding="utf-8")
+    if "Crease" not in struct and "rest_y" not in struct:
+        _fail("structure seat must crease/lift/seat")
+    proj = PROJECT.read_text(encoding="utf-8")
+    if 'config/name="The Weaver"' not in proj:
+        _fail("window/product name must be The Weaver")
+    main = (ROOT / "scripts" / "main.gd").read_text(encoding="utf-8")
+    if 'window_set_title("The Weaver")' not in main:
+        _fail("main must set window title The Weaver")
+    gap = (SCRIPTS / "gap_art.gd").read_text(encoding="utf-8")
+    if "shed_air" not in gap and "0.165" not in gap:
+        _fail("gap art must show shed-air depth")
 
 
 def test_loom_logic_mirror() -> None:
@@ -134,7 +188,9 @@ def main() -> None:
     test_host_files_exist()
     test_field_returns_via_signal()
     test_main_routes_weaver()
+    test_field_camera_covers_window()
     test_locale_brand()
+    test_visual_lock_no_maze_film_or_discs()
     test_loom_logic_mirror()
     print("test_weaver_on_lattice: PASS")
 
