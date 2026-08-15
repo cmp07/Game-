@@ -6,6 +6,22 @@
 
 ---
 
+## 2026-08-15 — Generative Void session lock
+
+**Branch:** `cursor/generative-void-b7ac` · **Base:** `cursor/weaver-visual-lock`  
+**PR title:** Weaver Generative Void — start from nothing, no shed
+
+### Product
+
+- New [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) — session fantasy lock
+- Boot = **black void + one spark**; worlds grow from player intent (move / type / speak / combine)
+- **Infinite component** creation; **no prescribed steps**; generative around the player
+- **Anti-chatbot:** friction / physics / consequences remain mandatory
+- **No shed** — Shed Yard hub superseded for generative-void workstreams
+- Indexed from [`README.md`](README.md)
+
+---
+
 ## 2026-08-09 — 1000× design + media pack (master synthesis)
 
 **Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  
