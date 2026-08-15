@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-08-15 — Game as Cloth (metaphor lock)
+
+**Branch:** `cursor/weaver-game-as-cloth-020c` · **Base:** `cursor/weaver-visual-lock`
+
+- New [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) — player weaves the **game/universe**, not a shed
+- Features unlock as **structures of play**; new verbs appear because you wove them
+- Code stub: `game/weaver/scripts/loom/game_as_cloth.gd` — seating `echo_loom` unlocks verb `echo`
+- Wired through Loom (`seat_play_structure` / `has_verb`); recipes list `play_structures`
+- Indexed from [`README.md`](README.md)
+
+---
+
 ## 2026-08-09 — 1000× design + media pack (master synthesis)
 
 **Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  

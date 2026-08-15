@@ -11,7 +11,7 @@
 **1000× vision (live deepen pack):** [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) · [`1000X/00_MASTER_VISION.md`](1000X/00_MASTER_VISION.md) · index [`1000X/README.md`](1000X/README.md)  
 *(Echo Lattice [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) is archive temperature — not the north star.)*
 
-**Companions:** [`ROADMAP.md`](ROADMAP.md) · [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`17_MVP.md`](17_MVP.md)
+**Companions:** [`ROADMAP.md`](ROADMAP.md) · [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) · [`17_MVP.md`](17_MVP.md)
 
 ---
 

@@ -17,6 +17,7 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
+| [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) | **Metaphor lock** — weave the game; verbs from play-structures |
 | [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | **Visual lock** Yard Folio + torn-gap stills (`media/photos_v2/`) |
 | [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Photo galleries (photos_v2 + prior pack) |
 | [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
@@ -35,6 +36,7 @@
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
 | [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) | Design changelog |
+| [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) | Metaphor lock — game-as-cloth; structures of play |
 
 ### 01 — Fantasy
 
