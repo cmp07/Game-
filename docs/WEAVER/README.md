@@ -17,6 +17,7 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
+| [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) | Generative constraints — playable + beautiful, not chatbot/slop |
 | [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | **Visual lock** Yard Folio + torn-gap stills (`media/photos_v2/`) |
 | [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Photo galleries (photos_v2 + prior pack) |
 | [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
@@ -83,6 +84,7 @@
 | [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) | Premium first-session spine |
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
+| [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) | Generative death modes — chatbot / purple void / no game |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
 ### 20–34 — Elevations / v2 locks
