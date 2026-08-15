@@ -1,0 +1,108 @@
+[gd_scene load_steps=3 format=3 uid="uid://weaver_void_speak_0001"]
+
+[ext_resource type="Script" path="res://scripts/speak/void_speak.gd" id="1_void"]
+[ext_resource type="Script" path="res://scripts/speak/starry_void.gd" id="2_stars"]
+
+[node name="VoidSpeak" type="Node2D"]
+script = ExtResource("1_void")
+
+[node name="StarryVoid" type="Node2D" parent="."]
+script = ExtResource("2_stars")
+
+[node name="VoidFill" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+z_index = -7
+color = Color(0.02, 0.023, 0.039, 1)
+polygon = PackedVector2Array(-2400, -1800, 4000, -1800, 4000, 3000, -2400, 3000)
+
+[node name="FrayEdge" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+width = 2.0
+default_color = Color(0.55, 0.48, 0.38, 0.0)
+points = PackedVector2Array(0, 0, 1, 0)
+
+[node name="MatterRoot" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = 4
+
+[node name="CursorMark" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+z_index = 5
+position = Vector2(640, 360)
+color = Color(0.86, 0.78, 0.62, 0.8)
+polygon = PackedVector2Array(-3, -18, 3, -18, 2, 18, -2, 18)
+
+[node name="Dust" type="CPUParticles2D" parent="."]
+unique_name_in_owner = true
+z_index = 6
+position = Vector2(640, 360)
+emitting = false
+amount = 18
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.85
+local_coords = false
+direction = Vector2(0, -1)
+spread = 55.0
+gravity = Vector2(0, 40)
+initial_velocity_min = 20.0
+initial_velocity_max = 70.0
+scale_amount_min = 0.5
+scale_amount_max = 1.4
+color = Color(0.86, 0.80, 0.68, 0.75)
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="UtterLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -36.0
+offset_right = 280.0
+offset_bottom = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.82, 1)
+theme_override_font_sizes/font_size = 36
+text = "· · ·"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Whisper" type="Label" parent="UI"]
+unique_name_in_owner = true
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -420.0
+offset_top = -72.0
+offset_right = 420.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.78, 0.74, 0.66, 0.88)
+theme_override_font_sizes/font_size = 15
+text = "Type into the void. Enter seats the word. Hold Tab to speak (stub)."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HintEsc" type="Label" parent="UI"]
+offset_left = 36.0
+offset_top = 680.0
+offset_right = 520.0
+offset_bottom = 708.0
+theme_override_colors/font_color = Color(0.70, 0.66, 0.58, 0.55)
+theme_override_font_sizes/font_size = 12
+text = "Esc clears / returns · speak/type spike"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(640, 360)
+enabled = true
+zoom = Vector2(1.0, 1.0)

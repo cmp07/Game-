@@ -10,10 +10,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]
-JUICE_GD = ROOT / "scripts" / "juice" / "weaver_juice.gd"
-PALETTE_GD = ROOT / "scripts" / "juice" / "weaver_palette.gd"
-DEMO_GD = ROOT / "scripts" / "field" / "demo_field.gd"
-PALETTE_JSON = ROOT / "content" / "palette.json"
+JUICE_GD = ROOT / "scripts" / "weaver" / "juice" / "weaver_juice.gd"
+PALETTE_GD = ROOT / "scripts" / "weaver" / "juice" / "weaver_palette.gd"
+DEMO_GD = ROOT / "scripts" / "weaver" / "field" / "demo_field.gd"
+PALETTE_JSON = ROOT / "content" / "weaver" / "palette.json"
 PROJECT = ROOT / "project.godot"
 JUICE_DOC = REPO / "docs" / "WEAVER" / "35_JUICE.md"
 
@@ -35,16 +35,17 @@ class TestProjectScaffold(unittest.TestCase):
     def test_project_names_weaver_not_echo(self) -> None:
         text = PROJECT.read_text()
         self.assertIn('config/name="The Weaver"', text)
-        self.assertIn("res://scenes/demo_field.tscn", text)
         self.assertIn("WeaverJuice=", text)
         self.assertIn("WeaverPalette=", text)
+        self.assertIn("scripts/weaver/juice/weaver_juice.gd", text)
         # Product name must be Weaver; EL may appear only as a "do not overwrite" fence.
         self.assertNotRegex(text, r'config/name\s*=\s*"Echo Lattice"')
 
-    def test_echo_lattice_untouched_marker(self) -> None:
-        # Spike lives under game/weaver only.
-        self.assertTrue((ROOT / "scripts" / "juice" / "weaver_juice.gd").is_file())
-        self.assertTrue((REPO / "game" / "echo_lattice" / "project.godot").is_file())
+    def test_weaver_juice_hosted_on_lattice(self) -> None:
+        self.assertTrue(JUICE_GD.is_file())
+        self.assertTrue(PALETTE_JSON.is_file())
+        self.assertTrue(DEMO_GD.is_file())
+        self.assertTrue((REPO / "game" / "weaver" / "project.godot").is_file())
 
 
 class TestPalette(unittest.TestCase):
@@ -77,12 +78,16 @@ class TestPalette(unittest.TestCase):
         self.assertGreater(r, b, "kiln_copper must stay warm (R > B)")
         self.assertGreater(r, 120)
 
-    def test_gap_void_not_near_black_cosmos(self) -> None:
+    def test_gap_void_is_true_void_depth(self) -> None:
         h = self.swatches["gap_void"]["hex"].lstrip("#")
         r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-        # Torn cloth gap — sepia dark, not #000 void.
-        self.assertGreater(r + g + b, 60)
-        self.assertLess(abs(r - b), 40)
+        # True void — deep near-black with a cool depth bias (not purple, not cream).
+        self.assertLess(r + g + b, 80)
+        self.assertGreaterEqual(b, r - 8)
+        # Must not be flat pure #000 — keep a readable depth floor.
+        self.assertGreater(r + g + b, 8)
+        # First light token present for creation wake.
+        self.assertIn("first_light", self.swatches)
 
     def test_juice_timings_in_json(self) -> None:
         juice = self.data["juice"]
@@ -162,7 +167,10 @@ class TestJuiceApi(unittest.TestCase):
 
     def test_demo_brand_lockup(self) -> None:
         self.assertIn("THE WEAVER", self.demo)
-        self.assertIn("Stitch the gap", self.demo)
+        self.assertTrue(
+            "Create in the void" in self.demo or "Stitch the gap" in self.demo,
+            msg="demo brand line must sell void-create or legacy stitch",
+        )
 
     def test_demo_selftest_hook(self) -> None:
         self.assertIn("func _selftest(", self.demo)

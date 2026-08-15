@@ -1,17 +1,24 @@
 # The Weaver — Master GDD v2
 
 **Role:** Executive synthesis of sibling `cursor/weaver-*` docs into one durable **product lock**.  
-**Version:** **v2** — product replace Lattice (shipping identity = Weaver)  
+**Version:** **v2.1** — void generative north (not a shed)  
 **Working title:** The Weaver  
-**Branch:** `cursor/weaver-master-v2`  
-**Base:** `cursor/echo-lattice-rc1`  
-**Date:** 2026-08-09  
+**Branch:** `cursor/weaver-generative-north`  
+**Base:** `cursor/weaver-visual-lock` → `cursor/echo-lattice-rc1`  
+**Date:** 2026-08-15  
 **Mode:** Cloud-only. **No AppID invention. No Echo Lattice deletion in this PR.**
 
-**1000× vision (live deepen pack):** [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) · [`1000X/00_MASTER_VISION.md`](1000X/00_MASTER_VISION.md) · index [`1000X/README.md`](1000X/README.md)  
-*(Echo Lattice [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) is archive temperature — not the north star.)*
+> **Live north star (read first):** [`TRUE_NORTH.md`](TRUE_NORTH.md) — void-first · speak/type · infinite components · generative around *you*.  
+> Session fantasy: [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) (black void + one spark).  
+> Audit of shed drift: [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md).  
+> **This MASTER file’s shed-yard / ports / recipe loop is historical temperature wherever it conflicts with True North.**
 
-**Companions:** [`ROADMAP.md`](ROADMAP.md) · [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`17_MVP.md`](17_MVP.md)
+**1000× pack (shed-loom deepen — superseded where conflicting):** [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) · [`1000X/00_MASTER_VISION.md`](1000X/00_MASTER_VISION.md) · index [`1000X/README.md`](1000X/README.md)  
+*(Echo Lattice [`../VISION/MASTER_1000X.md`](../VISION/MASTER_1000X.md) remains archive temperature.)*
+
+**Companions:** [`TRUE_NORTH.md`](TRUE_NORTH.md) · [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) · [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) · [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) · [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) · [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) · [`ROADMAP.md`](ROADMAP.md) · [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) · [`README.md`](README.md) · [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) · [`17_MVP.md`](17_MVP.md)
+
+**Playable minimum (this synthesis):** cold boot → `game/echo_lattice/scenes/weaver/void_boot.tscn` — void + spark + type box (`WordEdit`).
 
 ---
 
@@ -19,19 +26,21 @@
 
 | Field | Lock |
 |---|---|
-| **North star** | **The Weaver** — offline craft / physics-puzzle toy we **ship** |
-| **1000× vision** | Live deepen pack → [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) (shed-yard · slack→taut · category purity) |
-| **Echo Lattice** | **Frozen** product line; `game/echo_lattice/` **kept beside** `game/weaver/` until a human-approved migrate execute PR ([`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) is **plan only**) |
-| **Core verb** | Recover **Fragments** → draw **Threads** → tension **Structures** → inhabit what you wove |
-| **Hub** | One **Shed Yard** + authored fields/jobs (not open-world, not MMO) |
-| **Economy** | Solo-satisfying craft scarcity — **no player trade** at MVP or 1.0 ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)) |
+| **North star** | **The Weaver** — void-first generative craft: speak/type, free components, world answers *you* ([`TRUE_NORTH.md`](TRUE_NORTH.md)) |
+| **Session open** | Black void + **one Spark** — no Shed Yard hub ([`GENERATIVE_VOID.md`](GENERATIVE_VOID.md)) |
+| **1000× / shed corpus** | Historical deepen pack — **superseded** where it conflicts with True North |
+| **Echo Lattice** | **Frozen** product line; `game/echo_lattice/` **kept** until a human-approved migrate execute PR ([`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) is **plan only**) |
+| **Core verb (live)** | Enter void → utter (type/speak) → compose freely → world densifies around intent |
+| **Core verb (archive shed)** | Recover Fragments → Threads → Structures — kept as drift record / hybrid path only |
+| **Hub** | **None** at session open — no Shed Yard / job board as the fantasy |
+| **Economy** | Solo-satisfying scarcity — **no player trade** at MVP or 1.0 ([`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md)) |
 | **Multiplayer** | **None** at MVP; post-1.0 co-op fence only ([`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md)) |
 | **Monetization** | Paid premium **$4.99–$8.99** (plan **$6.99**); no F2P / battle pass / gacha ([`30_STEAM_PITCH.md`](30_STEAM_PITCH.md)) |
-| **Tech** | Godot 4 · offline-first · playable root **`game/weaver/`** (scaffold present) · do not overwrite EL |
-| **Look / ear** | Fiber, dust, timber, wire, chalk, kiln copper — **ban purple-void AI look** and chronomancy ([`25_VOID_ART_V2.md`](25_VOID_ART_V2.md) · [`26_AUDIO_V2.md`](26_AUDIO_V2.md)) |
+| **Tech** | Godot 4 · offline-first · launch path **`game/echo_lattice/`** hosts void boot; twin spike `game/weaver/` · do not wipe EL |
+| **Look / ear** | Void → emergence (not Yard Folio timber). Still ban Midjourney purple-cosmos costume ([`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md)) |
 | **Coming Soon** | Blocked until vertical slice passes MVP exit criteria |
 
-**One line:** Echo Lattice stays a frozen archive **in place**; **The Weaver** is the product we design and prototype next — a fair loom where physics judges your stitches.
+**One line:** Echo Lattice stays frozen **in place**; **The Weaver** ships as void-first generative play — not a timber shed with recipes.
 
 ### v1 → v2 product replace
 
@@ -50,27 +59,29 @@
 
 When sibling docs disagree, win order is:
 
-1. [`PIVOT.md`](PIVOT.md) — product-line decision (EL frozen · Weaver north star · tree kept)  
-2. [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) — ship-as-Weaver · archive intent · Steam rename  
-3. [`17_MVP.md`](17_MVP.md) — honest cut list  
-4. Systems core [`02`](02_CORE_LOOP.md)–[`08`](08_LEGACY.md) — verb grammar  
-5. Elevations [`20`](20_ELEVATIONS_V2.md)–[`34`](34_ADVERSARIAL.md) — feel / pedagogy / fences (must not reopen bans)  
-6. Craft [`09`](09_VISUAL.md)–[`11`](11_PROGRESSION.md) — base look / ear / unlock voice  
-7. Biz/tech [`12`](12_MULTIPLAYER.md)–[`15`](15_MARKET.md) — fences  
-8. [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`18_RISKS.md`](18_RISKS.md) · [`19_NAMES.md`](19_NAMES.md) · [`31_NAME_LOCK.md`](31_NAME_LOCK.md)  
-9. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–5**
+1. [`TRUE_NORTH.md`](TRUE_NORTH.md) — user correction (void-first generative; **overrides shed fantasy**)  
+2. [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) · [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) · [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) · [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) — void session / fences / memory / open bind  
+3. [`PIVOT.md`](PIVOT.md) — product-line decision (EL frozen · Weaver north star · tree kept)  
+4. [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) — ship-as-Weaver · archive intent · Steam rename  
+5. [`17_MVP.md`](17_MVP.md) — honest cut list (reinterpreted under True North)  
+6. Systems / elevations / craft / biz corpus — **historical** where they prescribe shed / ports / recipes  
+7. [`01_CONCEPT.md`](01_CONCEPT.md) — fantasy language **only where it does not contradict 1–5**
 
 ### Resolved conflict — what Weaver *is*
 
 | Claim | Source | Verdict |
 |---|---|---|
+| Weaver is a shed workshop with gather→combine→weave recipes | MASTER v2 / 1000× / visual-lock | **Superseded** — [`TRUE_NORTH.md`](TRUE_NORTH.md) |
+| Void-first · speak/type · free components · generative around you | User correction · True North | **Wins** |
 | Weaver elevates EL habit→geometry; no second SKU | `01_CONCEPT` (parts of `15_MARKET`) | **Superseded** as product identity |
-| Weaver is the shipping product; EL frozen & kept (archive later) | `PIVOT`, `PRODUCT_IDENTITY`, `17_MVP`, elevations | **Wins** |
+| Weaver is the shipping product; EL frozen & kept (archive later) | `PIVOT`, `PRODUCT_IDENTITY` | **Wins** (product-line only) |
 | Player trade / marketplace as endgame | Soft reading of `07` | **Killed** — [`27_SOLO_ECONOMY_V2.md`](27_SOLO_ECONOMY_V2.md) |
 | Realtime / seamless competitive MP | Soft reading of `12` | **Killed for MVP**; post-1.0 co-op only — [`29_MULTIPLAYER_V2.md`](29_MULTIPLAYER_V2.md) |
 | Delete EL now that Weaver scaffold exists | Temptation | **Out** — migrate is plan-only until human gates |
+| Chatbot / purple cosmos / docs-without-play as “generative” | Soft reading of generative ambition | **Killed** — [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) |
 
-**Fantasy elevation (MASTER lock):** You are a craftsperson in a worked yard. You recover material atoms (**Fragments**), stitch typed relations (**Threads**), and seat graphs into place-changing **Structures**. Pride is recognition — “that span is mine” — not loot, kill-feed, or trade flex.
+**Fantasy elevation (live):** You begin in **nothing**. You **speak or type**. Components answer. The **game weaves itself** around what you do.  
+**Fantasy elevation (archive shed):** Craftsperson in a worked yard with Fragments/Threads/Structures — kept as drift record only.
 
 ---
 
@@ -267,6 +278,24 @@ Freeze / pivot / identity / migrate: [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTIT
 **Numbering note:** Juice landed as `20_JUICE.md` on its branch; synthesis renumbered to [`35_JUICE.md`](35_JUICE.md) so [`20_ELEVATIONS_V2.md`](20_ELEVATIONS_V2.md) keeps the elevations slot.
 
 ---
+
+
+
+### Wave-4 (void generative north — `cursor/weaver-generative-north`)
+
+| Branch | Role |
+|---|---|
+| `cursor/weaver-true-north-990f` | `TRUE_NORTH.md` user correction |
+| `cursor/generative-void-b7ac` | `GENERATIVE_VOID.md` session lock |
+| `cursor/generative-risks-4f2e` | `GENERATIVE_RISKS.md` |
+| `cursor/weaver-audit-vs-player-f0a0` | `AUDIT_VS_PLAYER.md` |
+| `cursor/weaver-void-boot` | Playable void + spark + type box |
+| `cursor/open-component-grammar-3526` | `36_OPEN_COMPONENT_GRAMMAR.md` + atoms bind |
+| `cursor/weaver-player-shaped-97b8` | `PLAYER_SHAPED.md` + void memory seed |
+| `cursor/weaver-game-as-cloth-020c` | `GAME_AS_CLOTH.md` metaphor |
+| `cursor/true-void-weaver-be09` | True void field art (fills as you create) |
+| `cursor/weaver-generative-north` | This synthesis · MASTER v2.1 pointer |
+
 
 ## 11. Gaps & follow-ups
 

@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "note": "Open component grammar — five starting atoms. Any pair may attempt bind; failures are craft tells. Not a closed recipe catalog.",
+  "authority": "docs/WEAVER/36_OPEN_COMPONENT_GRAMMAR.md",
+  "atoms": [
+    {
+      "id": "Light",
+      "label": "Light",
+      "role": "lamp wash / sight-line / chalk that shows",
+      "temper": "washout",
+      "ports_hint": ["sense", "brace"],
+      "tell": "soft disk with a ray nick"
+    },
+    {
+      "id": "Matter",
+      "label": "Matter",
+      "role": "mass / peg / timber body that pins",
+      "temper": "crush",
+      "ports_hint": ["brace", "ground"],
+      "tell": "stake / block silhouette"
+    },
+    {
+      "id": "Energy",
+      "label": "Energy",
+      "role": "push / kiln-heart / stored shove",
+      "temper": "burst",
+      "ports_hint": ["in", "out", "release"],
+      "tell": "spring coil / bladder"
+    },
+    {
+      "id": "Time",
+      "label": "Time",
+      "role": "beat / dwell / period — workshop interval, never clock-magic",
+      "temper": "stutter",
+      "ports_hint": ["beat", "out"],
+      "tell": "pendulum arc / knocker",
+      "ban": "Refuse clock-magic loot and violet shards"
+    },
+    {
+      "id": "Space",
+      "label": "Space",
+      "role": "gap / span length / extent that holds open",
+      "temper": "slack",
+      "ports_hint": ["brace", "brace"],
+      "tell": "plank / cloth strip"
+    }
+  ],
+  "craft_aliases": {
+    "Anchor": "Matter",
+    "Span": "Space",
+    "Charge": "Energy",
+    "Pulse": "Time",
+    "Lamp": "Light"
+  },
+  "combine_affinity": [
+    {
+      "inputs": ["Matter", "Space"],
+      "outcome": "bind",
+      "output_thread": "Brace",
+      "label": "Brace Thread",
+      "emergent": "Span",
+      "tell": "Seam holds across the gap."
+    },
+    {
+      "inputs": ["Matter", "Matter"],
+      "outcome": "bind",
+      "output_thread": "Brace",
+      "label": "Pin brace",
+      "emergent": "Scaffold",
+      "tell": "Two masses pin. Heavy, honest."
+    },
+    {
+      "inputs": ["Space", "Space"],
+      "outcome": "bind",
+      "output_thread": "Brace",
+      "label": "Fiber tether",
+      "emergent": "Span",
+      "tell": "Length finds length — tether spins."
+    },
+    {
+      "inputs": ["Light", "Space"],
+      "outcome": "bind",
+      "output_thread": "Echo",
+      "label": "Sight-line",
+      "emergent": "Beacon",
+      "tell": "Light draws a line through open air."
+    },
+    {
+      "inputs": ["Light", "Matter"],
+      "outcome": "bind",
+      "output_thread": "Echo",
+      "label": "Lamp seat",
+      "emergent": "Beacon",
+      "tell": "Lamp seats on mass — the shed answers."
+    },
+    {
+      "inputs": ["Energy", "Matter"],
+      "outcome": "bind",
+      "output_thread": "Feed",
+      "label": "Charge cord",
+      "emergent": "Kiln",
+      "tell": "Push stored in body — cord hums."
+    },
+    {
+      "inputs": ["Energy", "Space"],
+      "outcome": "bind",
+      "output_thread": "Feed",
+      "label": "Flow channel",
+      "emergent": "Culvert",
+      "tell": "Energy wants a path through the gap."
+    },
+    {
+      "inputs": ["Time", "Energy"],
+      "outcome": "bind",
+      "output_thread": "Echo",
+      "label": "Pulse beat",
+      "emergent": "Gate",
+      "tell": "Beat meets push — the gate learns a period."
+    },
+    {
+      "inputs": ["Time", "Space"],
+      "outcome": "bind",
+      "output_thread": "Echo",
+      "label": "Period gate",
+      "emergent": "Gate",
+      "tell": "Interval spans the gap — cross on the beat."
+    },
+    {
+      "inputs": ["Time", "Matter"],
+      "outcome": "strain",
+      "fray": "Dwell",
+      "tell": "Dwell weight — the beat won't lift that mass.",
+      "consume": "refund"
+    },
+    {
+      "inputs": ["Light", "Energy"],
+      "outcome": "strain",
+      "fray": "Glare",
+      "tell": "Glare wash — too bright to stitch.",
+      "consume": "refund"
+    },
+    {
+      "inputs": ["Light", "Time"],
+      "outcome": "snap",
+      "fray": "Afterimage",
+      "tell": "Afterimage stutter — the stitch shears mid-travel.",
+      "consume": "refund"
+    },
+    {
+      "inputs": ["Energy", "Energy"],
+      "outcome": "snap",
+      "fray": "Overload",
+      "tell": "Overload tear — two pushes refuse one cord.",
+      "consume": "refund"
+    },
+    {
+      "inputs": ["Time", "Time"],
+      "outcome": "snap",
+      "fray": "Stutter",
+      "tell": "Two beats desync — snap white, settle chalk.",
+      "consume": "refund"
+    },
+    {
+      "inputs": ["Light", "Light"],
+      "outcome": "strain",
+      "fray": "Washout",
+      "tell": "Washout — light on light leaves no seam.",
+      "consume": "refund"
+    }
+  ],
+  "default_unknown": {
+    "outcome": "strain",
+    "fray": "Fray",
+    "tell": "The loom tries — these atoms quarrel without a name yet.",
+    "consume": "refund"
+  }
+}

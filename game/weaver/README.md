@@ -19,15 +19,19 @@ Design authority: [`docs/WEAVER/MASTER_GDD.md`](../../docs/WEAVER/MASTER_GDD.md)
 
 1. Install [Godot 4.3](https://godotengine.org/download/archive/4.3-stable/) (standard / GDScript).
 2. Open Godot → **Import** → select `game/weaver/project.godot`.
-3. Press **F5**. Default main scene: `scenes/main.tscn` (prototype loop).
+3. Press **F5**. Default main scene: `scenes/void_speak.tscn` (**speak/type spike**).
+
+Yard loop title: open `scenes/main.tscn` (or press Esc from the void, then **Yard loop**).
 
 Juice feel demo: open / set main to `scenes/demo_field.tscn`.
 
 ```bash
 godot --path game/weaver
 godot --path game/weaver --quit-after 1
+godot --path game/weaver -- --void-speak-selftest
 godot --path game/weaver -- --selftest
 godot --path game/weaver -- --gameplay-demo   # paced gather→combine→weave (cloud / xvfb capture)
+python3 game/weaver/tests/test_speak_type.py
 python3 game/weaver/tests/test_weaver_juice.py
 python3 game/weaver/tests/test_prototype_loop.py
 ```
@@ -35,6 +39,19 @@ python3 game/weaver/tests/test_prototype_loop.py
 Gameplay MP4: [`docs/WEAVER/media/VIDEO.md`](../../docs/WEAVER/media/VIDEO.md).
 
 ## Playable surfaces
+
+### Speak / type void spike (`scenes/void_speak.tscn`) — **default**
+
+Design: [`docs/WEAVER/36_SPEAK_TYPE.md`](../../docs/WEAVER/36_SPEAK_TYPE.md).
+
+| Input | Feel |
+|---|---|
+| Type | Chalk glyphs form in the frayed void |
+| Enter | Word seats as Fragment / Thread / Law |
+| Hold Tab | Voice stub → text → same seat pipeline |
+| Esc | Clear / return |
+
+No shed UI. Not a command console — uttered words become matter.
 
 ### Juice spike (`scenes/demo_field.tscn`)
 
@@ -50,9 +67,9 @@ Authority: [`docs/WEAVER/35_JUICE.md`](../../docs/WEAVER/35_JUICE.md).
 ### Prototype loop (`scenes/main.tscn`)
 
 1. **Void** — frayed gap in the Shed Yard field (physical missing span, not cosmic purple).
-2. **Recover** — walk into Fragments (Span / Anchor / …) to collect them.
-3. **Bind** — combine two Fragments into a **Brace Thread** (combine panel / **C**).
-4. **Tension / weave** — seat a placeholder **Span Structure** across the gap (**Space**).
+2. **Recover** — walk into Fragments (atoms / Anchor / Span / …) to collect them.
+3. **Bind** — pick **any two**; the loom always answers (`bind` / `strain` / `snap`). Matter×Space (Anchor×Span) still braces; failures refund with a craft tell.
+4. **Tension / weave** — seat a Structure across the gap (**Space**). Emergent lean comes from atom chemistry, not a recipe wiki.
 
 Controls (loop): **WASD** move · **E** collect · **C** combine · **Space** weave · **Esc** title.
 
@@ -64,13 +81,14 @@ Gameplay photos: [`docs/WEAVER/media/photos/`](../../docs/WEAVER/media/photos/) 
 game/weaver/
   project.godot
   README.md
-  content/           # fragments, recipes, palette
-  scenes/            # main, field, demo_field, player, fragment, structure, ui/
+  content/           # fragments, recipes, palette, speak_lexicon
+  scenes/            # void_speak (default), main, field, demo_field, …
   scripts/
+    speak/           # void speak/type spike
     juice/           # WeaverJuice + palette
     loom/            # session state
     field/           # demo field controller
-  tests/             # python smoke (juice + loop)
+  tests/             # python smoke (speak + juice + loop)
 ```
 
 ## Non-goals

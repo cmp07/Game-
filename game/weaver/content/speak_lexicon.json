@@ -1,0 +1,57 @@
+{
+  "id": "void_speak_lexicon_v0",
+  "notes": "Uttered words become Fragments / Threads / Laws in the void — not console commands.",
+  "fragments": {
+    "anchor": "Anchor",
+    "peg": "Anchor",
+    "stake": "Anchor",
+    "weight": "Anchor",
+    "span": "Span",
+    "beam": "Span",
+    "plank": "Span",
+    "bridge": "Span",
+    "fiber": "Span",
+    "dust": "Anchor",
+    "chalk": "Anchor",
+    "timber": "Span",
+    "copper": "Span",
+    "kiln": "Anchor"
+  },
+  "threads": {
+    "brace": "Brace",
+    "bind": "Brace",
+    "stitch": "Brace",
+    "tie": "Brace",
+    "feed": "Feed",
+    "supply": "Feed",
+    "oppose": "Oppose",
+    "resist": "Oppose",
+    "push": "Oppose",
+    "echo": "Echo",
+    "resonate": "Echo",
+    "mirror": "Echo"
+  },
+  "laws": {
+    "law": "Law",
+    "stand": "Law",
+    "seat": "Law",
+    "hold": "Law",
+    "must": "Law",
+    "shall": "Law",
+    "rule": "Law",
+    "settle": "Law",
+    "inhabit": "Law"
+  },
+  "voice_stub_phrases": [
+    "anchor",
+    "span",
+    "brace",
+    "hold the span",
+    "stitch",
+    "law",
+    "feed",
+    "seat",
+    "echo",
+    "timber"
+  ]
+}

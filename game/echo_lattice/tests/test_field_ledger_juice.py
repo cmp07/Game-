@@ -152,11 +152,12 @@ class TestFeelQuickWins(unittest.TestCase):
         self.assertIn("boot.wing_line", boot)
         self.assertIn("signal finished", boot)
         self.assertIn("y_lift", boot)
+        self.assertIn("STARRY", boot.upper())
         main = (ROOT / "scripts" / "main.gd").read_text()
         self.assertIn("boot_title.tscn", main)
         self.assertIn("_show_boot_title_if_needed", main)
         self.assertIn("_boot_shown", main)
-        self.assertIn("begin_boot_handoff", main)
+        self.assertIn("show_weaver_void", main)
         self.assertIn("_connect_menu_signals", main)
         self.assertTrue((ROOT / "scenes" / "boot_title.tscn").is_file())
 
@@ -266,9 +267,9 @@ class TestDiegeticShellMvp(unittest.TestCase):
         self.assertIn("boot_splash/show_image=true", proj)
         self.assertIn('boot_splash/image="res://art/ui/boot_splash.png"', proj)
         self.assertTrue(
-            "boot_splash/bg_color=Color(0.894118, 0.847059, 0.737255, 1)" in proj
-            or "boot_splash/bg_color=Color(0.937255, 0.901961, 0.823529, 1)" in proj,
-            msg="boot splash bg must be paper_bone family",
+            "boot_splash/bg_color=Color(0.019608, 0.023529, 0.039216, 1)" in proj
+            or "0.019608" in proj,
+            msg="boot splash bg must be starry void far (not cream folio)",
         )
         self.assertTrue((ROOT / "art" / "ui" / "boot_splash.png").is_file())
         gen = (ROOT / "art" / "generate_placeholders.py").read_text()

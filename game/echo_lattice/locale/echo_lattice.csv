@@ -8,7 +8,7 @@ menu.buffer,BUFFER,缓冲
 menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
 menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Pause  Esc,移动  WASD / 方向键     重开  R     撤销  Z     暂停  Esc
 menu.continue,Continue field,继续场内
-menu.start_new,Enter the Yard,进入工棚院
+menu.start_new,Begin,开始
 menu.archive_chambers,Archive · Chambers,归档 · 间室
 menu.daily,Daily sheet,每日页
 menu.endless,Endless corridor,无尽廊道

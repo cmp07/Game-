@@ -1,5 +1,5 @@
 extends Node2D
-## Span Structure across the void — posts, beam, shadow, seated loom. No debug label.
+## Span Structure across the void — luminous geometry that fills creation. No shed posts.
 
 signal request_spawn_fragment(kind: String, at: Vector2)
 
@@ -21,28 +21,32 @@ func _ready() -> void:
 	var structure: Dictionary = Loom.recipes.get("structure", {})
 	emit_interval = float(structure.get("emit_interval_sec", 3.5))
 	add_to_group("structures")
+	# Hide timber posts — structure is light geometry now.
+	if _posts:
+		_posts.visible = false
 	queue_redraw()
 
 
 func _draw() -> void:
-	var ink := Color(0.110, 0.094, 0.078, 1.0)
-	var timber := Color(0.380, 0.290, 0.220, 1.0)
-	var timber_dark := Color(0.220, 0.180, 0.140, 1.0)
-	var shadow := Color(0.05, 0.04, 0.03, 0.36)
-	# Contact shadow across the tear.
+	var light := Color(0.92, 0.90, 0.84, 1.0)
+	var geo := Color(0.70, 0.78, 0.90, 1.0)
+	var shadow := Color(0.02, 0.03, 0.05, 0.4)
+	# Soft contact under the span.
 	draw_colored_polygon(PackedVector2Array([
 		Vector2(-170, 10), Vector2(174, 6), Vector2(168, 28), Vector2(-176, 32),
 	]), shadow)
-	# Extra posts if scene posts are hidden during seat tween — scene nodes carry the body.
-	draw_line(Vector2(-40, -8), Vector2(40, -6), Color(ink.r, ink.g, ink.b, 0.5), 1.4, true)
-	# Warp threads — seated loom tell.
-	for i in range(5):
-		var x: float = -90.0 + float(i) * 45.0
-		draw_line(Vector2(x, -18), Vector2(x * 0.96, 16), Color(ink.r, ink.g, ink.b, 0.35), 1.1, true)
-	# Quiet kiln tick on the beam — ≤5%.
-	draw_line(Vector2(40, -10), Vector2(70, -8), Color(0.545, 0.227, 0.122, 0.7), 2.0, true)
-	draw_circle(Vector2(-155, -24), 2.2, timber_dark)
-	draw_circle(Vector2(155, -24), 2.2, timber)
+	# Lattice ribs — evolving geometry, not warp threads on a loom.
+	for i in range(6):
+		var x: float = -100.0 + float(i) * 40.0
+		draw_line(Vector2(x, -22), Vector2(x * 0.94, 18), Color(geo.r, geo.g, geo.b, 0.45), 1.2, true)
+	draw_line(Vector2(-120, -4), Vector2(120, -2), Color(light.r, light.g, light.b, 0.55), 1.4, true)
+	# Quiet kiln tick — ≤5%.
+	draw_line(Vector2(40, -10), Vector2(70, -8), Color(0.72, 0.42, 0.28, 0.65), 2.0, true)
+	# End nodes as diamonds, not nail circles.
+	var l := PackedVector2Array([Vector2(-155, -28), Vector2(-148, -22), Vector2(-155, -16), Vector2(-162, -22)])
+	var r := PackedVector2Array([Vector2(155, -28), Vector2(162, -22), Vector2(155, -16), Vector2(148, -22)])
+	draw_colored_polygon(l, geo)
+	draw_colored_polygon(r, light)
 
 
 func _process(delta: float) -> void:
@@ -65,7 +69,7 @@ func play_seat() -> void:
 	position.y = rest_y + 8.0
 	if _stitch:
 		_stitch.width = 1.2
-		_stitch.default_color = Color(0.953, 0.925, 0.855, 0.85)
+		_stitch.default_color = Color(0.92, 0.90, 0.84, 0.85)
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tw.tween_property(self, "modulate:a", 1.0, 0.16)
@@ -75,7 +79,7 @@ func play_seat() -> void:
 	tw.parallel().tween_property(self, "position:y", rest_y, 0.26)
 	if _stitch:
 		tw.parallel().tween_property(_stitch, "width", 3.2, 0.26)
-		tw.parallel().tween_property(_stitch, "default_color", Color(0.11, 0.094, 0.078, 1), 0.26)
+		tw.parallel().tween_property(_stitch, "default_color", Color(0.88, 0.90, 0.96, 1), 0.26)
 	if _beam:
-		tw.parallel().tween_property(_beam, "color", Color(0.42, 0.325, 0.251, 1), 0.26)
+		tw.parallel().tween_property(_beam, "color", Color(0.72, 0.78, 0.90, 0.92), 0.26)
 	tw.tween_callback(func() -> void: _seated = true)

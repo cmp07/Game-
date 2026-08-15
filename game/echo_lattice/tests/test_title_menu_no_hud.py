@@ -149,7 +149,9 @@ class TestTitleStageDoesNotInstanceChamberHud(unittest.TestCase):
         )
         self.assertIsNotNone(m)
         body = m.group("body")
-        self.assertIn("MENU_SCENE.instantiate()", body)
+        # Playable identity is the starry void — not Yard Folio cream, not chambers.
+        self.assertIn("show_weaver_void()", body)
+        self.assertNotIn("MENU_SCENE.instantiate()", body)
         self.assertNotIn("CHAMBER_SCENE.instantiate()", body)
 
 

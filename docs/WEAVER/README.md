@@ -1,15 +1,22 @@
 # The Weaver — docs index
 
 **North star product docs** for **The Weaver** (working title).  
+**True North (highest priority):** [`TRUE_NORTH.md`](TRUE_NORTH.md) — user correction; **overrides** shed-yard / ports / recipes / Field Ledger drift.  
 **Pivot:** Echo Lattice is frozen; Weaver is active — see [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md).  
 **Do not delete** `game/echo_lattice/` or the Steam pack freeze under [`../BACKUP/`](../BACKUP/).  
 **Playable launch:** [`../../game/echo_lattice/`](../../game/echo_lattice/) (Weaver on Lattice) · twin spike [`../../game/weaver/`](../../game/weaver/).  
-**Hybrid contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md).
+**Hybrid contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) *(launch path only — fantasy follows True North)*.
 
 | Start here | Role |
 |---|---|
-| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
-| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** executive vision + media pack (live deepen) |
+| [`TRUE_NORTH.md`](TRUE_NORTH.md) | **User correction** — void-first · speak/type · infinite components · generative around you |
+| [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | **Session fantasy lock** — void + spark · intent grows world · no shed · anti-chatbot |
+| [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | **Player correction audit** — keep / rewrite / kill vs void north |
+| [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Void memory — world grows from *this* player (offline seed) |
+| [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) | Open atoms · any-two bind · interesting fail |
+| [`36_SPEAK_TYPE.md`](36_SPEAK_TYPE.md) | Speak/type void spike — typed words become matter (`game/weaver`) |
+| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis *(shed loop — superseded where it conflicts with True North)* |
+| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** pack *(shed-loom deepen — superseded where it conflicts with True North)* |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
 | [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) | Lattice hosts Weaver loop — how to run |
 | [`ROADMAP.md`](ROADMAP.md) | Gates, scaffold status, build order |
@@ -17,10 +24,10 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
-| [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | **Visual lock** Yard Folio + torn-gap stills (`media/photos_v2/`) |
+| [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) | Generative constraints — playable + beautiful, not chatbot/slop |
+| [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | Yard Folio timber stills — **drift record** (look wrong per True North) |
 | [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Photo galleries (photos_v2 + prior pack) |
-| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
-| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave) + GitHub links |
+| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave drift) + GitHub links |
 
 ---
 
@@ -30,9 +37,14 @@
 
 | Doc | Topic |
 |---|---|
-| [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
+| [`TRUE_NORTH.md`](TRUE_NORTH.md) | **True North** — user correction (overrides shed elevations) |
+| [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | Audit vs player correction (keep / rewrite / kill) |
+| [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | Generative void session lock (no shed · anti-chatbot) |
+| [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Player-shaped void memory + loom seed |
+| [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) | Metaphor: weave the game (play-structures unlock verbs) |
+| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver ships · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Shipping identity & rename strategy |
-| [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** |
+| [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** *(shed drift — see True North)* |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
 | [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) | Design changelog |
 
@@ -83,6 +95,7 @@
 | [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) | Premium first-session spine |
 | [`17_MVP.md`](17_MVP.md) | Scope & exit criteria |
 | [`18_RISKS.md`](18_RISKS.md) | Pre-mortem |
+| [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) | Generative death modes — chatbot / purple void / no game |
 | [`19_NAMES.md`](19_NAMES.md) | Working title + shortlist |
 
 ### 20–34 — Elevations / v2 locks
@@ -105,6 +118,8 @@
 | [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | EL → archive migrate **plan** (no move yet) |
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
+| [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) | Open atoms (Light/Matter/Energy/Time/Space) · free bind · interesting fail |
+| [`36_SPEAK_TYPE.md`](36_SPEAK_TYPE.md) | Speak/type void spike — words become Fragments/Threads/Laws |
 
 ### 1000× — Vision / deepen pack
 

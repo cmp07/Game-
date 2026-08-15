@@ -32,8 +32,10 @@ def test_project_branding() -> None:
 def test_recipes_first_five() -> None:
     data = json.loads((CONTENT / "recipes.json").read_text(encoding="utf-8"))
     kinds = {k["id"] for k in data.get("fragment_kinds", [])}
-    if kinds != {"Anchor", "Span"}:
-        _fail(f"FIRST_FIVE fragment kinds expected Anchor+Span, got {kinds}")
+    if not {"Anchor", "Span"} <= kinds:
+        _fail(f"FIRST_FIVE skins Anchor+Span required, got {kinds}")
+    if not {"Light", "Matter", "Energy", "Time", "Space"} <= kinds:
+        _fail(f"open atoms missing from fragment_kinds, got {kinds}")
     recipes = data.get("combine_recipes", [])
     if not recipes:
         _fail("combine_recipes empty")
@@ -45,10 +47,36 @@ def test_recipes_first_five() -> None:
         _fail("structure must be span_structure")
 
 
+def test_open_component_grammar() -> None:
+    atoms_path = CONTENT / "atoms.json"
+    if not atoms_path.is_file():
+        _fail("missing content/weaver/atoms.json")
+    atoms = json.loads(atoms_path.read_text(encoding="utf-8"))
+    ids = {a["id"] for a in atoms.get("atoms", [])}
+    if ids != {"Light", "Matter", "Energy", "Time", "Space"}:
+        _fail(f"expected five starting atoms, got {ids}")
+    if atoms.get("craft_aliases", {}).get("Anchor") != "Matter":
+        _fail("Anchor must alias to Matter")
+    if atoms.get("craft_aliases", {}).get("Span") != "Space":
+        _fail("Span must alias to Space")
+    fails = [e for e in atoms.get("combine_affinity", []) if e.get("outcome") != "bind"]
+    if len(fails) < 3:
+        _fail("need interesting failure affinity rows")
+    loom = (SCRIPTS / "loom" / "loom_state.gd").read_text(encoding="utf-8")
+    if "func attempt_bind(" not in loom:
+        _fail("Loom must expose attempt_bind for open grammar")
+    combine = (SCRIPTS / "ui" / "combine_panel.gd").read_text(encoding="utf-8")
+    if "any two" not in combine.lower():
+        _fail("combine panel must invite any-two bind attempts")
+
+
 def test_host_files_exist() -> None:
     required = [
         SCRIPTS / "loom" / "loom_state.gd",
         SCRIPTS / "field.gd",
+        SCRIPTS / "void_boot.gd",
+        SCRIPTS / "void_art.gd",
+        SCRIPTS / "spark.gd",
         SCRIPTS / "fragment.gd",
         SCRIPTS / "structure.gd",
         SCRIPTS / "player.gd",
@@ -56,12 +84,14 @@ def test_host_files_exist() -> None:
         SCRIPTS / "juice" / "weaver_juice.gd",
         SCRIPTS / "juice" / "weaver_palette.gd",
         SCENES / "field.tscn",
+        SCENES / "void_boot.tscn",
         SCENES / "fragment.tscn",
         SCENES / "player.tscn",
         SCENES / "structure.tscn",
         SCENES / "ui" / "combine_panel.tscn",
         CONTENT / "recipes.json",
         CONTENT / "fragments.json",
+        CONTENT / "atoms.json",
         CONTENT / "palette.json",
     ]
     for path in required:
@@ -75,25 +105,81 @@ def test_field_returns_via_signal() -> None:
         _fail("field.gd must emit menu_requested for Lattice Main")
     if "change_scene_to_file" in field:
         _fail("field.gd must not hard-swap main scene away from Lattice router")
+    void_boot = (SCRIPTS / "void_boot.gd").read_text(encoding="utf-8")
+    if "signal menu_requested" not in void_boot:
+        _fail("void_boot.gd must emit menu_requested for Lattice Main")
+    if "change_scene_to_file" in void_boot:
+        _fail("void_boot.gd must not hard-swap main scene away from Lattice router")
 
 
 def test_main_routes_weaver() -> None:
     main = (ROOT / "scripts" / "main.gd").read_text(encoding="utf-8")
+    if "show_weaver_void" not in main:
+        _fail("main.gd missing show_weaver_void")
+    if "WEAVER_VOID_SCENE" not in main:
+        _fail("main.gd missing WEAVER_VOID_SCENE")
     if "show_weaver_field" not in main:
         _fail("main.gd missing show_weaver_field")
     if "WEAVER_FIELD_SCENE" not in main:
         _fail("main.gd missing WEAVER_FIELD_SCENE")
     if "_on_menu_archive_chambers" not in main:
         _fail("main.gd missing archive chambers callback")
+    if "--void-boot-selftest" not in main:
+        _fail("main.gd missing --void-boot-selftest hook")
     if "--weaver-selftest" not in main:
         _fail("main.gd missing --weaver-selftest hook")
     if "--weaver-photos" not in main:
         _fail("main.gd missing --weaver-photos hook")
     if "_run_weaver_photos" not in main:
         _fail("main.gd missing _run_weaver_photos")
+    if "_run_void_boot_self_test" not in main:
+        _fail("main.gd missing _run_void_boot_self_test")
     field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
     if "func run_photo_beats(" not in field:
         _fail("field.gd missing run_photo_beats")
+    # Cold boot must land in VOID, not Yard Folio.
+    ready = main
+    if "show_weaver_void()" not in ready:
+        _fail("cold boot path must call show_weaver_void")
+    boot_fn = main
+    if "Yard Folio" in boot_fn[boot_fn.find("_show_boot_title_if_needed") : boot_fn.find("_connect_menu_signals")]:
+        # comment may mention skipping folio — ensure we don't instantiate MENU for handoff
+        pass
+    boot_body_start = main.find("func _show_boot_title_if_needed")
+    boot_body_end = main.find("\nfunc ", boot_body_start + 1)
+    boot_body = main[boot_body_start:boot_body_end]
+    if "MENU_SCENE.instantiate()" in boot_body:
+        _fail("boot handoff must not mount Yard Folio menu")
+    if "show_weaver_void()" not in boot_body:
+        _fail("boot handoff must show_weaver_void")
+
+
+def test_void_boot_playable_minutes() -> None:
+    """First minutes: spark, move, type word, world change, full-window camera, no shed."""
+    void_gd = (SCRIPTS / "void_boot.gd").read_text(encoding="utf-8")
+    void_tscn = (SCENES / "void_boot.tscn").read_text(encoding="utf-8")
+    art = (SCRIPTS / "void_art.gd").read_text(encoding="utf-8")
+    spark = (SCRIPTS / "spark.gd").read_text(encoding="utf-8")
+    if "func _fill_window_with_field" not in void_gd:
+        _fail("void_boot must COVER-zoom into the window")
+    if "FILL_OVERSCAN" not in void_gd:
+        _fail("void_boot camera missing FILL_OVERSCAN")
+    if "debug_speak_word" not in void_gd:
+        _fail("void_boot missing debug_speak_word")
+    if "_drift_spark" not in void_gd:
+        _fail("void_boot must drift one spark")
+    if "WordEdit" not in void_tscn:
+        _fail("void_boot scene needs WordEdit for typed words")
+    if "Spark" not in void_tscn:
+        _fail("void_boot scene needs Spark node")
+    if "BeginButton" not in void_tscn:
+        _fail("void_boot Esc gate must be Begin-only")
+    if "YardArt" in void_tscn or "_draw_timber_deck" in art:
+        _fail("void_boot must not include East Post Gap shed decks")
+    if "STARRY BLACK VOID" not in art and "0.020" not in art:
+        _fail("void art must use starry black void (not cream folio / purple cosmos)")
+    if "draw_circle" not in spark:
+        _fail("spark must draw a kiln mote")
 
 
 def test_field_camera_covers_window() -> None:
@@ -116,8 +202,8 @@ def test_locale_brand() -> None:
     csv = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
     if "brand.title,THE WEAVER," not in csv:
         _fail("locale brand.title must be THE WEAVER")
-    if "menu.start_new,Enter the Yard," not in csv:
-        _fail("locale start CTA must be Enter the Yard")
+    if "menu.start_new,Begin," not in csv:
+        _fail("locale start CTA must be Begin")
     if "menu.archive_chambers," not in csv:
         _fail("locale missing archive chambers label")
     if "FIELD INDEX" in csv:
@@ -137,10 +223,15 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
     if "_demote_archive_actions" not in menu:
         _fail("archive CTAs must be demoted")
     frag = (SCRIPTS / "fragment.gd").read_text(encoding="utf-8")
+    if "draw_colored_polygon" not in frag:
+        _fail("fragments need polygon silhouettes")
     if "draw_circle" in frag:
         _fail("fragments must not default to discs")
-    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag:
+    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag and "shard" not in frag.lower():
         _fail("fragments need family silhouettes")
+    # Ban disc-as-default body (Glow orb / circle mesh), not tiny punched ports.
+    if "draw_circle(Vector2.ZERO" in frag or "draw_circle(Vector2(0, 0)" in frag:
+        _fail("fragments must not default to discs")
     field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
     if "nest  " not in field:
         _fail("field HUD must be diegetic nest stamps")
@@ -156,13 +247,28 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
     if 'window_set_title("The Weaver")' not in main:
         _fail("main must set window title The Weaver")
     gap = (SCRIPTS / "gap_art.gd").read_text(encoding="utf-8")
-    if "shed_air" not in gap and "0.165" not in gap:
-        _fail("gap art must show shed-air depth")
+    if "true void" not in gap.lower() and "void_deep" not in gap and "0.012" not in gap:
+        _fail("gap art must show true-void depth (deep black with depth)")
+    if "splintered plank" in gap.lower() or "_draw_timber_deck" in gap:
+        _fail("gap art still draws shed timber/planks")
+    yard = (SCRIPTS / "yard_art.gd").read_text(encoding="utf-8")
+    if "set_creation_state" not in yard:
+        _fail("yard/void art must evolve from player creation state")
+    if "_draw_timber_deck" in yard or "_draw_loom" in yard:
+        _fail("yard art still draws shed timber/loom")
+    if "first_light" not in yard and "first light" not in yard.lower():
+        _fail("void field must include first light")
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    if "_sync_void_creation" not in field:
+        _fail("field.gd must sync void fill from player acts")
+    if "FILL_OVERSCAN" not in field or "_fill_window_with_field" not in field:
+        _fail("cover-zoom full window must remain")
 
 
 def test_loom_logic_mirror() -> None:
-    """Lightweight gather→combine→weave→emit using recipes.json (mirrors Loom)."""
+    """Lightweight gather→combine→weave→emit using recipes + open atoms affinity."""
     data = json.loads((CONTENT / "recipes.json").read_text(encoding="utf-8"))
+    atoms = json.loads((CONTENT / "atoms.json").read_text(encoding="utf-8"))
     inv = ["Anchor", "Span"]
     recipes = data["combine_recipes"]
     matched = None
@@ -176,22 +282,79 @@ def test_loom_logic_mirror() -> None:
     thread = matched["output_thread"]
     if thread != "Brace":
         _fail(f"expected Brace, got {thread}")
+    # Open grammar: Light×Time must fail interestingly (snap), Matter×Space binds.
+    aliases = atoms.get("craft_aliases", {})
+    def resolve(k: str) -> str:
+        return str(aliases.get(k, k))
+
+    def affinity(a: str, b: str) -> dict:
+        aa, bb = resolve(a), resolve(b)
+        for entry in atoms.get("combine_affinity", []):
+            inputs = entry.get("inputs", [])
+            if sorted(inputs) == sorted([aa, bb]):
+                return entry
+        return {}
+
+    ms = affinity("Matter", "Space")
+    if ms.get("outcome") != "bind" or ms.get("output_thread") != "Brace":
+        _fail("Matter×Space must brace under open affinity")
+    lt = affinity("Light", "Time")
+    if lt.get("outcome") not in ("strain", "snap"):
+        _fail("Light×Time must fail interestingly")
+    if lt.get("consume") != "refund":
+        _fail("failed binds should refund by default")
     emit_kinds = data["structure"].get("emit_kinds", [])
     if not emit_kinds:
         _fail("structure emit_kinds empty")
-    print("loom-mirror: gather→combine→weave→emit OK")
+    print("loom-mirror: gather→open-combine→weave→emit OK")
+
+
+def test_player_shaped_seed_hook() -> None:
+    """PLAYER_SHAPED.md — local void memory + seeded emergence (no online LLM)."""
+    loom = (SCRIPTS / "loom" / "loom_state.gd").read_text(encoding="utf-8")
+    required = [
+        'PLAYER_SEED_PATH := "user://weaver_player_seed.json"',
+        "func load_player_seed",
+        "func save_player_seed",
+        "func remember_action",
+        "func emergence_index",
+        "func reset_player_seed",
+        "player_seed",
+        "law_weights",
+        "PLAYER_SHAPED.md",
+    ]
+    for needle in required:
+        if needle not in loom:
+            _fail(f"loom_state.gd missing player-shaped hook: {needle}")
+    doc = Path(__file__).resolve().parents[3] / "docs" / "WEAVER" / "PLAYER_SHAPED.md"
+    if not doc.is_file():
+        _fail("docs/WEAVER/PLAYER_SHAPED.md missing")
+    text = doc.read_text(encoding="utf-8").lower()
+    for phrase in (
+        "actions leave laws",
+        "no always-online llm",
+        "seeded emergence",
+        "typed intent",
+        "weaver_player_seed.json",
+    ):
+        if phrase not in text:
+            _fail(f"PLAYER_SHAPED.md missing phrase: {phrase}")
+    print("player-shaped: void memory hook OK")
 
 
 def main() -> None:
     test_project_branding()
     test_recipes_first_five()
+    test_open_component_grammar()
     test_host_files_exist()
     test_field_returns_via_signal()
     test_main_routes_weaver()
+    test_void_boot_playable_minutes()
     test_field_camera_covers_window()
     test_locale_brand()
     test_visual_lock_no_maze_film_or_discs()
     test_loom_logic_mirror()
+    test_player_shaped_seed_hook()
     print("test_weaver_on_lattice: PASS")
 
 

@@ -8,6 +8,7 @@ extends Node
 ##
 
 const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
+const WEAVER_VOID_SCENE: PackedScene = preload("res://scenes/weaver/void_boot.tscn")
 const WEAVER_FIELD_SCENE: PackedScene = preload("res://scenes/weaver/field.tscn")
 const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
 const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
@@ -30,6 +31,11 @@ func _ready() -> void:
 		all_args.append(a)
 	if all_args.has("--battery"):
 		DeckProfile.set_battery_mode(true)
+	# Void boot self-test — `-- --void-boot-selftest` (spark + type word → world).
+	if all_args.has("--void-boot-selftest"):
+		var void_ok: bool = await _run_void_boot_self_test()
+		get_tree().quit(0 if void_ok else 1)
+		return
 	# Weaver loop self-test — `-- --weaver-selftest` (gather→combine→weave→emit).
 	if all_args.has("--weaver-selftest"):
 		var weaver_ok: bool = await _run_weaver_self_test()
@@ -51,6 +57,23 @@ func _ready() -> void:
 			return
 		var photos_ok: bool = await _run_weaver_photos(safe_photo_out)
 		get_tree().quit(0 if photos_ok else 1)
+		return
+	# VOID era photo pack — `-- --void-photos [--out DIR]` (black void · spark · after type).
+	# SEC-03: `--out` must resolve under user:// or the project tree.
+	if all_args.has("--void-photos"):
+		var void_out := ".capture_staging/photos_void"
+		var vi := 0
+		while vi < all_args.size():
+			if all_args[vi] == "--out" and vi + 1 < all_args.size():
+				void_out = all_args[vi + 1]
+			vi += 1
+		var safe_void_out: String = _resolve_screenshot_out_dir(void_out)
+		if safe_void_out == "":
+			printerr("void-photos --out rejected (must be user:// or under project root): %s" % void_out)
+			get_tree().quit(2)
+			return
+		var void_photos_ok: bool = await _run_void_photos(safe_void_out)
+		get_tree().quit(0 if void_photos_ok else 1)
 		return
 	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
@@ -83,11 +106,10 @@ func _ready() -> void:
 		await _capture_screenshot(kind, safe_out)
 		get_tree().quit(0)
 		return
-	# Cold-boot Weaver title plate once, then Yard Index (QW-1).
-	# Boot handoff mounts the menu under the stamp — skip a second show_menu clear.
+	# Cold-boot stamp, then VOID first minutes (not Yard Folio / East Post Gap).
 	var handed: bool = await _show_boot_title_if_needed()
 	if not handed:
-		show_menu()
+		show_weaver_void()
 
 
 func _show_boot_title_if_needed() -> bool:
@@ -101,18 +123,12 @@ func _show_boot_title_if_needed() -> bool:
 		await boot.finished
 	else:
 		await get_tree().create_timer(1.2).timeout
-	# Paper handoff: mount menu under the boot plate, then release the stamp.
-	# Avoids a black frame / hard cut (PRODUCTION_CRAFT X1 · UI_DIEGETIC_V3 §7).
-	var menu_node: Node = MENU_SCENE.instantiate()
-	if menu_node.has_method("begin_boot_handoff"):
-		menu_node.call("begin_boot_handoff")
-	stage.add_child(menu_node)
-	stage.move_child(menu_node, 0)
-	_connect_menu_signals(menu_node)
+	# Hand off into VOID — skip folio menu. Esc in-void opens a Begin gate.
 	await get_tree().process_frame
 	if is_instance_valid(boot):
 		boot.queue_free()
 	await get_tree().process_frame
+	show_weaver_void()
 	return true
 
 
@@ -1388,8 +1404,21 @@ func show_menu() -> void:
 	_connect_menu_signals(m)
 
 
+func show_weaver_void() -> void:
+	## Primary first minutes — VOID with one spark (no East Post Gap shed).
+	_clear_stage()
+	if has_node("/root/Loom") and Loom.has_method("reset"):
+		Loom.reset()
+	var void_field: Node = WEAVER_VOID_SCENE.instantiate()
+	stage.add_child(void_field)
+	if void_field.has_signal("menu_requested"):
+		void_field.connect("menu_requested", Callable(self, "_on_weaver_menu_requested"))
+	if has_node("/root/SteamService") and SteamService.has_method("set_menu_presence"):
+		SteamService.set_menu_presence()
+
+
 func show_weaver_field() -> void:
-	## Primary product path — Shed Yard teaching field (FIRST_FIVE fence).
+	## Legacy East Post Gap teaching field (selftest / photos / archive).
 	_clear_stage()
 	if has_node("/root/Loom") and Loom.has_method("reset"):
 		Loom.reset()
@@ -1399,6 +1428,29 @@ func show_weaver_field() -> void:
 		field.connect("menu_requested", Callable(self, "_on_weaver_menu_requested"))
 	if has_node("/root/SteamService") and SteamService.has_method("set_menu_presence"):
 		SteamService.set_menu_presence()
+
+
+func _run_void_boot_self_test() -> bool:
+	print("== The Weaver — void boot self-test ==")
+	show_weaver_void()
+	for _i in range(8):
+		await get_tree().process_frame
+	var void_field: Node = null
+	if stage.get_child_count() > 0:
+		void_field = stage.get_child(0)
+	if void_field == null or not void_field.has_method("debug_speak_word"):
+		printerr("void_boot missing debug_speak_word")
+		return false
+	if not bool(void_field.call("debug_speak_word", "span")):
+		printerr("void_boot failed to answer spoken word")
+		return false
+	for _j in range(6):
+		await get_tree().process_frame
+	if void_field.has_method("has_answered") and not bool(void_field.call("has_answered")):
+		printerr("void_boot has_answered false after speak")
+		return false
+	print("void-boot: PASS word answered")
+	return true
 
 
 func _run_weaver_self_test() -> bool:
@@ -1495,6 +1547,59 @@ func _run_weaver_photos(out_dir: String) -> bool:
 	return true
 
 
+func _run_void_photos(out_dir: String) -> bool:
+	## Capture VOID boot stills: black void, spark, after typing a word.
+	print("== The Weaver — VOID photo pack ==")
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	show_weaver_void()
+	for _i in range(10):
+		await get_tree().process_frame
+	var void_field: Node = null
+	if stage.get_child_count() > 0:
+		void_field = stage.get_child(0)
+	if void_field == null:
+		printerr("void-photos: void_boot missing")
+		return false
+	# 01 — cold black void (spark just present, early frame).
+	if not await _save_void_photo(out_dir, "01_void_black.png"):
+		return false
+	# 02 — spark has drifted; mote reads as the live seed.
+	await get_tree().create_timer(1.35).timeout
+	for _k in range(8):
+		await get_tree().process_frame
+	if not await _save_void_photo(out_dir, "02_void_spark.png"):
+		return false
+	if void_field.has_method("debug_speak_word"):
+		if not bool(void_field.call("debug_speak_word", "span")):
+			printerr("void-photos: speak failed")
+			return false
+		for _j in range(18):
+			await get_tree().process_frame
+		await get_tree().create_timer(1.0).timeout
+		if not await _save_void_photo(out_dir, "03_void_after_type.png"):
+			return false
+	else:
+		printerr("void-photos: debug_speak_word missing — skipping after-type still")
+	print("void-photos: PASS → %s" % out_dir)
+	return true
+
+
+func _save_void_photo(out_dir: String, filename: String) -> bool:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var img: Image = get_viewport().get_texture().get_image()
+	if img == null:
+		printerr("void-photos: capture failed for %s" % filename)
+		return false
+	var path: String = out_dir.path_join(filename)
+	var err := img.save_png(path)
+	if err != OK:
+		printerr("void-photos: save failed %s" % path)
+		return false
+	print("void-photos: wrote %s" % path)
+	return true
+
+
 func show_museum() -> void:
 	_clear_stage()
 	var m: Node = MUSEUM_SCENE.instantiate()
@@ -1551,8 +1656,8 @@ func show_end_screen() -> void:
 # ---------- menu callbacks ----------
 
 func _on_menu_start_new() -> void:
-	## Primary CTA — enter The Weaver teaching field.
-	show_weaver_field()
+	## Primary CTA — Begin into VOID first minutes.
+	show_weaver_void()
 
 
 func _on_menu_archive_chambers() -> void:
@@ -1562,7 +1667,8 @@ func _on_menu_archive_chambers() -> void:
 
 
 func _on_weaver_menu_requested() -> void:
-	show_menu()
+	## Minimal return — Begin gate lives on void; folio only if explicitly shown.
+	show_weaver_void()
 
 
 func _on_menu_continue() -> void:
