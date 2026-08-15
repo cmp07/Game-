@@ -137,6 +137,8 @@ class PrototypeLoopTests(unittest.TestCase):
             "func combine_indices(",
             "func request_combine_ui(",
             "func seat_structure(",
+            "func seat_play_structure(",
+            "func has_verb(",
             "func emit_from_structure(",
             "func selftest_loop(",
             "func load_atoms(",
