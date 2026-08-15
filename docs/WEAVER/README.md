@@ -8,7 +8,8 @@
 
 | Start here | Role |
 |---|---|
-| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
+| [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | **Player correction audit** — keep / rewrite / kill vs void origin · type/speak · generative · no shed · no prescribed path |
+| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution *(superseded fantasy pending TRUE_NORTH — see audit)* |
 | [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** executive vision + media pack (live deepen) |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
 | [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) | Lattice hosts Weaver loop — how to run |
