@@ -105,6 +105,7 @@
 | [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) | EL → archive migrate **plan** (no move yet) |
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
+| [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Generative around *this* player — actions leave laws; void memory; no online LLM |
 
 ### 1000× — Vision / deepen pack
 

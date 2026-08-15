@@ -182,6 +182,39 @@ def test_loom_logic_mirror() -> None:
     print("loom-mirror: gather→combine→weave→emit OK")
 
 
+def test_player_shaped_seed_hook() -> None:
+    """PLAYER_SHAPED.md — local void memory + seeded emergence (no online LLM)."""
+    loom = (SCRIPTS / "loom" / "loom_state.gd").read_text(encoding="utf-8")
+    required = [
+        'PLAYER_SEED_PATH := "user://weaver_player_seed.json"',
+        "func load_player_seed",
+        "func save_player_seed",
+        "func remember_action",
+        "func emergence_index",
+        "func reset_player_seed",
+        "player_seed",
+        "law_weights",
+        "PLAYER_SHAPED.md",
+    ]
+    for needle in required:
+        if needle not in loom:
+            _fail(f"loom_state.gd missing player-shaped hook: {needle}")
+    doc = Path(__file__).resolve().parents[3] / "docs" / "WEAVER" / "PLAYER_SHAPED.md"
+    if not doc.is_file():
+        _fail("docs/WEAVER/PLAYER_SHAPED.md missing")
+    text = doc.read_text(encoding="utf-8").lower()
+    for phrase in (
+        "actions leave laws",
+        "no always-online llm",
+        "seeded emergence",
+        "typed intent",
+        "weaver_player_seed.json",
+    ):
+        if phrase not in text:
+            _fail(f"PLAYER_SHAPED.md missing phrase: {phrase}")
+    print("player-shaped: void memory hook OK")
+
+
 def main() -> None:
     test_project_branding()
     test_recipes_first_five()
@@ -192,6 +225,7 @@ def main() -> None:
     test_locale_brand()
     test_visual_lock_no_maze_film_or_discs()
     test_loom_logic_mirror()
+    test_player_shaped_seed_hook()
     print("test_weaver_on_lattice: PASS")
 
 

@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-08-15 — Player-shaped generative (void memory + seed hook)
+
+**Branch:** `cursor/weaver-player-shaped-97b8`  
+**PR title:** Weaver player-shaped generative — void memory + loom seed hook
+
+### Product
+
+- New [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) — actions leave laws; void remembers per player; local rules + seeded emergence; **no always-online LLM** for MVP; optional later typed intent parsed locally
+- Lattice loom hook: `user://weaver_player_seed.json` load/save + `remember_action` / `emergence_index` in `game/echo_lattice/scripts/weaver/loom/loom_state.gd`
+- Indexed from [`README.md`](README.md)
+
+---
+
 ## 2026-08-09 — 1000× design + media pack (master synthesis)
 
 **Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  
