@@ -1,15 +1,17 @@
 # The Weaver — docs index
 
 **North star product docs** for **The Weaver** (working title).  
+**True North (highest priority):** [`TRUE_NORTH.md`](TRUE_NORTH.md) — user correction; **overrides** shed-yard / ports / recipes / Field Ledger drift.  
 **Pivot:** Echo Lattice is frozen; Weaver is active — see [`PIVOT.md`](PIVOT.md) · [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md).  
 **Do not delete** `game/echo_lattice/` or the Steam pack freeze under [`../BACKUP/`](../BACKUP/).  
 **Playable launch:** [`../../game/echo_lattice/`](../../game/echo_lattice/) (Weaver on Lattice) · twin spike [`../../game/weaver/`](../../game/weaver/).  
-**Hybrid contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md).
+**Hybrid contract:** [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) *(launch path only — fantasy follows True North)*.
 
 | Start here | Role |
 |---|---|
-| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
-| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** executive vision + media pack (live deepen) |
+| [`TRUE_NORTH.md`](TRUE_NORTH.md) | **User correction** — void-first · speak/type · infinite components · generative around you |
+| [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis *(shed loop — superseded where it conflicts with True North)* |
+| [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** pack *(shed-loom deepen — superseded where it conflicts with True North)* |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
 | [`BUILD_ON_LATTICE.md`](BUILD_ON_LATTICE.md) | Lattice hosts Weaver loop — how to run |
 | [`ROADMAP.md`](ROADMAP.md) | Gates, scaffold status, build order |
@@ -17,10 +19,9 @@
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver north star · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Ship-as-Weaver · archive intent · Steam rename |
 | [`17_MVP.md`](17_MVP.md) | Honest MVP cut list |
-| [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | **Visual lock** Yard Folio + torn-gap stills (`media/photos_v2/`) |
+| [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md) | Yard Folio timber stills — **drift record** (look wrong per True North) |
 | [`VIEW_SCREENSHOTS.md`](VIEW_SCREENSHOTS.md) | Photo galleries (photos_v2 + prior pack) |
-| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 notes + raw URLs |
-| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave) + GitHub links |
+| [`media/VIDEO.md`](media/VIDEO.md) | Gameplay MP4 (gather→combine→weave drift) + GitHub links |
 
 ---
 
@@ -30,9 +31,10 @@
 
 | Doc | Topic |
 |---|---|
-| [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
+| [`TRUE_NORTH.md`](TRUE_NORTH.md) | **True North** — user correction (overrides shed elevations) |
+| [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver ships · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Shipping identity & rename strategy |
-| [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** |
+| [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** *(shed drift — see True North)* |
 | [`ROADMAP.md`](ROADMAP.md) | Execution roadmap |
 | [`CHANGELOG_DESIGN.md`](CHANGELOG_DESIGN.md) | Design changelog |
 
