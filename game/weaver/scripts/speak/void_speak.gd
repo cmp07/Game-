@@ -256,10 +256,32 @@ func counts_by_kind() -> Dictionary:
 
 func _run_selftest() -> void:
 	print("== Weaver void speak/type selftest ==")
+	var want_shot: bool = false
+	var args := OS.get_cmdline_user_args()
+	if args.has("--screenshot") or args.has("--void-photos"):
+		want_shot = true
+	# Deterministic seats for photo proof; still exercises fragment/thread/law.
+	if want_shot:
+		_rng.seed = 42
+		_matter_root.z_index = 8
+		_cursor_mark.visible = false
 	var phrases := ["anchor", "span", "brace", "hold", "timber"]
-	for p in phrases:
-		_spawn_from_text(p)
-		await get_tree().create_timer(0.15).timeout
+	# Seat along the void/page seam so matter reads against cream + charcoal.
+	var photo_spots := [
+		Vector2(360.0, 340.0),
+		Vector2(520.0, 280.0),
+		Vector2(700.0, 300.0),
+		Vector2(860.0, 360.0),
+		Vector2(640.0, 480.0),
+	]
+	for idx in range(phrases.size()):
+		if want_shot and idx < photo_spots.size():
+			_spawn_from_text_at(phrases[idx], photo_spots[idx])
+		else:
+			_spawn_from_text(phrases[idx])
+		await get_tree().create_timer(0.18).timeout
+	# Let spoken matter finish seating (scale/fade tween ~0.42s).
+	await get_tree().create_timer(0.85).timeout
 	var counts := counts_by_kind()
 	var ok: bool = (
 		matter_count() >= 5
@@ -268,15 +290,68 @@ func _run_selftest() -> void:
 		and int(counts["law"]) >= 1
 	)
 	print("void-speak-selftest: matters=%d counts=%s ok=%s" % [matter_count(), str(counts), str(ok)])
-	var args := OS.get_cmdline_user_args()
-	if args.has("--screenshot"):
+	if want_shot:
+		_utter_label.text = ""
+		_whisper.text = "Typed words seat as Fragment · Thread · Law."
 		await get_tree().process_frame
 		await get_tree().process_frame
-		var out_dir := ProjectSettings.globalize_path("res://").path_join("../../docs/WEAVER/media")
+		await get_tree().create_timer(0.25).timeout
+		var out_dir := ProjectSettings.globalize_path("res://").path_join(".capture_staging/photos_void")
+		var i := 0
+		while i < args.size():
+			if args[i] == "--out" and i + 1 < args.size():
+				var raw := str(args[i + 1]).strip_edges()
+				if raw != "" and raw.find("..") < 0:
+					if raw.is_absolute_path():
+						out_dir = raw
+					else:
+						out_dir = ProjectSettings.globalize_path("res://").path_join(raw)
+				break
+			i += 1
 		DirAccess.make_dir_recursive_absolute(out_dir)
 		var img: Image = get_viewport().get_texture().get_image()
 		if img != null:
-			var path := out_dir.path_join("void_speak_spike.png")
+			var path := out_dir.path_join("04_void_speak_seated.png")
 			img.save_png(path)
 			print("void-speak-selftest: wrote %s" % path)
+		else:
+			printerr("void-speak-selftest: screenshot capture failed")
+			ok = false
 	get_tree().quit(0 if ok else 1)
+
+
+func _spawn_from_text_at(text: String, at: Vector2) -> void:
+	## Same as _spawn_from_text but seats at a fixed photo spot.
+	var hit: Dictionary = _lexicon.classify(text)
+	if hit.is_empty():
+		return
+	var kind_s := str(hit.get("kind", "fragment"))
+	var label := str(hit.get("label", text))
+	var source := str(hit.get("source_word", text))
+	var matter_kind: int = SpokenMatterScript.KIND_FRAGMENT
+	var accent := Color(0.45, 0.36, 0.24, 1)
+	match kind_s:
+		"thread":
+			matter_kind = SpokenMatterScript.KIND_THREAD
+			accent = Color(0.72, 0.47, 0.28, 1)
+			_whisper.text = "A %s Thread frays into being." % label
+		"law":
+			matter_kind = SpokenMatterScript.KIND_LAW
+			accent = Color(0.32, 0.28, 0.22, 1)
+			_whisper.text = "Law seats: %s." % label.to_upper()
+		_:
+			matter_kind = SpokenMatterScript.KIND_FRAGMENT
+			accent = _accent_for_fragment(label)
+			_whisper.text = "Fragment · %s settles in the void." % label
+	var matter: Node2D = SpokenMatterScript.new()
+	_matter_root.add_child(matter)
+	matter.position = at
+	matter.setup(matter_kind, label, source, accent)
+	_matters.append(matter)
+	if matter_kind == SpokenMatterScript.KIND_THREAD:
+		var anchor: Node2D = _nearest_fragment(matter)
+		if anchor != null:
+			matter.link_thread_to(anchor)
+	elif matter_kind == SpokenMatterScript.KIND_LAW:
+		_pulse_void()
+	_chalk_burst(at)

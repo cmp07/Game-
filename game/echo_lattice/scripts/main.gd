@@ -58,6 +58,23 @@ func _ready() -> void:
 		var photos_ok: bool = await _run_weaver_photos(safe_photo_out)
 		get_tree().quit(0 if photos_ok else 1)
 		return
+	# VOID era photo pack — `-- --void-photos [--out DIR]` (black void · spark · after type).
+	# SEC-03: `--out` must resolve under user:// or the project tree.
+	if all_args.has("--void-photos"):
+		var void_out := ".capture_staging/photos_void"
+		var vi := 0
+		while vi < all_args.size():
+			if all_args[vi] == "--out" and vi + 1 < all_args.size():
+				void_out = all_args[vi + 1]
+			vi += 1
+		var safe_void_out: String = _resolve_screenshot_out_dir(void_out)
+		if safe_void_out == "":
+			printerr("void-photos --out rejected (must be user:// or under project root): %s" % void_out)
+			get_tree().quit(2)
+			return
+		var void_photos_ok: bool = await _run_void_photos(safe_void_out)
+		get_tree().quit(0 if void_photos_ok else 1)
+		return
 	# Headless self-test — run when launched with `-- --selftest`.
 	if all_args.has("--selftest"):
 		var ok: bool = await _run_self_test()
@@ -1527,6 +1544,59 @@ func _run_weaver_photos(out_dir: String) -> bool:
 		printerr("weaver-photos: field beats failed")
 		return false
 	print("weaver-photos: PASS → %s" % out_dir)
+	return true
+
+
+func _run_void_photos(out_dir: String) -> bool:
+	## Capture VOID boot stills: black void, spark, after typing a word.
+	print("== The Weaver — VOID photo pack ==")
+	DirAccess.make_dir_recursive_absolute(out_dir)
+	show_weaver_void()
+	for _i in range(10):
+		await get_tree().process_frame
+	var void_field: Node = null
+	if stage.get_child_count() > 0:
+		void_field = stage.get_child(0)
+	if void_field == null:
+		printerr("void-photos: void_boot missing")
+		return false
+	# 01 — cold black void (spark just present, early frame).
+	if not await _save_void_photo(out_dir, "01_void_black.png"):
+		return false
+	# 02 — spark has drifted; mote reads as the live seed.
+	await get_tree().create_timer(1.35).timeout
+	for _k in range(8):
+		await get_tree().process_frame
+	if not await _save_void_photo(out_dir, "02_void_spark.png"):
+		return false
+	if void_field.has_method("debug_speak_word"):
+		if not bool(void_field.call("debug_speak_word", "span")):
+			printerr("void-photos: speak failed")
+			return false
+		for _j in range(18):
+			await get_tree().process_frame
+		await get_tree().create_timer(1.0).timeout
+		if not await _save_void_photo(out_dir, "03_void_after_type.png"):
+			return false
+	else:
+		printerr("void-photos: debug_speak_word missing — skipping after-type still")
+	print("void-photos: PASS → %s" % out_dir)
+	return true
+
+
+func _save_void_photo(out_dir: String, filename: String) -> bool:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var img: Image = get_viewport().get_texture().get_image()
+	if img == null:
+		printerr("void-photos: capture failed for %s" % filename)
+		return false
+	var path: String = out_dir.path_join(filename)
+	var err := img.save_png(path)
+	if err != OK:
+		printerr("void-photos: save failed %s" % path)
+		return false
+	print("void-photos: wrote %s" % path)
 	return true
 
 
