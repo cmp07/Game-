@@ -12,6 +12,8 @@
 | [`TRUE_NORTH.md`](TRUE_NORTH.md) | **User correction** — void-first · speak/type · infinite components · generative around you |
 | [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | **Session fantasy lock** — void + spark · intent grows world · no shed · anti-chatbot |
 | [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | **Player correction audit** — keep / rewrite / kill vs void north |
+| [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Void memory — world grows from *this* player (offline seed) |
+| [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) | Open atoms · any-two bind · interesting fail |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis *(shed loop — superseded where it conflicts with True North)* |
 | [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** pack *(shed-loom deepen — superseded where it conflicts with True North)* |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
@@ -37,6 +39,8 @@
 | [`TRUE_NORTH.md`](TRUE_NORTH.md) | **True North** — user correction (overrides shed elevations) |
 | [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | Audit vs player correction (keep / rewrite / kill) |
 | [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | Generative void session lock (no shed · anti-chatbot) |
+| [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Player-shaped void memory + loom seed |
+| [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md) | Metaphor: weave the game (play-structures unlock verbs) |
 | [`PIVOT.md`](PIVOT.md) | Product-line lock (EL frozen · Weaver ships · tree kept) |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Shipping identity & rename strategy |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** *(shed drift — see True North)* |

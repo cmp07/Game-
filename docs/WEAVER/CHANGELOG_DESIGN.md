@@ -8,21 +8,20 @@
 
 ## 2026-08-15 — True North + Generative Void (synthesis wave)
 
-**Branches:** `cursor/weaver-true-north-990f` · `cursor/generative-void-b7ac` · **Base:** `cursor/weaver-visual-lock`  
-**Synthesis:** `cursor/weaver-generative-north`
+**Branches absorbed:** `cursor/weaver-true-north-990f` · `cursor/generative-void-b7ac` · `cursor/generative-risks-4f2e` · `cursor/weaver-audit-vs-player-f0a0` · `cursor/weaver-void-boot` · `cursor/open-component-grammar-3526` · `cursor/weaver-player-shaped-97b8` · `cursor/weaver-game-as-cloth-020c` · `cursor/true-void-weaver-be09`  
+**Base:** `cursor/weaver-visual-lock` · **Synthesis branch:** `cursor/weaver-generative-north`  
+**PR title:** The Weaver — void generative north (not a shed)
 
 ### Product
 
 - New [`TRUE_NORTH.md`](TRUE_NORTH.md) — quotes user intent; names shed / ports / recipes / Field Ledger drift; locks void-first generative north star
 - New [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) — session fantasy lock: **black void + one spark**; worlds grow from player intent (move / type / speak / combine)
+- New [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) · [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) · [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) · [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) · [`GAME_AS_CLOTH.md`](GAME_AS_CLOTH.md)
+- [`MASTER_GDD.md`](MASTER_GDD.md) pointer updated to **v2.1 void generative north** (shed loop marked historical)
+- **Playable minimum:** `void_boot.tscn` — void + spark + type box on Lattice host
 - **Overrides** shed-yard elevations and timber visual-lock as live fantasy law
-- **Infinite component** creation; **no prescribed steps**; generative around the player
-- **Anti-chatbot:** friction / physics / consequences remain mandatory
 - **No shed** — Shed Yard hub superseded for generative-void workstreams
 - Index: [`README.md`](README.md) Start here + catalog pointer
-- New [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) — attacks G1 empty chatbot, G2 AI slop purple void, G3 no game
-- Constraints so offline generative *tooling* cannot replace stitch verbs, material craft, or playable consequence
-- Cross-linked from [`18_RISKS.md`](18_RISKS.md)
 
 
 ---
