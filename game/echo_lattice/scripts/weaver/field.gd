@@ -24,8 +24,10 @@ const FILL_OVERSCAN := 1.04
 @onready var _structure_anchor: Marker2D = %StructureAnchor
 @onready var _player: CharacterBody2D = %Player
 @onready var _thread_preview: Line2D = %ThreadPreview
+@onready var _thread_shadow: Line2D = get_node_or_null("%ThreadShadow")
 @onready var _dust: CPUParticles2D = %Dust
 @onready var _camera: Camera2D = $Camera2D
+@onready var _lamp_rect: ColorRect = get_node_or_null("%Lamp")
 
 var _near_void: bool = false
 var _structure_node: Node2D = null
@@ -46,6 +48,10 @@ func _ready() -> void:
 	_fill_window_with_field()
 	_spawn_fragments()
 	_thread_preview.visible = false
+	if _thread_shadow:
+		_thread_shadow.visible = false
+	if _lamp_rect != null and _lamp_rect.material is ShaderMaterial:
+		_lamp_rect.material = (_lamp_rect.material as ShaderMaterial).duplicate()
 	_combine_panel = CombinePanelScene.instantiate()
 	add_child(_combine_panel)
 	if has_node("%VoidZone"):
@@ -160,14 +166,21 @@ func _on_prompt_changed(text: String) -> void:
 
 
 func _refresh_thread_preview() -> void:
+	var taut := PackedVector2Array([Vector2(500, 360), Vector2(640, 352), Vector2(780, 358)])
+	var shadow := PackedVector2Array([Vector2(498, 368), Vector2(642, 364), Vector2(782, 366)])
 	if Loom.thread_count > 0 and not Loom.structure_built:
 		_thread_preview.visible = true
-		# Taut seated-ink seam — not a slack neon bridge.
-		_thread_preview.default_color = Color(0.11, 0.094, 0.078, 0.92)
-		_thread_preview.width = 2.6
-		_thread_preview.points = PackedVector2Array([Vector2(500, 360), Vector2(780, 358)])
+		# Taut ink/fiber with a tension peak — not a slack neon bridge.
+		_thread_preview.default_color = Color(0.11, 0.094, 0.078, 0.94)
+		_thread_preview.width = 2.8
+		_thread_preview.points = taut
+		if _thread_shadow:
+			_thread_shadow.visible = true
+			_thread_shadow.points = shadow
 	else:
 		_thread_preview.visible = false
+		if _thread_shadow:
+			_thread_shadow.visible = false
 
 
 func _flash_thread_bind() -> void:
@@ -189,6 +202,8 @@ func _flash_thread_bind() -> void:
 
 func _on_structure_seated() -> void:
 	_thread_preview.visible = false
+	if _thread_shadow:
+		_thread_shadow.visible = false
 	var tw := create_tween()
 	tw.set_parallel(true)
 	tw.tween_property(_void_fill, "modulate:a", 0.15, 0.6)
@@ -305,6 +320,22 @@ func _fill_window_with_field(look: Vector2 = FIELD_CENTER) -> void:
 	_camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
 	_camera.position = Vector2(cx, cy)
 	_camera.zoom = Vector2(zoom, zoom)
+	_sync_lamp_uv(Vector2(cx, cy), zoom)
+
+
+func _sync_lamp_uv(center: Vector2, zoom: float) -> void:
+	if _lamp_rect == null:
+		return
+	var mat := _lamp_rect.material as ShaderMaterial
+	if mat == null:
+		return
+	var vp: Vector2 = get_viewport().get_visible_rect().size
+	var lamp_world := Vector2(300, 150)
+	var screen: Vector2 = (lamp_world - center) * zoom + vp * 0.5
+	mat.set_shader_parameter("lamp_uv", Vector2(
+		screen.x / maxf(vp.x, 1.0),
+		screen.y / maxf(vp.y, 1.0)
+	))
 
 
 func _stage_gather_beat() -> void:
@@ -315,6 +346,8 @@ func _stage_gather_beat() -> void:
 	_void_fill.modulate.a = 1.0
 	_void_root.modulate = Color(1, 1, 1, 1)
 	_thread_preview.visible = false
+	if _thread_shadow:
+		_thread_shadow.visible = false
 	spawn_fragment("Anchor", Vector2(300, 360), Color(0.28, 0.26, 0.22))
 	spawn_fragment("Span", Vector2(380, 470), Color(0.45, 0.36, 0.24))
 	spawn_fragment("Anchor", Vector2(980, 340), Color(0.28, 0.26, 0.22))
@@ -323,8 +356,8 @@ func _stage_gather_beat() -> void:
 	# One Fragment already in hand; player stands at the next recover.
 	Loom.add_fragment("Anchor")
 	_player.global_position = Vector2(340, 450)
-	_fill_window_with_field()
-	Loom.prompt_changed.emit("Gather — recover Span beside you (E / walk over).")
+	_fill_window_with_field(Vector2(380, 430))
+	Loom.prompt_changed.emit("Gather — recover the plank beside you (E / walk over).")
 	for i in 10:
 		await get_tree().process_frame
 
@@ -418,6 +451,8 @@ func _stage_legacy_void_beat() -> void:
 	_void_fill.modulate.a = 1.0
 	_void_root.modulate = Color(1, 1, 1, 1)
 	_thread_preview.visible = false
+	if _thread_shadow:
+		_thread_shadow.visible = false
 	_spawn_fragments()
 	_freeze_fragments_auto_collect()
 	_player.global_position = Vector2(220, 400)

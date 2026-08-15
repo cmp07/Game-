@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://weaver_page_mat01"]
+
+[ext_resource type="Shader" path="res://shaders/weaver_page.gdshader" id="1_shader"]
+
+[resource]
+shader = ExtResource("1_shader")
+shader_parameter/page_bone = Color(0.91, 0.875, 0.784, 1)
+shader_parameter/page_deep = Color(0.824, 0.769, 0.643, 1)
+shader_parameter/grain = 0.08

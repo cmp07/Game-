@@ -1,11 +1,10 @@
 extends Node2D
-## Span Structure across the void — seats, then emits Fragments (loop close).
+## Span Structure across the void — posts, beam, shadow, seated loom. No debug label.
 
 signal request_spawn_fragment(kind: String, at: Vector2)
 
 @onready var _beam: Polygon2D = $Beam
 @onready var _stitch: Line2D = $Stitch
-@onready var _label: Label = $Label
 @onready var _posts: Node2D = $Posts
 
 var emit_interval: float = 3.5
@@ -14,12 +13,36 @@ var _seated: bool = false
 
 
 func _ready() -> void:
-	_label.text = "Span Structure"
+	if has_node("Label"):
+		$Label.visible = false
+		$Label.text = ""
 	modulate.a = 0.0
 	scale = Vector2(0.85, 0.85)
 	var structure: Dictionary = Loom.recipes.get("structure", {})
 	emit_interval = float(structure.get("emit_interval_sec", 3.5))
 	add_to_group("structures")
+	queue_redraw()
+
+
+func _draw() -> void:
+	var ink := Color(0.110, 0.094, 0.078, 1.0)
+	var timber := Color(0.380, 0.290, 0.220, 1.0)
+	var timber_dark := Color(0.220, 0.180, 0.140, 1.0)
+	var shadow := Color(0.05, 0.04, 0.03, 0.36)
+	# Contact shadow across the tear.
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-170, 10), Vector2(174, 6), Vector2(168, 28), Vector2(-176, 32),
+	]), shadow)
+	# Extra posts if scene posts are hidden during seat tween — scene nodes carry the body.
+	draw_line(Vector2(-40, -8), Vector2(40, -6), Color(ink.r, ink.g, ink.b, 0.5), 1.4, true)
+	# Warp threads — seated loom tell.
+	for i in range(5):
+		var x: float = -90.0 + float(i) * 45.0
+		draw_line(Vector2(x, -18), Vector2(x * 0.96, 16), Color(ink.r, ink.g, ink.b, 0.35), 1.1, true)
+	# Quiet kiln tick on the beam — ≤5%.
+	draw_line(Vector2(40, -10), Vector2(70, -8), Color(0.545, 0.227, 0.122, 0.7), 2.0, true)
+	draw_circle(Vector2(-155, -24), 2.2, timber_dark)
+	draw_circle(Vector2(155, -24), 2.2, timber)
 
 
 func _process(delta: float) -> void:
