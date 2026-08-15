@@ -6,12 +6,19 @@
 
 ---
 
-## 2026-08-15 — True North (user correction)
+## 2026-08-15 — True North + Generative Void (synthesis wave)
 
-**Branch:** `cursor/weaver-true-north-990f` · **Base:** `cursor/weaver-visual-lock`
+**Branches:** `cursor/weaver-true-north-990f` · `cursor/generative-void-b7ac` · **Base:** `cursor/weaver-visual-lock`  
+**Synthesis:** `cursor/weaver-generative-north`
+
+### Product
 
 - New [`TRUE_NORTH.md`](TRUE_NORTH.md) — quotes user intent; names shed / ports / recipes / Field Ledger drift; locks void-first generative north star
+- New [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) — session fantasy lock: **black void + one spark**; worlds grow from player intent (move / type / speak / combine)
 - **Overrides** shed-yard elevations and timber visual-lock as live fantasy law
+- **Infinite component** creation; **no prescribed steps**; generative around the player
+- **Anti-chatbot:** friction / physics / consequences remain mandatory
+- **No shed** — Shed Yard hub superseded for generative-void workstreams
 - Index: [`README.md`](README.md) Start here + catalog pointer
 
 ---
