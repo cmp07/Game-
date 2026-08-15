@@ -119,7 +119,7 @@ func clear_rich_presence() -> void:
 
 func set_menu_presence() -> void:
 	var tpl: Dictionary = features.get("presence", {})
-	set_rich_presence_status(str(tpl.get("menu", "At the Field Ledger")))
+	set_rich_presence_status(str(tpl.get("menu", "In the Shed Yard")))
 
 
 func set_chamber_presence(chamber_id: int) -> void:
@@ -234,7 +234,7 @@ func _load_features() -> void:
 		"store_page_url": "",
 		"cloud_remote_path": "save.json",
 		"presence": {
-			"menu": "At the Field Ledger",
+			"menu": "In the Shed Yard",
 			"chamber_template": "Chamber {index}: {title}",
 			"daily_template": "Daily {label}",
 			"endless_template": "Endless {label} · depth {depth}",

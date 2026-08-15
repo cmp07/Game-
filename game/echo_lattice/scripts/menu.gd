@@ -1,12 +1,10 @@
 extends Control
 ##
-## Main menu — The Weaver title shell hosted on the Echo Lattice folio layout.
+## Main menu — The Weaver Yard Folio (shed job book).
 ## Type roles: MENU_TYPE_SYSTEM.md via LedgerType (Bold brand / Medium actions).
-## Open folio @ 1920×1080: verso ~52% (THE WEAVER hero + gameplay film plate)
-## | spine | recto ~42% (Yard Index, compact action block). Explicit anchors — never hope.
-## Primary CTA enters the Weaver field; Lattice chambers stay under Archive.
-## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cadmium.
-## Left visual anchor = diegetic gameplay preview (not a static empty maze).
+## Open spread @ 1920×1080: verso ~52% (THE WEAVER + Yard field plate)
+## | spine | recto ~42% (Yard Index). Primary CTA Enter the Yard; Archive demoted.
+## Zero chamber HUD. Selection = ink rule + rust tick. No glass / glow / purple / cream maze postage.
 ##
 
 signal start_new_pressed()
@@ -243,7 +241,7 @@ func field_index_card_rect(vp: Vector2 = Vector2.ZERO, y_off: float = 0.0) -> Re
 	return Rect2(card_x, top, card_w, card_h)
 
 
-## Inner content inset: FIELD INDEX header top; actions pack the plate.
+## Inner content inset: Yard Index header top; actions pack the plate.
 func field_index_content_rect(card: Rect2) -> Rect2:
 	return Rect2(
 		card.position.x + _INDEX_PAD_L,
@@ -358,9 +356,25 @@ func _style_index_actions(compact: bool = false) -> void:
 	LedgerChrome.style_index_button(quit_button, false, idx_px)
 	if _wishlist_button != null:
 		LedgerChrome.style_index_button(_wishlist_button, false, idx_px)
+	_demote_archive_actions()
 	# Deck / editor short pages: keep row advance tight so the plate can hug actions.
 	if compact:
 		_clamp_index_button_fonts(idx_px, primary_px)
+
+
+func _demote_archive_actions() -> void:
+	## Archive wing sits under a quiet hairline — never peer with Enter the Yard.
+	var archive: Array = [daily_button, endless_button, hard_button, museum_button]
+	for b in archive:
+		if b == null:
+			continue
+		var btn: Button = b as Button
+		btn.modulate = Color(1, 1, 1, 0.62)
+		btn.add_theme_font_size_override("font_size", 16)
+
+
+func _archive_buttons() -> Array:
+	return [daily_button, endless_button, hard_button, museum_button]
 
 
 func _clamp_index_button_fonts(idx_px: int, primary_px: int) -> void:
@@ -623,16 +637,10 @@ func _sync_tech_art_grain() -> void:
 
 
 func _ensure_gameplay_preview() -> void:
+	## Visual lock: verso is a drawn Yard field plate — not a Lattice chamber film.
 	if _gameplay_preview != null and is_instance_valid(_gameplay_preview):
-		return
-	_gameplay_preview = Control.new()
-	_gameplay_preview.set_script(PREVIEW_SCRIPT)
-	_gameplay_preview.name = "GameplayPreview"
-	_gameplay_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_gameplay_preview.focus_mode = Control.FOCUS_NONE
-	add_child(_gameplay_preview)
-	move_child(_gameplay_preview, 0)
-	_sync_preview_layout()
+		_gameplay_preview.queue_free()
+	_gameplay_preview = null
 
 
 func _sync_preview_layout() -> void:
@@ -796,16 +804,17 @@ func _ensure_wishlist_button() -> void:
 
 
 func _index_action_buttons() -> Array:
-	var order: Array = [continue_button, start_button, daily_button]
+	var order: Array = [start_button, continue_button]
+	order.append(settings_button)
+	if colophon_button:
+		order.append(colophon_button)
+	order.append(daily_button)
 	if endless_button:
 		order.append(endless_button)
 	if hard_button:
 		order.append(hard_button)
 	if museum_button:
 		order.append(museum_button)
-	order.append(settings_button)
-	if colophon_button:
-		order.append(colophon_button)
 	order.append(quit_button)
 	if _wishlist_button != null:
 		order.insert(order.size() - 1, _wishlist_button)
@@ -868,7 +877,7 @@ func _draw() -> void:
 	if vp.x < 2.0:
 		vp = get_viewport_rect().size
 
-	# Lightbox desk + open folio — sharp page edges (no torn / deckled foot junk).
+	# Lightbox desk + open job book — canvas/shed, not cream maze postage.
 	ArtKit.draw_desk_margin(self, vp, 3, 0.05 if not TechArt.v3_enabled() else 0.028)
 	var layout: Dictionary = composition_layout(vp)
 	var outer: Rect2 = layout["outer"]
@@ -900,7 +909,7 @@ func _draw() -> void:
 	var brand_block: Rect2 = layout["brand_block"]
 	var preview_plate: Rect2 = layout["preview_plate"]
 
-	# ONE quiet micro header line — FIELD LEDGER · WING I · seed. Never competes with brand.
+	# ONE quiet micro header — YARD FOLIO · seed. Never Field Ledger / FIELD INDEX.
 	var micro_line: String = "%s  ·  %s" % [tr("menu.folio_mark"), tr("menu.seed_strip")]
 	draw_string(
 		_type("meta"),
@@ -962,17 +971,15 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT, -1, blurb_px, Palette.INK_SOFT
 	)
 
-	# Gameplay film plate — diegetic media window; SubViewport / loop sits in the well.
-	# Not a static empty maze, not YouTube chrome, no chamber HUD overlay.
-	# Seed already lives on the verso micro header — never reprint it under the well.
+	# Yard field plate — torn gap / timber / taut fiber. Not a maze film well.
 	if preview_plate.size.y >= 120.0 and preview_plate.size.x >= 80.0:
-		ArtKit.draw_ledger_film_plate(self, preview_plate, {
+		ArtKit.draw_yard_field_plate(self, preview_plate, {
 			"seed": 71,
 			"alpha": 1.0,
 		})
 
-	# Recto Field Index — fills ~42% width, full readable height.
-	# ONE Field Index title on the card — no duplicate recto micro header.
+	# Recto Yard Index — fills ~42% width. Archive demoted below a hairline.
+	# ONE Yard Index title on the card — no duplicate recto micro header.
 	var y_off: float = _slot_y_off()
 	var slot_a: float = _slot_alpha()
 	var card: Rect2 = field_index_card_rect(vp, y_off)
@@ -1012,6 +1019,7 @@ func _draw() -> void:
 
 	# Selection — solid tick + text-width rust baseline only (MENU_TYPE_SYSTEM §4).
 	_draw_button_underlines(card)
+	_draw_archive_hairline()
 
 	# Title shell is NOT a paused chamber — no BUFFER ribbon, no Move/Restart/Undo footer.
 
@@ -1019,6 +1027,24 @@ func _draw() -> void:
 func _draw_button_underlines(_card: Rect2) -> void:
 	var progress: float = clampf(_focus_underline_t / FOCUS_UNDERLINE_SEC, 0.0, 1.0)
 	LedgerChrome.draw_index_underlines(self, _index_buttons(), global_position, progress)
+
+
+func _draw_archive_hairline() -> void:
+	if daily_button == null or not daily_button.visible:
+		return
+	var r: Rect2 = daily_button.get_global_rect()
+	var local: Vector2 = r.position - global_position
+	var y: float = local.y - 8.0
+	var x0: float = local.x
+	var x1: float = local.x + minf(r.size.x, 220.0)
+	draw_line(Vector2(x0, y), Vector2(x1, y), Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.35), 1.0)
+	draw_string(
+		_type("micro"),
+		Vector2(x0, y - 4.0),
+		"archive",
+		HORIZONTAL_ALIGNMENT_LEFT, -1, 11,
+		Color(Palette.INK_SOFT.r, Palette.INK_SOFT.g, Palette.INK_SOFT.b, 0.45)
+	)
 
 
 func _type(role: String = "display") -> Font:

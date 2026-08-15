@@ -32,61 +32,25 @@ theme_override_colors/font_color = Color(0.176, 0.29, 0.333, 0.85)
 [node name="Subtitle" type="Label" parent="CardColumn"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-text = "Wing I on file."
+text = "East Post Gap awaits."
 autowrap_mode = 3
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.227, 0.204, 0.173, 0.78)
-
-[node name="ContinueButton" type="Button" parent="CardColumn"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 32)
-size_flags_horizontal = 3
-text = "Continue"
-flat = true
-theme_override_font_sizes/font_size = 20
-alignment = 0
 
 [node name="StartButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 36)
 size_flags_horizontal = 3
-text = "Start New Run"
+text = "Enter the Yard"
 flat = true
 theme_override_font_sizes/font_size = 22
 alignment = 0
 
-[node name="DailyButton" type="Button" parent="CardColumn"]
+[node name="ContinueButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 32)
 size_flags_horizontal = 3
-text = "Daily Challenge"
-flat = true
-theme_override_font_sizes/font_size = 20
-alignment = 0
-
-[node name="EndlessButton" type="Button" parent="CardColumn"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 32)
-size_flags_horizontal = 3
-text = "Endless"
-flat = true
-theme_override_font_sizes/font_size = 20
-alignment = 0
-
-[node name="HardButton" type="Button" parent="CardColumn"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 32)
-size_flags_horizontal = 3
-text = "Hard Variants"
-flat = true
-theme_override_font_sizes/font_size = 20
-alignment = 0
-
-[node name="MuseumButton" type="Button" parent="CardColumn"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 32)
-size_flags_horizontal = 3
-text = "Museum of Selves"
+text = "Continue field"
 flat = true
 theme_override_font_sizes/font_size = 20
 alignment = 0
@@ -95,7 +59,7 @@ alignment = 0
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 32)
 size_flags_horizontal = 3
-text = "Instruments"
+text = "Tool Chest"
 flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0
@@ -109,11 +73,47 @@ flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0
 
+[node name="DailyButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Daily Challenge"
+flat = true
+theme_override_font_sizes/font_size = 16
+alignment = 0
+
+[node name="EndlessButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Archive · Chambers"
+flat = true
+theme_override_font_sizes/font_size = 16
+alignment = 0
+
+[node name="HardButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Hard Variants"
+flat = true
+theme_override_font_sizes/font_size = 16
+alignment = 0
+
+[node name="MuseumButton" type="Button" parent="CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 32)
+size_flags_horizontal = 3
+text = "Museum of Selves"
+flat = true
+theme_override_font_sizes/font_size = 16
+alignment = 0
+
 [node name="QuitButton" type="Button" parent="CardColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 32)
 size_flags_horizontal = 3
-text = "Close ledger"
+text = "Close the shed"
 flat = true
 theme_override_font_sizes/font_size = 18
 alignment = 0

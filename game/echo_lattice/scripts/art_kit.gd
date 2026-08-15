@@ -1254,3 +1254,108 @@ func film_plate_media_rect(plate: Rect2) -> Rect2:
 	if well.size.x < 20.0 or well.size.y < 20.0:
 		return plate.grow(-8.0)
 	return well
+
+
+func draw_yard_field_plate(canvas: CanvasItem, plate: Rect2, opts: Dictionary = {}) -> void:
+	## Shed Yard ambient — torn gap, timber decks, taut fiber. Not a maze film well.
+	if plate.size.x < 40.0 or plate.size.y < 40.0:
+		return
+	var seed: int = int(opts.get("seed", 71))
+	var alpha: float = float(opts.get("alpha", 1.0))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var canvas_raw := Color(0.804, 0.749, 0.620, alpha)  # #CDBF9E
+	var page_deep := Color(0.824, 0.769, 0.643, alpha)  # #D2C4A4
+	var shed_air := Color(0.165, 0.180, 0.173, alpha)  # #2A2E2C
+	var timber := Color(0.420, 0.325, 0.251, alpha)
+	var ink := Color(0.110, 0.094, 0.078, alpha)
+	var chalk := Color(0.953, 0.925, 0.855, 0.72 * alpha)
+	var lamp := Color(0.769, 0.643, 0.416, 0.16 * alpha)
+	var rust := Color(0.545, 0.227, 0.122, alpha)
+
+	canvas.draw_rect(Rect2(plate.position + Vector2(4, 6), plate.size), Color(0.078, 0.071, 0.063, 0.22 * alpha), true)
+	canvas.draw_rect(plate, canvas_raw, true)
+	draw_paper_grain(canvas, plate, seed, 0.07)
+	draw_fiber_streaks(canvas, plate, seed + 4, 0.05, 16)
+
+	var well: Rect2 = plate.grow_individual(-8.0, -10.0, -8.0, -12.0)
+	if well.size.x < 24.0 or well.size.y < 24.0:
+		well = plate.grow(-6.0)
+	canvas.draw_rect(well, page_deep, true)
+
+	# Left / right timber decks.
+	var deck_l := PackedVector2Array([
+		well.position + Vector2(4, 18),
+		well.position + Vector2(well.size.x * 0.38, 22),
+		well.position + Vector2(well.size.x * 0.36, well.size.y - 16),
+		well.position + Vector2(10, well.size.y - 12),
+	])
+	var deck_r := PackedVector2Array([
+		well.position + Vector2(well.size.x * 0.62, 20),
+		well.position + Vector2(well.size.x - 6, 16),
+		well.position + Vector2(well.size.x - 10, well.size.y - 14),
+		well.position + Vector2(well.size.x * 0.64, well.size.y - 18),
+	])
+	canvas.draw_colored_polygon(deck_l, Color(timber.r, timber.g, timber.b, 0.55 * alpha))
+	canvas.draw_colored_polygon(deck_r, Color(timber.r, timber.g, timber.b, 0.50 * alpha))
+
+	# Gap drop — cooler shed air, never #000 / purple.
+	var gap := PackedVector2Array()
+	var gy0: float = well.position.y + 28.0
+	var gy1: float = well.end.y - 22.0
+	var mid_x: float = well.position.x + well.size.x * 0.50
+	var steps: int = 9
+	for i in range(steps + 1):
+		var t: float = float(i) / float(steps)
+		var y: float = lerpf(gy0, gy1, t)
+		var wobble: float = sin(t * 7.3 + float(seed) * 0.01) * 10.0 + rng.randf_range(-4.0, 4.0)
+		gap.append(Vector2(mid_x - 42.0 + wobble, y))
+	for i in range(steps, -1, -1):
+		var t2: float = float(i) / float(steps)
+		var y2: float = lerpf(gy0, gy1, t2)
+		var wobble2: float = sin(t2 * 6.1) * 9.0 + rng.randf_range(-4.0, 4.0)
+		gap.append(Vector2(mid_x + 46.0 + wobble2, y2))
+	canvas.draw_colored_polygon(gap, shed_air)
+
+	# Torn-edge whiskers + survey ticks.
+	for i in range(1, gap.size() - 1, 2):
+		if i >= steps:
+			break
+		var p: Vector2 = gap[i]
+		var outward: Vector2 = Vector2(-1.0, rng.randf_range(-0.4, 0.4)).normalized()
+		canvas.draw_line(p, p + outward * rng.randf_range(6.0, 14.0), Color(ink.r, ink.g, ink.b, 0.55 * alpha), 1.0, true)
+	for i in range(3):
+		var tick_y: float = gy0 + 18.0 + float(i) * ((gy1 - gy0) * 0.28)
+		canvas.draw_line(
+			Vector2(mid_x - 54.0, tick_y),
+			Vector2(mid_x - 46.0, tick_y),
+			chalk,
+			1.2,
+			true
+		)
+
+	# Taut seated thread + thin contact shadow across the tear.
+	var a: Vector2 = Vector2(well.position.x + well.size.x * 0.34, well.position.y + well.size.y * 0.52)
+	var b: Vector2 = Vector2(well.position.x + well.size.x * 0.66, well.position.y + well.size.y * 0.50)
+	canvas.draw_line(a + Vector2(0, 4), b + Vector2(0, 5), Color(0.05, 0.05, 0.04, 0.28 * alpha), 3.0, true)
+	canvas.draw_line(a, b, ink, 2.4, true)
+	canvas.draw_line(a, b, Color(rust.r, rust.g, rust.b, 0.35 * alpha), 1.0, true)
+
+	# Seated span plank across the gap.
+	var plank := PackedVector2Array([
+		a + Vector2(-8, -7),
+		b + Vector2(8, -6),
+		b + Vector2(10, 7),
+		a + Vector2(-6, 8),
+	])
+	canvas.draw_colored_polygon(plank, Color(timber.r, timber.g, timber.b, 0.92 * alpha))
+	canvas.draw_line(plank[0], plank[1], ink, 1.2, true)
+
+	# Single shed lamp — hard-ish disk, no bloom stack.
+	var lamp_c: Vector2 = well.position + Vector2(well.size.x * 0.22, well.size.y * 0.18)
+	canvas.draw_circle(lamp_c, 54.0, lamp)
+	canvas.draw_circle(lamp_c, 22.0, Color(lamp.r, lamp.g, lamp.b, 0.28 * alpha))
+
+	# Hairline plate rule — job-book window, not registration film chrome.
+	canvas.draw_rect(plate, Color(ink.r, ink.g, ink.b, 0.55 * alpha), false, 1.5)
+	canvas.draw_rect(Rect2(plate.position.x + 10.0, plate.position.y + 6.0, plate.size.x - 20.0, 2.0), rust, true)

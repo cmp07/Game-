@@ -1,7 +1,7 @@
 extends Control
 ##
-## Cold-boot Field Ledger title plate — paper stamp, then hand off to menu.
-## No fade-from-black, no glow. Skip path owned by Main for tooling launches.
+## Cold-boot The Weaver title plate — paper stamp, then hand off to Yard Index.
+## No fade-from-black, no glow, no Field Ledger maze seal.
 ##
 
 signal finished()
@@ -104,17 +104,17 @@ func _draw() -> void:
 		tr("brand.tagline"),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, tag_px, tag
 	)
-	# Rectangular letterpress plate only — never dashed concentric rings / FIELD watermark.
+	# Rectangular letterpress plate — workshop stamp, never maze / FIELD watermark.
 	ArtKit.draw_seal_stamp(
 		self,
 		Vector2(page.end.x - 56.0, page.position.y + 56.0),
 		24.0,
 		{
 			"rot_deg": 3.0,
-			"color": Palette.SLATE_TEAL,
+			"color": Palette.RUST_FOSSIL,
 			"alpha": 0.72 * fade,
 			"seed": 19,
-			"maze": true,
+			"maze": false,
 			"rust_accent": true,
 			"plate_w": 52.0,
 			"plate_h": 52.0,

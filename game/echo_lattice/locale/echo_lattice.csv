@@ -7,18 +7,18 @@ menu.field_index,YARD INDEX,院落索引
 menu.buffer,BUFFER,缓冲
 menu.seed_strip,SEED  A7F3 · 19C2 · B004 · EE51,种子  A7F3 · 19C2 · B004 · EE51
 menu.controls_hint,Move  WASD / Arrows     Restart  R     Undo  Z     Pause  Esc,移动  WASD / 方向键     重开  R     撤销  Z     暂停  Esc
-menu.continue,Continue archive,继续归档
+menu.continue,Continue field,继续场内
 menu.start_new,Enter the Yard,进入工棚院
 menu.archive_chambers,Archive · Chambers,归档 · 间室
 menu.daily,Daily sheet,每日页
 menu.endless,Endless corridor,无尽廊道
 menu.hard,Hard binding,高难装订
 menu.hard_count,Hard binding (%s),高难装订（%s）
-menu.settings,Instruments,仪器
+menu.settings,Tool Chest,工具箱
 menu.wishlist,Wishlist on Steam,Steam 愿望单
-menu.quit,Close ledger,合上账本
+menu.quit,Close the shed,关上工棚
 menu.colophon,Colophon,版权页
-menu.folio_mark,THE WEAVER · SHED YARD,织者 · 工棚院
+menu.folio_mark,YARD FOLIO · SHED YARD,院落对开 · 工棚院
 menu.seal_caption,LETTERPRESS PLATE · RETIRED,凸版印版 · 已退役
 menu.habit_silhouette,HABIT SILHOUETTE · THIRTY MOVES,习惯剪影 · 三十步
 menu.recto_mark,YARD INDEX · RECTO,院落索引 · 右页
@@ -334,7 +334,7 @@ habit.op.mirror_walked_h,a horizontal habit mirror,一枚水平习惯镜
 habit.op.widen_hot_corridor,a widened corridor,拓宽走廊
 habit.op.carve_shortcut,a carved shortcut,凿出的捷径
 end.museum,Museum of Selves,自我博物馆
-pause.title,PAUSE · FIELD INDEX,暂停 · 现场索引
+pause.title,PAUSE · YARD INDEX,暂停 · 院落索引
 pause.meta,%s  ·  seed  %s,%s  ·  种子  %s
 pause.resume,Resume survey,继续勘测
 pause.restart,Restart chamber,重开间室
@@ -342,9 +342,9 @@ pause.instruments,Instruments,仪器
 pause.abandon,Abandon to Field Index,返回现场索引
 colophon.folio,FIELD LEDGER · COLOPHON,现场账本 · 版权页
 colophon.heading,COLOPHON,版权页
-colophon.blurb,Echo Lattice — a Field Ledger survey,回声晶格 — 一份现场账本勘测
+colophon.blurb,The Weaver — a Yard Folio,织者 — 一份院落对开本
 colophon.design,Design / code / content,设计 / 代码 / 内容
-colophon.design_body,Echo Lattice,回声晶格
+colophon.design_body,The Weaver,织者
 colophon.engine,Engine,引擎
 colophon.engine_body,"Godot Engine — © Juan Linietsky, Ariel Manzur, and contributors (MIT)","Godot 引擎 — © Juan Linietsky、Ariel Manzur 与贡献者（MIT）"
 colophon.fonts,Fonts,字体

@@ -13,12 +13,39 @@ var _selected: Array[int] = []
 func _ready() -> void:
 	visible = false
 	layer = 30
-	_title.text = "Combine · spin a Brace Thread"
+	_title.text = "Spindle · spin a Brace Thread"
+	_style_yard_tag()
 	_combine_btn.pressed.connect(_on_combine)
 	_close_btn.pressed.connect(hide_panel)
 	Loom.inventory_changed.connect(_rebuild_slots)
 	Loom.combine_ui_requested.connect(show_panel)
 	_rebuild_slots()
+
+
+func _style_yard_tag() -> void:
+	## Stamped job tag — paper, not glass Godot panel.
+	var dim: ColorRect = get_node_or_null("Dim") as ColorRect
+	if dim:
+		dim.color = Color(0.91, 0.87, 0.78, 0.35)
+	var panel: PanelContainer = get_node_or_null("Panel") as PanelContainer
+	if panel:
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.910, 0.875, 0.784, 1)
+		sb.border_color = Color(0.110, 0.094, 0.078, 0.85)
+		sb.set_border_width_all(2)
+		sb.content_margin_left = 18
+		sb.content_margin_right = 18
+		sb.content_margin_top = 16
+		sb.content_margin_bottom = 16
+		sb.corner_radius_top_left = 2
+		sb.corner_radius_top_right = 2
+		sb.corner_radius_bottom_left = 2
+		sb.corner_radius_bottom_right = 2
+		panel.add_theme_stylebox_override("panel", sb)
+	_combine_btn.flat = true
+	_close_btn.flat = true
+	_combine_btn.add_theme_color_override("font_color", Color(0.545, 0.227, 0.122, 1))
+	_close_btn.add_theme_color_override("font_color", Color(0.22, 0.18, 0.14, 1))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -105,4 +132,4 @@ func _on_combine() -> void:
 	_selected.clear()
 	_rebuild_slots()
 	var thread: Dictionary = result.get("thread", {})
-	_result.text = "Spun %s. Close and weave at the void (Space)." % str(thread.get("label", "Thread"))
+	_result.text = "Spun %s. Close and tension at the gap (Space)." % str(thread.get("label", "Thread"))

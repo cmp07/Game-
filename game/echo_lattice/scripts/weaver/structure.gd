@@ -35,12 +35,24 @@ func _process(delta: float) -> void:
 
 
 func play_seat() -> void:
+	## Crease → lift → seat. Quiet weight — no portal, no bloom.
+	var rest_y: float = position.y
+	modulate.a = 0.4
+	scale = Vector2(1.05, 0.74)
+	position.y = rest_y + 8.0
+	if _stitch:
+		_stitch.width = 1.2
+		_stitch.default_color = Color(0.953, 0.925, 0.855, 0.85)
 	var tw := create_tween()
-	tw.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tw.set_parallel(true)
-	tw.tween_property(self, "modulate:a", 1.0, 0.45)
-	tw.tween_property(self, "scale", Vector2.ONE, 0.55)
-	_stitch.width = 1.0
-	tw.tween_property(_stitch, "width", 5.0, 0.5)
-	tw.tween_property(_beam, "color", Color(0.38, 0.3, 0.2, 1), 0.5)
-	tw.chain().tween_callback(func() -> void: _seated = true)
+	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "modulate:a", 1.0, 0.16)
+	tw.parallel().tween_property(self, "scale", Vector2(1.02, 1.06), 0.22)
+	tw.parallel().tween_property(self, "position:y", rest_y - 8.0, 0.22)
+	tw.tween_property(self, "scale", Vector2.ONE, 0.26)
+	tw.parallel().tween_property(self, "position:y", rest_y, 0.26)
+	if _stitch:
+		tw.parallel().tween_property(_stitch, "width", 3.2, 0.26)
+		tw.parallel().tween_property(_stitch, "default_color", Color(0.11, 0.094, 0.078, 1), 0.26)
+	if _beam:
+		tw.parallel().tween_property(_beam, "color", Color(0.42, 0.325, 0.251, 1), 0.26)
+	tw.tween_callback(func() -> void: _seated = true)

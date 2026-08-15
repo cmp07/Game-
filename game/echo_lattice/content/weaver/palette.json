@@ -13,6 +13,8 @@
     "kiln_copper":     { "hex": "#B8784A", "role": "weave pulse crest, stress accent ≤10%" },
     "kiln_rust":       { "hex": "#8B4A2A", "role": "overload creep along Thread" },
     "gap_void":        { "hex": "#3A342C", "role": "frayed physical gap — torn edge, never chroma purple" },
+    "shed_air":        { "hex": "#2A2E2C", "role": "void drop behind torn margin — cool neutral, never #000" },
+    "lamp_warm":       { "hex": "#C4A46A", "role": "single practical shed lamp" },
     "shed_lamp":       { "hex": "#E8D2A8", "role": "single practical light wash" }
   },
   "banlist": {

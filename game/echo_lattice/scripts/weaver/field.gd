@@ -1,5 +1,5 @@
 extends Node2D
-## Playable field hosted by Echo Lattice Main: void gap → gather → combine → weave → emit.
+## Playable Weaver field: torn gap → recover → combine → tension seat → emit.
 ## Esc returns through Main (menu_requested) — does not hard-swap the Godot project main scene.
 
 signal menu_requested
@@ -33,7 +33,8 @@ func _ready() -> void:
 	Loom.structure_seated.connect(_on_structure_seated)
 	_on_fragments_changed(0)
 	_on_threads_changed(0)
-	_on_prompt_changed("East Post Gap — gather Anchor + Span (E / walk over).")
+	_on_prompt_changed("East Post Gap — recover Anchor + Span (E / walk over).")
+	_style_diegetic_hud()
 	_spawn_fragments()
 	_thread_preview.visible = false
 	_combine_panel = CombinePanelScene.instantiate()
@@ -85,12 +86,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _try_weave() -> void:
 	if not Loom.can_weave():
 		if Loom.structure_built and Loom.thread_count <= 0:
-			Loom.prompt_changed.emit("Structure stands and sheds Fragments. Esc returns to title.")
+			Loom.prompt_changed.emit("Structure stands. Esc returns to the Yard Index.")
 		elif Loom.thread_count <= 0:
-			Loom.prompt_changed.emit("Spin a Thread first (collect 2 Fragments, press C).")
+			Loom.prompt_changed.emit("Spin a Thread first (recover 2 Fragments, press C).")
 		return
 	if not _near_void:
-		Loom.prompt_changed.emit("Step closer to the void gap, then press Space to weave.")
+		Loom.prompt_changed.emit("Step onto the torn edge, then press Space to tension.")
 		return
 	if Loom.seat_structure():
 		_flash_thread_bind()
@@ -100,7 +101,7 @@ func _on_void_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		_near_void = true
 		if Loom.can_weave():
-			Loom.prompt_changed.emit("Void underfoot. Press Space to tension your Thread into a Structure.")
+			Loom.prompt_changed.emit("Gap underfoot. Press Space to seat the Thread.")
 
 
 func _on_void_exited(body: Node2D) -> void:
@@ -108,13 +109,40 @@ func _on_void_exited(body: Node2D) -> void:
 		_near_void = false
 
 
+func _style_diegetic_hud() -> void:
+	## Chalk / stamp captions on the shed wall — not glass HUD chrome.
+	for lab in [_hud_fragments, _hud_threads, _prompt]:
+		if lab == null:
+			continue
+		lab.add_theme_color_override("font_color", Color(0.22, 0.18, 0.14, 0.92))
+	if has_node("UI/Hud"):
+		var hud: Control = $UI/Hud
+		hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _nest_marks(count: int) -> String:
+	var filled: int = clampi(count, 0, 3)
+	var s := ""
+	for i in range(3):
+		s += "▣" if i < filled else "▢"
+	return s
+
+
+func _thread_marks(count: int) -> String:
+	var n: int = clampi(count, 0, 4)
+	var s := ""
+	for i in range(4):
+		s += "━" if i < n else "·"
+	return s
+
+
 func _on_fragments_changed(count: int) -> void:
-	_hud_fragments.text = "Fragments: %d" % count
+	_hud_fragments.text = "nest  %s" % _nest_marks(count)
 	_refresh_thread_preview()
 
 
 func _on_threads_changed(count: int) -> void:
-	_hud_threads.text = "Threads: %d" % count
+	_hud_threads.text = "thread  %s" % _thread_marks(count)
 	_refresh_thread_preview()
 
 
@@ -125,22 +153,29 @@ func _on_prompt_changed(text: String) -> void:
 func _refresh_thread_preview() -> void:
 	if Loom.thread_count > 0 and not Loom.structure_built:
 		_thread_preview.visible = true
-		_thread_preview.default_color = Color(0.42, 0.28, 0.18, 0.55)
-		_thread_preview.width = 3.0
+		# Taut seated-ink seam — not a slack neon bridge.
+		_thread_preview.default_color = Color(0.11, 0.094, 0.078, 0.92)
+		_thread_preview.width = 2.6
+		_thread_preview.points = PackedVector2Array([Vector2(500, 360), Vector2(780, 358)])
 	else:
 		_thread_preview.visible = false
 
 
 func _flash_thread_bind() -> void:
 	var chalk := Line2D.new()
-	chalk.width = 2.0
-	chalk.default_color = Color(0.55, 0.5, 0.4, 0.9)
+	chalk.width = 1.5
+	chalk.default_color = Color(0.11, 0.094, 0.078, 0.95)
 	chalk.points = PackedVector2Array([_player.global_position, _structure_anchor.global_position])
 	add_child(chalk)
 	var tw := create_tween()
-	tw.tween_property(chalk, "width", 6.0, 0.25)
-	tw.tween_property(chalk, "modulate:a", 0.0, 0.35)
+	tw.tween_property(chalk, "width", 3.2, 0.22)
+	tw.tween_property(chalk, "modulate:a", 0.0, 0.28)
 	tw.tween_callback(chalk.queue_free)
+	if has_node("/root/WeaverJuice"):
+		WeaverJuice.weave_pulse(PackedVector2Array([
+			_player.global_position,
+			_structure_anchor.global_position,
+		]), 1.0)
 
 
 func _on_structure_seated() -> void:

@@ -104,6 +104,44 @@ def test_locale_brand() -> None:
         _fail("locale start CTA must be Enter the Yard")
     if "menu.archive_chambers," not in csv:
         _fail("locale missing archive chambers label")
+    if "FIELD INDEX" in csv:
+        _fail("player-facing FIELD INDEX still in locale")
+    if "menu.folio_mark,YARD FOLIO" not in csv:
+        _fail("folio mark must be YARD FOLIO")
+    if "pause.title,PAUSE · YARD INDEX," not in csv:
+        _fail("pause title must not say FIELD INDEX")
+
+
+def test_visual_lock_no_maze_film_or_discs() -> None:
+    menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
+    if "draw_yard_field_plate" not in menu:
+        _fail("menu must draw Yard field plate")
+    if "draw_ledger_film_plate" in menu:
+        _fail("menu still draws Lattice film plate")
+    if "_demote_archive_actions" not in menu:
+        _fail("archive CTAs must be demoted")
+    frag = (SCRIPTS / "fragment.gd").read_text(encoding="utf-8")
+    if "draw_circle" in frag:
+        _fail("fragments must not default to discs")
+    if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag:
+        _fail("fragments need family silhouettes")
+    field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
+    if "nest  " not in field:
+        _fail("field HUD must be diegetic nest stamps")
+    if "Fragments:" in field:
+        _fail("field HUD still says Fragments:")
+    struct = (SCRIPTS / "structure.gd").read_text(encoding="utf-8")
+    if "Crease" not in struct and "rest_y" not in struct:
+        _fail("structure seat must crease/lift/seat")
+    proj = PROJECT.read_text(encoding="utf-8")
+    if 'config/name="The Weaver"' not in proj:
+        _fail("window/product name must be The Weaver")
+    main = (ROOT / "scripts" / "main.gd").read_text(encoding="utf-8")
+    if 'window_set_title("The Weaver")' not in main:
+        _fail("main must set window title The Weaver")
+    gap = (SCRIPTS / "gap_art.gd").read_text(encoding="utf-8")
+    if "shed_air" not in gap and "0.165" not in gap:
+        _fail("gap art must show shed-air depth")
 
 
 def test_loom_logic_mirror() -> None:
@@ -135,6 +173,7 @@ def main() -> None:
     test_field_returns_via_signal()
     test_main_routes_weaver()
     test_locale_brand()
+    test_visual_lock_no_maze_film_or_discs()
     test_loom_logic_mirror()
     print("test_weaver_on_lattice: PASS")
 

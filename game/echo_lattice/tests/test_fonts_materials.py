@@ -81,6 +81,7 @@ class TestFontsMaterials(unittest.TestCase):
             "draw_open_folio",
             "draw_habit_silhouette",
             "draw_ledger_film_plate",
+            "draw_yard_field_plate",
             "draw_index_card",
             "draw_seal_stamp",
             "draw_binder_clip",
@@ -112,7 +113,7 @@ class TestFontsMaterials(unittest.TestCase):
         menu = (ROOT / "scripts" / "menu.gd").read_text(encoding="utf-8")
         self.assertIn("ArtKit.draw_desk_margin", menu)
         self.assertIn("ArtKit.draw_open_folio", menu)
-        self.assertIn("ArtKit.draw_ledger_film_plate", menu)
+        self.assertIn("ArtKit.draw_yard_field_plate", menu)
         self.assertIn("ArtKit.draw_index_card", menu)
         self.assertNotIn("ArtKit.draw_habit_silhouette", menu)
         self.assertNotIn('"caption": "FIELD"', menu)

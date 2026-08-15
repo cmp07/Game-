@@ -40,29 +40,23 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
                 body,
             )
         )
-        self.assertEqual(title_sites, 1, msg="FIELD INDEX must be drawn once on the card")
+        self.assertEqual(title_sites, 1, msg="YARD INDEX must be drawn once on the card")
         self.assertIn('tr("menu.field_index")', body)
         # Recto micro header duplicates the card title — ban it on the title shell.
         self.assertNotIn('tr("menu.recto_mark")', body)
-        self.assertIn('menu.field_index,FIELD INDEX,', LOCALE)
+        self.assertIn('menu.field_index,YARD INDEX,', LOCALE)
+        self.assertNotIn("FIELD INDEX", LOCALE)
 
     def test_wing_not_restated_on_fresh_card(self) -> None:
         body = _draw_body()
         refresh = _refresh_body()
-        # Verso keeps ONE folio mark with WING I.
         self.assertIn('tr("menu.folio_mark")', body)
         folio = re.search(r"menu\.folio_mark,([^,\n]+),", LOCALE)
         self.assertIsNotNone(folio)
-        self.assertIn("WING", folio.group(1).upper())
-        # Fresh title hides the wing/chamber subtitle — wing must not reappear on the card.
-        self.assertIn("subtitle.visible = false", refresh)
-        self.assertNotIn('tr("menu.subtitle_fresh")', refresh)
-        # Count WING mentions in title draw + fresh-path locale keys that still ink.
-        wing_hits = 0
-        wing_hits += body.upper().count("WING")
-        wing_hits += len(re.findall(r"WING", folio.group(1).upper()))
-        # Locale key text for folio_mark already counted via folio; draw body should not
-        # hardcode additional WING strings.
+        self.assertIn("YARD FOLIO", folio.group(1).upper())
+        self.assertNotIn("FIELD LEDGER", folio.group(1).upper())
+        self.assertIn('tr("menu.subtitle_weaver")', refresh)
+        wing_hits = body.upper().count("WING")
         self.assertLess(
             wing_hits,
             3,
@@ -71,8 +65,8 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
 
     def test_single_film_plate_no_dual_seal_captions(self) -> None:
         body = _draw_body()
-        # One gameplay film plate under the brand — no dual seal/maze captions.
-        self.assertIn("ArtKit.draw_ledger_film_plate", body)
+        self.assertIn("ArtKit.draw_yard_field_plate", body)
+        self.assertNotIn("ArtKit.draw_ledger_film_plate", body)
         self.assertNotIn("ArtKit.draw_habit_silhouette", body)
         self.assertNotIn("ArtKit.draw_seal_stamp", body)
         self.assertNotIn('tr("menu.seal_caption")', body)
@@ -102,7 +96,7 @@ class TestMenuNoRedundantLabels(unittest.TestCase):
         body = _draw_body()
         hits = len(re.findall(r'tr\("menu\.seed_strip"\)', body))
         self.assertEqual(hits, 1, msg=f"menu.seed_strip ×{hits} — twin seed bars")
-        plate = re.search(r"ArtKit\.draw_ledger_film_plate\([\s\S]*?\)", body)
+        plate = re.search(r"ArtKit\.draw_yard_field_plate\([\s\S]*?\)", body)
         self.assertIsNotNone(plate)
         self.assertNotIn("seed_strip", plate.group(0))
 

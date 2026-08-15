@@ -15,7 +15,7 @@
 	"store_page_url": "",
 	"cloud_remote_path": "save.json",
 	"presence": {
-		"menu": "At the Field Ledger",
+		"menu": "In the Shed Yard",
 		"chamber_template": "Chamber {index}: {title}",
 		"daily_template": "Daily {label}",
 		"endless_template": "Endless {label} · depth {depth}",
