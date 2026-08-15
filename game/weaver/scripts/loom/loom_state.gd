@@ -1,6 +1,7 @@
 extends Node
 ## Autoload: gather → combine → weave session state (extends scaffold stub).
-## Authority: docs/WEAVER/32_FIRST_FIVE.md · 17_MVP.md · 02_CORE_LOOP.md
+## Authority: docs/WEAVER/32_FIRST_FIVE.md · 17_MVP.md · 02_CORE_LOOP.md · GAME_AS_CLOTH.md
+## Metaphor: player weaves the game into being; play-structures unlock verbs (not shed-building).
 
 signal fragments_changed(count: int)
 signal threads_changed(count: int)
@@ -9,6 +10,10 @@ signal fragment_emitted(kind: String, at: Vector2)
 signal prompt_changed(text: String)
 signal inventory_changed
 signal combine_ui_requested
+signal verb_unlocked(verb_id: String, structure_id: String)
+
+const GameAsClothScript := preload("res://scripts/loom/game_as_cloth.gd")
+var cloth: RefCounted = null
 
 var fragment_inventory: Array[String] = []
 var thread_count: int = 0
@@ -32,6 +37,8 @@ var api_selftest_result: Dictionary = {}
 
 
 func _ready() -> void:
+	cloth = GameAsClothScript.new()
+	cloth.verb_unlocked.connect(_on_cloth_verb_unlocked)
 	_rng.randomize()
 	load_recipes()
 	var args := OS.get_cmdline_user_args()
@@ -61,6 +68,10 @@ func load_recipes() -> void:
 
 
 func reset() -> void:
+	if cloth == null:
+		cloth = GameAsClothScript.new()
+		cloth.verb_unlocked.connect(_on_cloth_verb_unlocked)
+	cloth.reset()
 	fragment_inventory.clear()
 	threads.clear()
 	thread_count = 0
@@ -181,6 +192,31 @@ func seat_structure() -> bool:
 	return true
 
 
+
+func has_verb(verb_id: String) -> bool:
+	if cloth == null:
+		return false
+	return cloth.has_verb(verb_id)
+
+
+func seat_play_structure(structure_id: String) -> Dictionary:
+	## Weave a structure of play — unlocks a verb into the cloth (GAME_AS_CLOTH.md).
+	if cloth == null:
+		cloth = GameAsClothScript.new()
+		cloth.verb_unlocked.connect(_on_cloth_verb_unlocked)
+	var result: Dictionary = cloth.seat_play_structure(structure_id)
+	if bool(result.get("ok", false)) and not bool(result.get("already", false)):
+		var verb := str(result.get("verb", ""))
+		prompt_changed.emit("Wove play-structure %s — verb '%s' is now in your hands." % [
+			structure_id, verb
+		])
+	return result
+
+
+func _on_cloth_verb_unlocked(verb_id: String, structure_id: String) -> void:
+	verb_unlocked.emit(verb_id, structure_id)
+
+
 func emit_from_structure(at: Vector2) -> String:
 	var structure: Dictionary = recipes.get("structure", {})
 	var kinds: Array = structure.get("emit_kinds", ["Anchor", "Span"])
@@ -206,6 +242,15 @@ func selftest_loop(seed: int = 7) -> Dictionary:
 	var emitted := emit_from_structure(Vector2(640, 360))
 	assert(emitted != "")
 	log.append("emitted:%s" % emitted)
+	var cloth_result: Dictionary = cloth.selftest() if cloth else {}
+	assert(bool(cloth_result.get("ok", false)))
+	# Re-seat after cloth.selftest reset: prove Loom API unlocks echo via echo_loom.
+	cloth.reset()
+	assert(not has_verb("echo"))
+	var play := seat_play_structure("echo_loom")
+	assert(bool(play.get("ok", false)))
+	assert(has_verb("echo"))
+	log.append("play_structure:echo_loom→echo")
 	return {
 		"ok": true,
 		"phase": phase,
@@ -213,4 +258,6 @@ func selftest_loop(seed: int = 7) -> Dictionary:
 		"log": log,
 		"fragments_gathered": fragments_gathered,
 		"combines_done": combines_done,
+		"verbs": cloth.unlocked_verbs.duplicate() if cloth else [],
+		"echo_unlocked": has_verb("echo"),
 	}
