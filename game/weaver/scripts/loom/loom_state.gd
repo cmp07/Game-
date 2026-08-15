@@ -400,6 +400,13 @@ func selftest_loop(seed: int = 7) -> Dictionary:
 	var emitted := emit_from_structure(Vector2(640, 360))
 	assert(emitted != "")
 	log.append("emitted:%s" % emitted)
+	var cloth_result: Dictionary = cloth.selftest() if cloth else {}
+	assert(bool(cloth_result.get("ok", false)))
+	# Re-seat after cloth.selftest reset: prove Loom API unlocks echo via echo_loom.
+	cloth.reset()
+	var seat: Dictionary = seat_play_structure("echo_loom")
+	assert(bool(seat.get("ok", false)))
+	assert(has_verb("echo"))
 	return {
 		"ok": true,
 		"phase": phase,
@@ -408,4 +415,5 @@ func selftest_loop(seed: int = 7) -> Dictionary:
 		"fragments_gathered": fragments_gathered,
 		"combines_done": combines_done,
 		"binds_failed": binds_failed,
+		"verbs": cloth.unlocked_verbs.duplicate() if cloth else [],
 	}

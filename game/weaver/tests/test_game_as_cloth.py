@@ -70,11 +70,18 @@ class GameAsClothTests(unittest.TestCase):
             self.assertIn(name, self.loom_src)
 
     def test_first_five_fence_still_brace_only(self) -> None:
-        """Play-structure stub must not expand the FIRST_FIVE fragment/thread fence."""
+        """Play-structure stub keeps FIRST_FIVE skins; open atoms may coexist."""
         kinds = {k["id"] for k in self.recipes["fragment_kinds"]}
-        self.assertEqual(kinds, {"Anchor", "Span"})
+        self.assertTrue({"Anchor", "Span"} <= kinds)
         thread_ids = {t["id"] for t in self.recipes["thread_types"]}
-        self.assertEqual(thread_ids, {"Brace"})
+        self.assertIn("Brace", thread_ids)
+        # FIRST_FIVE compatibility recipe remains
+        brace = next(
+            r
+            for r in self.recipes["combine_recipes"]
+            if set(r["inputs"]) == {"Anchor", "Span"}
+        )
+        self.assertEqual(brace["output_thread"], "Brace")
 
     def test_echo_locked_until_woven_contract_in_source(self) -> None:
         # Stub maps echo_loom → echo and starts without echo in BASE_VERBS.

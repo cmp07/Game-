@@ -1,40 +1,107 @@
 {
   "version": 2,
-  "note": "Open component grammar + FIRST_FIVE compatibility. Matter×Space (Anchor×Span) still braces; any pair may attempt bind via atoms.json affinity.",
+  "note": "Open component grammar + FIRST_FIVE compatibility + GAME_AS_CLOTH play-structures. Matter\u00d7Space (Anchor\u00d7Span) braces; any pair may attempt bind via atoms.json affinity; seated play-structures unlock verbs.",
   "authority": "docs/WEAVER/36_OPEN_COMPONENT_GRAMMAR.md",
   "atoms_path": "res://content/atoms.json",
   "fragment_kinds": [
-    { "id": "Light", "family": "light", "atom": "Light", "label": "Light", "role": "lamp wash / sight-line" },
-    { "id": "Matter", "family": "matter", "atom": "Matter", "label": "Matter", "role": "mass / peg / pin" },
-    { "id": "Energy", "family": "energy", "atom": "Energy", "label": "Energy", "role": "push / kiln-heart" },
-    { "id": "Time", "family": "time", "atom": "Time", "label": "Time", "role": "beat / dwell / period (not clock-magic)" },
-    { "id": "Space", "family": "space", "atom": "Space", "label": "Space", "role": "gap / span length" },
-    { "id": "Anchor", "family": "anchor", "atom": "Matter", "label": "Anchor", "role": "stiff ground peg (Matter skin)" },
-    { "id": "Span", "family": "span", "atom": "Space", "label": "Span", "role": "soft / tensile length (Space skin)" }
+    {
+      "id": "Light",
+      "family": "light",
+      "atom": "Light",
+      "label": "Light",
+      "role": "lamp wash / sight-line"
+    },
+    {
+      "id": "Matter",
+      "family": "matter",
+      "atom": "Matter",
+      "label": "Matter",
+      "role": "mass / peg / pin"
+    },
+    {
+      "id": "Energy",
+      "family": "energy",
+      "atom": "Energy",
+      "label": "Energy",
+      "role": "push / kiln-heart"
+    },
+    {
+      "id": "Time",
+      "family": "time",
+      "atom": "Time",
+      "label": "Time",
+      "role": "beat / dwell / period (not clock-magic)"
+    },
+    {
+      "id": "Space",
+      "family": "space",
+      "atom": "Space",
+      "label": "Space",
+      "role": "gap / span length"
+    },
+    {
+      "id": "Anchor",
+      "family": "anchor",
+      "atom": "Matter",
+      "label": "Anchor",
+      "role": "stiff ground peg (Matter skin)"
+    },
+    {
+      "id": "Span",
+      "family": "span",
+      "atom": "Space",
+      "label": "Span",
+      "role": "soft / tensile length (Space skin)"
+    }
   ],
   "thread_types": [
-    { "id": "Brace", "label": "Brace Thread", "failure": "overload tear" },
-    { "id": "Feed", "label": "Feed Thread", "failure": "starve or burst" },
-    { "id": "Echo", "label": "Echo Thread", "failure": "desync chatter" },
-    { "id": "Oppose", "label": "Oppose Thread", "failure": "blowback" }
+    {
+      "id": "Brace",
+      "label": "Brace Thread",
+      "failure": "overload tear"
+    },
+    {
+      "id": "Feed",
+      "label": "Feed Thread",
+      "failure": "starve or burst"
+    },
+    {
+      "id": "Echo",
+      "label": "Echo Thread",
+      "failure": "desync chatter"
+    },
+    {
+      "id": "Oppose",
+      "label": "Oppose Thread",
+      "failure": "blowback"
+    }
   ],
   "combine_recipes": [
     {
       "id": "east_post_brace",
-      "inputs": ["Anchor", "Span"],
+      "inputs": [
+        "Anchor",
+        "Span"
+      ],
       "output_thread": "Brace",
       "label": "Brace Thread",
-      "note": "FIRST_FIVE compatibility — prefer atoms affinity Matter×Space"
+      "note": "FIRST_FIVE compatibility \u2014 prefer atoms affinity Matter\u00d7Space"
     },
     {
       "id": "span_cord",
-      "inputs": ["Span", "Span"],
+      "inputs": [
+        "Span",
+        "Span"
+      ],
       "output_thread": "Brace",
       "label": "Fiber brace"
     },
     {
       "id": "anchor_pin",
-      "inputs": ["Anchor", "Anchor"],
+      "inputs": [
+        "Anchor",
+        "Anchor"
+      ],
       "output_thread": "Brace",
       "label": "Pin brace"
     }
@@ -44,7 +111,12 @@
     "label": "Span Structure",
     "thread_cost": 1,
     "emit_interval_sec": 3.5,
-    "emit_kinds": ["Anchor", "Span", "Matter", "Space"],
+    "emit_kinds": [
+      "Anchor",
+      "Span",
+      "Matter",
+      "Space"
+    ],
     "channel": "topology",
     "emergent_note": "East Post Gap seats a Span lean; other atom signatures may emerge later"
   },
@@ -52,5 +124,15 @@
     "fragment_slots": 4,
     "thread_budget": 3,
     "field_seed_fragments": 4
-  }
+  },
+  "play_structures": [
+    {
+      "id": "echo_loom",
+      "label": "Echo Loom",
+      "kind": "play",
+      "unlocks_verb": "echo",
+      "channel": "play_grammar",
+      "note": "Structure of play \u2014 seats Echo into the hands. Not shed furniture."
+    }
+  ]
 }
