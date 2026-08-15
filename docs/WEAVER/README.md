@@ -8,6 +8,7 @@
 
 | Start here | Role |
 |---|---|
+| [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | **Session fantasy lock** — void + spark · intent grows world · no shed · anti-chatbot |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis + glossary + conflict resolution |
 | [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** executive vision + media pack (live deepen) |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
@@ -30,6 +31,7 @@
 
 | Doc | Topic |
 |---|---|
+| [`GENERATIVE_VOID.md`](GENERATIVE_VOID.md) | Generative void session lock (no shed · anti-chatbot) |
 | [`PIVOT.md`](PIVOT.md) | Durable north-star decision |
 | [`PRODUCT_IDENTITY.md`](PRODUCT_IDENTITY.md) | Shipping identity & rename strategy |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | Master game design document **v2** |
