@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-08-15 — Open component grammar (atoms · free bind)
+
+**Branch:** `cursor/open-component-grammar-3526`  
+**Base:** `cursor/weaver-visual-lock`
+
+- New [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) — Light / Matter / Energy / Time / Space as starting atoms
+- Closed Brace/Span jobs framed as teach aperture + compatibility, not forever grammar
+- Data: `atoms.json` affinity (bind / strain / snap); failures refund with craft tells
+- Runtime: `Loom.attempt_bind` — any two may try; FIRST_FIVE Anchor×Span still braces
+- Explicitly **not** a recipe wiki or building-step list ([`22_DISCOVERY_UX.md`](22_DISCOVERY_UX.md))
+
+---
+
 ## 2026-08-09 — 1000× design + media pack (master synthesis)
 
 **Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  

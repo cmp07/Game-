@@ -1,5 +1,5 @@
 extends CanvasLayer
-## Combine UI — pick two Fragments, spin a Brace Thread.
+## Combine UI — pick any two Fragments; the loom always answers (bind / strain / snap).
 
 var _selected: Array[int] = []
 
@@ -13,7 +13,7 @@ var _selected: Array[int] = []
 func _ready() -> void:
 	visible = false
 	layer = 30
-	_title.text = "Combine · spin a Brace Thread"
+	_title.text = "Combine · any two may try"
 	_combine_btn.pressed.connect(_on_combine)
 	_close_btn.pressed.connect(hide_panel)
 	Loom.inventory_changed.connect(_rebuild_slots)
@@ -32,7 +32,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func show_panel() -> void:
 	_selected.clear()
 	_rebuild_slots()
-	_result.text = "Select two Fragments (FIRST_FIVE: Anchor + Span)."
+	_result.text = "Select any two — bind, strain, or snap."
 	visible = true
 
 
@@ -86,12 +86,18 @@ func _on_slot_toggled(index: int, on: bool) -> void:
 
 func _preview() -> void:
 	if _selected.size() < 2:
-		_result.text = "Select two Fragments (FIRST_FIVE: Anchor + Span)."
+		_result.text = "Select any two — bind, strain, or snap."
 		return
 	var a: String = Loom.fragment_inventory[_selected[0]]
 	var b: String = Loom.fragment_inventory[_selected[1]]
 	var recipe := Loom.find_recipe(a, b)
-	_result.text = "Will spin: %s" % str(recipe.get("label", "Brace Thread"))
+	if bool(recipe.get("ok", false)):
+		_result.text = "May bind: %s" % str(recipe.get("label", "Thread"))
+	else:
+		_result.text = "May %s: %s" % [
+			str(recipe.get("outcome", "strain")),
+			str(recipe.get("tell", recipe.get("label", "fray"))),
+		]
 
 
 func _on_combine() -> void:
@@ -100,7 +106,9 @@ func _on_combine() -> void:
 		return
 	var result := Loom.combine_indices(_selected[0], _selected[1])
 	if not result.get("ok", false):
-		_result.text = str(result.get("reason", "Combine failed."))
+		_result.text = str(result.get("tell", result.get("reason", "Bind failed — interesting.")))
+		_selected.clear()
+		_rebuild_slots()
 		return
 	_selected.clear()
 	_rebuild_slots()

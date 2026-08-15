@@ -1,13 +1,23 @@
 {
-  "note": "FIRST_FIVE / MVP stub fragment families — authored data for loom pipeline.",
+  "note": "Open atoms + FIRST_FIVE craft skins. Combine uses atoms.json affinity — not a closed Brace-only list.",
+  "authority": "docs/WEAVER/36_OPEN_COMPONENT_GRAMMAR.md",
+  "atoms": ["Light", "Matter", "Energy", "Time", "Space"],
   "families": [
-    { "id": "span", "label": "Span", "role": "soft / tensile length" },
-    { "id": "anchor", "label": "Anchor", "role": "stiff ground peg" }
+    { "id": "light", "label": "Light", "atom": "Light", "role": "lamp wash / sight-line" },
+    { "id": "matter", "label": "Matter", "atom": "Matter", "role": "mass / peg / pin" },
+    { "id": "energy", "label": "Energy", "atom": "Energy", "role": "push / kiln-heart" },
+    { "id": "time", "label": "Time", "atom": "Time", "role": "beat / dwell / period" },
+    { "id": "space", "label": "Space", "atom": "Space", "role": "gap / span length" },
+    { "id": "span", "label": "Span", "atom": "Space", "role": "soft / tensile length (Space skin)" },
+    { "id": "anchor", "label": "Anchor", "atom": "Matter", "role": "stiff ground peg (Matter skin)" }
   ],
   "combine_rule": {
+    "mode": "open_attempt",
     "inputs": 2,
-    "output": "thread",
-    "thread_type": "Brace"
+    "any_pair_may_try": true,
+    "failures_are_interesting": true,
+    "atoms_path": "res://content/atoms.json",
+    "output": "thread_or_fray"
   },
   "recipes_path": "res://content/recipes.json"
 }
