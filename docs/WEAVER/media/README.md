@@ -4,8 +4,9 @@ Gameplay photo pack for the Shed Yard teaching loop (hosted on Echo Lattice).
 
 | Path | Role |
 |---|---|
-| [`photos/`](photos/) | 1920×1080 stills — menu/yard enter → gather → combine → weave → emit → wider yard |
-| [`../screenshots/`](../screenshots/) | Legacy 1280×720 (or recaptured) void / structure pair |
+| [`photos_v2/`](photos_v2/) | **Visual lock** 1920×1080 stills — Yard Folio menu + shed field craft |
+| [`photos/`](photos/) | Prior 1920×1080 pack (pre–visual-lock) |
+| [`../screenshots/`](../screenshots/) | Legacy void / structure pair (refreshed with visual lock) |
 
 **Gallery with embeds + raw URLs:** [`../VIEW_SCREENSHOTS.md`](../VIEW_SCREENSHOTS.md)
 
