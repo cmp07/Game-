@@ -234,7 +234,11 @@ class TestMenuCompositionDensity(unittest.TestCase):
     def test_film_plate_and_preview_hooks(self) -> None:
         """Verso is a Yard field plate — not a Lattice maze film well."""
         self.assertIn("func draw_yard_field_plate", ART)
-        self.assertIn("shed_air", ART)
+        self.assertTrue(
+            "void_far" in ART or "true void" in ART.lower() or "0.020" in ART,
+            msg="yard field plate must read as true void, not shed timber",
+        )
+        self.assertNotIn("timber decks", ART.lower())
         self.assertIn("_ensure_gameplay_preview", MENU)
         self.assertNotIn("ArtKit.draw_habit_silhouette", MENU)
         self.assertNotIn("ArtKit.draw_seal_stamp", MENU)

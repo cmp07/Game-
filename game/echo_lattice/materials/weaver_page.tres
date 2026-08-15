@@ -4,6 +4,6 @@
 
 [resource]
 shader = ExtResource("1_shader")
-shader_parameter/page_bone = Color(0.91, 0.875, 0.784, 1)
-shader_parameter/page_deep = Color(0.824, 0.769, 0.643, 1)
-shader_parameter/grain = 0.08
+shader_parameter/void_far = Color(0.015, 0.018, 0.028, 1)
+shader_parameter/void_near = Color(0.045, 0.055, 0.075, 1)
+shader_parameter/grain = 0.04
