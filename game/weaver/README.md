@@ -50,9 +50,9 @@ Authority: [`docs/WEAVER/35_JUICE.md`](../../docs/WEAVER/35_JUICE.md).
 ### Prototype loop (`scenes/main.tscn`)
 
 1. **Void** — frayed gap in the Shed Yard field (physical missing span, not cosmic purple).
-2. **Recover** — walk into Fragments (Span / Anchor / …) to collect them.
-3. **Bind** — combine two Fragments into a **Brace Thread** (combine panel / **C**).
-4. **Tension / weave** — seat a placeholder **Span Structure** across the gap (**Space**).
+2. **Recover** — walk into Fragments (atoms / Anchor / Span / …) to collect them.
+3. **Bind** — pick **any two**; the loom always answers (`bind` / `strain` / `snap`). Matter×Space (Anchor×Span) still braces; failures refund with a craft tell.
+4. **Tension / weave** — seat a Structure across the gap (**Space**). Emergent lean comes from atom chemistry, not a recipe wiki.
 
 Controls (loop): **WASD** move · **E** collect · **C** combine · **Space** weave · **Esc** title.
 

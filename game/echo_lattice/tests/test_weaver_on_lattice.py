@@ -32,8 +32,10 @@ def test_project_branding() -> None:
 def test_recipes_first_five() -> None:
     data = json.loads((CONTENT / "recipes.json").read_text(encoding="utf-8"))
     kinds = {k["id"] for k in data.get("fragment_kinds", [])}
-    if kinds != {"Anchor", "Span"}:
-        _fail(f"FIRST_FIVE fragment kinds expected Anchor+Span, got {kinds}")
+    if not {"Anchor", "Span"} <= kinds:
+        _fail(f"FIRST_FIVE skins Anchor+Span required, got {kinds}")
+    if not {"Light", "Matter", "Energy", "Time", "Space"} <= kinds:
+        _fail(f"open atoms missing from fragment_kinds, got {kinds}")
     recipes = data.get("combine_recipes", [])
     if not recipes:
         _fail("combine_recipes empty")
@@ -43,6 +45,29 @@ def test_recipes_first_five() -> None:
     structure = data.get("structure", {})
     if structure.get("id") != "span_structure":
         _fail("structure must be span_structure")
+
+
+def test_open_component_grammar() -> None:
+    atoms_path = CONTENT / "atoms.json"
+    if not atoms_path.is_file():
+        _fail("missing content/weaver/atoms.json")
+    atoms = json.loads(atoms_path.read_text(encoding="utf-8"))
+    ids = {a["id"] for a in atoms.get("atoms", [])}
+    if ids != {"Light", "Matter", "Energy", "Time", "Space"}:
+        _fail(f"expected five starting atoms, got {ids}")
+    if atoms.get("craft_aliases", {}).get("Anchor") != "Matter":
+        _fail("Anchor must alias to Matter")
+    if atoms.get("craft_aliases", {}).get("Span") != "Space":
+        _fail("Span must alias to Space")
+    fails = [e for e in atoms.get("combine_affinity", []) if e.get("outcome") != "bind"]
+    if len(fails) < 3:
+        _fail("need interesting failure affinity rows")
+    loom = (SCRIPTS / "loom" / "loom_state.gd").read_text(encoding="utf-8")
+    if "func attempt_bind(" not in loom:
+        _fail("Loom must expose attempt_bind for open grammar")
+    combine = (SCRIPTS / "ui" / "combine_panel.gd").read_text(encoding="utf-8")
+    if "any two" not in combine.lower():
+        _fail("combine panel must invite any-two bind attempts")
 
 
 def test_host_files_exist() -> None:
@@ -66,6 +91,7 @@ def test_host_files_exist() -> None:
         SCENES / "ui" / "combine_panel.tscn",
         CONTENT / "recipes.json",
         CONTENT / "fragments.json",
+        CONTENT / "atoms.json",
         CONTENT / "palette.json",
     ]
     for path in required:
@@ -224,8 +250,9 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
 
 
 def test_loom_logic_mirror() -> None:
-    """Lightweight gather→combine→weave→emit using recipes.json (mirrors Loom)."""
+    """Lightweight gather→combine→weave→emit using recipes + open atoms affinity."""
     data = json.loads((CONTENT / "recipes.json").read_text(encoding="utf-8"))
+    atoms = json.loads((CONTENT / "atoms.json").read_text(encoding="utf-8"))
     inv = ["Anchor", "Span"]
     recipes = data["combine_recipes"]
     matched = None
@@ -239,15 +266,37 @@ def test_loom_logic_mirror() -> None:
     thread = matched["output_thread"]
     if thread != "Brace":
         _fail(f"expected Brace, got {thread}")
+    # Open grammar: Light×Time must fail interestingly (snap), Matter×Space binds.
+    aliases = atoms.get("craft_aliases", {})
+    def resolve(k: str) -> str:
+        return str(aliases.get(k, k))
+
+    def affinity(a: str, b: str) -> dict:
+        aa, bb = resolve(a), resolve(b)
+        for entry in atoms.get("combine_affinity", []):
+            inputs = entry.get("inputs", [])
+            if sorted(inputs) == sorted([aa, bb]):
+                return entry
+        return {}
+
+    ms = affinity("Matter", "Space")
+    if ms.get("outcome") != "bind" or ms.get("output_thread") != "Brace":
+        _fail("Matter×Space must brace under open affinity")
+    lt = affinity("Light", "Time")
+    if lt.get("outcome") not in ("strain", "snap"):
+        _fail("Light×Time must fail interestingly")
+    if lt.get("consume") != "refund":
+        _fail("failed binds should refund by default")
     emit_kinds = data["structure"].get("emit_kinds", [])
     if not emit_kinds:
         _fail("structure emit_kinds empty")
-    print("loom-mirror: gather→combine→weave→emit OK")
+    print("loom-mirror: gather→open-combine→weave→emit OK")
 
 
 def main() -> None:
     test_project_branding()
     test_recipes_first_five()
+    test_open_component_grammar()
     test_host_files_exist()
     test_field_returns_via_signal()
     test_main_routes_weaver()
