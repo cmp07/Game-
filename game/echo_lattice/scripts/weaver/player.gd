@@ -17,7 +17,14 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var typing := false
+	var parent_void := get_parent()
+	if parent_void != null and parent_void.has_node("%WordEdit"):
+		var edit: LineEdit = parent_void.get_node("%WordEdit")
+		typing = edit.has_focus()
+	var dir := Vector2.ZERO
+	if not typing:
+		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = dir * speed
 	move_and_slide()
 	_moving = dir.length_squared() > 0.01

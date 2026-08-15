@@ -8,11 +8,12 @@
 |---|---|
 | **Ship / window title** | **The Weaver** (internal; store name **Threadfall** remains NAME_LOCK recommend only) |
 | **Launch project** | `game/echo_lattice/project.godot` |
-| **Primary loop** | `scenes/weaver/field.tscn` via Main → Enter the Yard |
+| **Primary loop** | `scenes/weaver/void_boot.tscn` via Main cold boot (VOID · spark · speak) |
+| **Archive field** | `scenes/weaver/field.tscn` (East Post Gap) for selftest / photos |
 | **Prototype twin** | `game/weaver/` kept temporarily as standalone spike reference |
-| **Lattice chambers** | Intact — menu **Archive · Chambers** / Continue / Daily / Hard / Museum |
+| **Lattice chambers** | Intact — folio / Archive · Chambers when opened explicitly |
 
-**One line:** Play Weaver from the Echo Lattice shell; do not delete Lattice history; archive-move waits on human gates.
+**One line:** Play Weaver from the Echo Lattice shell; boot into VOID first minutes; do not delete Lattice history; archive-move waits on human gates.
 
 ---
 
@@ -20,21 +21,24 @@
 
 | Lock | Meaning |
 |---|---|
-| **Lattice hosts Weaver** | Autoloads, menu shell, fonts, audio bus, Steam stubs, save stack stay in `game/echo_lattice/`. |
-| **Weaver is primary CTA** | Boot → menu brand **THE WEAVER** → **Enter the Yard** opens gather→combine→weave. |
+| **Lattice hosts Weaver** | Autoloads, fonts, audio bus, Steam stubs, save stack stay in `game/echo_lattice/`. |
+| **VOID is primary boot** | Boot → stamp → **void_boot** (spark · move · type a word). Esc → **Begin** only. |
 | **No blind archive move** | `game/echo_lattice/` stays in place until [`33_MIGRATE_FROM_LATTICE.md`](33_MIGRATE_FROM_LATTICE.md) §6 is green. |
 | **`game/weaver/` temporary** | Standalone Godot project remains for juice/loop spikes; product launch is Lattice. |
-| **Chambers not deleted** | Echo Lattice wing reachable as **Archive · Chambers** (and existing modes). |
+| **Chambers not deleted** | Echo Lattice wing reachable when folio/archive is opened. |
 
 ---
 
 ## 1. How to run
 
 ```bash
-# Product launch path (Weaver on Lattice)
+# Product launch path (Weaver on Lattice) — boots into VOID
 godot --path game/echo_lattice
 
-# Headless Weaver loop contract
+# Headless VOID first-minutes contract
+godot --path game/echo_lattice -- --void-boot-selftest
+
+# East Post Gap loop contract (archive field)
 godot --path game/echo_lattice -- --weaver-selftest
 
 # Optional: standalone spike project (temporary twin)
@@ -48,7 +52,9 @@ python3 game/weaver/tests/test_weaver_juice.py
 
 **Editor:** Godot 4.3 → Import → `game/echo_lattice/project.godot` → F5.
 
-**Controls (Yard):** WASD move · E gather · C combine · Space weave at void · Esc menu.
+**Controls (VOID):** WASD move · type a word · Enter speak · Esc Begin gate.
+
+**Controls (East Post Gap archive):** WASD move · E gather · C combine · Space weave · Esc menu.
 
 ---
 
@@ -68,7 +74,8 @@ python3 game/weaver/tests/test_weaver_juice.py
 |---|---|
 | `scripts/weaver/loom/loom_state.gd` (autoload `Loom`) | Session state gather→combine→weave→emit |
 | `scripts/weaver/juice/*` | W1 juice + shed palette |
-| `scenes/weaver/field.tscn` (+ fragment/player/structure/ui) | Playable East Post Gap |
+| `scenes/weaver/void_boot.tscn` (+ void_art / spark) | Playable VOID first minutes |
+| `scenes/weaver/field.tscn` (+ fragment/player/structure/ui) | East Post Gap archive field |
 | `content/weaver/*.json` | Recipes / fragments / palette |
 
 ---
@@ -77,7 +84,7 @@ python3 game/weaver/tests/test_weaver_juice.py
 
 | Action | Destination |
 |---|---|
-| **Enter the Yard** | Weaver field (primary) |
+| **Enter the Yard** / **Begin** | VOID first minutes (`void_boot`) |
 | Continue archive | Lattice mid-run chambers |
 | Daily sheet | Lattice daily wing |
 | **Archive · Chambers** | Fresh Lattice campaign run |
