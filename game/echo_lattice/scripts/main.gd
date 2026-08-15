@@ -8,6 +8,7 @@ extends Node
 ##
 
 const MENU_SCENE:     PackedScene = preload("res://scenes/menu.tscn")
+const WEAVER_VOID_SCENE: PackedScene = preload("res://scenes/weaver/void_boot.tscn")
 const WEAVER_FIELD_SCENE: PackedScene = preload("res://scenes/weaver/field.tscn")
 const CHAMBER_SCENE:  PackedScene = preload("res://scenes/chamber.tscn")
 const WIN_SCENE:      PackedScene = preload("res://scenes/chamber_won.tscn")
@@ -30,6 +31,11 @@ func _ready() -> void:
 		all_args.append(a)
 	if all_args.has("--battery"):
 		DeckProfile.set_battery_mode(true)
+	# Void boot self-test — `-- --void-boot-selftest` (spark + type word → world).
+	if all_args.has("--void-boot-selftest"):
+		var void_ok: bool = await _run_void_boot_self_test()
+		get_tree().quit(0 if void_ok else 1)
+		return
 	# Weaver loop self-test — `-- --weaver-selftest` (gather→combine→weave→emit).
 	if all_args.has("--weaver-selftest"):
 		var weaver_ok: bool = await _run_weaver_self_test()
@@ -83,11 +89,10 @@ func _ready() -> void:
 		await _capture_screenshot(kind, safe_out)
 		get_tree().quit(0)
 		return
-	# Cold-boot Weaver title plate once, then Yard Index (QW-1).
-	# Boot handoff mounts the menu under the stamp — skip a second show_menu clear.
+	# Cold-boot stamp, then VOID first minutes (not Yard Folio / East Post Gap).
 	var handed: bool = await _show_boot_title_if_needed()
 	if not handed:
-		show_menu()
+		show_weaver_void()
 
 
 func _show_boot_title_if_needed() -> bool:
@@ -101,18 +106,12 @@ func _show_boot_title_if_needed() -> bool:
 		await boot.finished
 	else:
 		await get_tree().create_timer(1.2).timeout
-	# Paper handoff: mount menu under the boot plate, then release the stamp.
-	# Avoids a black frame / hard cut (PRODUCTION_CRAFT X1 · UI_DIEGETIC_V3 §7).
-	var menu_node: Node = MENU_SCENE.instantiate()
-	if menu_node.has_method("begin_boot_handoff"):
-		menu_node.call("begin_boot_handoff")
-	stage.add_child(menu_node)
-	stage.move_child(menu_node, 0)
-	_connect_menu_signals(menu_node)
+	# Hand off into VOID — skip folio menu. Esc in-void opens a Begin gate.
 	await get_tree().process_frame
 	if is_instance_valid(boot):
 		boot.queue_free()
 	await get_tree().process_frame
+	show_weaver_void()
 	return true
 
 
@@ -1388,8 +1387,21 @@ func show_menu() -> void:
 	_connect_menu_signals(m)
 
 
+func show_weaver_void() -> void:
+	## Primary first minutes — VOID with one spark (no East Post Gap shed).
+	_clear_stage()
+	if has_node("/root/Loom") and Loom.has_method("reset"):
+		Loom.reset()
+	var void_field: Node = WEAVER_VOID_SCENE.instantiate()
+	stage.add_child(void_field)
+	if void_field.has_signal("menu_requested"):
+		void_field.connect("menu_requested", Callable(self, "_on_weaver_menu_requested"))
+	if has_node("/root/SteamService") and SteamService.has_method("set_menu_presence"):
+		SteamService.set_menu_presence()
+
+
 func show_weaver_field() -> void:
-	## Primary product path — Shed Yard teaching field (FIRST_FIVE fence).
+	## Legacy East Post Gap teaching field (selftest / photos / archive).
 	_clear_stage()
 	if has_node("/root/Loom") and Loom.has_method("reset"):
 		Loom.reset()
@@ -1399,6 +1411,29 @@ func show_weaver_field() -> void:
 		field.connect("menu_requested", Callable(self, "_on_weaver_menu_requested"))
 	if has_node("/root/SteamService") and SteamService.has_method("set_menu_presence"):
 		SteamService.set_menu_presence()
+
+
+func _run_void_boot_self_test() -> bool:
+	print("== The Weaver — void boot self-test ==")
+	show_weaver_void()
+	for _i in range(8):
+		await get_tree().process_frame
+	var void_field: Node = null
+	if stage.get_child_count() > 0:
+		void_field = stage.get_child(0)
+	if void_field == null or not void_field.has_method("debug_speak_word"):
+		printerr("void_boot missing debug_speak_word")
+		return false
+	if not bool(void_field.call("debug_speak_word", "span")):
+		printerr("void_boot failed to answer spoken word")
+		return false
+	for _j in range(6):
+		await get_tree().process_frame
+	if void_field.has_method("has_answered") and not bool(void_field.call("has_answered")):
+		printerr("void_boot has_answered false after speak")
+		return false
+	print("void-boot: PASS word answered")
+	return true
 
 
 func _run_weaver_self_test() -> bool:
@@ -1551,8 +1586,8 @@ func show_end_screen() -> void:
 # ---------- menu callbacks ----------
 
 func _on_menu_start_new() -> void:
-	## Primary CTA — enter The Weaver teaching field.
-	show_weaver_field()
+	## Primary CTA — Begin into VOID first minutes.
+	show_weaver_void()
 
 
 func _on_menu_archive_chambers() -> void:
@@ -1562,7 +1597,8 @@ func _on_menu_archive_chambers() -> void:
 
 
 func _on_weaver_menu_requested() -> void:
-	show_menu()
+	## Minimal return — Begin gate lives on void; folio only if explicitly shown.
+	show_weaver_void()
 
 
 func _on_menu_continue() -> void:
