@@ -49,6 +49,9 @@ def test_host_files_exist() -> None:
     required = [
         SCRIPTS / "loom" / "loom_state.gd",
         SCRIPTS / "field.gd",
+        SCRIPTS / "void_boot.gd",
+        SCRIPTS / "void_art.gd",
+        SCRIPTS / "spark.gd",
         SCRIPTS / "fragment.gd",
         SCRIPTS / "structure.gd",
         SCRIPTS / "player.gd",
@@ -56,6 +59,7 @@ def test_host_files_exist() -> None:
         SCRIPTS / "juice" / "weaver_juice.gd",
         SCRIPTS / "juice" / "weaver_palette.gd",
         SCENES / "field.tscn",
+        SCENES / "void_boot.tscn",
         SCENES / "fragment.tscn",
         SCENES / "player.tscn",
         SCENES / "structure.tscn",
@@ -75,25 +79,81 @@ def test_field_returns_via_signal() -> None:
         _fail("field.gd must emit menu_requested for Lattice Main")
     if "change_scene_to_file" in field:
         _fail("field.gd must not hard-swap main scene away from Lattice router")
+    void_boot = (SCRIPTS / "void_boot.gd").read_text(encoding="utf-8")
+    if "signal menu_requested" not in void_boot:
+        _fail("void_boot.gd must emit menu_requested for Lattice Main")
+    if "change_scene_to_file" in void_boot:
+        _fail("void_boot.gd must not hard-swap main scene away from Lattice router")
 
 
 def test_main_routes_weaver() -> None:
     main = (ROOT / "scripts" / "main.gd").read_text(encoding="utf-8")
+    if "show_weaver_void" not in main:
+        _fail("main.gd missing show_weaver_void")
+    if "WEAVER_VOID_SCENE" not in main:
+        _fail("main.gd missing WEAVER_VOID_SCENE")
     if "show_weaver_field" not in main:
         _fail("main.gd missing show_weaver_field")
     if "WEAVER_FIELD_SCENE" not in main:
         _fail("main.gd missing WEAVER_FIELD_SCENE")
     if "_on_menu_archive_chambers" not in main:
         _fail("main.gd missing archive chambers callback")
+    if "--void-boot-selftest" not in main:
+        _fail("main.gd missing --void-boot-selftest hook")
     if "--weaver-selftest" not in main:
         _fail("main.gd missing --weaver-selftest hook")
     if "--weaver-photos" not in main:
         _fail("main.gd missing --weaver-photos hook")
     if "_run_weaver_photos" not in main:
         _fail("main.gd missing _run_weaver_photos")
+    if "_run_void_boot_self_test" not in main:
+        _fail("main.gd missing _run_void_boot_self_test")
     field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
     if "func run_photo_beats(" not in field:
         _fail("field.gd missing run_photo_beats")
+    # Cold boot must land in VOID, not Yard Folio.
+    ready = main
+    if "show_weaver_void()" not in ready:
+        _fail("cold boot path must call show_weaver_void")
+    boot_fn = main
+    if "Yard Folio" in boot_fn[boot_fn.find("_show_boot_title_if_needed") : boot_fn.find("_connect_menu_signals")]:
+        # comment may mention skipping folio — ensure we don't instantiate MENU for handoff
+        pass
+    boot_body_start = main.find("func _show_boot_title_if_needed")
+    boot_body_end = main.find("\nfunc ", boot_body_start + 1)
+    boot_body = main[boot_body_start:boot_body_end]
+    if "MENU_SCENE.instantiate()" in boot_body:
+        _fail("boot handoff must not mount Yard Folio menu")
+    if "show_weaver_void()" not in boot_body:
+        _fail("boot handoff must show_weaver_void")
+
+
+def test_void_boot_playable_minutes() -> None:
+    """First minutes: spark, move, type word, world change, full-window camera, no shed."""
+    void_gd = (SCRIPTS / "void_boot.gd").read_text(encoding="utf-8")
+    void_tscn = (SCENES / "void_boot.tscn").read_text(encoding="utf-8")
+    art = (SCRIPTS / "void_art.gd").read_text(encoding="utf-8")
+    spark = (SCRIPTS / "spark.gd").read_text(encoding="utf-8")
+    if "func _fill_window_with_field" not in void_gd:
+        _fail("void_boot must COVER-zoom into the window")
+    if "FILL_OVERSCAN" not in void_gd:
+        _fail("void_boot camera missing FILL_OVERSCAN")
+    if "debug_speak_word" not in void_gd:
+        _fail("void_boot missing debug_speak_word")
+    if "_drift_spark" not in void_gd:
+        _fail("void_boot must drift one spark")
+    if "WordEdit" not in void_tscn:
+        _fail("void_boot scene needs WordEdit for typed words")
+    if "Spark" not in void_tscn:
+        _fail("void_boot scene needs Spark node")
+    if "BeginButton" not in void_tscn:
+        _fail("void_boot Esc gate must be Begin-only")
+    if "YardArt" in void_tscn or "_draw_timber_deck" in art:
+        _fail("void_boot must not include East Post Gap shed decks")
+    if "shed_air" not in art and "0.145" not in art:
+        _fail("void art must use shed-air void (not purple cosmos)")
+    if "draw_circle" not in spark:
+        _fail("spark must draw a kiln mote")
 
 
 def test_field_camera_covers_window() -> None:
@@ -116,8 +176,8 @@ def test_locale_brand() -> None:
     csv = (ROOT / "locale" / "echo_lattice.csv").read_text(encoding="utf-8")
     if "brand.title,THE WEAVER," not in csv:
         _fail("locale brand.title must be THE WEAVER")
-    if "menu.start_new,Enter the Yard," not in csv:
-        _fail("locale start CTA must be Enter the Yard")
+    if "menu.start_new,Begin," not in csv:
+        _fail("locale start CTA must be Begin")
     if "menu.archive_chambers," not in csv:
         _fail("locale missing archive chambers label")
     if "FIELD INDEX" in csv:
@@ -137,10 +197,13 @@ def test_visual_lock_no_maze_film_or_discs() -> None:
     if "_demote_archive_actions" not in menu:
         _fail("archive CTAs must be demoted")
     frag = (SCRIPTS / "fragment.gd").read_text(encoding="utf-8")
-    if "draw_circle" in frag:
-        _fail("fragments must not default to discs")
+    if "draw_colored_polygon" not in frag:
+        _fail("fragments need polygon silhouettes")
     if "T-post" not in frag and "plank" not in frag.lower() and "Anchor" not in frag:
         _fail("fragments need family silhouettes")
+    # Ban disc-as-default body (Glow orb / circle mesh), not tiny punched ports.
+    if "draw_circle(Vector2.ZERO" in frag or "draw_circle(Vector2(0, 0)" in frag:
+        _fail("fragments must not default to discs")
     field = (SCRIPTS / "field.gd").read_text(encoding="utf-8")
     if "nest  " not in field:
         _fail("field HUD must be diegetic nest stamps")
@@ -188,6 +251,7 @@ def main() -> None:
     test_host_files_exist()
     test_field_returns_via_signal()
     test_main_routes_weaver()
+    test_void_boot_playable_minutes()
     test_field_camera_covers_window()
     test_locale_brand()
     test_visual_lock_no_maze_film_or_discs()
