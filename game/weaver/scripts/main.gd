@@ -1,12 +1,17 @@
 extends Control
-## Boot composition: brand, one line, one CTA into the frayed-field stub.
-## Headless: `-- --selftest [--screenshot]` skips the title into the field.
-## Cloud capture: `-- --gameplay-demo` (alias `--demo`) skips title into paced loop.
+## Boot composition: brand, one line, CTA into void-speak spike or yard loop.
+## Headless: `-- --selftest` → field; `-- --void-speak` / default main → void speak.
 
 
 func _ready() -> void:
+	if Loom.pending_void_speak:
+		call_deferred("_enter_void_speak")
+		return
 	if Loom.pending_selftest or Loom.pending_gameplay_demo:
 		call_deferred("_enter_field")
+		return
+	if Loom.pending_photos:
+		call_deferred("_run_photo_pack")
 		return
 	Loom.reset()
 
@@ -15,7 +20,15 @@ func _enter_field() -> void:
 	get_tree().change_scene_to_file("res://scenes/field.tscn")
 
 
+func _enter_void_speak() -> void:
+	get_tree().change_scene_to_file("res://scenes/void_speak.tscn")
+
+
 func _on_begin_pressed() -> void:
+	_enter_void_speak()
+
+
+func _on_yard_pressed() -> void:
 	_enter_field()
 
 

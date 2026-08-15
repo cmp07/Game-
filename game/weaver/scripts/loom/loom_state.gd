@@ -39,6 +39,8 @@ var pending_selftest: bool = false
 var pending_screenshot: bool = false
 var pending_gameplay_demo: bool = false
 var pending_photos: bool = false
+var pending_void_speak: bool = false
+var pending_void_speak_selftest: bool = false
 var api_selftest_result: Dictionary = {}
 
 
@@ -53,6 +55,13 @@ func _ready() -> void:
 		pending_photos = true
 		pending_selftest = false
 		pending_screenshot = false
+	elif args.has("--void-speak-selftest") or args.has("--speak-selftest"):
+		pending_void_speak = true
+		pending_void_speak_selftest = true
+		pending_selftest = false
+	elif args.has("--void-speak") or args.has("--speak"):
+		pending_void_speak = true
+		pending_selftest = false
 	elif args.has("--selftest"):
 		pending_selftest = true
 		pending_screenshot = args.has("--screenshot")

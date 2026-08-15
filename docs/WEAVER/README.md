@@ -14,6 +14,7 @@
 | [`AUDIT_VS_PLAYER.md`](AUDIT_VS_PLAYER.md) | **Player correction audit** — keep / rewrite / kill vs void north |
 | [`PLAYER_SHAPED.md`](PLAYER_SHAPED.md) | Void memory — world grows from *this* player (offline seed) |
 | [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) | Open atoms · any-two bind · interesting fail |
+| [`36_SPEAK_TYPE.md`](36_SPEAK_TYPE.md) | Speak/type void spike — typed words become matter (`game/weaver`) |
 | [`MASTER_GDD.md`](MASTER_GDD.md) | **v2** executive synthesis *(shed loop — superseded where it conflicts with True North)* |
 | [`1000X/MASTER_1000X.md`](1000X/MASTER_1000X.md) | **1000×** pack *(shed-loom deepen — superseded where it conflicts with True North)* |
 | [`1000X/README.md`](1000X/README.md) | 1000× docs + media index |
@@ -118,6 +119,7 @@
 | [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) | Adversarial attack + mandatory fixes |
 | [`35_JUICE.md`](35_JUICE.md) | W1 juice feel (suck / flash / pulse) — *renumbered from colliding `20_JUICE`* |
 | [`36_OPEN_COMPONENT_GRAMMAR.md`](36_OPEN_COMPONENT_GRAMMAR.md) | Open atoms (Light/Matter/Energy/Time/Space) · free bind · interesting fail |
+| [`36_SPEAK_TYPE.md`](36_SPEAK_TYPE.md) | Speak/type void spike — words become Fragments/Threads/Laws |
 
 ### 1000× — Vision / deepen pack
 
