@@ -20,6 +20,10 @@
 - **Anti-chatbot:** friction / physics / consequences remain mandatory
 - **No shed** — Shed Yard hub superseded for generative-void workstreams
 - Index: [`README.md`](README.md) Start here + catalog pointer
+- New [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) — attacks G1 empty chatbot, G2 AI slop purple void, G3 no game
+- Constraints so offline generative *tooling* cannot replace stitch verbs, material craft, or playable consequence
+- Cross-linked from [`18_RISKS.md`](18_RISKS.md)
+
 
 ---
 

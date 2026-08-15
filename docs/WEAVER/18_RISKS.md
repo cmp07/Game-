@@ -2,7 +2,7 @@
 
 **Working title:** The Weaver  
 **Purpose:** Pre-mortem for design, production, market, and pivot hygiene.  
-**Companions:** [`17_MVP.md`](17_MVP.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`15_MARKET.md`](15_MARKET.md) · [`14_TECH.md`](14_TECH.md) (when present)
+**Companions:** [`17_MVP.md`](17_MVP.md) · [`16_FIRST_THIRTY.md`](16_FIRST_THIRTY.md) · [`15_MARKET.md`](15_MARKET.md) · [`14_TECH.md`](14_TECH.md) (when present) · [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) (chatbot / purple void / no-game fence)
 
 Severity: **H** = can kill the product · **M** = can stall a quarter · **L** = annoyance if ignored.
 
@@ -91,6 +91,7 @@ Stop the current Weaver prototype and replan if any hold after a honest slice:
 - The only “fun” is a feature that MVP forbids (trade, combat, LLM worldgen).
 - Art direction collapses to purple-void generics and nobody will own a material bible.
 - Adversarial kill-tests K1–K6 in [`34_ADVERSARIAL.md`](34_ADVERSARIAL.md) fail after two honest pedagogy passes (idle / spreadsheet / empty void).
+- Generative kill-tests in [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) fail (empty chatbot / AI slop purple void / no game).
 
 ---
 
