@@ -1,7 +1,8 @@
 # The Weaver — view screenshots
 
 **Branch:** [`cursor/weaver-visual-lock`](https://github.com/cmp07/Game-/tree/cursor/weaver-visual-lock) → PR into [`cursor/echo-lattice-rc1`](https://github.com/cmp07/Game-/tree/cursor/echo-lattice-rc1)  
-**Source:** `game/echo_lattice/` Yard Folio menu + shed field (`--weaver-photos`, 1920×1080)  
+**Source:** `game/echo_lattice/` Yard Folio menu + torn-gap shed field (`--weaver-photos`, 1920×1080)  
+**Standalone gallery:** [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md)  
 **Tool:** [`game/echo_lattice/tools/capture_weaver_photos.sh`](../../game/echo_lattice/tools/capture_weaver_photos.sh)
 
 Raw base (visual lock):
@@ -81,8 +82,19 @@ Refreshed by the same capture pass (void field + structure standing).
 
 ## Regenerate
 
+Play / recapture with **one** Godot 4.3 instance:
+
+```text
+godot --path game/echo_lattice
+godot --path game/echo_lattice --resolution 1920x1080 -- --weaver-photos --out ".capture_staging/weaver_photos"
+```
+
+Linux helper (xvfb):
+
 ```bash
 git lfs pull --include "game/echo_lattice/fonts/**"
 GODOT=/path/to/Godot_v4.3-stable_linux.x86_64 \
   ./game/echo_lattice/tools/capture_weaver_photos.sh
 ```
+
+Copy staged PNGs into `docs/WEAVER/media/photos_v2/` (see [`VIEW_PHOTOS_V2.md`](VIEW_PHOTOS_V2.md)).

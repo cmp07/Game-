@@ -8,7 +8,7 @@ Gameplay photo pack for the Shed Yard teaching loop (hosted on Echo Lattice).
 | [`photos/`](photos/) | Prior 1920×1080 pack (pre–visual-lock) |
 | [`../screenshots/`](../screenshots/) | Legacy void / structure pair (refreshed with visual lock) |
 
-**Gallery with embeds + raw URLs:** [`../VIEW_SCREENSHOTS.md`](../VIEW_SCREENSHOTS.md)
+**Gallery with embeds + raw URLs:** [`../VIEW_PHOTOS_V2.md`](../VIEW_PHOTOS_V2.md) · [`../VIEW_SCREENSHOTS.md`](../VIEW_SCREENSHOTS.md)
 
 ## Regenerate
 

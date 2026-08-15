@@ -11,4 +11,6 @@
 | 05 | Structure emit | `05_structure_emit.png` |
 | 06 | Wider yard | `06_wider_yard.png` |
 
-Gallery: [`../../VIEW_SCREENSHOTS.md`](../../VIEW_SCREENSHOTS.md) (photos_v2 section).
+Gallery: [`../../VIEW_PHOTOS_V2.md`](../../VIEW_PHOTOS_V2.md) · [`../../VIEW_SCREENSHOTS.md`](../../VIEW_SCREENSHOTS.md)
+
+Short aliases (same pixels): `01_menu.png`, `05_structure.png`.
