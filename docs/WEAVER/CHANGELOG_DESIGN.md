@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-08-15 — Generative risks (chatbot / purple void / no game)
+
+**Branch:** `cursor/generative-risks-4f2e` · **Base:** `cursor/weaver-visual-lock`
+
+- New [`GENERATIVE_RISKS.md`](GENERATIVE_RISKS.md) — attacks G1 empty chatbot, G2 AI slop purple void, G3 no game
+- Constraints C1–C17 so offline generative *tooling* cannot replace stitch verbs, material craft, or playable jobs
+- Indexed from [`README.md`](README.md); cross-linked from [`18_RISKS.md`](18_RISKS.md)
+
+---
+
 ## 2026-08-09 — 1000× design + media pack (master synthesis)
 
 **Branch:** `cursor/weaver-1000x-master` · **Base:** `cursor/echo-lattice-rc1`  
