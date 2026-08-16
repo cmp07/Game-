@@ -12,11 +12,12 @@ Planning and production workspace for a sequence of **small, separate Steam desk
   2. Coin-machine game
   3. Idle / particle tycoon (Particul-like)
 - Research scores & comps: [`docs/research/CATEGORY_RANKING.md`](docs/research/CATEGORY_RANKING.md)
+- AI / gameslop Steam research (2025–2026): [`docs/research/AI_STEAM_GAMESLOP_REPORT.md`](docs/research/AI_STEAM_GAMESLOP_REPORT.md)
 
 ## Layout
 
 - `docs/` — game plan, design notes, Steam checklist
-- `docs/research/` — category ranking and competitive notes
+- `docs/research/` — category ranking, competitive notes, AI/gameslop Steam report
 - `research/` — scratch references
 - `game/` — Godot 4 project (after a lane is locked)
 
