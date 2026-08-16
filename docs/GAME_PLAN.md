@@ -125,4 +125,5 @@ Until that choice is locked, do not scaffold conflicting GDDs or mash systems.
 ## Related docs
 
 - [`docs/research/CATEGORY_RANKING.md`](research/CATEGORY_RANKING.md) — condensed scores, comps, Steam links  
+- [`docs/research/AI_TECH_STACK_SOLO_INDIE_2026.md`](research/AI_TECH_STACK_SOLO_INDIE_2026.md) — solo indie AI stack (local/cloud LLM, diffusion, voice, ACE, Steam AI survey) + Ritual Director architecture for inventive Game 1 without AI-slop dependency  
 - Repo layout: `game/` (Godot), `docs/` (plans), `research/` (scratch notes)
